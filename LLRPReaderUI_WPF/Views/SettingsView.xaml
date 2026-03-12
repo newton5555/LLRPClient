@@ -1,0 +1,165 @@
+<UserControl x:Class="LLRPReaderUI_WPF.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="clr-namespace:LLRPReaderUI_WPF.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
+             mc:Ignorable="d">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="16" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <GroupBox Header="Keepalive 配置" Margin="0,0,0,12">
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="启用 Keepalive" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding EnableKeepalive}" VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Keepalive 间隔(ms)" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Height="30" Text="{Binding KeepaliveIntervalMs}" />
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="RF 与盘点配置" Margin="0,0,0,12">
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="RF Mode" />
+                        <ComboBox Grid.Row="0" Grid.Column="1"
+                                  Height="30"
+                                  ItemsSource="{Binding RfModeOptions}"
+                                  DisplayMemberPath="DisplayText"
+                                  SelectedItem="{Binding SelectedRfModeOption}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Session (0-3)" />
+                        <ComboBox Grid.Row="2" Grid.Column="1" Height="30" SelectedValuePath="Tag" SelectedValue="{Binding Session}">
+                            <ComboBoxItem Content="0" Tag="0" />
+                            <ComboBoxItem Content="1" Tag="1" />
+                            <ComboBoxItem Content="2" Tag="2" />
+                            <ComboBoxItem Content="3" Tag="3" />
+                        </ComboBox>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="TagPopulationEstimate" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding TagPopulationEstimate}" />
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="连接后暂缓上报（需 ENABLE_EVENTS_AND_REPORTS）" TextWrapping="WrapWithOverflow"/>
+                        <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding HoldEventsAndReportsUponReconnect}" VerticalAlignment="Center" />
+
+                       
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="AntennaConfigGroup（按天线）" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="200" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="端口" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="1" Text="启用" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="2" Text="TxPower(dBm)" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="3" Text="RxSensitivity(dBm)" FontWeight="SemiBold" />
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding Antennas}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="90" />
+                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="200" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=天线 {0}}" />
+                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsEnabled}" />
+                                        <ComboBox Grid.Column="2"
+                                                  Height="28"
+                                                  ItemsSource="{Binding DataContext.TxPowerOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  SelectedItem="{Binding TxPowerInDbm}" />
+                                        <ComboBox Grid.Column="3"
+                                                  Height="28"
+                                                  ItemsSource="{Binding DataContext.RxSensitivityOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  SelectedItem="{Binding RxSensitivityInDbm}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                       
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Reader 上报事件（只读）" Margin="0,0,0,12">
+                    <ItemsControl Margin="10" ItemsSource="{Binding ReaderEventNotifications}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,0,0,4" Text="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Height="32"
+                    Width="120"
+                    Margin="0,0,8,0"
+                    Content="获取参数"
+                    Command="{Binding QueryDeviceSettingsCommand}" />
+          
+            <Button Height="32"
+                    Width="120"
+                    Margin="0,0,8,0"
+                    Content="保存参数"
+                    Command="{Binding SaveSettingsCommand}" />
+
+
+            <Button Height="32"
+      Width="120"
+      Margin="0,0,8,0"
+      Content="获取设备状态"
+      Command="{Binding DataContext.QueryStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+
+            <Button Height="32"
+                    Width="120"
+                    Content="恢复出厂"
+                    Command="{Binding ResetFactoryDefaultsCommand}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="3" Margin="4,0,0,0" VerticalAlignment="Center" Text="{Binding SaveResult}" />
+    </Grid>
+</UserControl>

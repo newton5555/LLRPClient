@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gb="using:GroupBox.Avalonia.Controls"
+             xmlns:vm="using:LLRPReaderUI_Avalonia.ViewModels"
+             x:Class="LLRPReaderUI_Avalonia.Views.ReadWriteView"
+             x:DataType="vm:ReadWriteViewModel">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="16" MaxWidth="800" Spacing="10">
+            <gb:GroupBox Header="读取配置">
+                <Grid Margin="10" RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto" ColumnDefinitions="120,*">
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="目标标签类型" />
+                    <ComboBox Grid.Row="0" Grid.Column="1" Height="32" ItemsSource="{Binding TargetTagBanks}" SelectedItem="{Binding SelectedTargetTagBank}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="目标标签值" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Height="32" Text="{Binding TargetTagData}" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="内存区" />
+                    <ComboBox Grid.Row="4" Grid.Column="1" Height="32" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding SelectedMemoryBank}" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="Word 起始地址" />
+                    <TextBox Grid.Row="6" Grid.Column="1" Height="32" Text="{Binding WordPointer}" />
+
+                    <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="Word 数量" />
+                    <TextBox Grid.Row="8" Grid.Column="1" Height="32" Text="{Binding WordCount}" />
+
+                    <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="写入数据" />
+                    <TextBox Grid.Row="10" Grid.Column="1" Height="32" Text="{Binding WriteData}" />
+
+                    <TextBlock Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" Text="访问密码" />
+                    <TextBox Grid.Row="12" Grid.Column="1" Height="32" Text="{Binding AccessPassword}" />
+                </Grid>
+            </gb:GroupBox>
+
+            <gb:GroupBox Header="操作">
+                <StackPanel Margin="10" Spacing="10">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Height="36" Width="120" Content="读取内存" Command="{Binding ReadMemoryCommand}" />
+                        <Button Height="36" Width="120" Content="写入内存" Command="{Binding WriteMemoryCommand}" />
+                        <Button Height="36" Width="120" Content="清空数据" Command="{Binding ClearDataCommand}" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding OperationResult}" TextWrapping="Wrap" />
+                </StackPanel>
+            </gb:GroupBox>
+
+            <gb:GroupBox Header="读取结果">
+                <Grid Margin="10" RowDefinitions="Auto,10,Auto">
+                    <TextBlock Grid.Row="0" Text="十六进制数据：" />
+                    <TextBox Grid.Row="2" Height="100" Text="{Binding ReadData, Mode=OneWay}" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" />
+                </Grid>
+            </gb:GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

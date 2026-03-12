@@ -1,0 +1,62 @@
+<UserControl x:Class="LLRPReaderUI_WPF.Views.DeviceConnectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:Height="500">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Padding="12" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ComboBox Grid.Column="0"
+                          Height="32"
+                          IsEditable="True"
+                          IsTextSearchEnabled="False"
+                          VerticalContentAlignment="Center"
+                          ItemsSource="{Binding RecentReaderEndpoints}"
+                          Text="{Binding ReaderEndpoint, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Button Grid.Column="2"
+                        Height="32"
+                        Content="连接"
+                        Command="{Binding ConnectCommand}"
+                        Style="{DynamicResource MahApps.Styles.Button.Accent}" />
+
+                <Button Grid.Column="4"
+                        Height="32"
+                        Content="断开"
+                        Command="{Binding DisconnectCommand}" />
+
+                <TextBlock Grid.Column="5"
+                           Margin="12,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="{Binding ConnectionState}" />
+            </Grid>
+        </Border>
+
+        <DataGrid Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  ItemsSource="{Binding FeatureSetItems}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="FeatureSet 属性" Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="3*" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

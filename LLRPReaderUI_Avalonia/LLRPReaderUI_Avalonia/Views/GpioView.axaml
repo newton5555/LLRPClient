@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gb="using:GroupBox.Avalonia.Controls"
+             xmlns:vm="using:LLRPReaderUI_Avalonia.ViewModels"
+             x:Class="LLRPReaderUI_Avalonia.Views.GpioView"
+             x:DataType="vm:GpioViewModel">
+    <Grid Margin="16" RowDefinitions="*,16,Auto,32">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <gb:GroupBox Header="GPI 配置（可保存）" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <Grid Margin="0,0,0,8" ColumnDefinitions="120,120,120">
+                            <TextBlock Grid.Column="0" Text="端口"  />
+                            <TextBlock Grid.Column="1" Text="启用"  />
+                            <TextBlock Grid.Column="2" Text="当前电平"  />
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding Gpis}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,8" ColumnDefinitions="120,120,120">
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=GPI {0}}" />
+                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsEnabled}" />
+                                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding CurrentStateText}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </gb:GroupBox>
+
+                <gb:GroupBox Header="GPO 输出（即时下发）" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <Grid Margin="0,0,0,8" ColumnDefinitions="120,140,140">
+                            <TextBlock Grid.Column="0" Text="端口"  />
+                            <TextBlock Grid.Column="1" Text="输出高电平" />
+                            <TextBlock Grid.Column="2" Text="当前电平"  />
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding Gpos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,8" ColumnDefinitions="120,140,140">
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=GPO {0}}" />
+                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding DesiredState}" />
+                                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding CurrentStateText}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </gb:GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+            <Button Height="32" Width="120" Content="获取GPIO" Command="{Binding QueryGpioSettingsCommand}" />
+            <Button Height="32" Width="120" Content="保存GPI" Command="{Binding SaveGpiSettingsCommand}" />
+            <Button Height="32" Width="120" Content="下发GPO" Command="{Binding ApplyGpoStatesCommand}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="3" Margin="4,0,0,0" VerticalAlignment="Center" Text="{Binding OperationResult}" />
+    </Grid>
+</UserControl>

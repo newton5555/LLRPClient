@@ -1,0 +1,9 @@
+﻿
+
+namespace Org.LLRP.LTK.LLRPV1
+{
+  public class ENCAPED_READER_EVENT_NOTIFICATION : ENCAPED_READER_ASYN_MSG
+  {
+    public MSG_READER_EVENT_NOTIFICATION ntf;
+  }
+}

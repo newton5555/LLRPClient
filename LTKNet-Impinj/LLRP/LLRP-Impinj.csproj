@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <AssemblyName>LLRP</AssemblyName>
+    <RootNamespace>LLRP</RootNamespace>
+    <VersionPrefix>12.0.2</VersionPrefix>
+    <VersionSuffix>beta-260213</VersionSuffix>
+   
+   
+  </PropertyGroup>
+
+
+
+  <ItemGroup>
+    <Folder Include="LLRPMsg\" />
+    <Folder Include="LLRPEnum\" />
+    <Folder Include="LLRPParam\" />
+  </ItemGroup>
+
+</Project>

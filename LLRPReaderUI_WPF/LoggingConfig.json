@@ -1,0 +1,35 @@
+{
+  "serilog": {
+    "minimumLevel": "Debug",
+    "writeTo": [
+      {
+        "name": "Async",
+        "args": {
+          "configure": [
+            {
+              "name": "File",
+              "args": {
+                "path": "logs/app-.log",
+                "rollingInterval": "Day",
+                "retainedFileCountLimit": 14,
+                "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "logging": {
+    "rawFrameLogging": {
+      "enabled": true
+    },
+    "llrpMessageLogging": {
+      "enabled": true,
+      "isXml": false
+    },
+    "eventNotificationLogging": {
+      "enabled": true
+    }
+  }
+}

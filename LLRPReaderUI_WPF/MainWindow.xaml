@@ -1,0 +1,123 @@
+﻿<mah:MetroWindow
+    x:Class="LLRPReaderUI_WPF.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:LLRPReaderUI_WPF.Models"
+    xmlns:views="clr-namespace:LLRPReaderUI_WPF.Views"
+    xmlns:vm="clr-namespace:LLRPReaderUI_WPF.ViewModels"
+    Title="{Binding WindowTitle}"
+    Width="1200"
+    Height="760"
+    Icon="Assets/rfid-icon.ico"
+    d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel,
+                                     IsDesignTimeCreatable=False}"
+    GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <mah:MetroWindow.Resources>
+        <DataTemplate DataType="{x:Type vm:DeviceConnectionViewModel}">
+            <views:DeviceConnectionView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GpioViewModel}">
+            <views:GpioView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:InventoryConfigViewModel}">
+            <views:InventoryConfigView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:InventoryViewModel}">
+            <views:InventoryView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReadWriteViewModel}">
+            <views:ReadWriteView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AdvancedTagOpsViewModel}">
+            <views:AdvancedTagOpsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LogViewModel}">
+            <views:LogView />
+        </DataTemplate>
+    </mah:MetroWindow.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Column="0"
+                Padding="10"
+                Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="6,6,6,12"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="功能导航" />
+
+                    <ListBox
+                        Grid.Row="1"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ItemsSource="{Binding NavigationItems}"
+                        SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:NavigationItem}">
+                                <StackPanel Margin="4,8" Orientation="Horizontal">
+                                    <TextBlock
+                                        FontFamily="Segoe MDL2 Assets"
+                                        FontSize="15"
+                                        Text="{Binding Glyph}" />
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Title}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                <ContentControl Content="{Binding CurrentPageViewModel}" />
+            </Border>
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Margin="0,8,0,0"
+            Padding="8,6"
+            Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            BorderThickness="1">
+            <StatusBar>
+                <TextBlock Margin="0,0,12,0" Text="{Binding DeviceStatusText}" />
+                <TextBlock Margin="0,0,12,0" Text="{Binding InventoryStatusText}" />
+                <TextBlock Margin="0,0,12,0" Text="{Binding TemperatureStatusText}" />
+                <TextBlock Margin="0,0,12,0" Text="{Binding AntennaStatusText}" />
+                <TextBlock Margin="0,0,12,0" Text="{Binding GpiStatusText}" />
+                <TextBlock Margin="0,0,12,0" Text="{Binding GpoStatusText}" />
+                <TextBlock Text="{Binding IdentificationStatusText}" />
+            </StatusBar>
+        </Border>
+    </Grid>
+</mah:MetroWindow>

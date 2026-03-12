@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LLRPReaderUI_Avalonia.ViewModels"
+             x:Class="LLRPReaderUI_Avalonia.Views.InventoryView"
+             x:DataType="vm:InventoryViewModel"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             d:DesignHeight="500"
+             x:Name="Root">
+    <Grid Margin="16" RowDefinitions="Auto,8,Auto,8,*">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button Height="32" Width="120" Content="开始寻卡" Command="{Binding StartInventoryCommand}" />
+            <Button Height="32" Width="120" Content="停止寻卡" Command="{Binding StopInventoryCommand}" />
+            <Button Height="32" Width="120" Content="手动拉缓存" Command="{Binding ManualPullBufferedReportsCommand}" />
+            <Button Height="32" Width="100" Content="清空数据" Command="{Binding ClearReceivedDataCommand}" />
+            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{Binding InventoryState}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16">
+            <TextBlock Text="{Binding TotalReports, StringFormat=报告包: {0}}" />
+            <TextBlock Text="{Binding TotalTags, StringFormat=标签总数: {0}}" />
+            <TextBlock Text="{Binding UniqueTagCount, StringFormat=唯一 EPC: {0}}" />
+        </StackPanel>
+
+            <DataGrid x:Name="InventoryDataGrid"
+                      Grid.Row="4" Padding="8"
+                      x:CompileBindings="False"
+                      ItemsSource="{Binding ReceivedTags}"
+                      IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      SelectionMode="Extended"
+                      KeyDown="InventoryDataGrid_OnKeyDown"
+                      GridLinesVisibility="Horizontal">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="复制 EPC" Click="CopyEpcMenuItem_OnClick" />
+                        <MenuItem Header="复制附加数据" Click="CopyAttachedDataMenuItem_OnClick" />
+                        <Separator />
+                        <MenuItem Header="复制选中行" Click="CopySelectedRowsMenuItem_OnClick" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="接收时间" Binding="{Binding ReceiveTime, StringFormat=yyyy-MM-dd HH:mm:ss.fff}" Width="180" />
+                    <DataGridTextColumn Header="EPC" Binding="{Binding Epc}" Width="*" />
+                    <DataGridTextColumn Header="天线" Binding="{Binding Antenna}" Width="70" />
+                    <DataGridTextColumn Header="信道(MHz)" Binding="{Binding ChannelMhz}" Width="90" />
+                    <DataGridTextColumn Header="RSSI(dBm)" Binding="{Binding Rssi}" Width="90" />
+                    <DataGridTextColumn Header="SeenCount" Binding="{Binding SeenCount}" Width="90" />
+                    <DataGridTextColumn Header="附加数据" Binding="{Binding AttachedData}" Width="220" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+       
+        
+    </Grid>
+</UserControl>

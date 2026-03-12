@@ -1,0 +1,157 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gb="using:GroupBox.Avalonia.Controls"
+             xmlns:vm="using:LLRPReaderUI_Avalonia.ViewModels"
+             x:Class="LLRPReaderUI_Avalonia.Views.InventoryConfigView"
+             x:DataType="vm:InventoryConfigViewModel"
+             x:Name="Root">
+    <Grid Margin="16" RowDefinitions="*,12,Auto,32">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <gb:GroupBox Header="自动开始配置" Margin="0,0,0,12">
+                    <Grid Margin="10" ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="模式" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" Height="30" ItemsSource="{Binding AutoStartModes}" SelectedItem="{Binding AutoStartMode}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="GPI端口号" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Height="30" Text="{Binding AutoStartGpiPortNumber}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="GPI电平" />
+                        <CheckBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AutoStartGpiLevel}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="首次延时(ms)" />
+                        <TextBox Grid.Row="6" Grid.Column="1" Height="30" Text="{Binding AutoStartFirstDelayInMs}" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="周期(ms)" />
+                        <TextBox Grid.Row="8" Grid.Column="1" Height="30" Text="{Binding AutoStartPeriodInMs}" />
+                        <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="UTC时间戳" />
+                        <TextBox Grid.Row="10" Grid.Column="1" Height="30" Text="{Binding AutoStartUtcTimestamp}" />
+                    </Grid>
+                </gb:GroupBox>
+
+                <gb:GroupBox Header="自动停止配置" Margin="0,0,0,12">
+                    <Grid Margin="10" ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="模式" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" Height="30" ItemsSource="{Binding AutoStopModes}" SelectedItem="{Binding AutoStopMode}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="持续时长(ms)" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Height="30" Text="{Binding AutoStopDurationInMs}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="GPI端口号" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding AutoStopGpiPortNumber}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="GPI电平" />
+                        <CheckBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AutoStopGpiLevel}" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="超时" />
+                        <TextBox Grid.Row="8" Grid.Column="1" Height="30" Text="{Binding AutoStopTimeout}" />
+                    </Grid>
+                </gb:GroupBox>
+
+                <gb:GroupBox Header="筛选配置" Margin="0,0,0,12">
+                    <StackPanel Margin="10" Spacing="8">
+                        <Grid ColumnDefinitions="200,220">
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="模式" />
+                            <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding TagFilterModes}" SelectedItem="{Binding FilterMode}" />
+                        </Grid>
+
+                        <gb:GroupBox Header="标签筛选1 (TagFilter1)">
+                            <Grid Margin="8" ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto,8,Auto,Auto">
+                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="MemoryBank" />
+                                <ComboBox Grid.Row="0" Grid.Column="1" Height="28" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter1MemoryBank}" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="FilterOp" />
+                                <ComboBox Grid.Row="0" Grid.Column="3" Height="28" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter1FilterOp}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="BitPointer" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Height="28" Text="{Binding Filter1BitPointer}" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="BitCount" />
+                                <TextBox Grid.Row="2" Grid.Column="3" Height="28" Text="{Binding Filter1BitCount}" />
+                                <TextBlock Grid.Row="4" Grid.ColumnSpan="4" Margin="0,0,0,4" Text="TagFilter1 TagMask (HEX)"/>
+                                <TextBox Grid.Row="5" Grid.ColumnSpan="4" Height="30" Text="{Binding Filter1TagMask}"/>
+                            </Grid>
+                        </gb:GroupBox>
+
+                        <gb:GroupBox Header="标签筛选2 (TagFilter2)">
+                            <Grid Margin="8" ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto,8,Auto,Auto">
+                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="MemoryBank" />
+                                <ComboBox Grid.Row="0" Grid.Column="1" Height="28" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter2MemoryBank}" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="FilterOp" />
+                                <ComboBox Grid.Row="0" Grid.Column="3" Height="28" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter2FilterOp}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="BitPointer" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Height="28" Text="{Binding Filter2BitPointer}" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="BitCount" />
+                                <TextBox Grid.Row="2" Grid.Column="3" Height="28" Text="{Binding Filter2BitCount}" />
+                                <TextBlock Grid.Row="4" Grid.ColumnSpan="4" Margin="0,0,0,4" Text="TagFilter2 TagMask (HEX)"/>
+                                <TextBox Grid.Row="5" Grid.ColumnSpan="4" Height="30" Text="{Binding Filter2TagMask}"/>
+                            </Grid>
+                        </gb:GroupBox>
+
+                        <gb:GroupBox Header="标签选择筛选 (TagSelectFilters)">
+                            <StackPanel Margin="8" Spacing="8">
+                                <Button Width="120" Height="30" Content="新增筛选" Command="{Binding AddTagSelectFilterCommand}" />
+                                <ItemsControl ItemsSource="{Binding TagSelectFilters}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="8" BorderThickness="1">
+                                                <Grid ColumnDefinitions="130,170,130,170,Auto" RowDefinitions="Auto,8,Auto,8,Auto">
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="MemoryBank" />
+                                                    <ComboBox Grid.Row="0" Grid.Column="1" Height="26" ItemsSource="{Binding $parent[ItemsControl].DataContext.MemoryBanks}" SelectedItem="{Binding MemoryBank}" />
+                                                    <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="位指针(BitPointer)" />
+                                                    <TextBox Grid.Row="0" Grid.Column="3" Height="26" Text="{Binding BitPointer}" />
+                                                    <Button Grid.Row="0" Grid.Column="4" Width="72" Height="26" Margin="8,0,0,0"
+                                                            Content="删除"
+                                                            Command="{Binding $parent[ItemsControl].DataContext.RemoveTagSelectFilterCommand}"
+                                                            CommandParameter="{Binding}" />
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="位长度(BitCount)" />
+                                                    <TextBox Grid.Row="2" Grid.Column="1" Height="26" Text="{Binding BitCount}" />
+                                                    <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="MatchAction" />
+                                                    <ComboBox Grid.Row="2" Grid.Column="3" Height="26" ItemsSource="{Binding $parent[ItemsControl].DataContext.StateUnawareActions}" SelectedItem="{Binding MatchAction}" />
+                                                    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="TagMask" />
+                                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding TagMask}" />
+                                                    <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Text="NonMatchAction" />
+                                                    <ComboBox Grid.Row="4" Grid.Column="3" Height="26" ItemsSource="{Binding $parent[ItemsControl].DataContext.StateUnawareActions}" SelectedItem="{Binding NonMatchAction}" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </gb:GroupBox>
+                    </StackPanel>
+                </gb:GroupBox>
+
+                <gb:GroupBox Header="上报配置" Margin="0,0,0,12">
+                    <StackPanel Margin="10" Spacing="8">
+                        <Grid ColumnDefinitions="200,220">
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="上报模式" />
+                            <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding ReportModes}" SelectedItem="{Binding ReportMode}" />
+                        </Grid>
+                        <WrapPanel>
+                            <CheckBox Content="包含天线号" IsChecked="{Binding IncludeAntennaPortNumber}" />
+                            <CheckBox Content="包含信道" IsChecked="{Binding IncludeChannel}" />
+                            <CheckBox Content="包含首次时间" IsChecked="{Binding IncludeFirstSeenTime}" />
+                            <CheckBox Content="包含末次时间" IsChecked="{Binding IncludeLastSeenTime}" />
+                            <CheckBox Content="包含出现次数" IsChecked="{Binding IncludeSeenCount}" />
+                            <CheckBox Content="包含峰值RSSI" IsChecked="{Binding IncludePeakRssi}" />
+                            <CheckBox Content="包含PC位" IsChecked="{Binding IncludePcBits}" />
+                            <CheckBox Content="包含CRC" IsChecked="{Binding IncludeCrc}" />
+                        </WrapPanel>
+                    </StackPanel>
+                </gb:GroupBox>
+
+                <gb:GroupBox Header="附加数据配置" Margin="0,0,0,12">
+                    <Grid Margin="10" ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="启用附加数据" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AttachedDataEnabled}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="存储区" />
+                        <ComboBox Grid.Row="2" Grid.Column="1" Height="30" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding AttachedDataMemoryBank}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="起始字地址" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding AttachedDataWordPointer}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="读取字数" />
+                        <TextBox Grid.Row="6" Grid.Column="1" Height="30" Text="{Binding AttachedDataWordCount}" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="访问密码(HEX)" />
+                        <TextBox Grid.Row="8" Grid.Column="1" Height="30" Text="{Binding AttachedDataAccessPassword}" />
+                    </Grid>
+                </gb:GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+            <Button Height="32" Width="120" Content="读取寻卡配置" Command="{Binding QueryInventoryConfigCommand}" />
+            <Button Height="32" Width="120" Content="保存寻卡配置" Command="{Binding SaveInventoryConfigCommand}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="3" Margin="4,0,0,0" VerticalAlignment="Center" Text="{Binding OperationResult}" />
+    </Grid>
+</UserControl>

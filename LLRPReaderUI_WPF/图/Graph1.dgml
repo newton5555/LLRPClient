@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph GraphDirection="TopToBottom" Layout="Sugiyama" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="AISpec" Category="Class" Bounds="-4.5879983921244,320.216000779277,125.433333333333,57.88" Label="AISpec&#xA;+AntennaIDs : list&#xA;+AISpecStopTrigger" UseManualLocation="True" />
+    <Node Id="AccessSpec" Category="Class" Bounds="395.923664970013,115.151999980272,246.33,89.8" Label="AccessSpec&#xA;+AccessSpecID : uint&#xA;+ROSpecID : uint (关联 ROSpec)&#xA;+AntennaID&#xA;+AccessCommand (TagSpec + OpSpecList)" UseManualLocation="True" />
+    <Node Id="InventoryParameterSpec" Category="Class" Bounds="-8.17366541390469,482.608000463621,231.676666666667,73.84" Label="InventoryParameterSpec&#xA;+InventoryParameterSpecID&#xA;+ProtocolID (e.g. EPCGlobalClass1Gen2)&#xA;+AntennaConfiguration" UseManualLocation="True" />
+    <Node Id="OpSpec" Category="Interface" Bounds="458.905,262.68,99.0233333333333,105.76" Label="OpSpec&#xA;&lt;&lt;Interface&gt;&gt;&#xA;C1G2Read&#xA;C1G2Write&#xA;C1G2Lock&#xA;C1G2Kill" />
+    <Node Id="ROSpec" Category="Class" Bounds="-82.4759982145676,114.896001173848,231.673333333333,73.84" Label="ROSpec&#xA;+ROSpecID : uint&#xA;+CurrentState : Disabled/Inactive/Active&#xA;+ROBoundarySpec (Start/Stop Triggers)" UseManualLocation="True" />
+    <Node Id="Reader" Category="Class" Bounds="172.633333333333,0,171.566666666667,51.92" Group="Expanded" Label="Reader&#xA;+GetReaderCapabilities()" />
+  </Nodes>
+  <Links>
+    <Link Source="AISpec" Target="InventoryParameterSpec" Category="Composition" Bounds="66.5430322238614,378.096005859375,27.8743575595087,95.8698729092193" Label="1 *-- 1..N&#xA;MaxNumInventoryParameterSpecsPerAISpec" LabelBounds="84.4835043533456,402.156129790199,257.493333333333,30.48" />
+    <Link Source="AccessSpec" Target="OpSpec" Category="Composition" Bounds="512.661841147355,204.951998138428,3.34548992963789,48.7491181463623" Label="1 *-- 1..N&#xA;MaxNumOpSpecsPerAccessSpec" LabelBounds="518.334597150436,214.223488494895,187.793333333333,30.48" />
+    <Link Source="AccessSpec" Target="ROSpec" Category="Reference" Bounds="158.196045167145,153.932705674579,237.727623656098,4.03090770088357" Label="关联 (通过 ROSpecID 绑定)" LabelBounds="202.845949884952,159.948159566339,148.36,15.24" />
+    <Link Source="ROSpec" Target="AISpec" Category="Composition" Bounds="37.9944736087267,188.735998077393,15.3811667866015,122.550062638167" Label="1 *-- 1..N&#xA;MaxNumSpecsPerROSpec" LabelBounds="49.6851791477937,234.521964928803,149.57,30.4799999999999" />
+    <Link Source="Reader" Target="AccessSpec" Category="Composition" Bounds="308.882354977308,51.92,114.918475024378,59.1150881222365" Label="1 *-- 0..N&#xA;MaxNumAccessSpecs" LabelBounds="367.256461791282,49.2190575808068,124.196666666667,30.48" />
+    <Link Source="Reader" Target="ROSpec" Category="Composition" Bounds="107.236261557217,51.92,104.75867186544,58.5832309907934" Label="1 *-- 0..N&#xA;MaxNumROSpecs" LabelBounds="160.591768641727,82.9572070519795,103.416666666667,30.48" />
+  </Links>
+  <Categories>
+    <Category Id="Class" Label="Class" />
+    <Category Id="Composition" Label="Composition" Stroke="#FF4E79A7" />
+    <Category Id="Interface" Label="Interface" Background="#FFFDEBD0" Stroke="#FF8A6D3B" />
+    <Category Id="Reference" Label="Reference" Stroke="#FF9C755F" />
+  </Categories>
+  <Properties>
+    <Property Id="Background" Label="背景" Description="背景色" DataType="System.Windows.Media.Brush" />
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="Expression" DataType="System.String" />
+    <Property Id="GraphDirection" DataType="Microsoft.VisualStudio.Diagrams.Layout.LayoutOrientation" />
+    <Property Id="Group" Label="组" Description="将节点显示为组" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
+    <Property Id="GroupLabel" DataType="System.String" />
+    <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="Label" Label="标签" Description="可批注对象的可显示标签" DataType="System.String" />
+    <Property Id="LabelBounds" DataType="System.Windows.Rect" />
+    <Property Id="Layout" DataType="System.String" />
+    <Property Id="Stroke" DataType="System.Windows.Media.Brush" />
+    <Property Id="TargetType" DataType="System.Type" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="Value" DataType="System.String" />
+    <Property Id="ValueLabel" DataType="System.String" />
+  </Properties>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="Class Node Style" ValueLabel="True">
+      <Condition Expression="HasCategory('Class')" />
+      <Setter Property="Background" Value="#FFEAF2FF" />
+      <Setter Property="Stroke" Value="#FF4E79A7" />
+      <Setter Property="NodeRadius" Value="4" />
+      <Setter Property="FontFamily" Value="Segoe UI" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Interface Node Style" ValueLabel="True">
+      <Condition Expression="HasCategory('Interface')" />
+      <Setter Property="NodeRadius" Value="4" />
+      <Setter Property="FontFamily" Value="Segoe UI" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Composition Link Style" ValueLabel="True">
+      <Condition Expression="HasCategory('Composition')" />
+      <Setter Property="StrokeThickness" Value="2" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Reference Link Style" ValueLabel="True">
+      <Condition Expression="HasCategory('Reference')" />
+      <Setter Property="StrokeDashArray" Value="4 2" />
+      <Setter Property="StrokeThickness" Value="1.5" />
+    </Style>
+  </Styles>
+</DirectedGraph>

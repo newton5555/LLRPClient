@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LLRPReaderUI_Avalonia.ViewModels"
+             x:Class="LLRPReaderUI_Avalonia.Views.DeviceConnectionView"
+             x:DataType="vm:DeviceConnectionViewModel">
+    <Grid Margin="16" RowDefinitions="Auto,12,*">
+        <Border Padding="12">
+            <Grid ColumnDefinitions="220,10,100,10,100,*">
+                <ComboBox Grid.Column="0"
+                          Height="32"
+                          IsEditable="True"
+                          ItemsSource="{Binding RecentReaderEndpoints}"
+                          Text="{Binding ReaderEndpoint}" />
+
+                <Button Grid.Column="2"
+                        x:Name="btn1"
+                        Height="32"
+                        Content="连接"
+                        Command="{Binding ConnectCommand}"/>
+
+                <Button Grid.Column="4"
+                        Height="32"
+                        Content="断开"
+                        Command="{Binding DisconnectCommand}" />
+
+                <TextBlock 
+                x:Name="tbk1"
+                Grid.Column="5"
+                           Margin="12,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="{Binding ConnectionState}" />
+
+
+            </Grid>
+        </Border>
+
+        <DataGrid Grid.Row="2"
+                  x:CompileBindings="False"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  ItemsSource="{Binding FeatureSetItems}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="FeatureSet 属性" Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="3*" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
