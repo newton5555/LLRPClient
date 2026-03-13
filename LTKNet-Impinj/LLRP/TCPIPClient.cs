@@ -13,7 +13,7 @@ namespace Org.LLRP.LTK.LLRPV1
     /// <summary>
     /// TCPIPClient, used for building LLRPClient
     /// </summary>
-    internal class TCPIPClient : CommunicationInterface
+    public class TCPIPClient : CommunicationInterface
     {
         private TcpClient tcp_client;
         private Stream network_stream;

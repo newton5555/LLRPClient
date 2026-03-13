@@ -10,7 +10,7 @@ namespace Org.LLRP.LTK.LLRPV1
 
 
     [Serializable]
-    internal class AsynReadState
+    public class AsynReadState
     {
         public byte[] data;
 
@@ -19,7 +19,7 @@ namespace Org.LLRP.LTK.LLRPV1
 
 
     [Serializable]
-    internal abstract class CommunicationInterface : IDisposable
+    public abstract class CommunicationInterface : IDisposable
     {
         protected AsynReadState state;
 
@@ -43,8 +43,6 @@ namespace Org.LLRP.LTK.LLRPV1
             try
             {
                 try { OnRawReceived?.Invoke(data); } catch { }
-
-
                 if (this.OnFrameReceived == null)
                     return;
                 this.OnFrameReceived(ver, msg_type, msg_id, data);

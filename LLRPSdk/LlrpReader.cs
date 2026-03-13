@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
@@ -48,9 +49,10 @@ namespace LLRPSdk
         private static readonly int DEFAULT_LLRP_PORT_UNSECURED = 5084;
         private static readonly int DEFAULT_LLRP_PORT_ENCRYPTED = 5085;
         private const ushort UNIVERSAL_ANTENNA_ID = 0;
-        internal LLRPClient reader;
-        //internal Org.LLRP.LTK.LLRPV1.LLRPClient_OverTCPServer reader;
-        
+        //internal LLRPClient reader;
+        internal  LLRPClient<TCPIPClientOptimized> reader;
+       
+
         private FeatureSet _readerCapabilities;
         private SyncProgramOpStatus syncProgramOpStatus;
         private SyncReadOpStatus syncReadOpStatus;
@@ -561,8 +563,8 @@ namespace LLRPSdk
         {
             if (this.reader != null)
                 this.reader.Dispose();
-            this.reader = new LLRPClient(port);
-            //this.reader = new LLRPClient_OverTCPServer(port);
+            //this.reader = new LLRPClient(port);
+            this.reader = new LLRPClient<TCPIPClientOptimized>(port);
             this.reader.OnRoAccessReportReceived += new delegateRoAccessReport(this.OnTagReportAvailableInternal);
             this.reader.OnReaderEventNotification += new delegateReaderEventNotification(this.OnReaderEventInternal);
             this.reader.OnKeepAlive += new delegateKeepAlive(this.OnKeepAliveInternal);
