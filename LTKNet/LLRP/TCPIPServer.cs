@@ -11,7 +11,7 @@ namespace Org.LLRP.LTK.LLRPV1
     /// <summary>
     /// TCPIPServer. Used for building LLRPServer, for example: LLRP reader simulator
     /// </summary>
-    internal class TCPIPServer : CommunicationInterface
+    public class TCPIPServer : CommunicationInterface
     {
         private TcpListener server;
         private NetworkStream ns;

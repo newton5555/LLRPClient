@@ -16,7 +16,6 @@
     <Folder Include="LLRPMsg\" />
     <Folder Include="LLRPEnum\" />
     <Folder Include="LLRPParam\" />
-    <Folder Include="EnhancedLLRPClient\" />
   </ItemGroup>
 
 </Project>
