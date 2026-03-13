@@ -1,0 +1,1524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    -                                                                           -
+    -                 IMPINJ CONFIDENTIAL AND PROPRIETARY                       -
+    -                                                                           -
+    - This source code is the sole property of Impinj, Inc.  Reproduction or    -
+    - utilization of this source code in whole or in part is forbidden without  -
+    - the prior written consent of Impinj, Inc.                                 -
+    -                                                                           -
+    - (c) Copyright Impinj, Inc. 2007,2009. All rights reserved.                -
+    -                                                                           -
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      -->
+<xs:schema xmlns:Impinj="http://developer.impinj.com/ltk/schema/encoding/xml/1.50"
+           xmlns:llrp="http://www.llrp.org/ltk/schema/core/encoding/xml/1.0"
+           xmlns="http://www/w3.org/2001/XMLSchema"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://developer.impinj.com/ltk/schema/encoding/xml/1.50"
+           elementFormDefault="qualified">
+   <xs:import namespace="http://www.llrp.org/ltk/schema/core/encoding/xml/1.0"
+              schemaLocation="http://www.llrp.org/ltk/schema/core/encoding/xml/1.0/llrp.xsd"/>
+   <xs:import namespace="http://www.llrp.org/ltk/schema/core/encoding/binary/1.0"
+              schemaLocation="http://www.llrp.org/ltk/schema/core/encoding/binary/1.0/llrpdef.xsd"/>
+
+
+
+
+   <xs:element name="IMPINJ_ENABLE_EXTENSIONS" type="Impinj:IMPINJ_ENABLE_EXTENSIONS"/>
+   <xs:element name="IMPINJ_ENABLE_EXTENSIONS_RESPONSE"
+               type="Impinj:IMPINJ_ENABLE_EXTENSIONS_RESPONSE"/>
+   <xs:element name="IMPINJ_SAVE_SETTINGS" type="Impinj:IMPINJ_SAVE_SETTINGS"/>
+   <xs:element name="IMPINJ_SAVE_SETTINGS_RESPONSE"
+               type="Impinj:IMPINJ_SAVE_SETTINGS_RESPONSE"/>
+
+
+
+
+   <xs:element name="ImpinjRequestedData" type="Impinj:ImpinjRequestedData"/>
+   <xs:element name="ImpinjSubRegulatoryRegion" type="Impinj:ImpinjSubRegulatoryRegion"/>
+   <xs:element name="ImpinjInventorySearchMode" type="Impinj:ImpinjInventorySearchMode"/>
+   <xs:element name="ImpinjFixedFrequencyList" type="Impinj:ImpinjFixedFrequencyList"/>
+   <xs:element name="ImpinjReducedPowerFrequencyList"
+               type="Impinj:ImpinjReducedPowerFrequencyList"/>
+   <xs:element name="ImpinjLowDutyCycle" type="Impinj:ImpinjLowDutyCycle"/>
+   <xs:element name="ImpinjHubVersions" type="Impinj:ImpinjHubVersions"/>
+   <xs:element name="ImpinjDetailedVersion" type="Impinj:ImpinjDetailedVersion"/>
+   <xs:element name="ImpinjFrequencyCapabilities" type="Impinj:ImpinjFrequencyCapabilities"/>
+   <xs:element name="ImpinjGPIDebounceConfiguration"
+               type="Impinj:ImpinjGPIDebounceConfiguration"/>
+   <xs:element name="ImpinjReaderTemperature" type="Impinj:ImpinjReaderTemperature"/>
+   <xs:element name="ImpinjLinkMonitorConfiguration"
+               type="Impinj:ImpinjLinkMonitorConfiguration"/>
+   <xs:element name="ImpinjReportBufferConfiguration"
+               type="Impinj:ImpinjReportBufferConfiguration"/>
+   <xs:element name="ImpinjAccessSpecConfiguration"
+               type="Impinj:ImpinjAccessSpecConfiguration"/>
+   <xs:element name="ImpinjBlockWriteWordCount" type="Impinj:ImpinjBlockWriteWordCount"/>
+   <xs:element name="ImpinjBlockPermalock" type="Impinj:ImpinjBlockPermalock"/>
+   <xs:element name="ImpinjBlockPermalockOpSpecResult"
+               type="Impinj:ImpinjBlockPermalockOpSpecResult"/>
+   <xs:element name="ImpinjGetBlockPermalockStatus"
+               type="Impinj:ImpinjGetBlockPermalockStatus"/>
+   <xs:element name="ImpinjGetBlockPermalockStatusOpSpecResult"
+               type="Impinj:ImpinjGetBlockPermalockStatusOpSpecResult"/>
+   <xs:element name="ImpinjSetQTConfig" type="Impinj:ImpinjSetQTConfig"/>
+   <xs:element name="ImpinjSetQTConfigOpSpecResult"
+               type="Impinj:ImpinjSetQTConfigOpSpecResult"/>
+   <xs:element name="ImpinjGetQTConfig" type="Impinj:ImpinjGetQTConfig"/>
+   <xs:element name="ImpinjGetQTConfigOpSpecResult"
+               type="Impinj:ImpinjGetQTConfigOpSpecResult"/>
+   <xs:element name="ImpinjTagReportContentSelector"
+               type="Impinj:ImpinjTagReportContentSelector"/>
+   <xs:element name="ImpinjEnableSerializedTID" type="Impinj:ImpinjEnableSerializedTID"/>
+   <xs:element name="ImpinjEnableRFPhaseAngle" type="Impinj:ImpinjEnableRFPhaseAngle"/>
+   <xs:element name="ImpinjEnablePeakRSSI" type="Impinj:ImpinjEnablePeakRSSI"/>
+   <xs:element name="ImpinjEnableGPSCoordinates" type="Impinj:ImpinjEnableGPSCoordinates"/>
+   <xs:element name="ImpinjSerializedTID" type="Impinj:ImpinjSerializedTID"/>
+   <xs:element name="ImpinjRFPhaseAngle" type="Impinj:ImpinjRFPhaseAngle"/>
+   <xs:element name="ImpinjPeakRSSI" type="Impinj:ImpinjPeakRSSI"/>
+   <xs:element name="ImpinjGPSCoordinates" type="Impinj:ImpinjGPSCoordinates"/>
+   <xs:element name="ImpinjLoopSpec" type="Impinj:ImpinjLoopSpec"/>
+   <xs:element name="ImpinjGPSNMEASentences" type="Impinj:ImpinjGPSNMEASentences"/>
+   <xs:element name="ImpinjGGASentence" type="Impinj:ImpinjGGASentence"/>
+   <xs:element name="ImpinjRMCSentence" type="Impinj:ImpinjRMCSentence"/>
+   <xs:element name="ImpinjOpSpecRetryCount" type="Impinj:ImpinjOpSpecRetryCount"/>
+   <xs:element name="ImpinjAdvancedGPOConfiguration"
+               type="Impinj:ImpinjAdvancedGPOConfiguration"/>
+   <xs:element name="ImpinjEnableOptimizedRead" type="Impinj:ImpinjEnableOptimizedRead"/>
+   <xs:element name="ImpinjAccessSpecOrdering" type="Impinj:ImpinjAccessSpecOrdering"/>
+   <xs:element name="ImpinjEnableRFDopplerFrequency"
+               type="Impinj:ImpinjEnableRFDopplerFrequency"/>
+   <xs:element name="ImpinjRFDopplerFrequency" type="Impinj:ImpinjRFDopplerFrequency"/>
+   <xs:element name="ImpinjInventoryConfiguration" type="Impinj:ImpinjInventoryConfiguration"/>
+   <xs:element name="ImpinjEnableTxPower" type="Impinj:ImpinjEnableTxPower"/>
+   <xs:element name="ImpinjTxPower" type="Impinj:ImpinjTxPower"/>
+   <xs:element name="ImpinjEnableXPCWords" type="Impinj:ImpinjEnableXPCWords"/>
+   <xs:element name="ImpinjXPCWords" type="Impinj:ImpinjXPCWords"/>
+   <xs:element name="ImpinjArrayVersion" type="Impinj:ImpinjArrayVersion"/>
+   <xs:element name="ImpinjxArrayCapabilities" type="Impinj:ImpinjxArrayCapabilities"/>
+   <xs:element name="ImpinjTiltConfiguration" type="Impinj:ImpinjTiltConfiguration"/>
+   <xs:element name="ImpinjBeaconConfiguration" type="Impinj:ImpinjBeaconConfiguration"/>
+   <xs:element name="ImpinjAntennaConfiguration" type="Impinj:ImpinjAntennaConfiguration"/>
+   <xs:element name="ImpinjAntennaEventHysteresis" type="Impinj:ImpinjAntennaEventHysteresis"/>
+   <xs:element name="ImpinjAntennaEventConfiguration"
+               type="Impinj:ImpinjAntennaEventConfiguration"/>
+   <xs:element name="ImpinjAntennaAttemptEvent" type="Impinj:ImpinjAntennaAttemptEvent"/>
+   <xs:element name="ImpinjHubConfiguration" type="Impinj:ImpinjHubConfiguration"/>
+   <xs:element name="ImpinjDiagnosticReport" type="Impinj:ImpinjDiagnosticReport"/>
+   <xs:element name="ImpinjPlacementConfiguration" type="Impinj:ImpinjPlacementConfiguration"/>
+   <xs:element name="ImpinjLISpec" type="Impinj:ImpinjLISpec"/>
+   <xs:element name="ImpinjLocationConfig" type="Impinj:ImpinjLocationConfig"/>
+   <xs:element name="ImpinjC1G2LocationConfig" type="Impinj:ImpinjC1G2LocationConfig"/>
+   <xs:element name="ImpinjLocationReporting" type="Impinj:ImpinjLocationReporting"/>
+   <xs:element name="ImpinjLocationConfidence" type="Impinj:ImpinjLocationConfidence"/>
+   <xs:element name="ImpinjLocationReportData" type="Impinj:ImpinjLocationReportData"/>
+   <xs:element name="ImpinjDISpec" type="Impinj:ImpinjDISpec"/>
+   <xs:element name="ImpinjDirectionSectors" type="Impinj:ImpinjDirectionSectors"/>
+   <xs:element name="ImpinjDirectionConfig" type="Impinj:ImpinjDirectionConfig"/>
+   <xs:element name="ImpinjDirectionUserTagPopulationLimit"
+               type="Impinj:ImpinjDirectionUserTagPopulationLimit"/>
+   <xs:element name="ImpinjC1G2DirectionConfig" type="Impinj:ImpinjC1G2DirectionConfig"/>
+   <xs:element name="ImpinjExtendedTagInformation" type="Impinj:ImpinjExtendedTagInformation"/>
+   <xs:element name="ImpinjDirectionReporting" type="Impinj:ImpinjDirectionReporting"/>
+   <xs:element name="ImpinjDirectionReportData" type="Impinj:ImpinjDirectionReportData"/>
+   <xs:element name="ImpinjDirectionDiagnosticData"
+               type="Impinj:ImpinjDirectionDiagnosticData"/>
+   <xs:element name="ImpinjxArrayDirectionCapabilities"
+               type="Impinj:ImpinjxArrayDirectionCapabilities"/>
+   <xs:element name="ImpinjIntelligentAntennaManagement"
+               type="Impinj:ImpinjIntelligentAntennaManagement"/>
+   <xs:element name="ImpinjTransmitPower" type="Impinj:ImpinjTransmitPower"/>
+   <xs:element name="ImpinjPolarizationControl" type="Impinj:ImpinjPolarizationControl"/>
+   <xs:element name="ImpinjAntennaCapabilities" type="Impinj:ImpinjAntennaCapabilities"/>
+   <xs:element name="ImpinjAntennaPolarizationCapability"
+               type="Impinj:ImpinjAntennaPolarizationCapability"/>
+   <xs:element name="ImpinjDisabledAntennas" type="Impinj:ImpinjDisabledAntennas"/>
+   <xs:element name="ImpinjTIDParity" type="Impinj:ImpinjTIDParity"/>
+   <xs:element name="ImpinjMarginRead" type="Impinj:ImpinjMarginRead"/>
+   <xs:element name="ImpinjMarginReadOpSpecResult" type="Impinj:ImpinjMarginReadOpSpecResult"/>
+   <xs:element name="ImpinjBLEVersion" type="Impinj:ImpinjBLEVersion"/>
+   <xs:element name="ImpinjLocationAlgorithmControl"
+               type="Impinj:ImpinjLocationAlgorithmControl"/>
+   <xs:element name="ImpinjRFPowerSweep" type="Impinj:ImpinjRFPowerSweep"/>
+   <xs:element name="ImpinjTruncatedReplyConfiguration"
+               type="Impinj:ImpinjTruncatedReplyConfiguration"/>
+   <xs:element name="ImpinjAuthenticate" type="Impinj:ImpinjAuthenticate"/>
+   <xs:element name="ImpinjAuthenticateOpSpecResult"
+               type="Impinj:ImpinjAuthenticateOpSpecResult"/>
+   <xs:element name="ImpinjTagFilterVerificationConfiguration"
+               type="Impinj:ImpinjTagFilterVerificationConfiguration"/>
+   <xs:element name="ImpinjEnableTagPopulationEstimationAlgorithm"
+               type="Impinj:ImpinjEnableTagPopulationEstimationAlgorithm"/>
+   <xs:element name="ImpinjEnableCRHandle" type="Impinj:ImpinjEnableCRHandle"/>
+   <xs:element name="ImpinjCRHandle" type="Impinj:ImpinjCRHandle"/>
+   <xs:element name="ImpinjEnableEnhancedIntegra" type="Impinj:ImpinjEnableEnhancedIntegra"/>
+   <xs:element name="ImpinjEnhancedIntegraReport" type="Impinj:ImpinjEnhancedIntegraReport"/>
+
+
+
+
+   <xs:complexType name="IMPINJ_ENABLE_EXTENSIONS">
+      <xs:sequence>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:headerAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="IMPINJ_ENABLE_EXTENSIONS_RESPONSE">
+      <xs:sequence>
+         <xs:element name="LLRPStatus" type="llrp:LLRPStatus"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:headerAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="IMPINJ_SAVE_SETTINGS">
+      <xs:sequence>
+         <xs:element name="SaveConfiguration" type="xs:boolean"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:headerAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="IMPINJ_SAVE_SETTINGS_RESPONSE">
+      <xs:sequence>
+         <xs:element name="LLRPStatus" type="llrp:LLRPStatus"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:headerAttrs"/>
+   </xs:complexType>
+
+
+
+
+
+   <xs:complexType name="ImpinjRequestedData">
+      <xs:sequence>
+         <xs:element name="RequestedData" type="Impinj:ImpinjRequestedDataType"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjSubRegulatoryRegion">
+      <xs:sequence>
+         <xs:element name="RegulatoryRegion" type="Impinj:ImpinjRegulatoryRegion"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjInventorySearchMode">
+      <xs:sequence>
+         <xs:element name="InventorySearchMode" type="Impinj:ImpinjInventorySearchType"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjFixedFrequencyList">
+      <xs:sequence>
+         <xs:element name="FixedFrequencyMode" type="Impinj:ImpinjFixedFrequencyMode"/>
+         <xs:element name="ChannelList" type="llrp:listOfUnsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjReducedPowerFrequencyList">
+      <xs:sequence>
+         <xs:element name="ReducedPowerMode" type="Impinj:ImpinjReducedPowerMode"/>
+         <xs:element name="ChannelList" type="llrp:listOfUnsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLowDutyCycle">
+      <xs:sequence>
+         <xs:element name="LowDutyCycleMode" type="Impinj:ImpinjLowDutyCycleMode"/>
+         <xs:element name="EmptyFieldTimeout" type="xs:unsignedShort"/>
+         <xs:element name="FieldPingInterval" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjHubVersions">
+      <xs:sequence>
+         <xs:element name="ImpinjArrayVersion" type="Impinj:ImpinjArrayVersion"
+                     maxOccurs="unbounded"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDetailedVersion">
+      <xs:sequence>
+         <xs:element name="ModelName" type="xs:string"/>
+         <xs:element name="SerialNumber" type="xs:string"/>
+         <xs:element name="SoftwareVersion" type="xs:string"/>
+         <xs:element name="FirmwareVersion" type="xs:string"/>
+         <xs:element name="FPGAVersion" type="xs:string"/>
+         <xs:element name="PCBAVersion" type="xs:string"/>
+         <xs:element name="ImpinjHubVersions" type="Impinj:ImpinjHubVersions" minOccurs="0"/>
+         <xs:element name="ImpinjArrayVersion" type="Impinj:ImpinjArrayVersion" minOccurs="0"/>
+         <xs:element name="ImpinjBLEVersion" type="Impinj:ImpinjBLEVersion" minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjFrequencyCapabilities">
+      <xs:sequence>
+         <xs:element name="FrequencyList" type="llrp:listOfUnsignedInt"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGPIDebounceConfiguration">
+      <xs:sequence>
+         <xs:element name="GPIPortNum" type="xs:unsignedShort"/>
+         <xs:element name="GPIDebounceTimerMSec" type="xs:unsignedInt"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjReaderTemperature">
+      <xs:sequence>
+         <xs:element name="Temperature" type="xs:short"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLinkMonitorConfiguration">
+      <xs:sequence>
+         <xs:element name="LinkMonitorMode" type="Impinj:ImpinjLinkMonitorMode"/>
+         <xs:element name="LinkDownThreshold" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjReportBufferConfiguration">
+      <xs:sequence>
+         <xs:element name="ReportBufferMode" type="Impinj:ImpinjReportBufferMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAccessSpecConfiguration">
+      <xs:sequence>
+         <xs:element name="ImpinjBlockWriteWordCount" type="Impinj:ImpinjBlockWriteWordCount"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjOpSpecRetryCount" type="Impinj:ImpinjOpSpecRetryCount"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjAccessSpecOrdering" type="Impinj:ImpinjAccessSpecOrdering"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjBlockWriteWordCount">
+      <xs:sequence>
+         <xs:element name="WordCount" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjBlockPermalock">
+      <xs:sequence>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="AccessPassword" type="xs:unsignedInt"/>
+         <xs:element name="MB" type="llrp:twoBit"/>
+         <xs:element name="BlockPointer" type="xs:unsignedShort"/>
+         <xs:element name="BlockMask" type="llrp:listOfHexWord"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjBlockPermalockOpSpecResult">
+      <xs:sequence>
+         <xs:element name="Result" type="Impinj:ImpinjBlockPermalockResultType"/>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGetBlockPermalockStatus">
+      <xs:sequence>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="AccessPassword" type="xs:unsignedInt"/>
+         <xs:element name="MB" type="llrp:twoBit"/>
+         <xs:element name="BlockPointer" type="xs:unsignedShort"/>
+         <xs:element name="BlockRange" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGetBlockPermalockStatusOpSpecResult">
+      <xs:sequence>
+         <xs:element name="Result" type="Impinj:ImpinjGetBlockPermalockStatusResultType"/>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="PermalockStatus" type="llrp:listOfHexWord"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjSetQTConfig">
+      <xs:sequence>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="AccessPassword" type="xs:unsignedInt"/>
+         <xs:element name="DataProfile" type="Impinj:ImpinjQTDataProfile"/>
+         <xs:element name="AccessRange" type="Impinj:ImpinjQTAccessRange"/>
+         <xs:element name="Persistence" type="Impinj:ImpinjQTPersistence"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjSetQTConfigOpSpecResult">
+      <xs:sequence>
+         <xs:element name="Result" type="Impinj:ImpinjSetQTConfigResultType"/>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGetQTConfig">
+      <xs:sequence>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="AccessPassword" type="xs:unsignedInt"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGetQTConfigOpSpecResult">
+      <xs:sequence>
+         <xs:element name="Result" type="Impinj:ImpinjGetQTConfigResultType"/>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="DataProfile" type="Impinj:ImpinjQTDataProfile"/>
+         <xs:element name="AccessRange" type="Impinj:ImpinjQTAccessRange"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjTagReportContentSelector">
+      <xs:sequence>
+         <xs:element name="ImpinjEnableSerializedTID" type="Impinj:ImpinjEnableSerializedTID"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjEnableRFPhaseAngle" type="Impinj:ImpinjEnableRFPhaseAngle"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjEnablePeakRSSI" type="Impinj:ImpinjEnablePeakRSSI" minOccurs="0"/>
+         <xs:element name="ImpinjEnableGPSCoordinates" type="Impinj:ImpinjEnableGPSCoordinates"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjEnableOptimizedRead" type="Impinj:ImpinjEnableOptimizedRead"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjEnableRFDopplerFrequency"
+                     type="Impinj:ImpinjEnableRFDopplerFrequency"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjEnableTxPower" type="Impinj:ImpinjEnableTxPower" minOccurs="0"/>
+         <xs:element name="ImpinjEnableXPCWords" type="Impinj:ImpinjEnableXPCWords" minOccurs="0"/>
+         <xs:element name="ImpinjEnableCRHandle" type="Impinj:ImpinjEnableCRHandle" minOccurs="0"/>
+         <xs:element name="ImpinjEnableEnhancedIntegra" type="Impinj:ImpinjEnableEnhancedIntegra"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableSerializedTID">
+      <xs:sequence>
+         <xs:element name="SerializedTIDMode" type="Impinj:ImpinjSerializedTIDMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableRFPhaseAngle">
+      <xs:sequence>
+         <xs:element name="RFPhaseAngleMode" type="Impinj:ImpinjRFPhaseAngleMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnablePeakRSSI">
+      <xs:sequence>
+         <xs:element name="PeakRSSIMode" type="Impinj:ImpinjPeakRSSIMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableGPSCoordinates">
+      <xs:sequence>
+         <xs:element name="GPSCoordinatesMode" type="Impinj:ImpinjGPSCoordinatesMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjSerializedTID">
+      <xs:sequence>
+         <xs:element name="TID" type="llrp:listOfHexWord"/>
+         <xs:element name="ImpinjTIDParity" type="Impinj:ImpinjTIDParity" minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjRFPhaseAngle">
+      <xs:sequence>
+         <xs:element name="PhaseAngle" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjPeakRSSI">
+      <xs:sequence>
+         <xs:element name="RSSI" type="xs:short"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGPSCoordinates">
+      <xs:sequence>
+         <xs:element name="Latitude" type="xs:int"/>
+         <xs:element name="Longitude" type="xs:int"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLoopSpec">
+      <xs:sequence>
+         <xs:element name="LoopCount" type="xs:unsignedInt"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGPSNMEASentences">
+      <xs:sequence>
+         <xs:element name="ImpinjGGASentence" type="Impinj:ImpinjGGASentence" minOccurs="0"/>
+         <xs:element name="ImpinjRMCSentence" type="Impinj:ImpinjRMCSentence" minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjGGASentence">
+      <xs:sequence>
+         <xs:element name="GGASentence" type="xs:string"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjRMCSentence">
+      <xs:sequence>
+         <xs:element name="RMCSentence" type="xs:string"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjOpSpecRetryCount">
+      <xs:sequence>
+         <xs:element name="RetryCount" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAdvancedGPOConfiguration">
+      <xs:sequence>
+         <xs:element name="GPOPortNum" type="xs:unsignedShort"/>
+         <xs:element name="GPOMode" type="Impinj:ImpinjAdvancedGPOMode"/>
+         <xs:element name="GPOPulseDurationMSec" type="xs:unsignedInt"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableOptimizedRead">
+      <xs:sequence>
+         <xs:element name="OptimizedReadMode" type="Impinj:ImpinjOptimizedReadMode"/>
+         <xs:element name="C1G2Read" type="llrp:C1G2Read" minOccurs="0" maxOccurs="unbounded"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAccessSpecOrdering">
+      <xs:sequence>
+         <xs:element name="OrderingMode" type="Impinj:ImpinjAccessSpecOrderingMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableRFDopplerFrequency">
+      <xs:sequence>
+         <xs:element name="RFDopplerFrequencyMode" type="Impinj:ImpinjRFDopplerFrequencyMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjRFDopplerFrequency">
+      <xs:sequence>
+         <xs:element name="DopplerFrequency" type="xs:short"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjInventoryConfiguration">
+      <xs:sequence>
+         <xs:element name="EnableAntDwellTimeLimit" type="xs:boolean"/>
+         <xs:element name="EnableSelectGapClose" type="xs:boolean"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableTxPower">
+      <xs:sequence>
+         <xs:element name="TxPowerReportingMode" type="Impinj:ImpinjTxPowerReportingModeEnum"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjTxPower">
+      <xs:sequence>
+         <xs:element name="TxPower" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableXPCWords">
+      <xs:sequence>
+         <xs:element name="XPCWordsMode" type="Impinj:ImpinjXPCWordsMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjXPCWords">
+      <xs:sequence>
+         <xs:element name="XPCWords" type="llrp:listOfHexWord"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjArrayVersion">
+      <xs:sequence>
+         <xs:element name="SerialNumber" type="xs:string"/>
+         <xs:element name="FirmwareVersion" type="xs:string"/>
+         <xs:element name="PCBAVersion" type="xs:string"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjxArrayCapabilities">
+      <xs:sequence>
+         <xs:element name="MaxNumSectors" type="xs:unsignedInt"/>
+         <xs:element name="SupportsLISpecs" type="xs:boolean"/>
+         <xs:element name="SupportsTISpecs" type="xs:boolean"/>
+         <xs:element name="SupportsTSISpecs" type="xs:boolean"/>
+         <xs:element name="SupportsDISpecs" type="xs:boolean"/>
+         <xs:element name="SupportsESSpecs" type="xs:boolean"/>
+         <xs:element name="ImpinjxArrayDirectionCapabilities"
+                     type="Impinj:ImpinjxArrayDirectionCapabilities"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjTiltConfiguration">
+      <xs:sequence>
+         <xs:element name="XAxis" type="xs:int"/>
+         <xs:element name="YAxis" type="xs:int"/>
+         <xs:element name="ZAxis" type="xs:int"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjBeaconConfiguration">
+      <xs:sequence>
+         <xs:element name="BeaconState" type="xs:boolean"/>
+         <xs:element name="BeaconDurationSeconds" type="xs:unsignedLong"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAntennaConfiguration">
+      <xs:sequence>
+         <xs:element name="ImpinjAntennaEventHysteresis" type="Impinj:ImpinjAntennaEventHysteresis"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjAntennaEventConfiguration"
+                     type="Impinj:ImpinjAntennaEventConfiguration"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAntennaEventHysteresis">
+      <xs:sequence>
+         <xs:element name="AntennaEventConnected" type="xs:unsignedLong"/>
+         <xs:element name="AntennaEventDisconnected" type="xs:unsignedLong"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAntennaEventConfiguration">
+      <xs:sequence>
+         <xs:element name="EnableAntennaAttemptNotification" type="xs:boolean"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAntennaAttemptEvent">
+      <xs:sequence>
+         <xs:element name="AntennaID" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjHubConfiguration">
+      <xs:sequence>
+         <xs:element name="HubID" type="xs:unsignedShort"/>
+         <xs:element name="Connected" type="Impinj:ImpinjHubConnectedType"/>
+         <xs:element name="Fault" type="Impinj:ImpinjHubFaultType"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDiagnosticReport">
+      <xs:sequence>
+         <xs:element name="Metric" type="llrp:listOfUnsignedInt"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjPlacementConfiguration">
+      <xs:sequence>
+         <xs:element name="HeightCm" type="xs:unsignedShort"/>
+         <xs:element name="FacilityXLocationCm" type="xs:int"/>
+         <xs:element name="FacilityYLocationCm" type="xs:int"/>
+         <xs:element name="OrientationDegrees" type="xs:short"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLISpec">
+      <xs:sequence>
+         <xs:element name="ImpinjLocationConfig" type="Impinj:ImpinjLocationConfig" minOccurs="0"/>
+         <xs:element name="ImpinjC1G2LocationConfig" type="Impinj:ImpinjC1G2LocationConfig"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjLocationReporting" type="Impinj:ImpinjLocationReporting"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLocationConfig">
+      <xs:sequence>
+         <xs:element name="ComputeWindowSeconds" type="xs:unsignedShort"/>
+         <xs:element name="TagAgeIntervalSeconds" type="xs:unsignedShort"/>
+         <xs:element name="UpdateIntervalSeconds" type="xs:unsignedShort"/>
+         <xs:element name="ImpinjDisabledAntennas" type="Impinj:ImpinjDisabledAntennas"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjLocationAlgorithmControl"
+                     type="Impinj:ImpinjLocationAlgorithmControl"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjC1G2LocationConfig">
+      <xs:sequence>
+         <xs:element name="ModeIndex" type="xs:unsignedShort"/>
+         <xs:element name="Session" type="llrp:twoBit"/>
+         <xs:element name="C1G2Filter" type="llrp:C1G2Filter" minOccurs="0" maxOccurs="unbounded"/>
+         <xs:element name="ImpinjTransmitPower" type="Impinj:ImpinjTransmitPower" minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLocationReporting">
+      <xs:sequence>
+         <xs:element name="EnableUpdateReport" type="xs:boolean"/>
+         <xs:element name="EnableEntryReport" type="xs:boolean"/>
+         <xs:element name="EnableExitReport" type="xs:boolean"/>
+         <xs:element name="EnableDiagnosticReport" type="xs:boolean"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLocationConfidence">
+      <xs:sequence>
+         <xs:element name="ReadCount" type="xs:unsignedShort"/>
+         <xs:element name="ConfidenceData" type="llrp:listOfUnsignedInt"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLocationReportData">
+      <xs:sequence>
+         <xs:element name="LastSeenTimestampUTC" type="xs:unsignedLong"/>
+         <xs:element name="LocXCentimeters" type="xs:int"/>
+         <xs:element name="LocYCentimeters" type="xs:int"/>
+         <xs:element name="Type" type="Impinj:ImpinjLocationReportType"/>
+         <xs:element name="ImpinjLocationConfidence" type="Impinj:ImpinjLocationConfidence"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDISpec">
+      <xs:sequence>
+         <xs:element name="ImpinjDirectionSectors" type="Impinj:ImpinjDirectionSectors"/>
+         <xs:element name="ImpinjDirectionConfig" type="Impinj:ImpinjDirectionConfig" minOccurs="0"/>
+         <xs:element name="ImpinjC1G2DirectionConfig" type="Impinj:ImpinjC1G2DirectionConfig"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjDirectionReporting" type="Impinj:ImpinjDirectionReporting"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDirectionSectors">
+      <xs:sequence>
+         <xs:element name="EnabledSectorIDs" type="llrp:listOfUnsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDirectionConfig">
+      <xs:sequence>
+         <xs:element name="TagAgeIntervalSeconds" type="xs:unsignedShort"/>
+         <xs:element name="UpdateIntervalSeconds" type="xs:unsignedShort"/>
+         <xs:element name="FieldOfView" type="Impinj:ImpinjDirectionFieldOfView"/>
+         <xs:element name="ImpinjDirectionUserTagPopulationLimit"
+                     type="Impinj:ImpinjDirectionUserTagPopulationLimit"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDirectionUserTagPopulationLimit">
+      <xs:sequence>
+         <xs:element name="UserTagPopulationLimit" type="xs:unsignedShort"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjC1G2DirectionConfig">
+      <xs:sequence>
+         <xs:element name="RFMode" type="Impinj:ImpinjDirectionRFMode"/>
+         <xs:element name="ImpinjTransmitPower" type="Impinj:ImpinjTransmitPower" minOccurs="0"/>
+         <xs:element name="C1G2Filter" type="llrp:C1G2Filter" minOccurs="0" maxOccurs="unbounded"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjExtendedTagInformation">
+      <xs:sequence>
+         <xs:element name="EPCData" type="llrp:EPCData" maxOccurs="unbounded"/>
+         <xs:element name="ImpinjLocationReportData" type="Impinj:ImpinjLocationReportData"
+                     minOccurs="0"/>
+         <xs:element name="ImpinjDirectionReportData" type="Impinj:ImpinjDirectionReportData"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDirectionReporting">
+      <xs:sequence>
+         <xs:element name="EnableUpdateReport" type="xs:boolean"/>
+         <xs:element name="EnableEntryReport" type="xs:boolean"/>
+         <xs:element name="EnableExitReport" type="xs:boolean"/>
+         <xs:element name="EnableDiagnosticReport" type="xs:boolean"/>
+         <xs:element name="DiagnosticReportLevel" type="Impinj:ImpinjDirectionDiagnosticReportLevel"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDirectionReportData">
+      <xs:sequence>
+         <xs:element name="Type" type="Impinj:ImpinjDirectionReportType"/>
+         <xs:element name="TagPopulationStatus" type="Impinj:ImpinjDirectionTagPopulationStatus"/>
+         <xs:element name="FirstSeenSectorID" type="xs:unsignedByte"/>
+         <xs:element name="FirstSeenTimestampUTC" type="xs:unsignedLong"/>
+         <xs:element name="LastSeenSectorID" type="xs:unsignedByte"/>
+         <xs:element name="LastSeenTimestampUTC" type="xs:unsignedLong"/>
+         <xs:element name="ImpinjDirectionDiagnosticData"
+                     type="Impinj:ImpinjDirectionDiagnosticData"
+                     minOccurs="0"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDirectionDiagnosticData">
+      <xs:sequence>
+         <xs:element name="Metric" type="llrp:listOfUnsignedInt"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjxArrayDirectionCapabilities">
+      <xs:sequence>
+         <xs:element name="SystemTagPopulationLimitHighSensitivity" type="xs:unsignedShort"/>
+         <xs:element name="SystemTagPopulationLimitHighPerformance" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjIntelligentAntennaManagement">
+      <xs:sequence>
+         <xs:element name="ManagementEnabled" type="Impinj:ImpinjIntelligentAntennaMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjTransmitPower">
+      <xs:sequence>
+         <xs:element name="TransmitPower" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjPolarizationControl">
+      <xs:sequence>
+         <xs:element name="PolarizationControlEnabled" type="xs:boolean"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAntennaCapabilities">
+      <xs:sequence>
+         <xs:element name="ImpinjAntennaPolarizationCapability"
+                     type="Impinj:ImpinjAntennaPolarizationCapability"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAntennaPolarizationCapability">
+      <xs:sequence>
+         <xs:element name="Type" type="Impinj:ImpinjAntennaPolarizationType"/>
+         <xs:element name="AntennaIDOffset" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjDisabledAntennas">
+      <xs:sequence>
+         <xs:element name="AntennaIDs" type="llrp:listOfUnsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjTIDParity">
+      <xs:sequence>
+         <xs:element name="ParityError" type="xs:boolean"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjMarginRead">
+      <xs:sequence>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="AccessPassword" type="xs:unsignedInt"/>
+         <xs:element name="MB" type="llrp:twoBit"/>
+         <xs:element name="BitPointer" type="xs:unsignedShort"/>
+         <xs:element name="BitLength" type="xs:unsignedByte"/>
+         <xs:element name="Mask" type="llrp:listOfHexWord"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjMarginReadOpSpecResult">
+      <xs:sequence>
+         <xs:element name="Result" type="Impinj:ImpinjMarginReadResultType"/>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjBLEVersion">
+      <xs:sequence>
+         <xs:element name="FirmwareVersion" type="xs:string"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjLocationAlgorithmControl">
+      <xs:sequence>
+         <xs:element name="ControlData" type="llrp:listOfUnsignedInt"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjRFPowerSweep">
+      <xs:sequence>
+         <xs:element name="EnableRFPowerSweep" type="xs:boolean"/>
+         <xs:element name="MinimumPowerLevel" type="xs:unsignedShort"/>
+         <xs:element name="PowerLevelStepSize" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjTruncatedReplyConfiguration">
+      <xs:sequence>
+         <xs:element name="Gen2v2TagsOnly" type="xs:boolean"/>
+         <xs:element name="EPCLength" type="xs:unsignedByte"/>
+         <xs:element name="Pointer" type="xs:unsignedShort"/>
+         <xs:element name="TagMask" type="llrp:bitVector"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAuthenticate">
+      <xs:sequence>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="AccessPassword" type="xs:unsignedInt"/>
+         <xs:element name="SendRep" type="xs:boolean"/>
+         <xs:element name="IncRepLen" type="xs:boolean"/>
+         <xs:element name="CSI" type="xs:unsignedByte"/>
+         <xs:element name="Message" type="llrp:bitVector"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjAuthenticateOpSpecResult">
+      <xs:sequence>
+         <xs:element name="Result" type="Impinj:ImpinjAuthenticateResultType"/>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="Response" type="llrp:bitVector"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjTagFilterVerificationConfiguration">
+      <xs:sequence>
+         <xs:element name="TagFilterVerificationMode" type="Impinj:ImpinjTagFilterVerificationMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableTagPopulationEstimationAlgorithm">
+      <xs:sequence>
+         <xs:element name="TagPopulationEstimationMode"
+                     type="Impinj:ImpinjTagPopulationEstimationMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableCRHandle">
+      <xs:sequence>
+         <xs:element name="CRHandleMode" type="Impinj:ImpinjCRHandleMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjCRHandle">
+      <xs:sequence>
+         <xs:element name="CRHandle" type="llrp:hexDWord"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnableEnhancedIntegra">
+      <xs:sequence>
+         <xs:element name="EnhancedIntegraMode" type="Impinj:ImpinjEnhancedIntegraMode"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+   <xs:complexType name="ImpinjEnhancedIntegraReport">
+      <xs:sequence>
+         <xs:element name="Result" type="Impinj:ImpinjEnhancedIntegraResultType"/>
+         <xs:element name="OpSpecID" type="xs:unsignedShort"/>
+         <xs:element name="Custom" type="llrp:Custom" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="llrp:paramAttrs"/>
+   </xs:complexType>
+
+
+
+   <xs:simpleType name="ImpinjRequestedDataType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="All_Capabilities"/>
+         <xs:enumeration value="Impinj_Detailed_Version"/>
+         <xs:enumeration value="Impinj_Frequency_Capabilities"/>
+         <xs:enumeration value="Impinj_xArray_Capabilities"/>
+         <xs:enumeration value="Impinj_Antenna_Capabilities"/>
+         <xs:enumeration value="All_Configuration"/>
+         <xs:enumeration value="Impinj_Sub_Regulatory_Region"/>
+         <xs:enumeration value="Impinj_GPI_Debounce_Configuration"/>
+         <xs:enumeration value="Impinj_Reader_Temperature"/>
+         <xs:enumeration value="Impinj_Link_Monitor_Configuration"/>
+         <xs:enumeration value="Impinj_Report_Buffer_Configuration"/>
+         <xs:enumeration value="Impinj_Access_Spec_Configuration"/>
+         <xs:enumeration value="Impinj_GPS_NMEA_Sentences"/>
+         <xs:enumeration value="Impinj_Advanced_GPO_Configuration"/>
+         <xs:enumeration value="Impinj_Tilt_Configuration"/>
+         <xs:enumeration value="Impinj_Beacon_Configuration"/>
+         <xs:enumeration value="Impinj_Antenna_Configuration"/>
+         <xs:enumeration value="Impinj_Location_Configuration"/>
+         <xs:enumeration value="Impinj_Transition_Configuration"/>
+         <xs:enumeration value="Impinj_Hub_Configuration"/>
+         <xs:enumeration value="Impinj_PolarizationControl_Configuration"/>
+         <xs:enumeration value="Impinj_Direction_Configuration"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjRegulatoryRegion">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="FCC_Part_15_247"/>
+         <xs:enumeration value="ETSI_EN_300_220"/>
+         <xs:enumeration value="ETSI_EN_302_208_With_LBT"/>
+         <xs:enumeration value="Hong_Kong_920_925_MHz"/>
+         <xs:enumeration value="Taiwan_922_928_MHz"/>
+         <xs:enumeration value="ETSI_EN_302_208_v1_2_1"/>
+         <xs:enumeration value="Korea_917_921_MHz"/>
+         <xs:enumeration value="Malaysia_919_923_MHz"/>
+         <xs:enumeration value="China_920_925_MHz"/>
+         <xs:enumeration value="South_Africa_915_919_MHz"/>
+         <xs:enumeration value="Brazil_902_907_and_915_928_MHz"/>
+         <xs:enumeration value="Thailand_920_925_MHz"/>
+         <xs:enumeration value="Singapore_920_925_MHz"/>
+         <xs:enumeration value="Australia_920_926_MHz"/>
+         <xs:enumeration value="India_865_867_MHz"/>
+         <xs:enumeration value="Uruguay_916_928_MHz"/>
+         <xs:enumeration value="Vietnam_918_923_MHz"/>
+         <xs:enumeration value="Israel_915_917_MHz"/>
+         <xs:enumeration value="Philippines_918_920_MHz"/>
+         <xs:enumeration value="Vietnam_920_923_MHz"/>
+         <xs:enumeration value="Indonesia_920_923_MHz"/>
+         <xs:enumeration value="New_Zealand_921p5_928_MHz"/>
+         <xs:enumeration value="Japan_916_921_MHz_Without_LBT"/>
+         <xs:enumeration value="Latin_America_902_928_MHz"/>
+         <xs:enumeration value="Peru_916_928_MHz"/>
+         <xs:enumeration value="Bangladesh_925_927_MHz"/>
+         <xs:enumeration value="ETSI_915_921_MHz"/>
+         <xs:enumeration value="Morocco_867_868_MHz"/>
+         <xs:enumeration value="Paraguay_918_928_MHz"/>
+         <xs:enumeration value="Morocco"/>
+         <xs:enumeration value="Chile"/>
+         <xs:enumeration value="Colombia"/>
+         <xs:enumeration value="South_Africa_915_919_MHz_Alternate"/>
+         <xs:enumeration value="Venezuela"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjInventorySearchType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Reader_Selected"/>
+         <xs:enumeration value="Single_Target"/>
+         <xs:enumeration value="Dual_Target"/>
+         <xs:enumeration value="Single_Target_With_Suppression"/>
+         <xs:enumeration value="No_Target"/>
+         <xs:enumeration value="Single_Target_BtoA"/>
+         <xs:enumeration value="Dual_Target_with_BtoASelect"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjFixedFrequencyMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Auto_Select"/>
+         <xs:enumeration value="Channel_List"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjReducedPowerMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjLowDutyCycleMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjLinkMonitorMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjReportBufferMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Normal"/>
+         <xs:enumeration value="Low_Latency"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjBlockPermalockResultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Success"/>
+         <xs:enumeration value="Insufficient_Power"/>
+         <xs:enumeration value="Nonspecific_Tag_Error"/>
+         <xs:enumeration value="No_Response_From_Tag"/>
+         <xs:enumeration value="Nonspecific_Reader_Error"/>
+         <xs:enumeration value="Incorrect_Password_Error"/>
+         <xs:enumeration value="Tag_Memory_Overrun_Error"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjGetBlockPermalockStatusResultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Success"/>
+         <xs:enumeration value="Nonspecific_Tag_Error"/>
+         <xs:enumeration value="No_Response_From_Tag"/>
+         <xs:enumeration value="Nonspecific_Reader_Error"/>
+         <xs:enumeration value="Incorrect_Password_Error"/>
+         <xs:enumeration value="Tag_Memory_Overrun_Error"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjQTDataProfile">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Unknown"/>
+         <xs:enumeration value="Private"/>
+         <xs:enumeration value="Public"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjQTAccessRange">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Unknown"/>
+         <xs:enumeration value="Normal_Range"/>
+         <xs:enumeration value="Short_Range"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjQTPersistence">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Unknown"/>
+         <xs:enumeration value="Temporary"/>
+         <xs:enumeration value="Permanent"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjSetQTConfigResultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Success"/>
+         <xs:enumeration value="Insufficient_Power"/>
+         <xs:enumeration value="Nonspecific_Tag_Error"/>
+         <xs:enumeration value="No_Response_From_Tag"/>
+         <xs:enumeration value="Nonspecific_Reader_Error"/>
+         <xs:enumeration value="Incorrect_Password_Error"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjGetQTConfigResultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Success"/>
+         <xs:enumeration value="Nonspecific_Tag_Error"/>
+         <xs:enumeration value="No_Response_From_Tag"/>
+         <xs:enumeration value="Nonspecific_Reader_Error"/>
+         <xs:enumeration value="Incorrect_Password_Error"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjSerializedTIDMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjRFPhaseAngleMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjPeakRSSIMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjGPSCoordinatesMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjAdvancedGPOMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Normal"/>
+         <xs:enumeration value="Pulsed"/>
+         <xs:enumeration value="Reader_Operational_Status"/>
+         <xs:enumeration value="LLRP_Connection_Status"/>
+         <xs:enumeration value="Reader_Inventory_Status"/>
+         <xs:enumeration value="Network_Connection_Status"/>
+         <xs:enumeration value="Reader_Inventory_Tags_Status"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjOptimizedReadMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjAccessSpecOrderingMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="FIFO"/>
+         <xs:enumeration value="Ascending"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjRFDopplerFrequencyMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjTxPowerReportingModeEnum">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjXPCWordsMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjHubConnectedType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Unknown"/>
+         <xs:enumeration value="Disconnected"/>
+         <xs:enumeration value="Connected"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjHubFaultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="No_Fault"/>
+         <xs:enumeration value="RF_Power"/>
+         <xs:enumeration value="RF_Power_On_Hub_1"/>
+         <xs:enumeration value="RF_Power_On_Hub_2"/>
+         <xs:enumeration value="RF_Power_On_Hub_3"/>
+         <xs:enumeration value="RF_Power_On_Hub_4"/>
+         <xs:enumeration value="No_Init"/>
+         <xs:enumeration value="Serial_Overflow"/>
+         <xs:enumeration value="Disconnected"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjLocationReportType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Entry"/>
+         <xs:enumeration value="Update"/>
+         <xs:enumeration value="Exit"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjDirectionFieldOfView">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="ReaderSelected"/>
+         <xs:enumeration value="Wide"/>
+         <xs:enumeration value="Narrow"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjDirectionRFMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="HighSensitivity"/>
+         <xs:enumeration value="HighPerformance"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjDirectionDiagnosticReportLevel">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Off"/>
+         <xs:enumeration value="Basic"/>
+         <xs:enumeration value="Extended"/>
+         <xs:enumeration value="Debug"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjDirectionReportType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Entry"/>
+         <xs:enumeration value="Update"/>
+         <xs:enumeration value="Exit"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjDirectionTagPopulationStatus">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="OK"/>
+         <xs:enumeration value="UserOverflow"/>
+         <xs:enumeration value="SystemOverflow"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjIntelligentAntennaMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjAntennaPolarizationType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="LinearHorizontal"/>
+         <xs:enumeration value="LinearVertical"/>
+         <xs:enumeration value="CircularRight"/>
+         <xs:enumeration value="CircularLeft"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjMarginReadResultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Success"/>
+         <xs:enumeration value="Failure"/>
+         <xs:enumeration value="Insufficient_Power"/>
+         <xs:enumeration value="Nonspecific_Tag_Error"/>
+         <xs:enumeration value="No_Response_From_Tag"/>
+         <xs:enumeration value="Nonspecific_Reader_Error"/>
+         <xs:enumeration value="Incorrect_Password_Error"/>
+         <xs:enumeration value="Tag_Memory_Overrun_Error"/>
+         <xs:enumeration value="Tag_Memory_Locked_Error"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjAuthenticateResultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Success"/>
+         <xs:enumeration value="Insufficient_Power"/>
+         <xs:enumeration value="Not_Supported_Error"/>
+         <xs:enumeration value="Nonspecific_Tag_Error"/>
+         <xs:enumeration value="Nonspecific_Reader_Error"/>
+         <xs:enumeration value="No_Response_From_Tag"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjTagFilterVerificationMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Active"/>
+         <xs:enumeration value="Passive"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjTagPopulationEstimationMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjCRHandleMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjEnhancedIntegraMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Disabled"/>
+         <xs:enumeration value="Enabled"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="ImpinjEnhancedIntegraResultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="No_Parity_Error"/>
+         <xs:enumeration value="PC_Parity_Error"/>
+         <xs:enumeration value="EPC_Parity_Error"/>
+         <xs:enumeration value="PC_or_TID_Parity_Error"/>
+         <xs:enumeration value="EPC_or_TID_Parity_Error"/>
+         <xs:enumeration value="Memory_Read_Parity_Error"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>
