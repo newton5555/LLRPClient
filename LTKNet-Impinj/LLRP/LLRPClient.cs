@@ -3,6 +3,7 @@
 using Org.LLRP.LTK.LLRPV1.DataType;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Threading;
 
 
@@ -16,8 +17,8 @@ namespace Org.LLRP.LTK.LLRPV1
     private int MSG_TIME_OUT = 10000;
     private Thread notificationThread;
     private Thread keepalivesThread;
-    private BlockingQueue notificationQueue;
-    private BlockingQueue keepalivesQueue;
+    private BlockingCollection<Message> notificationQueue;
+    private BlockingCollection<Message> keepalivesQueue;
     private ManualResetEvent conn_evt;
     private ENUM_ConnectionAttemptStatusType conn_status_type;
     private string reader_name;
@@ -136,8 +137,8 @@ namespace Org.LLRP.LTK.LLRPV1
       this.cI = (CommunicationInterface) new TCPIPClient();
       this.cI.OnRawReceived += new delegateRawFrame(this.TriggerRawReceived);
       this.cI.OnRawSent += new delegateRawFrame(this.TriggerRawSent);
-      this.notificationQueue = new BlockingQueue();
-      this.keepalivesQueue = new BlockingQueue();
+      this.notificationQueue = new ();
+      this.keepalivesQueue = new ();
       this.CheckNotificationAndKeepaliveThreads();
     }
 
@@ -147,8 +148,8 @@ namespace Org.LLRP.LTK.LLRPV1
       this.cI = (CommunicationInterface) new TCPIPClient();
       this.cI.OnRawReceived += new delegateRawFrame(this.TriggerRawReceived);
       this.cI.OnRawSent += new delegateRawFrame(this.TriggerRawSent);
-      this.notificationQueue = new BlockingQueue();
-      this.keepalivesQueue = new BlockingQueue();
+      this.notificationQueue = new ();
+      this.keepalivesQueue = new ();
       this.CheckNotificationAndKeepaliveThreads();
     }
 
@@ -184,7 +185,7 @@ namespace Org.LLRP.LTK.LLRPV1
           ENUM_LLRP_MSG_TYPE msgType;
           do
           {
-            msg = (Message) this.notificationQueue.Dequeue();
+            msg = (Message) this.notificationQueue.Take();
             msgType = (ENUM_LLRP_MSG_TYPE) msg.MSG_TYPE;
             if (msgType == ENUM_LLRP_MSG_TYPE.RO_ACCESS_REPORT)
               goto label_3;
@@ -218,7 +219,7 @@ label_4:
           Message msg;
           do
           {
-            msg = (Message) this.keepalivesQueue.Dequeue();
+            msg = (Message) this.keepalivesQueue.Take();
           }
           while (msg.MSG_TYPE != (ushort) 62);
           this.TriggerKeepAlive((MSG_KEEPALIVE) msg);
@@ -352,7 +353,7 @@ label_4:
             MSG_RO_ACCESS_REPORT msgRoAccessReport = MSG_RO_ACCESS_REPORT.FromBitArray(ref bitArray, ref cursor, count);
             if (this.notificationQueue == null)
               break;
-            this.notificationQueue.Enqueue((object) msgRoAccessReport);
+            this.notificationQueue.Add(msgRoAccessReport);
             break;
           }
           catch
@@ -367,7 +368,7 @@ label_4:
             MSG_KEEPALIVE msgKeepalive = MSG_KEEPALIVE.FromBitArray(ref bitArray, ref cursor, count);
             if (this.keepalivesQueue == null)
               break;
-            this.keepalivesQueue.Enqueue((object) msgKeepalive);
+            this.keepalivesQueue.Add(msgKeepalive);
             break;
           }
           catch
@@ -388,7 +389,7 @@ label_4:
             }
             if (this.notificationQueue == null)
               break;
-            this.notificationQueue.Enqueue((object) eventNotification);
+            this.notificationQueue.Add(eventNotification);
             break;
           }
           catch

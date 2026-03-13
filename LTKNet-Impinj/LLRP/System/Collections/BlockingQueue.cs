@@ -5,6 +5,7 @@ using System.Threading;
 
 namespace System.Collections
 {
+    [Obsolete("Use System.Collections.Concurrent.BlockingCollection<T> instead.")]
     public class BlockingQueue : Queue
     {
         private bool open;
