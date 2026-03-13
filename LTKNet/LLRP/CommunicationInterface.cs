@@ -3,8 +3,6 @@
 
 namespace Org.LLRP.LTK.LLRPV1
 {
-    //Add two new delegates for raw frame events (received and sent)
-    public delegate void delegateMessageReceived(Int16 ver, Int16 msg_type, int msg_id, byte[] data);
     public delegate void delegateRawFrame(byte[] raw);
 
 
@@ -23,13 +21,13 @@ namespace Org.LLRP.LTK.LLRPV1
     {
         protected AsynReadState state;
 
-        public event delegateFrameReceived OnFrameReceived;
+        public event delegateFrameReceived OnFrameReceived;//真正的LLRP消息事件，外部订阅这个事件来处理LLRP消息
 
         public event delegateConnectionStatusChange OnClientConnectionStatusChange;
 
 
-        public event delegateRawFrame? OnRawReceived;
-        public event delegateRawFrame? OnRawSent;
+        public event delegateRawFrame? OnRawReceived;//日志
+        public event delegateRawFrame? OnRawSent;//日志
 
         protected void TriggerRawSent(byte[] data)
         {

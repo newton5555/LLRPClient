@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LTKNet-Impinj\LLRP\LLRP-Impinj.csproj" />
+    <ProjectReference Include="..\LTKNet\LLRP\LLRP-LTKNet.csproj" />
   </ItemGroup>
 
 </Project>
