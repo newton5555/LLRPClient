@@ -20,7 +20,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PlugCircleCheck" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PlugCircleCheck" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
                             <TextBlock Text="GPI 配置（可保存）" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -58,7 +58,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal" >
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ToggleOn" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ToggleOn" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
                             <TextBlock Text="GPO 输出（即时下发）" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -101,7 +101,7 @@
                     Margin="0,0,8,0"
                     Command="{Binding QueryGpioSettingsCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Download" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
                     <TextBlock Text="获取GPIO" />
                 </StackPanel>
             </Button>
@@ -110,7 +110,7 @@
                     Margin="0,0,8,0"
                     Command="{Binding SaveGpiSettingsCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="FloppyDisk" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock Text="保存GPI" />
                 </StackPanel>
             </Button>
@@ -118,7 +118,7 @@
                     Width="120"
                     Command="{Binding ApplyGpoStatesCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PaperPlane" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconVioletBrush}" Icon="PaperPlane" IconFont="Auto" />
                     <TextBlock Text="下发GPO" />
                 </StackPanel>
             </Button>

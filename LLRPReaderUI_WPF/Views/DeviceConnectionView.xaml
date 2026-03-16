@@ -36,7 +36,7 @@
                         Command="{Binding ConnectCommand}"
                         Style="{DynamicResource MahApps.Styles.Button.Accent}">
                     <StackPanel Orientation="Horizontal">
-                        <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PlugCircleCheck" IconFont="Auto" />
+                        <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="PlugCircleCheck" IconFont="Auto" />
                         <TextBlock Text="连接" />
                     </StackPanel>
                 </Button>
@@ -45,7 +45,7 @@
                         Height="32"
                         Command="{Binding DisconnectCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PowerOff" IconFont="Auto" />
+                        <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconDangerBrush}" Icon="PowerOff" IconFont="Auto" />
                         <TextBlock Text="断开" />
                     </StackPanel>
                 </Button>

@@ -147,6 +147,7 @@
                                 Width="14"
                                 Height="14"
                                 Margin="0,0,6,0"
+                                Foreground="{StaticResource IconAccentBrush}"
                                 VerticalAlignment="Center"
                                 Icon="ClipboardList"
                                 IconFont="Auto" />
@@ -203,6 +204,7 @@
                                 Width="14"
                                 Height="14"
                                 Margin="0,0,6,0"
+                                Foreground="{StaticResource IconInfoBrush}"
                                 VerticalAlignment="Center"
                                 Icon="SatelliteDish"
                                 IconFont="Auto" />
@@ -260,6 +262,7 @@
                                 Width="14"
                                 Height="14"
                                 Margin="0,0,6,0"
+                                Foreground="{StaticResource IconSlateBrush}"
                                 VerticalAlignment="Center"
                                 Icon="Code"
                                 IconFont="Auto" />

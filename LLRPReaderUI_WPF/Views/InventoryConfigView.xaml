@@ -20,7 +20,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Play" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Play" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
                             <TextBlock Text="自动开始配置" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -66,7 +66,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Stop" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Stop" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
                             <TextBlock Text="自动停止配置" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -107,7 +107,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Filter" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Filter" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}"/>
                             <TextBlock Text="筛选配置" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -249,7 +249,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="SquarePollVertical" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="SquarePollVertical" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
                             <TextBlock Text="上报配置" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -279,7 +279,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Database" IconFont="Auto" />
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconTealBrush}" Icon="Database" IconFont="Auto" />
                             <TextBlock Text="附加数据配置" />
                         </StackPanel>
                     </GroupBox.Header>
@@ -322,13 +322,13 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
             <Button Height="32" Width="120" Margin="0,0,8,0" Command="{Binding QueryInventoryConfigCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Download" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
                     <TextBlock Text="读取寻卡配置" />
                 </StackPanel>
             </Button>
             <Button Height="32" Width="120" Command="{Binding SaveInventoryConfigCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="FloppyDisk" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock Text="保存寻卡配置" />
                 </StackPanel>
             </Button>

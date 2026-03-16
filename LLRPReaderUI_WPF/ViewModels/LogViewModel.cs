@@ -148,10 +148,10 @@ public partial class LogViewModel : ObservableObject
 
     private static void InsertCapped(ObservableCollection<string> collection, string line)
     {
-        collection.Insert(0, line);
+        collection.Add(line);
         while (collection.Count > MaxRows)
         {
-            collection.RemoveAt(collection.Count - 1);
+            collection.RemoveAt(0);
         }
     }
 }

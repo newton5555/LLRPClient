@@ -18,7 +18,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="HeartPulse" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="HeartPulse" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
                             <TextBlock Text="Keepalive 配置" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -44,7 +44,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Sliders" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Sliders" IconFont="Auto" Foreground="{StaticResource IconVioletBrush}"/>
                             <TextBlock Text="RF 与盘点配置" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -93,7 +93,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="TowerBroadcast" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="TowerBroadcast" IconFont="Auto" Foreground="{StaticResource IconTealBrush}"/>
                             <TextBlock Text="AntennaConfigGroup（按天线）" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -143,7 +143,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ListCheck" IconFont="Auto" Foreground="White"/>
+                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ListCheck" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
                             <TextBlock Text="Reader 上报事件（只读）" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -164,7 +164,7 @@
                     Margin="0,0,8,0"
                     Command="{Binding QueryDeviceSettingsCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Download" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
                     <TextBlock Text="获取参数" />
                 </StackPanel>
             </Button>
@@ -174,7 +174,7 @@
                     Margin="0,0,8,0"
                     Command="{Binding SaveSettingsCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="FloppyDisk" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock Text="保存参数" />
                 </StackPanel>
             </Button>
@@ -185,7 +185,7 @@
       Margin="0,0,8,0"
       Command="{Binding DataContext.QueryStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="CircleInfo" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="CircleInfo" IconFont="Auto" />
                     <TextBlock Text="获取设备状态" />
                 </StackPanel>
             </Button>
@@ -195,7 +195,7 @@
                     Width="120"
                     Command="{Binding ResetFactoryDefaultsCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="RotateLeft" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconWarningBrush}" Icon="RotateLeft" IconFont="Auto" />
                     <TextBlock Text="恢复出厂" />
                 </StackPanel>
             </Button>

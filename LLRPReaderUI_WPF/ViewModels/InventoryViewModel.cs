@@ -205,7 +205,7 @@ public partial class InventoryViewModel : ObservableObject
 
                 ReceivedTags.Insert(0, new InventoryTagItemViewModel
                 {
-                    ReceiveTime = DateTime.Now,
+                    ReceiveTime = DateTime.Now,//From PC 
                     Epc = epc,
                     Antenna = tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber.ToString() : "-",
                     ChannelMhz = tag.IsChannelInMhzPresent ? tag.ChannelInMhz.ToString("F3") : "-",
