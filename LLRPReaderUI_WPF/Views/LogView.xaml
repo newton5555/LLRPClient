@@ -113,10 +113,10 @@
                                 <ControlTemplate TargetType="TabItem">
                                     <Border
                                         x:Name="HeaderBorder"
-                                        Margin="2,0"
+                                        Margin="0"
                                         Padding="{TemplateBinding Padding}"
                                         Background="{TemplateBinding Background}"
-                                        CornerRadius="4,4,0,0">
+                                        CornerRadius="2,0,0,0">
                                         <ContentPresenter
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -125,7 +125,7 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="HeaderBorder" Property="Background" Value="DodgerBlue" />
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="LightBlue" />
                                             <Setter Property="Foreground" Value="White" />
                                             <Setter Property="FontWeight" Value="SemiBold" />
                                         </Trigger>

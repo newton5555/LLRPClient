@@ -15,7 +15,7 @@
     d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel,
                                      IsDesignTimeCreatable=False}"
     GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
-    Icon="Assets/rfid-icon.ico"
+   
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>
