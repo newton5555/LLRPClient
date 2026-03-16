@@ -126,11 +126,13 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="TabItem">
                                     <Border
+                                        MinWidth="150"
+                                        Width="150"
                                         x:Name="HeaderBorder"
                                         Margin="0"
                                         Padding="{TemplateBinding Padding}"
                                         Background="{TemplateBinding Background}"
-                                        CornerRadius="4,4,0,0">
+                                        CornerRadius="2,0,0,0">
                                         <ContentPresenter
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
