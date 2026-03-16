@@ -1,9 +1,15 @@
-<UserControl x:Class="LLRPReaderUI_WPF.Views.LogView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="clr-namespace:LLRPReaderUI_WPF.ViewModels" xmlns:converters="clr-namespace:LLRPReaderUI_WPF.Converters" d:DataContext="{d:DesignInstance Type=viewmodels:LogViewModel}"
-             mc:Ignorable="d" d:Width="600" d:Height="500">
+<UserControl
+    x:Class="LLRPReaderUI_WPF.Views.LogView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:LLRPReaderUI_WPF.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:LLRPReaderUI_WPF.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:LogViewModel}"
+    d:Height="500"
+    d:Width="600"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:BooleanToStarGridLengthConverter x:Key="BoolToStarGridLengthConverter" />
@@ -15,8 +21,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Header: 统计和全局操作 -->
-        <Border Grid.Row="0" Padding="12" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="4">
+        <!--  Header: 统计和全局操作  -->
+        <Border
+            Grid.Row="0"
+            Padding="12"
+            Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            CornerRadius="4">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -28,177 +38,249 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0"
-                           VerticalAlignment="Center"
-                           FontSize="14" 
-                           FontWeight="SemiBold">
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    FontWeight="SemiBold">
                     <Run Text="日志总数: " />
-                    <Run Text="{Binding TotalLogCount,Mode=OneWay}" Foreground="DodgerBlue" FontWeight="Bold" />
+                    <Run
+                        FontWeight="Bold"
+                        Foreground="DodgerBlue"
+                        Text="{Binding TotalLogCount, Mode=OneWay}" />
                 </TextBlock>
 
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="8">
-                    <Button Content="清空全部" Padding="12,6" Command="{Binding ClearLogsCommand}" />
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="8"
+                    Orientation="Horizontal">
+                    <Button
+                        Padding="12,6"
+                        Command="{Binding ClearLogsCommand}"
+                        Content="清空全部" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,10,0,0">
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.ColumnSpan="3"
+                    Margin="0,10,0,0"
+                    Orientation="Horizontal">
                     <CheckBox Margin="0,0,16,0" IsChecked="{Binding ShowOperationLogs}">
                         <TextBlock>
                             <Run Text="📋 操作日志" />
-                            <Run Text="{Binding OperationEntries.Count,Mode=OneWay, StringFormat=(0)}" Foreground="DodgerBlue" FontSize="12" />
+                            <Run
+                                FontSize="12"
+                                Foreground="DodgerBlue"
+                                Text="{Binding OperationEntries.Count, Mode=OneWay, StringFormat=(0)}" />
                         </TextBlock>
                     </CheckBox>
                     <CheckBox Margin="0,0,16,0" IsChecked="{Binding ShowLlrpMessageLogs}">
                         <TextBlock>
                             <Run Text="📡 LLRP 消息日志" />
-                            <Run Text="{Binding LlrpMessageEntries.Count,Mode=OneWay, StringFormat=(0)}" Foreground="DodgerBlue" FontSize="12" />
+                            <Run
+                                FontSize="12"
+                                Foreground="DodgerBlue"
+                                Text="{Binding LlrpMessageEntries.Count, Mode=OneWay, StringFormat=(0)}" />
                         </TextBlock>
                     </CheckBox>
                     <CheckBox IsChecked="{Binding ShowRawFrameLogs}">
                         <TextBlock>
                             <Run Text="🔧 原始报文收发" />
-                            <Run Text="{Binding RawPacketEntries.Count,Mode=OneWay, StringFormat=(0)}" Foreground="DodgerBlue" FontSize="12" />
+                            <Run
+                                FontSize="12"
+                                Foreground="DodgerBlue"
+                                Text="{Binding RawPacketEntries.Count, Mode=OneWay, StringFormat=(0)}" />
                         </TextBlock>
                     </CheckBox>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- 日志内容区 -->
+        <!--  日志内容区  -->
         <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="{Binding ShowOperationLogs, Converter={StaticResource BoolToStarGridLengthConverter}}" />
-                <RowDefinition Height="{Binding ShowLlrpMessageLogs, Converter={StaticResource BoolToStarGridLengthConverter}}" />
-                <RowDefinition Height="{Binding ShowRawFrameLogs, Converter={StaticResource BoolToStarGridLengthConverter}}" />
-            </Grid.RowDefinitions>
 
-            <!-- 操作日志 -->
-            <Border Grid.Row="0" Padding="12" Margin="0,0,0,12"
-                    Visibility="{Binding ShowOperationLogs, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="4">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               VerticalAlignment="Center"
-                               FontWeight="SemiBold">
+            <TabControl>
+                <TabItem Margin="2,0" Background="LightGray">
+                    <TabItem.Header>
                         <TextBlock>
                             <Run Text="📋 操作日志" />
-                            <Run Text="{Binding OperationEntries.Count,Mode=OneWay, StringFormat=(0)}" Foreground="DodgerBlue" FontSize="12" />
+                            <Run
+                                FontSize="12"
+                                Foreground="DodgerBlue"
+                                Text="{Binding OperationEntries.Count, Mode=OneWay, StringFormat=(0)}" />
                         </TextBlock>
-                    </TextBlock>
+                    </TabItem.Header>
+                    <!--  操作日志  -->
+                    <Border
+                        Margin="0,0,0,12"
+                        Padding="12"
+                        Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                        CornerRadius="4"
+                        Visibility="{Binding ShowOperationLogs, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                    <Button Grid.Row="0" Grid.Column="2"
-                            Content="清空"
-                            Padding="10,4"
-                            Command="{Binding ClearOperationLogsCommand}" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold" />
 
-                    <ListBox x:Name="OperationListBox"
-                             Grid.Row="2" Grid.ColumnSpan="3"
-                             ItemsSource="{Binding OperationEntries,Mode=OneWay}"
-                             ScrollViewer.CanContentScroll="True"
-                             VirtualizingPanel.ScrollUnit="Pixel"
-                             SelectionMode="Extended"
-                             Background="{DynamicResource MahApps.Brushes.Control.Background}"
-                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                             FontFamily="Consolas"
-                             FontSize="11" />
-                </Grid>
-            </Border>
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Padding="10,4"
+                                Command="{Binding ClearOperationLogsCommand}"
+                                Content="清空" />
 
-            <!-- LLRP 消息日志 -->
-            <Border Grid.Row="1" Padding="12" Margin="0,0,0,12"
-                    Visibility="{Binding ShowLlrpMessageLogs, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="4">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                            <ListBox
+                                x:Name="OperationListBox"
+                                Grid.Row="2"
+                                Grid.ColumnSpan="3"
+                                Background="{DynamicResource MahApps.Brushes.Control.Background}"
+                                FontFamily="Consolas"
+                                FontSize="11"
+                                Foreground="{DynamicResource MahApps.Brushes.Text}"
+                                ItemsSource="{Binding OperationEntries, Mode=OneWay}"
+                                ScrollViewer.CanContentScroll="True"
+                                SelectionMode="Extended"
+                                VirtualizingPanel.ScrollUnit="Pixel" />
+                        </Grid>
+                    </Border>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               VerticalAlignment="Center"
-                               FontWeight="SemiBold">
-                        <TextBlock>
-                            <Run Text="📡 LLRP 消息日志" />
-                            <Run Text="{Binding LlrpMessageEntries.Count,Mode=OneWay, StringFormat=(0)}" Foreground="DodgerBlue" FontSize="12" />
+                </TabItem>
+                <TabItem Margin="2,0" Background="LightGray">
+                    <TabItem.Header>
+                        <TextBlock
+                           
+                            VerticalAlignment="Center">
+                            <TextBlock>
+                                <Run Text="📡 LLRP 消息日志" />
+                                <Run
+                                    FontSize="12"
+                                    Foreground="DodgerBlue"
+                                    Text="{Binding LlrpMessageEntries.Count, Mode=OneWay, StringFormat=(0)}" />
+                            </TextBlock>
                         </TextBlock>
-                    </TextBlock>
+                    </TabItem.Header>
+                    <!--  LLRP 消息日志  -->
+                    <Border
+                        Grid.Row="1"
+                        Margin="0,0,0,12"
+                        Padding="12"
+                        Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                        CornerRadius="4"
+                        Visibility="{Binding ShowLlrpMessageLogs, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                    <Button Grid.Row="0" Grid.Column="2"
-                            Content="清空"
-                            Padding="10,4"
-                            Command="{Binding ClearLlrpMessageLogsCommand}" />
 
-                    <ListBox x:Name="LlrpMessageListBox"
-                             Grid.Row="2" Grid.ColumnSpan="3"
-                             ItemsSource="{Binding LlrpMessageEntries,Mode=OneWay}"
-                             ScrollViewer.CanContentScroll="True"
-                             VirtualizingPanel.ScrollUnit="Pixel"
-                             SelectionMode="Extended"
-                             Background="{DynamicResource MahApps.Brushes.Control.Background}"
-                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                             FontFamily="Consolas"
-                             FontSize="11" />
-                </Grid>
-            </Border>
 
-            <!-- 原始报文 -->
-            <Border Grid.Row="2" Padding="12"
-                    Visibility="{Binding ShowRawFrameLogs, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Background="{DynamicResource MahApps.Brushes.ThemeBackground}" CornerRadius="4">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Padding="10,4"
+                                Command="{Binding ClearLlrpMessageLogsCommand}"
+                                Content="清空" />
 
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               VerticalAlignment="Center"
-                               FontWeight="SemiBold">
-                        <TextBlock>
-                            <Run Text="🔧 原始报文收发" />
-                            <Run Text="{Binding RawPacketEntries.Count,Mode=OneWay, StringFormat=(0)}" Foreground="DodgerBlue" FontSize="12" />
+                            <ListBox
+                                x:Name="LlrpMessageListBox"
+                                Grid.Row="2"
+                                Grid.ColumnSpan="3"
+                                Background="{DynamicResource MahApps.Brushes.Control.Background}"
+                                FontFamily="Consolas"
+                                FontSize="11"
+                                Foreground="{DynamicResource MahApps.Brushes.Text}"
+                                ItemsSource="{Binding LlrpMessageEntries, Mode=OneWay}"
+                                ScrollViewer.CanContentScroll="True"
+                                SelectionMode="Extended"
+                                VirtualizingPanel.ScrollUnit="Pixel" />
+                        </Grid>
+                    </Border>
+
+                </TabItem>
+                <TabItem Margin="2,0" Background="LightGray" >
+                    <TabItem.Header>
+                        <TextBlock VerticalAlignment="Center">
+                            <TextBlock>
+                                <Run Text="🔧 原始报文收发" />
+                                <Run
+                                    FontSize="12"
+                                    Foreground="DodgerBlue"
+                                    Text="{Binding RawPacketEntries.Count, Mode=OneWay, StringFormat=(0)}" />
+                            </TextBlock>
                         </TextBlock>
-                    </TextBlock>
+                    </TabItem.Header>
+                    <!--  原始报文  -->
+                    <Border
+                        Grid.Row="2"
+                        Padding="12"
+                        Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                        CornerRadius="4"
+                        Visibility="{Binding ShowRawFrameLogs, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                    <Button Grid.Row="0" Grid.Column="2"
-                            Content="清空"
-                            Padding="10,4"
-                            Command="{Binding ClearRawFrameLogsCommand}" />
 
-                    <ListBox x:Name="RawPacketListBox"
-                             Grid.Row="2" Grid.ColumnSpan="3"
-                             ItemsSource="{Binding RawPacketEntries,Mode=OneWay}"
-                             ScrollViewer.CanContentScroll="True"
-                             VirtualizingPanel.ScrollUnit="Pixel"
-                             SelectionMode="Extended"
-                             Background="{DynamicResource MahApps.Brushes.Control.Background}"
-                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                             FontFamily="Consolas"
-                             FontSize="11" />
-                </Grid>
-            </Border>
+
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Padding="10,4"
+                                Command="{Binding ClearRawFrameLogsCommand}"
+                                Content="清空" />
+
+                            <ListBox
+                                x:Name="RawPacketListBox"
+                                Grid.Row="2"
+                                Grid.ColumnSpan="3"
+                                Background="{DynamicResource MahApps.Brushes.Control.Background}"
+                                FontFamily="Consolas"
+                                FontSize="11"
+                                Foreground="{DynamicResource MahApps.Brushes.Text}"
+                                ItemsSource="{Binding RawPacketEntries, Mode=OneWay}"
+                                ScrollViewer.CanContentScroll="True"
+                                SelectionMode="Extended"
+                                VirtualizingPanel.ScrollUnit="Pixel" />
+                        </Grid>
+                    </Border>
+                </TabItem>
+            </TabControl>
+
+
+
+
+
+
         </Grid>
     </Grid>
 </UserControl>

@@ -645,7 +645,7 @@ namespace LLRPSdk
         }
 
         /// <summary>
-        /// 通用的 Transaction 日志记录辅助方法：在调用前后记录 XML
+        /// 通用的 Transaction 日志记录辅助方法：在调用前后记录 XML,记录LLRPMSG的入口函数
         /// </summary>
         private void LogTransaction(Message request, Message response, MSG_ERROR_MESSAGE error, string operationName, bool? isxml = null)
         {
