@@ -101,53 +101,79 @@
         <!--  日志内容区  -->
         <Grid Grid.Row="2">
 
-            <TabControl>
-                <TabItem Margin="2,0" Background="LightGray">
+            <TabControl Background="#FFEEEEEE">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}" />
+                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Control.Background}" />
+                        <Setter Property="Padding" Value="14,6" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Border
+                                        x:Name="HeaderBorder"
+                                        Margin="2,0"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        CornerRadius="4,4,0,0">
+                                        <ContentPresenter
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            ContentSource="Header"
+                                            RecognizesAccessKey="True" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="DodgerBlue" />
+                                            <Setter Property="Foreground" Value="White" />
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource MahApps.Brushes.Control.Background}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}" />
+                                            <Setter Property="FontWeight" Value="Normal" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
+                <TabItem>
                     <TabItem.Header>
                         <TextBlock>
                             <Run Text="📋 操作日志" />
-                            <Run
-                                FontSize="12"
-                                Foreground="DodgerBlue"
-                                Text="{Binding OperationEntries.Count, Mode=OneWay, StringFormat=(0)}" />
+                            <Run FontSize="12" Text="{Binding OperationEntries.Count, Mode=OneWay, StringFormat=(0)}" />
                         </TextBlock>
                     </TabItem.Header>
                     <!--  操作日志  -->
                     <Border
-                        Margin="0,0,0,12"
-                        Padding="12"
                         Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                         CornerRadius="4"
                         Visibility="{Binding ShowOperationLogs, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="8" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                FontWeight="SemiBold" />
+                           
 
                             <Button
                                 Grid.Row="0"
-                                Grid.Column="2"
-                                Padding="10,4"
+                                Grid.Column="1"
+                                Margin="2"
                                 Command="{Binding ClearOperationLogsCommand}"
-                                Content="清空" />
+                                Content="  清空  " />
 
                             <ListBox
                                 x:Name="OperationListBox"
-                                Grid.Row="2"
-                                Grid.ColumnSpan="3"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
                                 Background="{DynamicResource MahApps.Brushes.Control.Background}"
                                 FontFamily="Consolas"
                                 FontSize="11"
@@ -160,37 +186,26 @@
                     </Border>
 
                 </TabItem>
-                <TabItem Margin="2,0" Background="LightGray">
+                <TabItem>
                     <TabItem.Header>
-                        <TextBlock
-                           
-                            VerticalAlignment="Center">
-                            <TextBlock>
-                                <Run Text="📡 LLRP 消息日志" />
-                                <Run
-                                    FontSize="12"
-                                    Foreground="DodgerBlue"
-                                    Text="{Binding LlrpMessageEntries.Count, Mode=OneWay, StringFormat=(0)}" />
-                            </TextBlock>
+                        <TextBlock>
+                            <Run Text="📡 LLRP 消息日志" />
+                            <Run FontSize="12" Text="{Binding LlrpMessageEntries.Count, Mode=OneWay, StringFormat=(0)}" />
                         </TextBlock>
                     </TabItem.Header>
                     <!--  LLRP 消息日志  -->
                     <Border
                         Grid.Row="1"
-                        Margin="0,0,0,12"
-                        Padding="12"
                         Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                         CornerRadius="4"
                         Visibility="{Binding ShowLlrpMessageLogs, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="8" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
@@ -198,15 +213,15 @@
 
                             <Button
                                 Grid.Row="0"
-                                Grid.Column="2"
-                                Padding="10,4"
+                                Grid.Column="1"
+                                Margin="2"
                                 Command="{Binding ClearLlrpMessageLogsCommand}"
-                                Content="清空" />
+                                Content="  清空  " />
 
                             <ListBox
                                 x:Name="LlrpMessageListBox"
-                                Grid.Row="2"
-                                Grid.ColumnSpan="3"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
                                 Background="{DynamicResource MahApps.Brushes.Control.Background}"
                                 FontFamily="Consolas"
                                 FontSize="11"
@@ -219,34 +234,27 @@
                     </Border>
 
                 </TabItem>
-                <TabItem Margin="2,0" Background="LightGray" >
+                <TabItem>
                     <TabItem.Header>
-                        <TextBlock VerticalAlignment="Center">
-                            <TextBlock>
-                                <Run Text="🔧 原始报文收发" />
-                                <Run
-                                    FontSize="12"
-                                    Foreground="DodgerBlue"
-                                    Text="{Binding RawPacketEntries.Count, Mode=OneWay, StringFormat=(0)}" />
-                            </TextBlock>
+                        <TextBlock>
+                            <Run Text="🔧 原始报文收发" />
+                            <Run FontSize="12" Text="{Binding RawPacketEntries.Count, Mode=OneWay, StringFormat=(0)}" />
                         </TextBlock>
                     </TabItem.Header>
                     <!--  原始报文  -->
                     <Border
-                        Grid.Row="2"
-                        Padding="12"
                         Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                         CornerRadius="4"
                         Visibility="{Binding ShowRawFrameLogs, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="8" />
+                               
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                              
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
@@ -254,15 +262,15 @@
 
                             <Button
                                 Grid.Row="0"
-                                Grid.Column="2"
-                                Padding="10,4"
+                                Grid.Column="1"
+                                Margin="2"
                                 Command="{Binding ClearRawFrameLogsCommand}"
-                                Content="清空" />
+                                Content="  清空  " />
 
                             <ListBox
                                 x:Name="RawPacketListBox"
-                                Grid.Row="2"
-                                Grid.ColumnSpan="3"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
                                 Background="{DynamicResource MahApps.Brushes.Control.Background}"
                                 FontFamily="Consolas"
                                 FontSize="11"
