@@ -8,6 +8,7 @@ using LLRPSdk;
 using Serilog;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using FontAwesome.Sharp;
 
 namespace LLRPReaderUI_WPF.ViewModels;
 
@@ -72,14 +73,14 @@ public partial class MainWindowViewModel : ObservableObject
 
         NavigationItems =
         [
-            new NavigationItem { Title = "设备连接", Glyph = "\uE13D", ViewModel = deviceConnectionViewModel },
-            new NavigationItem { Title = "参数配置", Glyph = "\uE115", ViewModel = settingsViewModel },
-            new NavigationItem { Title = "GPIO 配置", Glyph = "\uE129", ViewModel = gpioViewModel },
-            new NavigationItem { Title = "寻卡配置", Glyph = "\uE1D3", ViewModel = inventoryConfigViewModel },
-            new NavigationItem { Title = "盘点操作", Glyph = "\uE140", ViewModel = inventoryViewModel },
-            new NavigationItem { Title = "读写操作", Glyph = "\uE1DF", ViewModel = readWriteViewModel },
-            new NavigationItem { Title = "高级标签操作", Glyph = "\uE1FC", ViewModel = advancedTagOpsViewModel },
-            new NavigationItem { Title = "日志", Glyph = "\uE121", ViewModel = logViewModel }
+            new NavigationItem { Title = "设备连接", Icon = IconChar.PlugCircleBolt, ViewModel = deviceConnectionViewModel },
+            new NavigationItem { Title = "参数配置", Icon = IconChar.Sliders, ViewModel = settingsViewModel },
+            new NavigationItem { Title = "GPIO 配置", Icon = IconChar.Microchip, ViewModel = gpioViewModel },
+            new NavigationItem { Title = "寻卡配置", Icon = IconChar.ScrewdriverWrench, ViewModel = inventoryConfigViewModel },
+            new NavigationItem { Title = "盘点操作", Icon = IconChar.Tags, ViewModel = inventoryViewModel },
+            new NavigationItem { Title = "读写操作", Icon = IconChar.PenToSquare, ViewModel = readWriteViewModel },
+            new NavigationItem { Title = "高级标签操作", Icon = IconChar.Flask, ViewModel = advancedTagOpsViewModel },
+            new NavigationItem { Title = "日志", Icon = IconChar.ClipboardList, ViewModel = logViewModel }
         ];
 
         WeakReferenceMessenger.Default.Register<MainWindowViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
