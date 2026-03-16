@@ -109,22 +109,25 @@
                         SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:NavigationItem}">
-                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" >
-                                    <fa:IconBlock
-                                       
-                                        Margin="0"
-                                        Padding="0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}"
-                                        Icon="{Binding Icon}"
-                                        IconFont="Auto"
-                                        TextAlignment="Center" />
+                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border
+                                        Width="30"
+                                        Height="30"
+                                        Background="#0D000000"
+                                        CornerRadius="15">
+                                        <fa:IconBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Foreground="{Binding IconBrush}"
+                                            Icon="{Binding Icon}"
+                                            IconFont="Auto"
+                                            TextAlignment="Center" />
+                                    </Border>
                                     <Label
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
                                         Content="{Binding Title}"
-                                         />
+                                        />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -146,7 +149,6 @@
             <StatusBar>
                 <TextBlock Margin="0,0,12,0" Text="{Binding DeviceStatusText}" />
                 <TextBlock Margin="0,0,12,0" Text="{Binding InventoryStatusText}" />
-                <TextBlock Margin="0,0,12,0" Text="{Binding TemperatureStatusText}" />
                 <TextBlock Margin="0,0,12,0" Text="{Binding AntennaStatusText}" />
                 <TextBlock Margin="0,0,12,0" Text="{Binding GpiStatusText}" />
                 <TextBlock Margin="0,0,12,0" Text="{Binding GpoStatusText}" />

@@ -127,7 +127,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         Width="auto"
-                        Binding="{Binding ReceiveTime, StringFormat=yy/MM/dd HH:mm:ss.fff}"
+                        Binding="{Binding ReceiveTime, StringFormat=MM/dd HH:mm:ss.fff}"
                         Header="接收时间" />
                     <DataGridTextColumn
                         Width="*"

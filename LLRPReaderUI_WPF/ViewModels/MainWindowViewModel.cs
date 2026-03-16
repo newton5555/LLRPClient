@@ -9,6 +9,7 @@ using Serilog;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using FontAwesome.Sharp;
+using System.Windows.Media;
 
 namespace LLRPReaderUI_WPF.ViewModels;
 
@@ -73,14 +74,14 @@ public partial class MainWindowViewModel : ObservableObject
 
         NavigationItems =
         [
-            new NavigationItem { Title = "设备连接", Icon = IconChar.PlugCircleBolt, ViewModel = deviceConnectionViewModel },
-            new NavigationItem { Title = "参数配置", Icon = IconChar.Sliders, ViewModel = settingsViewModel },
-            new NavigationItem { Title = "GPIO 配置", Icon = IconChar.Microchip, ViewModel = gpioViewModel },
-            new NavigationItem { Title = "寻卡配置", Icon = IconChar.ScrewdriverWrench, ViewModel = inventoryConfigViewModel },
-            new NavigationItem { Title = "盘点操作", Icon = IconChar.Tags, ViewModel = inventoryViewModel },
-            new NavigationItem { Title = "读写操作", Icon = IconChar.PenToSquare, ViewModel = readWriteViewModel },
-            new NavigationItem { Title = "高级标签操作", Icon = IconChar.Flask, ViewModel = advancedTagOpsViewModel },
-            new NavigationItem { Title = "日志", Icon = IconChar.ClipboardList, ViewModel = logViewModel }
+            new NavigationItem { Title = "设备连接", Icon = IconChar.PlugCircleBolt, IconBrush = CreateBrush("#0EA5E9"), ViewModel = deviceConnectionViewModel },
+            new NavigationItem { Title = "参数配置", Icon = IconChar.Sliders, IconBrush = CreateBrush("#8B5CF6"), ViewModel = settingsViewModel },
+            new NavigationItem { Title = "GPIO 配置", Icon = IconChar.Microchip, IconBrush = CreateBrush("#F59E0B"), ViewModel = gpioViewModel },
+            new NavigationItem { Title = "寻卡配置", Icon = IconChar.ScrewdriverWrench, IconBrush = CreateBrush("#14B8A6"), ViewModel = inventoryConfigViewModel },
+            new NavigationItem { Title = "盘点操作", Icon = IconChar.Tags, IconBrush = CreateBrush("#10B981"), ViewModel = inventoryViewModel },
+            new NavigationItem { Title = "读写操作", Icon = IconChar.PenToSquare, IconBrush = CreateBrush("#F97316"), ViewModel = readWriteViewModel },
+            new NavigationItem { Title = "高级标签操作", Icon = IconChar.Flask, IconBrush = CreateBrush("#EF4444"), ViewModel = advancedTagOpsViewModel },
+            new NavigationItem { Title = "日志", Icon = IconChar.ClipboardList, IconBrush = CreateBrush("#6366F1"), ViewModel = logViewModel }
         ];
 
         WeakReferenceMessenger.Default.Register<MainWindowViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
@@ -215,5 +216,10 @@ public partial class MainWindowViewModel : ObservableObject
         return string.IsNullOrWhiteSpace(assemblyVersion)
             ? appName
             : $"{appName} v{assemblyVersion}";
+    }
+
+    private static Brush CreateBrush(string hex)
+    {
+        return new BrushConverter().ConvertFromString(hex) as Brush ?? Brushes.DodgerBlue;
     }
 }
