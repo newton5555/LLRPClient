@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$fixedProjectRoot = "F:\Projects\LLRP\LlrpSDK-参考OctaneSdk\LLRPReaderUI_WPF"
+$fixedProjectRoot = "F:\Projects\LLRP\LLRPClient\LLRPReaderUI_WPF"
 if (-not (Test-Path $fixedProjectRoot)) {
     throw "Fixed project path not found: $fixedProjectRoot"
 }
