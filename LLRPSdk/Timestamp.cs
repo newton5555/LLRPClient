@@ -62,11 +62,11 @@ namespace LLRPSdk
     /// Utility that outputs the ImpinjTimestamp data in local time format.
     /// </summary>
     public DateTime LocalDateTime => this.FromUtc(this.Utc).ToLocalTime();
-
-    /// <summary>
-    /// Conversion utility that outputs the ImpinjTimestamp data as a string.
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString() => this.Utc.ToString();
+    public DateTime UTCDateTime => this.FromUtc(this.Utc);
+        /// <summary>
+        /// Conversion utility that outputs the ImpinjTimestamp data as a string.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() => this.Utc.ToString();
   }
 }

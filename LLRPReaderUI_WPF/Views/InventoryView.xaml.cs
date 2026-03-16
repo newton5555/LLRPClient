@@ -28,7 +28,7 @@ public partial class InventoryView : UserControl
     {
         var lines = GetSelectedRows()
             .Select(row =>
-                $"{row.ReceiveTime:yyyy-MM-dd HH:mm:ss.fff}\t{row.Epc}\t{row.Antenna}\t{row.ChannelMhz}\t{row.Rssi}\t{row.SeenCount}\t{row.AttachedData}")
+                $"{row.ReceiveTime:yyyy-MM-dd HH:mm:ss.fff}\t{row.Epc}\t{row.Antenna}\t{row.ChannelMhz}\t{row.Rssi}\t{row.SeenCount}\t{row.Pc}\t{row.Crc}\t{row.FirstSeenTimestampUtc}\t{row.LastSeenTimestampUtc}\t{row.AttachedData}")
             .ToList();
 
         if (lines.Count == 0)

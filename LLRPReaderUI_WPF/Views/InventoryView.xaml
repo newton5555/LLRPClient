@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+    xmlns:helpers="clr-namespace:LLRPReaderUI_WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:viewmodels="clr-namespace:LLRPReaderUI_WPF.ViewModels"
@@ -11,12 +12,18 @@
     d:Height="600"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <helpers:BindingProxy x:Key="ViewModelProxy" Data="{Binding}" />
         <x:Array x:Key="DesignReceivedTags" Type="{x:Type viewmodels:InventoryTagItemViewModel}">
             <viewmodels:InventoryTagItemViewModel
                 Antenna="1"
                 AttachedData="E28011712000013FADFC09A0"
                 ChannelMhz="920.625"
+                Crc="0x1A2B"
                 Epc="E20034120123456789012345"
+                FirstSeenTimestampUtc="2026-03-02 02:12:30.100Z"
+                LastSeenTimestampUtc="2026-03-02 02:12:30.123Z"
+                Pc="0x3000"
                 ReceiveTime="2026-03-02T10:12:30.123"
                 Rssi="-45.2"
                 SeenCount="3" />
@@ -24,7 +31,11 @@
                 Antenna="2"
                 AttachedData="E280117120001410AE2209A0"
                 ChannelMhz="921.125"
+                Crc="0x1A3C"
                 Epc="E2801170000002084F2A1BCD"
+                FirstSeenTimestampUtc="2026-03-02 02:12:31.000Z"
+                LastSeenTimestampUtc="2026-03-02 02:12:31.008Z"
+                Pc="0x3400"
                 ReceiveTime="2026-03-02T10:12:31.008"
                 Rssi="-51.7"
                 SeenCount="1" />
@@ -32,7 +43,11 @@
                 Antenna="4"
                 AttachedData="E280110C20007A91BCC50A11"
                 ChannelMhz="922.375"
+                Crc="0x2B4D"
                 Epc="300833B2DDD9014000000001"
+                FirstSeenTimestampUtc="2026-03-02 02:12:31.500Z"
+                LastSeenTimestampUtc="2026-03-02 02:12:31.556Z"
+                Pc="0x3800"
                 ReceiveTime="2026-03-02T10:12:31.556"
                 Rssi="-60.0"
                 SeenCount="8" />
@@ -136,22 +151,47 @@
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding Antenna}"
-                        Header="天线" />
+                        Header="天线" 
+                         Visibility="{Binding Data.ShowAntennaPortNumberColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <DataGridTextColumn
                         Width="auto"
+                         Visibility="{Binding Data.ShowChannelColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Binding="{Binding ChannelMhz}"
-                        Header="信道(MHz)" />
+                        Header="频率(MHz)" />
                     <DataGridTextColumn
                         Width="auto"
+                         Visibility="{Binding Data.ShowPeakRssiColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Binding="{Binding Rssi}"
                         Header="RSSI(dBm)" />
                     <DataGridTextColumn
                         Width="auto"
+                         Visibility="{Binding Data.ShowSeenCountColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Binding="{Binding SeenCount}"
                         Header="SeenCount" />
                     <DataGridTextColumn
+                        Width="auto"
+                        Binding="{Binding Pc}"
+                        Header="PC"
+                        Visibility="{Binding Data.ShowPcColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <DataGridTextColumn
+                        Width="auto"
+                        Binding="{Binding Crc}"
+                        Header="CRC"
+                        Visibility="{Binding Data.ShowCrcColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <DataGridTextColumn
+                        Width="180"
+                        Binding="{Binding FirstSeenTimestampUtc}"
+                        Header="FirstSeenTimestampUTC"
+                        Visibility="{Binding Data.ShowFirstSeenTimestampUtcColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <DataGridTextColumn
+                        Width="180"
+                        Binding="{Binding LastSeenTimestampUtc}"
+                        Header="LastSeenTimestampUTC"
+                        Visibility="{Binding Data.ShowLastSeenTimestampUtcColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <DataGridTextColumn
                         Width="220"
                         Binding="{Binding AttachedData}"
+                         Visibility="{Binding Data.AttachedDataEnabled, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Header="附加数据" />
                 </DataGrid.Columns>
             </DataGrid>

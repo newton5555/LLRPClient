@@ -21,23 +21,6 @@ public partial class InventoryViewModel : ObservableObject
     private readonly HashSet<string> uniqueEpcs = new(StringComparer.OrdinalIgnoreCase);
     private DateTime manualPullAcceptUntilUtc = DateTime.MinValue;
 
-    public InventoryViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore)
-    {
-        this.reader = reader;
-        this.logs = logs;
-        this.settingsStore = settingsStore;
-        this.reader.TagsReported += OnTagsReported;
-        this.reader.ReaderStopped += OnReaderStopped;
-        WeakReferenceMessenger.Default.Register<InventoryViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
-        {
-            r.OnConnectionStateChanged(m.Value);
-        });
-        WeakReferenceMessenger.Default.Register<InventoryViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
-        {
-            r.OnStatusUpdateRequested(m.Value);
-        });
-    }
-
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StartInventoryCommand))]
     [NotifyCanExecuteChangedFor(nameof(StopInventoryCommand))]
@@ -64,6 +47,49 @@ public partial class InventoryViewModel : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ManualPullBufferedReportsCommand))]
     private bool isManualPullAvailable;
+
+    [ObservableProperty]
+    private bool showPcColumn;
+
+    [ObservableProperty]
+    private bool showCrcColumn;
+
+    [ObservableProperty]
+    private bool showFirstSeenTimestampUtcColumn;
+
+    [ObservableProperty]
+    private bool showLastSeenTimestampUtcColumn;
+
+    [ObservableProperty]
+    private bool showAntennaPortNumberColumn;
+
+    [ObservableProperty]
+    private bool showChannelColumn;
+
+    [ObservableProperty]
+    private bool showPeakRssiColumn;
+
+    [ObservableProperty]
+    private bool showSeenCountColumn;
+
+    public InventoryViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore)
+    {
+        this.reader = reader;
+        this.logs = logs;
+        this.settingsStore = settingsStore;
+        this.reader.TagsReported += OnTagsReported;
+        this.reader.ReaderStopped += OnReaderStopped;
+        WeakReferenceMessenger.Default.Register<InventoryViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
+        {
+            r.OnConnectionStateChanged(m.Value);
+        });
+        WeakReferenceMessenger.Default.Register<InventoryViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
+        {
+            r.OnStatusUpdateRequested(m.Value);
+        });
+
+        RefreshReportColumnVisibility();
+    }
 
     private bool CanStartInventory() => !IsRunning;
 
@@ -211,6 +237,10 @@ public partial class InventoryViewModel : ObservableObject
                     ChannelMhz = tag.IsChannelInMhzPresent ? tag.ChannelInMhz.ToString("F3") : "-",
                     Rssi = tag.IsPeakRssiPresent ? tag.PeakRssi.ToString("F1") : "-",
                     SeenCount = tag.IsSeenCountPresent ? tag.TagSeenCount.ToString() : "-",
+                    Pc = tag.IsPcBitsPresent ? $"0x{tag.PcBits:X4}" : "-",
+                    Crc = tag.IsCrcPresent ? $"0x{tag.Crc:X4}" : "-",
+                    FirstSeenTimestampUtc = FormatUtcTimestamp(tag.IsFirstSeenTimePresent, tag.FirstSeenTime),
+                    LastSeenTimestampUtc = FormatUtcTimestamp(tag.IsLastSeenTimePresent, tag.LastSeenTime),
                     AttachedData = attachedData
                 });
             }
@@ -246,11 +276,13 @@ public partial class InventoryViewModel : ObservableObject
                 InventoryState = "请先连接设备";
                 AttachedDataEnabled = false;
                 IsManualPullAvailable = false;
+                RefreshReportColumnVisibility();
                 return;
             }
 
             RefreshAttachedDataEnabled();
             RefreshManualPullAvailability();
+            RefreshReportColumnVisibility();
             if (!IsRunning)
             {
                 InventoryState = "已连接，待开始";
@@ -263,6 +295,7 @@ public partial class InventoryViewModel : ObservableObject
         if (!reader.IsConnected)
         {
             AttachedDataEnabled = false;
+            RefreshReportColumnVisibility();
             return;
         }
 
@@ -272,6 +305,7 @@ public partial class InventoryViewModel : ObservableObject
         {
             RefreshAttachedDataEnabled();
             RefreshManualPullAvailability();
+            RefreshReportColumnVisibility();
         }
     }
 
@@ -302,6 +336,50 @@ public partial class InventoryViewModel : ObservableObject
 
         IsManualPullAvailable = false;
     }
+
+    private void RefreshReportColumnVisibility()
+    {
+        if (settingsStore.TryGetSnapshot(out var settings) && settings?.Report is not null)
+        {
+            ShowPcColumn = settings.Report.IncludePcBits;
+            ShowCrcColumn = settings.Report.IncludeCrc;
+            ShowFirstSeenTimestampUtcColumn = settings.Report.IncludeFirstSeenTime;
+            ShowLastSeenTimestampUtcColumn = settings.Report.IncludeLastSeenTime;
+            ShowAntennaPortNumberColumn = settings.Report.IncludeAntennaPortNumber;
+            ShowChannelColumn = settings.Report.IncludeChannel;
+            ShowPeakRssiColumn=settings.Report.IncludePeakRssi;
+            ShowSeenCountColumn=settings.Report.IncludeSeenCount;
+            return;
+        }
+
+        ShowPcColumn = false;
+        ShowCrcColumn = false;
+        ShowFirstSeenTimestampUtcColumn = false;
+        ShowLastSeenTimestampUtcColumn = false;
+
+        ShowAntennaPortNumberColumn = false;
+        ShowChannelColumn = false;
+        ShowPeakRssiColumn = false;
+        ShowSeenCountColumn = false;
+    }
+
+    private static string FormatUtcTimestamp(bool isPresent, Timestamp? timestamp)
+    {
+        if (!isPresent || timestamp is null)
+        {
+            return "-";
+        }
+
+        try
+        {
+            var utcDateTime = timestamp.UTCDateTime;
+            return utcDateTime.ToString("yy-MM-dd HH:mm:ss.fff");
+        }
+        catch
+        {
+            return timestamp.Utc.ToString();
+        }
+    }
 }
 
 public class InventoryTagItemViewModel
@@ -312,5 +390,9 @@ public class InventoryTagItemViewModel
     public string ChannelMhz { get; set; } = "-";
     public string Rssi { get; set; } = "-";
     public string SeenCount { get; set; } = "-";
+    public string Pc { get; set; } = "-";
+    public string Crc { get; set; } = "-";
+    public string FirstSeenTimestampUtc { get; set; } = "-";
+    public string LastSeenTimestampUtc { get; set; } = "-";
     public string AttachedData { get; set; } = "-";
 }
