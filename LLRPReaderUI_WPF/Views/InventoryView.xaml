@@ -67,7 +67,7 @@
                 Width="120"
                 Height="32"
                 Command="{Binding StartInventoryCommand}"
-                Style="{DynamicResource MahApps.Styles.Button.Accent}">
+                Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="Play" IconFont="Auto" />
                     <TextBlock Text="开始寻卡" />
@@ -77,7 +77,8 @@
                 Width="120"
                 Height="32"
                 Margin="10,0,0,0"
-                Command="{Binding StopInventoryCommand}">
+                Command="{Binding StopInventoryCommand}"
+                Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconDangerBrush}" Icon="Stop" IconFont="Auto" />
                     <TextBlock Text="停止寻卡" />
