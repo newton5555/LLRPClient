@@ -7,8 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\rfid-icon.ico</ApplicationIcon>
-    <VersionPrefix>1.0.2</VersionPrefix>
-    <VersionSuffix>Test-260316</VersionSuffix>
+    <VersionPrefix>1.0.3</VersionPrefix>
+    <VersionSuffix>Alpha-260317</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

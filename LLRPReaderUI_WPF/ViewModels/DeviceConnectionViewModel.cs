@@ -53,11 +53,37 @@ public partial class DeviceConnectionViewModel : ObservableObject
     [ObservableProperty]
     private string connectionState = "未连接";
 
+    [ObservableProperty]
+    private bool isBusy;
+
     public ObservableCollection<string> RecentReaderEndpoints { get; } = new();
 
     partial void OnIsConnectedChanged(bool value)
     {
         WeakReferenceMessenger.Default.Send(new ConnectionStateChangedMessage(value));
+
+        // Refresh command CanExecute when connection state changes
+        try
+        {
+            ConnectCommand?.NotifyCanExecuteChanged();
+        }
+        catch { }
+
+        try
+        {
+            DisconnectCommand?.NotifyCanExecuteChanged();
+        }
+        catch { }
+    }
+
+    partial void OnIsBusyChanged(bool value)
+    {
+        //WeakReferenceMessenger.Default.Send(new LLRPReaderUI_WPF.Messages.BusyStateChangedMessage(value, ConnectionState));
+    }
+
+    partial void OnConnectionStateChanged(string value)
+    {
+        WeakReferenceMessenger.Default.Send(new LLRPReaderUI_WPF.Messages.BusyStateChangedMessage(IsBusy, value));
     }
 
     public FeatureItemCollection FeatureSetItems { get; } =
@@ -89,11 +115,12 @@ public partial class DeviceConnectionViewModel : ObservableObject
         new("RfModes", "-")
     ];
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanConnect))]
     private void Connect()
     {
         try
         {
+            IsBusy = true;
             var endpoint = ReaderEndpoint.Trim();
             if (string.IsNullOrWhiteSpace(endpoint))
             {
@@ -127,9 +154,15 @@ public partial class DeviceConnectionViewModel : ObservableObject
         {
             reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
             IsConnected = false;
+            IsBusy = false;
             ConnectionState = $"连接失败：{ex.Message}";
             logs.LogOperation($"连接失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
+    }
+
+    private bool CanConnect()
+    {
+        return !IsConnected;
     }
 
     private void OnConnectAsyncComplete(LlrpReader _, ConnectAsyncResult result, string errorMessage)
@@ -137,6 +170,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
         Application.Current.Dispatcher.Invoke(() =>
         {
             reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
+            IsBusy = false;
 
             if (result == ConnectAsyncResult.Success && reader.IsConnected)
             {
@@ -168,7 +202,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
 
                 return;
             }
-
+            
             IsConnected = false;
             ConnectionState = $"连接失败：{errorMessage}";
             logs.LogOperation($"连接失败：{errorMessage}", Microsoft.Extensions.Logging.LogLevel.Warning);
@@ -202,7 +236,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanDisconnect))]
     private void Disconnect()
     {
         try
@@ -218,9 +252,15 @@ public partial class DeviceConnectionViewModel : ObservableObject
             settingsStore.Clear();
             statusStore.Clear();
             IsConnected = false;
+            IsBusy = false;
             ConnectionState = "未连接";
             logs.LogOperation("设备断开连接");
         }
+    }
+
+    private bool CanDisconnect()
+    {
+        return IsConnected;
     }
 
     private static (string Address, int? Port) ParseEndpoint(string endpoint)

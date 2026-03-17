@@ -151,7 +151,7 @@
                                 Width="120"
                                 Content="读取内存"
                                 Command="{Binding ReadMemoryCommand}"
-                                Style="{DynamicResource MahApps.Styles.Button.Accent}" />
+                                 />
                         <Button Height="36"
                                 Width="120"
                                 Margin="10,0,0,0"

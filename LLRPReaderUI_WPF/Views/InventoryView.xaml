@@ -69,7 +69,13 @@
                 Command="{Binding StartInventoryCommand}"
                 Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="Play" IconFont="Auto" />
+                    <fa:IconBlock
+                        Width="14"
+                        Height="14"
+                        Margin="0,0,6,0"
+                        Foreground="{StaticResource IconSuccessBrush}"
+                        Icon="Play"
+                        IconFont="Auto" />
                     <TextBlock Text="开始寻卡" />
                 </StackPanel>
             </Button>
@@ -77,10 +83,15 @@
                 Width="120"
                 Height="32"
                 Margin="10,0,0,0"
-                Command="{Binding StopInventoryCommand}"
-               >
+                Command="{Binding StopInventoryCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconDangerBrush}" Icon="Stop" IconFont="Auto" />
+                    <fa:IconBlock
+                        Width="14"
+                        Height="14"
+                        Margin="0,0,6,0"
+                        Foreground="{StaticResource IconDangerBrush}"
+                        Icon="Stop"
+                        IconFont="Auto" />
                     <TextBlock Text="停止寻卡" />
                 </StackPanel>
             </Button>
@@ -90,7 +101,13 @@
                 Margin="10,0,0,0"
                 Command="{Binding ManualPullBufferedReportsCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Rotate" IconFont="Auto" />
+                    <fa:IconBlock
+                        Width="14"
+                        Height="14"
+                        Margin="0,0,6,0"
+                        Foreground="{StaticResource IconInfoBrush}"
+                        Icon="Rotate"
+                        IconFont="Auto" />
                     <TextBlock Text="手动拉缓存" />
                 </StackPanel>
             </Button>
@@ -100,7 +117,13 @@
                 Margin="10,0,0,0"
                 Command="{Binding ClearReceivedDataCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconWarningBrush}" Icon="TrashCan" IconFont="Auto" />
+                    <fa:IconBlock
+                        Width="14"
+                        Height="14"
+                        Margin="0,0,6,0"
+                        Foreground="{StaticResource IconWarningBrush}"
+                        Icon="TrashCan"
+                        IconFont="Auto" />
                     <TextBlock Text="清空数据" />
                 </StackPanel>
             </Button>
@@ -116,9 +139,7 @@
             <TextBlock Text="{Binding UniqueTagCount, StringFormat=唯一 EPC: {0}}" />
         </StackPanel>
 
-        <Border
-            Grid.Row="4"
-            Style="{StaticResource CardBorderStyle}">
+        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}">
             <DataGrid
                 x:Name="InventoryDataGrid"
                 d:ItemsSource="{StaticResource ResourceKey=DesignReceivedTags}"
@@ -132,6 +153,13 @@
                 PreviewKeyDown="InventoryDataGrid_OnPreviewKeyDown"
                 SelectionMode="Extended"
                 SelectionUnit="FullRow">
+               
+                <DataGrid.CellStyle>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="DataGridCell">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                    </Style>
+                </DataGrid.CellStyle>
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Click="CopyEpcMenuItem_OnClick" Header="复制 EPC" />
@@ -141,10 +169,12 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
+
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding ReceiveTime, StringFormat=MM/dd HH:mm:ss.fff}"
-                        Header="接收时间" />
+                        Header="接收时间" >
+                    </DataGridTextColumn>
                     <DataGridTextColumn
                         Width="*"
                         Binding="{Binding Epc}"
@@ -152,23 +182,23 @@
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding Antenna}"
-                        Header="天线" 
-                         Visibility="{Binding Data.ShowAntennaPortNumberColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        Header="天线"
+                        Visibility="{Binding Data.ShowAntennaPortNumberColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
-                         Visibility="{Binding Data.ShowChannelColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Binding="{Binding ChannelMhz}"
-                        Header="频率(MHz)" />
+                        Header="频率(MHz)"
+                        Visibility="{Binding Data.ShowChannelColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
-                         Visibility="{Binding Data.ShowPeakRssiColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Binding="{Binding Rssi}"
-                        Header="RSSI(dBm)" />
+                        Header="RSSI(dBm)"
+                        Visibility="{Binding Data.ShowPeakRssiColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
-                         Visibility="{Binding Data.ShowSeenCountColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Binding="{Binding SeenCount}"
-                        Header="次数" />
+                        Header="次数"
+                        Visibility="{Binding Data.ShowSeenCountColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding Pc}"
@@ -192,8 +222,8 @@
                     <DataGridTextColumn
                         Width="220"
                         Binding="{Binding AttachedData}"
-                         Visibility="{Binding Data.AttachedDataEnabled, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Header="附加数据" />
+                        Header="附加数据"
+                        Visibility="{Binding Data.AttachedDataEnabled, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

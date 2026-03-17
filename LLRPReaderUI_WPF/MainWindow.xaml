@@ -15,7 +15,6 @@
     d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel,
                                      IsDesignTimeCreatable=False}"
     GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
-   
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>
@@ -54,7 +53,10 @@
             <Setter Property="CornerRadius" Value="10" />
         </Style>
 
-        <Style x:Key="DeviceStatusChipStyle" TargetType="Border" BasedOn="{StaticResource StatusChipStyle}">
+        <Style
+            x:Key="DeviceStatusChipStyle"
+            BasedOn="{StaticResource StatusChipStyle}"
+            TargetType="Border">
             <Setter Property="Background" Value="#FEE2E2" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsDeviceConnected}" Value="True">
@@ -63,7 +65,10 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="InventoryStatusChipStyle" TargetType="Border" BasedOn="{StaticResource StatusChipStyle}">
+        <Style
+            x:Key="InventoryStatusChipStyle"
+            BasedOn="{StaticResource StatusChipStyle}"
+            TargetType="Border">
             <Setter Property="Background" Value="#E2E8F0" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsInventoryRunning}" Value="True">
@@ -79,7 +84,10 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
-        <Style x:Key="DeviceStatusTextStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+        <Style
+            x:Key="DeviceStatusTextStyle"
+            BasedOn="{StaticResource StatusTextStyle}"
+            TargetType="TextBlock">
             <Setter Property="Foreground" Value="#991B1B" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsDeviceConnected}" Value="True">
@@ -88,7 +96,10 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="InventoryStatusTextStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+        <Style
+            x:Key="InventoryStatusTextStyle"
+            BasedOn="{StaticResource StatusTextStyle}"
+            TargetType="TextBlock">
             <Setter Property="Foreground" Value="#475569" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsInventoryRunning}" Value="True">
@@ -126,10 +137,22 @@
                     <Setter Property="Fill" Value="#3B82F6" />
                     <DataTrigger.EnterActions>
                         <BeginStoryboard x:Name="InventoryPulseStoryboard">
-                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.45" To="1" Duration="0:0:0.8" />
-                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="0.9" To="1.25" Duration="0:0:0.8" />
-                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="0.9" To="1.25" Duration="0:0:0.8" />
+                            <Storyboard AutoReverse="True" RepeatBehavior="Forever">
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.45"
+                                    To="1"
+                                    Duration="0:0:0.8" />
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                    From="0.9"
+                                    To="1.25"
+                                    Duration="0:0:0.8" />
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                    From="0.9"
+                                    To="1.25"
+                                    Duration="0:0:0.8" />
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -219,8 +242,7 @@
                                     <Label
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
-                                        Content="{Binding Title}"
-                                        />
+                                        Content="{Binding Title}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -268,5 +290,36 @@
                 </Border>
             </StatusBar>
         </Border>
+
+        <!--  Global modal overlay bound to MainWindowViewModel.IsGlobalBusy  -->
+        <Grid
+            d:Visibility="Collapsed"
+            Panel.ZIndex="100"
+            Background="#80000000"
+            Visibility="{Binding IsGlobalBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border
+                Width="420"
+                Padding="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{DynamicResource SurfaceBrush}"
+                CornerRadius="8">
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical">
+                    <ProgressBar
+                        Width="360"
+                        Height="14"
+                        IsIndeterminate="True" />
+                    <TextBlock
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource StatusTextStyle}"
+                        Text="{Binding BusyText}" />
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
+
 </mah:MetroWindow>
