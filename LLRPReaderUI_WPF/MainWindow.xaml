@@ -54,11 +54,90 @@
             <Setter Property="CornerRadius" Value="10" />
         </Style>
 
+        <Style x:Key="DeviceStatusChipStyle" TargetType="Border" BasedOn="{StaticResource StatusChipStyle}">
+            <Setter Property="Background" Value="#FEE2E2" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDeviceConnected}" Value="True">
+                    <Setter Property="Background" Value="#DCFCE7" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="InventoryStatusChipStyle" TargetType="Border" BasedOn="{StaticResource StatusChipStyle}">
+            <Setter Property="Background" Value="#E2E8F0" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsInventoryRunning}" Value="True">
+                    <Setter Property="Background" Value="#DBEAFE" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="StatusTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="#475569" />
             <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="DeviceStatusTextStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+            <Setter Property="Foreground" Value="#991B1B" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDeviceConnected}" Value="True">
+                    <Setter Property="Foreground" Value="#166534" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="InventoryStatusTextStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+            <Setter Property="Foreground" Value="#475569" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsInventoryRunning}" Value="True">
+                    <Setter Property="Foreground" Value="#1D4ED8" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DeviceStateDotStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Fill" Value="#EF4444" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDeviceConnected}" Value="True">
+                    <Setter Property="Fill" Value="#22C55E" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="InventoryStateDotStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Fill" Value="#94A3B8" />
+            <Setter Property="Opacity" Value="0.9" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsInventoryRunning}" Value="True">
+                    <Setter Property="Fill" Value="#3B82F6" />
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="InventoryPulseStoryboard">
+                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.45" To="1" Duration="0:0:0.8" />
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="0.9" To="1.25" Duration="0:0:0.8" />
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="0.9" To="1.25" Duration="0:0:0.8" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="InventoryPulseStoryboard" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <DataTemplate DataType="{x:Type vm:DeviceConnectionViewModel}">
@@ -163,11 +242,17 @@
             BorderBrush="#12000000"
             BorderThickness="0,1,0,0">
             <StatusBar Background="Transparent" BorderThickness="0">
-                <Border Style="{StaticResource StatusChipStyle}">
-                    <TextBlock Style="{StaticResource StatusTextStyle}" Text="{Binding DeviceStatusText}" />
+                <Border Style="{StaticResource DeviceStatusChipStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Style="{StaticResource DeviceStateDotStyle}" />
+                        <TextBlock Style="{StaticResource DeviceStatusTextStyle}" Text="{Binding DeviceStatusText}" />
+                    </StackPanel>
                 </Border>
-                <Border Style="{StaticResource StatusChipStyle}">
-                    <TextBlock Style="{StaticResource StatusTextStyle}" Text="{Binding InventoryStatusText}" />
+                <Border Style="{StaticResource InventoryStatusChipStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Style="{StaticResource InventoryStateDotStyle}" />
+                        <TextBlock Style="{StaticResource InventoryStatusTextStyle}" Text="{Binding InventoryStatusText}" />
+                    </StackPanel>
                 </Border>
                 <Border Style="{StaticResource StatusChipStyle}">
                     <TextBlock Style="{StaticResource StatusTextStyle}" Text="{Binding AntennaStatusText}" />

@@ -187,6 +187,7 @@
                     <TextBlock Grid.Row="0" Text="十六进制数据：" />
                     <TextBox Grid.Row="2" 
                              Height="100"
+                             VerticalContentAlignment="Top"
                              Text="{Binding ReadData, Mode=OneWay}" 
                              TextWrapping="Wrap"
                              VerticalScrollBarVisibility="Auto"

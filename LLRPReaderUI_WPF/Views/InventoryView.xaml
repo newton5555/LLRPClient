@@ -167,7 +167,7 @@
                         Width="auto"
                          Visibility="{Binding Data.ShowSeenCountColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}"
                         Binding="{Binding SeenCount}"
-                        Header="SeenCount" />
+                        Header="次数" />
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding Pc}"
@@ -181,12 +181,12 @@
                     <DataGridTextColumn
                         Width="180"
                         Binding="{Binding FirstSeenTimestampUtc}"
-                        Header="FirstSeenTimestampUTC"
+                        Header="FirstTimestamp"
                         Visibility="{Binding Data.ShowFirstSeenTimestampUtcColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="180"
                         Binding="{Binding LastSeenTimestampUtc}"
-                        Header="LastSeenTimestampUTC"
+                        Header="LastTimestamp"
                         Visibility="{Binding Data.ShowLastSeenTimestampUtcColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="220"

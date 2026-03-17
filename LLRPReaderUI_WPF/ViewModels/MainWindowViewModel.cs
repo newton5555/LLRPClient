@@ -33,7 +33,13 @@ public partial class MainWindowViewModel : ObservableObject
     private string deviceStatusText = "设备: 未连接";
 
     [ObservableProperty]
+    private bool isDeviceConnected;
+
+    [ObservableProperty]
     private string inventoryStatusText = "盘点: 未知";
+
+    [ObservableProperty]
+    private bool isInventoryRunning;
 
     //[ObservableProperty]
     //private string temperatureStatusText = "温度: --°C";
@@ -115,7 +121,9 @@ public partial class MainWindowViewModel : ObservableObject
         {
             statusStore.Clear();
             DeviceStatusText = "设备: 未连接";
+            IsDeviceConnected = false;
             InventoryStatusText = "盘点: 未知";
+            IsInventoryRunning = false;
             //TemperatureStatusText = "温度: --°C";
             AntennaStatusText = "天线: --";
             GpiStatusText = "GPI: --";
@@ -128,7 +136,9 @@ public partial class MainWindowViewModel : ObservableObject
         statusStore.Set(status);
         logs.LogOperation("已更新设备状态");
         DeviceStatusText = $"设备: {(status.IsConnected ? "已连接" : "未连接")}";
+        IsDeviceConnected = status.IsConnected;
         InventoryStatusText = $"盘点: {(status.IsSingulating ? "进行中" : "空闲")}";
+        IsInventoryRunning = status.IsSingulating;
         //TemperatureStatusText = $"温度: {status.TemperatureInCelsius}°C";
         IdentificationStatusText = $"MAC: {FormatIdentification(status.ReaderIdentity)}";
 
