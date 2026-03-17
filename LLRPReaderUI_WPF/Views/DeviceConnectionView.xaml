@@ -34,7 +34,7 @@
                 <Button Grid.Column="2"
                         Height="32"
                         Command="{Binding ConnectCommand}"
-                        Style="{DynamicResource MahApps.Styles.Button.Accent}">
+                        Style="{StaticResource FlatButtonPrimary}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="PlugCircleCheck" IconFont="Auto" />
                         <TextBlock Text="连接" />

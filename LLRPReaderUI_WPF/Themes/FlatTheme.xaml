@@ -24,6 +24,50 @@
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="Foreground" Value="#0F172A" />
     </Style>
+    
+    <!-- Card / surface -->
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="CardBorderBrush" Color="{StaticResource BorderColor}" />
+    
+    <!-- DataGrid brushes -->
+    <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#FFF4F9FF" />
+    <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="#1F2563EB" /> <!-- 12% primary -->
+    
+        <!-- Icon brushes (project-wide) -->
+        <SolidColorBrush x:Key="IconInfoBrush" Color="#0EA5E9" />
+        <SolidColorBrush x:Key="IconSuccessBrush" Color="#10B981" />
+        <SolidColorBrush x:Key="IconDangerBrush" Color="#EF4444" />
+        <SolidColorBrush x:Key="IconWarningBrush" Color="#F59E0B" />
+        <SolidColorBrush x:Key="IconAccentBrush" Color="#6366F1" />
+        <SolidColorBrush x:Key="IconTealBrush" Color="#14B8A6" />
+        <SolidColorBrush x:Key="IconVioletBrush" Color="#8B5CF6" />
+        <SolidColorBrush x:Key="IconSlateBrush" Color="#64748B" />
+
+        <!-- Status hint and card styles used across views -->
+        <Style x:Key="StatusHintTextStyle" TargetType="TextBlock" BasedOn="{StaticResource FlatTextBlock}">
+            <Setter Property="Margin" Value="4,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="CardBorderStyle" TargetType="Border">
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+    <!-- Heading / body text styles -->
+    <Style x:Key="HeadingText" TargetType="TextBlock" BasedOn="{StaticResource FlatTextBlock}">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    
+    <Style x:Key="BodyText" TargetType="TextBlock" BasedOn="{StaticResource FlatTextBlock}">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
 
     <!--  Base flat button style  -->
     <Style
@@ -47,7 +91,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="6"
+                        CornerRadius="1"
                         SnapsToDevicePixels="True">
                         <ContentPresenter
                             HorizontalAlignment="Center"

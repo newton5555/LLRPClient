@@ -13,55 +13,51 @@
 
             <Thickness x:Key="PagePadding">16</Thickness>
             <Thickness x:Key="SectionPadding">12</Thickness>
-            <SolidColorBrush x:Key="IconInfoBrush" Color="#0EA5E9" />
-            <SolidColorBrush x:Key="IconSuccessBrush" Color="#10B981" />
-            <SolidColorBrush x:Key="IconDangerBrush" Color="#EF4444" />
-            <SolidColorBrush x:Key="IconWarningBrush" Color="#F59E0B" />
-            <SolidColorBrush x:Key="IconAccentBrush" Color="#6366F1" />
-            <SolidColorBrush x:Key="IconTealBrush" Color="#14B8A6" />
-            <SolidColorBrush x:Key="IconVioletBrush" Color="#8B5CF6" />
-            <SolidColorBrush x:Key="IconSlateBrush" Color="#64748B" />
+            <!-- Icon brushes moved to Themes/FlatTheme.xaml -->
 
-            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                <Setter Property="MinHeight" Value="32" />
-                <Setter Property="Padding" Value="12,6" />
-                <Setter Property="Margin" Value="0" />
-                <Setter Property="HorizontalContentAlignment" Value="Center" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!-- Make flat theme the default for Buttons project-wide -->
+            <Style TargetType="Button" BasedOn="{StaticResource FlatButtonBase}" >
+                <Setter Property="BorderThickness" Value="0"/>
             </Style>
 
             <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                 <Setter Property="MinHeight" Value="32" />
                 <Setter Property="Padding" Value="8,4" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushCustom}" />
+                <Setter Property="Foreground" Value="#0F172A" />
             </Style>
 
             <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
                 <Setter Property="MinHeight" Value="32" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushCustom}" />
+                <Setter Property="Foreground" Value="#0F172A" />
             </Style>
 
 
             <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="RowBackground" Value="White" />
+                <Setter Property="RowBackground" Value="{DynamicResource SurfaceBrush}" />
                 <Setter Property="RowHeaderWidth" Value="0" />
                 <Setter Property="GridLinesVisibility" Value="Horizontal" />
                 <Setter Property="CanUserResizeRows" Value="False" />
-                <Setter Property="AlternatingRowBackground" Value="#F8FAFC" />
+                <Setter Property="AlternatingRowBackground" Value="{DynamicResource WindowBackgroundBrush}" />
                 <Setter Property="HeadersVisibility" Value="Column" />
-                <Setter Property="HorizontalGridLinesBrush" Value="#E6EBF2" />
+                <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BorderBrushCustom}" />
                 <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
                 <Setter Property="RowHeight" Value="36" />
             </Style>
 
             <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
-                <Setter Property="Background" Value="#F3F6F9" />
+                <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
                 <Setter Property="Foreground" Value="#334155" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Padding" Value="12,8" />
-                <Setter Property="BorderBrush" Value="#DCE3EB" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
                 <Setter Property="BorderThickness" Value="0,0,0,1" />
                 <Setter Property="HorizontalContentAlignment" Value="Left" />
                 <Setter Property="SeparatorBrush" Value="Transparent" />
@@ -72,10 +68,10 @@
                 <Setter Property="BorderThickness" Value="0" />
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#F4F9FF" />
+                        <Setter Property="Background" Value="{DynamicResource DataGridRowHoverBrush}" />
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="#DCEEFF" />
+                        <Setter Property="Background" Value="{DynamicResource DataGridRowSelectedBrush}" />
                         <Setter Property="Foreground" Value="#0F172A" />
                     </Trigger>
                 </Style.Triggers>
@@ -104,18 +100,7 @@
                 </Style.Triggers>
             </Style>
 
-            <Style x:Key="StatusHintTextStyle" TargetType="TextBlock">
-                <Setter Property="Margin" Value="4,0,0,0" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}" />
-                <Setter Property="TextWrapping" Value="Wrap" />
-            </Style>
-
-            <Style x:Key="CardBorderStyle" TargetType="Border">
-                <Setter Property="Padding" Value="12" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
-            </Style>
+            <!-- StatusHintTextStyle and CardBorderStyle moved to Themes/FlatTheme.xaml -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

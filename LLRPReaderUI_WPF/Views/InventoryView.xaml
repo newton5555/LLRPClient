@@ -78,7 +78,7 @@
                 Height="32"
                 Margin="10,0,0,0"
                 Command="{Binding StopInventoryCommand}"
-                Style="{StaticResource FlatButtonOutline}">
+               >
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconDangerBrush}" Icon="Stop" IconFont="Auto" />
                     <TextBlock Text="停止寻卡" />
