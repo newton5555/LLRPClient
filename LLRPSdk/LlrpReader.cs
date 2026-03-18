@@ -893,10 +893,13 @@ namespace LLRPSdk
         private void ResetToFactoryDefaults()
         {
             MSG_ERROR_MESSAGE msg_err;
-            MSG_SET_READER_CONFIG_RESPONSE rsp = this.reader != null ? this.reader.SET_READER_CONFIG(new MSG_SET_READER_CONFIG()
+            var req = new MSG_SET_READER_CONFIG()
             {
                 ResetToFactoryDefault = true
-            }, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before resetting to factory defaults.");
+            };
+            MSG_SET_READER_CONFIG_RESPONSE rsp = this.reader != null ? this.reader.SET_READER_CONFIG(req, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before resetting to factory defaults.");
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "RESET_TO_FACTORY_DEFAULTS");
             string str = "Reset to factory defaults";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -945,7 +948,10 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before getting tag reports.");
             MSG_ERROR_MESSAGE msg_err;
-            this.reader.GET_REPORT(new MSG_GET_REPORT(), out msg_err, this.MessageTimeout);
+            var req = new MSG_GET_REPORT();
+            this.reader.GET_REPORT(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志（请求已发送）
+            this.LogTransaction(req, null, msg_err, "GET_REPORT");
             if (msg_err != null)
                 throw new LLRPSdkException("Error getting buffered tag reports.");
         }
@@ -1097,10 +1103,13 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before deleting access spec.");
             MSG_ERROR_MESSAGE msg_err;
-            MSG_DELETE_ACCESSSPEC_RESPONSE rsp = this.reader.DELETE_ACCESSSPEC(new MSG_DELETE_ACCESSSPEC()
+            var req = new MSG_DELETE_ACCESSSPEC()
             {
                 AccessSpecID = id
-            }, out msg_err, this.MessageTimeout);
+            };
+            MSG_DELETE_ACCESSSPEC_RESPONSE rsp = this.reader.DELETE_ACCESSSPEC(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "DELETE_ACCESSSPEC");
             string str = "DELETE_ACCESSSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1475,10 +1484,13 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before enabling rospec.");
             MSG_ERROR_MESSAGE msg_err;
-            MSG_ENABLE_ROSPEC_RESPONSE rsp = this.reader.ENABLE_ROSPEC(new MSG_ENABLE_ROSPEC()
+            var req = new MSG_ENABLE_ROSPEC()
             {
                 ROSpecID = (uint)LlrpReader.RO_SPEC_ID
-            }, out msg_err, this.MessageTimeout);
+            };
+            MSG_ENABLE_ROSPEC_RESPONSE rsp = this.reader.ENABLE_ROSPEC(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "ENABLE_ROSPEC");
             string str = "ENABLE_ROSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1528,10 +1540,13 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before starting rospec.");
             MSG_ERROR_MESSAGE msg_err;
-            MSG_START_ROSPEC_RESPONSE rsp = this.reader.START_ROSPEC(new MSG_START_ROSPEC()
+            var req = new MSG_START_ROSPEC()
             {
                 ROSpecID = (uint)LlrpReader.RO_SPEC_ID
-            }, out msg_err, this.MessageTimeout);
+            };
+            MSG_START_ROSPEC_RESPONSE rsp = this.reader.START_ROSPEC(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "START_ROSPEC");
             string str = "START_ROSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1542,10 +1557,13 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before stopping rospec.");
             MSG_ERROR_MESSAGE msg_err;
-            MSG_STOP_ROSPEC_RESPONSE rsp = this.reader.STOP_ROSPEC(new MSG_STOP_ROSPEC()
+            var req = new MSG_STOP_ROSPEC()
             {
                 ROSpecID = (uint)LlrpReader.RO_SPEC_ID
-            }, out msg_err, this.MessageTimeout);
+            };
+            MSG_STOP_ROSPEC_RESPONSE rsp = this.reader.STOP_ROSPEC(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "STOP_ROSPEC");
             string str = "STOP_ROSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1557,6 +1575,8 @@ namespace LLRPSdk
                 throw new LLRPSdkException("You must connect to the reader before setting config.");
             MSG_ERROR_MESSAGE msg_err;
             MSG_SET_READER_CONFIG_RESPONSE rsp = this.reader.SET_READER_CONFIG(msg, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(msg, (Message)rsp, msg_err, "SET_READER_CONFIG");
             string str = "SET_READER_CONFIG";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1658,10 +1678,13 @@ namespace LLRPSdk
         private void DeleteRoSpecs()
         {
             MSG_ERROR_MESSAGE msg_err;
-            MSG_DELETE_ROSPEC_RESPONSE rsp = this.reader != null ? this.reader.DELETE_ROSPEC(new MSG_DELETE_ROSPEC()
+            var req = new MSG_DELETE_ROSPEC()
             {
                 ROSpecID = 0U
-            }, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before deleting rospecs.");
+            };
+            MSG_DELETE_ROSPEC_RESPONSE rsp = this.reader != null ? this.reader.DELETE_ROSPEC(req, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before deleting rospecs.");
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "DELETE_ROSPEC");
             string str = "DELETE_ROSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1699,7 +1722,10 @@ namespace LLRPSdk
         internal MSG_GET_ROSPECS_RESPONSE GetRoSpecs()
         {
             MSG_ERROR_MESSAGE msg_err;
-            MSG_GET_ROSPECS_RESPONSE rsp = this.reader != null ? this.reader.GET_ROSPECS(new MSG_GET_ROSPECS(), out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before getting rospecs.");
+            var req = new MSG_GET_ROSPECS();
+            MSG_GET_ROSPECS_RESPONSE rsp = this.reader != null ? this.reader.GET_ROSPECS(req, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before getting rospecs.");
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "GET_ROSPECS");
             string str = "GET_ROSPECS";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1709,7 +1735,10 @@ namespace LLRPSdk
         internal MSG_GET_ACCESSSPECS_RESPONSE GetAccessSpecs()
         {
             MSG_ERROR_MESSAGE msg_err;
-            MSG_GET_ACCESSSPECS_RESPONSE rsp = this.reader != null ? this.reader.GET_ACCESSSPECS(new MSG_GET_ACCESSSPECS(), out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before getting access specs.");
+            var req = new MSG_GET_ACCESSSPECS();
+            MSG_GET_ACCESSSPECS_RESPONSE rsp = this.reader != null ? this.reader.GET_ACCESSSPECS(req, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before getting access specs.");
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "GET_ACCESSSPECS");
             string str = "GET_ACCESSSPECS";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -1727,7 +1756,10 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before enabling events and reports.");
             MSG_ERROR_MESSAGE msg_err;
-            this.reader.ENABLE_EVENTS_AND_REPORTS(new MSG_ENABLE_EVENTS_AND_REPORTS(), out msg_err, this.MessageTimeout);
+            var req = new MSG_ENABLE_EVENTS_AND_REPORTS();
+            this.reader.ENABLE_EVENTS_AND_REPORTS(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志（响应通常为空）
+            this.LogTransaction(req, null, msg_err, "ENABLE_EVENTS_AND_REPORTS");
             if (msg_err != null)
                 throw new LLRPSdkException("Error enabling events and reports.");
         }
@@ -2093,10 +2125,13 @@ namespace LLRPSdk
         private void DeleteAccessSpecs()
         {
             MSG_ERROR_MESSAGE msg_err;
-            MSG_DELETE_ACCESSSPEC_RESPONSE rsp = this.reader != null ? this.reader.DELETE_ACCESSSPEC(new MSG_DELETE_ACCESSSPEC()
+            var req = new MSG_DELETE_ACCESSSPEC()
             {
                 AccessSpecID = 0U
-            }, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before deleting access specs.");
+            };
+            MSG_DELETE_ACCESSSPEC_RESPONSE rsp = this.reader != null ? this.reader.DELETE_ACCESSSPEC(req, out msg_err, this.MessageTimeout) : throw new LLRPSdkException("You must connect to the reader before deleting access specs.");
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "DELETE_ACCESSSPEC");
             string str = "DELETE_ACCESSSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -2107,10 +2142,13 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before disabling rospec.");
             MSG_ERROR_MESSAGE msg_err;
-            MSG_DISABLE_ROSPEC_RESPONSE rsp = this.reader.DISABLE_ROSPEC(new MSG_DISABLE_ROSPEC()
+            var req = new MSG_DISABLE_ROSPEC()
             {
                 ROSpecID = (uint)LlrpReader.RO_SPEC_ID
-            }, out msg_err, this.MessageTimeout);
+            };
+            MSG_DISABLE_ROSPEC_RESPONSE rsp = this.reader.DISABLE_ROSPEC(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "DISABLE_ROSPEC");
             string str = "DISABLE_ROSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -2272,10 +2310,13 @@ namespace LLRPSdk
             if (this.reader == null)
                 throw new LLRPSdkException("You must connect to the reader before enabling access spec.");
             MSG_ERROR_MESSAGE msg_err;
-            MSG_ENABLE_ACCESSSPEC_RESPONSE rsp = this.reader.ENABLE_ACCESSSPEC(new MSG_ENABLE_ACCESSSPEC()
+            var req = new MSG_ENABLE_ACCESSSPEC()
             {
                 AccessSpecID = id
-            }, out msg_err, this.MessageTimeout);
+            };
+            MSG_ENABLE_ACCESSSPEC_RESPONSE rsp = this.reader.ENABLE_ACCESSSPEC(req, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(req, (Message)rsp, msg_err, "ENABLE_ACCESSSPEC");
             string str = "ENABLE_ACCESSSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
@@ -2604,6 +2645,8 @@ namespace LLRPSdk
 
             MSG_ERROR_MESSAGE msg_err;
             MSG_ADD_ACCESSSPEC_RESPONSE rsp = this.reader.ADD_ACCESSSPEC(msg, out msg_err, this.MessageTimeout);
+            // 记录 Transaction 日志
+            this.LogTransaction(msg, (Message)rsp, msg_err, "ADD_ACCESSSPEC");
             string str = "ADD_ACCESSSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
