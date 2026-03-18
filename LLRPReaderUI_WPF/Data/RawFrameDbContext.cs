@@ -7,18 +7,22 @@ namespace LLRPReaderUI_WPF.Data
     {
         public RawFrameDbContext(DbContextOptions<RawFrameDbContext> options) : base(options)
         {
+            //Database.EnsureCreated();
         }
 
         public DbSet<RawFrameEntity> RawFrames { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<RawFrameEntity>(eb =>
             {
                 eb.HasKey(e => e.Id);
+                eb.Property(e => e.Id).ValueGeneratedOnAdd(); // ×ÔÔö³¤
                 eb.Property(e => e.Timestamp).IsRequired();
                 eb.Property(e => e.Direction).HasMaxLength(4).IsRequired();
                 eb.Property(e => e.Payload).IsRequired();
+                
             });
         }
     }

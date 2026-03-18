@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LLRPReaderUI_WPF.Data
 {
-    public class EfRawFrameRepository : IRawFrameRepository
+    public class RawFrameRepository : IRawFrameRepository
     {
         private readonly RawFrameDbContext _ctx;
 
-        public EfRawFrameRepository(RawFrameDbContext ctx)
+        public RawFrameRepository(RawFrameDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -28,7 +28,7 @@ namespace LLRPReaderUI_WPF.Data
                 _ctx.RawFrames.Add(entity);
                 await _ctx.SaveChangesAsync().ConfigureAwait(false);
             }
-            catch
+            catch(Exception ee)
             {
                 // swallow errors to avoid affecting UI
             }
