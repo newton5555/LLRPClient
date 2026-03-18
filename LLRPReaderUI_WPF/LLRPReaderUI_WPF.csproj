@@ -20,6 +20,10 @@
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
   
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
+  
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+  
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
     <PackageReference Include="Nager.Country" Version="4.4.0" />
