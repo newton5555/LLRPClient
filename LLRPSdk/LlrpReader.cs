@@ -212,11 +212,6 @@ namespace LLRPSdk
             this.keepaliveTimer.Elapsed += new ElapsedEventHandler(this.OnKeepaliveMissed);
         }
 
-   
-        [Obsolete("This property is no longer supported.", true)]
-        public int LogLevel { get; set; }
-
-
         ///<summary>
         /// The connection timeout in milliseconds.
         /// If a connection to the reader cannot be established in this time, an exception is thrown.
@@ -624,24 +619,30 @@ namespace LLRPSdk
 
         private void OnRawFrameReceivedInternal(byte[] raw)
         {
-            LlrpReader.RawFrameReceivedHandler rawFrameReceived = this.RawFrameReceived;
-            if (rawFrameReceived != null)
-                rawFrameReceived(this, raw);
+            //LlrpReader.RawFrameReceivedHandler rawFrameReceived = this.RawFrameReceived;
+            //if (rawFrameReceived != null)
+            //    rawFrameReceived(this, raw);
+
+            RawFrameReceived?.Invoke(this, raw);
         }
 
         private void OnRawFrameSentInternal(byte[] raw)
         {
-            LlrpReader.RawFrameSentHandler rawFrameSent = this.RawFrameSent;
-            if (rawFrameSent != null)
-                rawFrameSent(this, raw);
+            //LlrpReader.RawFrameSentHandler rawFrameSent = this.RawFrameSent;
+            //if (rawFrameSent != null)
+            //    rawFrameSent(this, raw);
+
+            RawFrameSent?.Invoke(this,raw);
         }
 
         private void LogLlrpMessage(string message)
         {
-            LlrpReader.LlrpMessageLoggedHandler llrpMessageLogged = this.LlrpMessageLogged;
-            if (llrpMessageLogged == null)
-                return;
-            llrpMessageLogged(this, message);
+            //LlrpReader.LlrpMessageLoggedHandler llrpMessageLogged = this.LlrpMessageLogged;
+            //if (llrpMessageLogged == null)
+            //    return;
+            //llrpMessageLogged(this, message);
+
+            LlrpMessageLogged?.Invoke(this, message);
         }
 
         /// <summary>
@@ -924,8 +925,7 @@ namespace LLRPSdk
             return QueryTagsTagReport;
         }
 
-        /// \endcond
-        ///             <summary>
+        /// <summary>
         /// Tells the reader to send all the tag reports it has buffered.
         /// The ReportMode should be set so that reader accumulates tag reads
         /// (WaitForQuery or BatchAfterStop).

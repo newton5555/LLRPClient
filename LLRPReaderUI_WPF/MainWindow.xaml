@@ -120,6 +120,8 @@
             </Style.Triggers>
         </Style>
 
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
         <Style x:Key="InventoryStateDotStyle" TargetType="Ellipse">
             <Setter Property="Width" Value="8" />
             <Setter Property="Height" Value="8" />
@@ -227,11 +229,12 @@
                             <DataTemplate DataType="{x:Type models:NavigationItem}">
                                 <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                     <Border
-                                        Width="30"
-                                        Height="30"
+                                        Width="40"
+                                        Height="40"
                                         Background="#0D000000"
-                                        CornerRadius="15">
+                                        CornerRadius="20">
                                         <fa:IconBlock
+                                            FontSize="20"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Foreground="{Binding IconBrush}"
@@ -240,6 +243,7 @@
                                             TextAlignment="Center" />
                                     </Border>
                                     <Label
+                                        FontSize="15"
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
                                         Content="{Binding Title}" />
@@ -291,32 +295,15 @@
             </StatusBar>
         </Border>
 
-        <!--  Global modal overlay bound to MainWindowViewModel.IsGlobalBusy  -->
-        <Grid
-            d:Visibility="Collapsed"
-            Panel.ZIndex="100"
-            Background="#80000000"
-            Visibility="{Binding IsGlobalBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Border
-                Width="420"
-                Padding="20"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="{DynamicResource SurfaceBrush}"
-                CornerRadius="8">
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Orientation="Vertical">
-                    <ProgressBar
-                        Width="360"
-                        Height="14"
-                        IsIndeterminate="True" />
-                    <TextBlock
-                        Margin="0,12,0,0"
-                        HorizontalAlignment="Center"
-                        Style="{StaticResource StatusTextStyle}"
-                        Text="{Binding BusyText}" />
+        <!-- Global modal overlay (no animation) bound to MainWindowViewModel.IsGlobalBusy -->
+        <Grid Background="#80000000" Panel.ZIndex="100"
+              d:Visibility="Collapsed"
+              Visibility="{Binding IsGlobalBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+              IsHitTestVisible="{Binding IsGlobalBusy}">
+            <Border Width="420" Padding="20" CornerRadius="8" Background="{DynamicResource SurfaceBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+                    <ProgressBar IsIndeterminate="True" Width="360" Height="14" />
+                    <TextBlock Text="{Binding BusyText}" Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource StatusTextStyle}" />
                 </StackPanel>
             </Border>
         </Grid>

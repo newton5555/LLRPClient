@@ -1,9 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LLRPSdk;
+using ControlzEx.Standard;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
+using LLRPSdk;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -323,7 +324,7 @@ public partial class ReadWriteViewModel : ObservableObject
             }
             finally
             {
-                FinishOperationCleanup();
+               FinishOperationCleanup();
             }
         });
     }
