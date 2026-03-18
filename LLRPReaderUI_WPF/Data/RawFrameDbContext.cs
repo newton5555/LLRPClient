@@ -1,6 +1,7 @@
+using LLRPReaderUI_WPF.Logging;
 using Microsoft.EntityFrameworkCore;
 
-namespace LLRPReaderUI_WPF.Logging
+namespace LLRPReaderUI_WPF.Data
 {
     public class RawFrameDbContext : DbContext
     {

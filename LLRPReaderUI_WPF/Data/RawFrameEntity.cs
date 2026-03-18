@@ -1,6 +1,6 @@
 using System;
 
-namespace LLRPReaderUI_WPF.Data
+namespace LLRPReaderUI_WPF.Logging
 {
     public class RawFrameEntity
     {

@@ -7,6 +7,8 @@ using LLRPReaderUI_WPF.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using LLRPReaderUI_WPF.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LLRPReaderUI_WPF
 {
