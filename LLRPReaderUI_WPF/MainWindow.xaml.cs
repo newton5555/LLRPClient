@@ -10,7 +10,7 @@ namespace LLRPReaderUI_WPF
     {
         public MainWindow()
         {
-                
+            
         }
 
 

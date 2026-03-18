@@ -18,6 +18,9 @@
 
             <!-- Converters -->
             <converters:InverseBooleanConverter x:Key="InverseBool" />
+            <converters:DirectionToBrushConverter x:Key="DirectionToBrush"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            
 
             <!-- Make flat theme the default for Buttons project-wide -->
             <Style TargetType="Button" BasedOn="{StaticResource FlatButtonBase}" >

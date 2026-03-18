@@ -80,6 +80,7 @@ namespace LLRPReaderUI_WPF
             services.AddTransient<ReadWriteViewModel>();
             services.AddTransient<AdvancedTagOpsViewModel>();
             services.AddTransient<LogViewModel>();
+            services.AddTransient<LLRPMessageViewModel>();
 
             services.AddSingleton<MainWindow>();
         }

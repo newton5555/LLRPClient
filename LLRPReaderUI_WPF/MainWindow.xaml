@@ -189,6 +189,9 @@
         <DataTemplate DataType="{x:Type vm:LogViewModel}">
             <views:LogView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LLRPMessageViewModel}">
+            <views:LLRPMessageView />
+        </DataTemplate>
     </mah:MetroWindow.Resources>
 
     <Grid>
