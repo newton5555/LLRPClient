@@ -8,10 +8,12 @@ public sealed class AppLogService : IAppLogService
     private readonly object gate = new();
     private readonly List<AppLogEntry> entries = new();
     private readonly ILogger<AppLogService> logger;
+    private readonly IRawFrameRepository? repository;
 
-    public AppLogService(ILogger<AppLogService> logger)
+    public AppLogService(ILogger<AppLogService> logger, IRawFrameRepository? repository = null)
     {
         this.logger = logger;
+        this.repository = repository;
     }
 
     public event Action<AppLogEntry>? EntryAdded;
@@ -84,15 +86,15 @@ public sealed class AppLogService : IAppLogService
         });
 
         logger.Log(level, "[Raw] {Direction} len={Length}", direction, payload?.Length ?? 0);
-        // 如果已初始化 sqlite 存储，则异步写入持久化层
-        _ = Task.Run(() =>
+        // 如果通过 DI 注入了仓库，则异步写入持久化层
+        if (repository != null)
         {
-            try
+            _ = Task.Run(async () =>
             {
-                RawFrameRepository.LogRaw(direction, payload);
-            }
-            catch { }
-        });
+                try { await repository.LogRawAsync(direction, payload).ConfigureAwait(false); }
+                catch { }
+            });
+        }
     }
 
     private void AddEntry(AppLogEntry entry)
