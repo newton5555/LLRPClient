@@ -84,6 +84,15 @@ public sealed class AppLogService : IAppLogService
         });
 
         logger.Log(level, "[Raw] {Direction} len={Length}", direction, payload?.Length ?? 0);
+        // 如果已初始化 sqlite 存储，则异步写入持久化层
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                RawFrameRepository.LogRaw(direction, payload);
+            }
+            catch { }
+        });
     }
 
     private void AddEntry(AppLogEntry entry)
