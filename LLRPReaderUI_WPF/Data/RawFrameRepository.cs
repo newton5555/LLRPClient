@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using LLRPReaderUI_WPF.Logging;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +34,18 @@ namespace LLRPReaderUI_WPF.Data
             {
                 // swallow errors to avoid affecting UI
             }
+        }
+
+        public async Task<List<RawFrameEntity>> GetRecentAsync(int take = 1000)
+        {
+            var size = take <= 0 ? 1000 : take;
+
+            return await _ctx.RawFrames
+                .AsNoTracking()
+                .OrderByDescending(f => f.Timestamp)
+                .Take(size)
+                .ToListAsync()
+                .ConfigureAwait(false);
         }
     }
 }
