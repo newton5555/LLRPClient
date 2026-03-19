@@ -95,7 +95,7 @@ public partial class MainWindowViewModel : ObservableObject
             new NavigationItem { Title = "读写操作", Icon = IconChar.PenToSquare, IconBrush = CreateBrush("#F97316"), ViewModel = readWriteViewModel },
             new NavigationItem { Title = "高级标签操作", Icon = IconChar.Flask, IconBrush = CreateBrush("#EF4444"), ViewModel = advancedTagOpsViewModel },
             new NavigationItem { Title = "日志", Icon = IconChar.ClipboardList, IconBrush = CreateBrush("#6366F1"), ViewModel = logViewModel },
-            new NavigationItem { Title = "LLRP消息", Icon = IconChar.CodeBranch, IconBrush = CreateBrush("#8B5CF6"), ViewModel = llrpMessageViewModel }
+            new NavigationItem { Title = "历史LLRP MSG", Icon = IconChar.CodeBranch, IconBrush = CreateBrush("#8B5CF6"), ViewModel = llrpMessageViewModel }
         ];
 
         WeakReferenceMessenger.Default.Register<MainWindowViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>

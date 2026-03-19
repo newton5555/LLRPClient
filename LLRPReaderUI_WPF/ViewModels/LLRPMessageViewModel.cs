@@ -9,11 +9,13 @@ using Org.LLRP.LTK.LLRPV1.DataType;
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Xml.Linq;
 
 namespace LLRPReaderUI_WPF.ViewModels
 {
@@ -44,6 +46,12 @@ namespace LLRPReaderUI_WPF.ViewModels
         [ObservableProperty]
         private bool _isLoading;
 
+        // 定义一个不希望在通用解析中显示的属性黑名单
+        private static readonly HashSet<string> PropertyBlacklist = new HashSet<string>
+        {
+            "MSG_ID", "TypeNum", "Length", "Version", "msgLen", "msgID", "hdr"
+        };
+
         public LLRPMessageViewModel(
             LlrpReader reader,
             IAppLogService logs,
@@ -53,11 +61,9 @@ namespace LLRPReaderUI_WPF.ViewModels
             _logs = logs;
             _rawFrameRepository = rawFrameRepository;
 
-            // 设置集合的自动刷新
             BindingOperations.EnableCollectionSynchronization(RawFrames, new object());
             BindingOperations.EnableCollectionSynchronization(MessageTree, new object());
 
-            // 加载数据
             _ = LoadRawFrames();
         }
 
@@ -66,19 +72,15 @@ namespace LLRPReaderUI_WPF.ViewModels
         {
             IsLoading = true;
             StatusText = "正在加载原始帧数据...";
-
             try
             {
                 var frames = await _rawFrameRepository.GetRecentAsync(1000);
-
                 RawFrames.Clear();
-                foreach (var frame in frames)
+                foreach (var frame in frames.OrderByDescending(f => f.Timestamp))
                 {
                     RawFrames.Add(frame);
                 }
-
                 StatusText = $"已加载 {RawFrames.Count} 条原始帧记录";
-                _logs.LogOperation($"加载了 {RawFrames.Count} 条原始帧记录");
             }
             catch (Exception ex)
             {
@@ -93,499 +95,193 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         partial void OnSelectedRawFrameChanged(RawFrameEntity? value)
         {
-            if (value == null || value.Payload == null)
-            {
-                MessageTree.Clear();
-                RawHexString = string.Empty;
-                return;
-            }
+            MessageTree.Clear();
+            RawHexString = string.Empty;
+            if (value?.Payload == null) return;
 
-            RawHexString = FormatHex(value.Payload);
-
-            // 解析LLRP消息
+            RawHexString = LlrpDisplayHelper.FormatHex(value.Payload);
             ParseLLRPMessage(value.Payload);
         }
 
         private void ParseLLRPMessage(byte[] payload)
         {
             MessageTree.Clear();
-
             try
             {
-                string headerSummary = $"Length: {payload.Length} bytes";
-                bool hasHeader = TryReadHeader(payload, out var version, out var reserved, out var messageTypeId, out var messageLength, out var messageId);
-                if (hasHeader)
-                {
-                    var desc = GetMessageTypeDescription(messageTypeId);
-                    headerSummary = $"{desc} | Len={payload.Length} | MsgId=0x{messageId:X8}";
-                }
+                var root = new LLRPMessageNode("LLRP Message");
+                MessageTree.Add(root);
 
-                var root = new LLRPMessageNode("LLRP Message", description: headerSummary);
-
-                // 添加基本信息
+                // 基本信息
                 var basicInfo = root.AddChild("基本信息");
                 basicInfo.AddChild("方向", SelectedRawFrame?.Direction);
                 basicInfo.AddChild("时间戳", SelectedRawFrame?.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                basicInfo.AddChild("长度", $"{payload.Length} bytes");
+                basicInfo.AddChild("长度", $"{payload.Length} 字节");
 
-                if (hasHeader)
-                {
-                    var header = root.AddChild("消息头");
-                    header.AddChild("协议版本", $"{version} (0x{version:X})");
-                    header.AddChild("保留位", $"0x{reserved:X}");
-                    header.AddChild("消息类型", $"0x{messageTypeId:X4}", GetMessageTypeDescription(messageTypeId));
-                    header.AddChild("消息长度", $"{messageLength} bytes");
-                    header.AddChild("消息ID", $"0x{messageId:X8}");
-
-                    if (messageLength != payload.Length)
-                    {
-                        header.AddChild("长度校验", "不一致", $"头部声明={messageLength}, 实际={payload.Length}");
-                    }
-                    else
-                    {
-                        header.AddChild("长度校验", "通过");
-                    }
-                }
-                else
-                {
-                    root.AddChild("消息头", "无法解析", "帧长度不足 10 字节");
-                }
-
-                // 添加原始数据节点
-                var rawData = root.AddChild("原始数据");
-                rawData.AddChild("十六进制", RawHexString);
-                rawData.AddChild("字节数", $"{payload.Length}");
-
-                // 尝试使用LLRPBinaryDecoder进行完整解析
+                // 使用LLRPBinaryDecoder进行完整解析
                 TryParseWithLLRPBinaryDecoder(payload, root);
-
-                MessageTree.Add(root);
-                StatusText = hasHeader
-                    ? $"LLRP消息解析完成: {GetMessageTypeDescription(messageTypeId)}"
-                    : "LLRP消息解析完成（头部不完整）";
             }
             catch (Exception ex)
             {
                 StatusText = $"解析LLRP消息时出错: {ex.Message}";
-                _logs.LogOperation($"解析LLRP消息失败: {ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
-                
-                // 即使解析失败，也显示基本信息
                 var errorNode = new LLRPMessageNode("LLRP Message", description: "解析失败");
                 errorNode.AddChild("错误信息", ex.Message);
-                errorNode.AddChild("原始数据", BitConverter.ToString(payload).Replace("-", " "));
+                errorNode.AddChild("原始数据 (Hex)", BitConverter.ToString(payload).Replace("-", " "));
                 MessageTree.Add(errorNode);
             }
-        }
-
-        private static bool TryReadHeader(
-            byte[] payload,
-            out int version,
-            out int reserved,
-            out ushort messageTypeId,
-            out uint messageLength,
-            out uint messageId)
-        {
-            version = 0;
-            reserved = 0;
-            messageTypeId = 0;
-            messageLength = 0;
-            messageId = 0;
-
-            if (payload.Length < 10)
-            {
-                return false;
-            }
-
-            ushort typeWord = (ushort)((payload[0] << 8) | payload[1]);
-            version = (typeWord >> 13) & 0x7;
-            reserved = (typeWord >> 10) & 0x7;
-            messageTypeId = (ushort)(typeWord & 0x03FF);
-
-            messageLength = (uint)((payload[2] << 24) | (payload[3] << 16) | (payload[4] << 8) | payload[5]);
-            messageId = (uint)((payload[6] << 24) | (payload[7] << 16) | (payload[8] << 8) | payload[9]);
-            return true;
-        }
-
-        private static string FormatHex(byte[] payload, int bytesPerLine = 16)
-        {
-            if (payload == null || payload.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            var sb = new StringBuilder(payload.Length * 4);
-            for (int i = 0; i < payload.Length; i += bytesPerLine)
-            {
-                int count = Math.Min(bytesPerLine, payload.Length - i);
-                sb.Append(i.ToString("X4"));
-                sb.Append(": ");
-                for (int j = 0; j < count; j++)
-                {
-                    if (j > 0)
-                    {
-                        sb.Append(' ');
-                    }
-                    sb.Append(payload[i + j].ToString("X2"));
-                }
-                if (i + count < payload.Length)
-                {
-                    sb.AppendLine();
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        // 暂时注释掉LTK解析相关代码，确保编译通过
-        // 如果需要完整解析，请确保引用了正确的LTK库并取消注释以下代码
-        /*
-        private void TryParseWithLTK(byte[] payload, LLRPMessageNode root)
-        {
-            try
-            {
-                // 尝试使用LTK解析消息
-                Message msg = LLRPMessageFactory.DecodeMessage(payload);
-                if (msg != null)
-                {
-                    var ltkNode = root.AddChild("LTK解析结果", description: msg.GetType().Name);
-                    
-                    // 添加消息基本信息
-                    var msgInfo = ltkNode.AddChild("消息信息");
-                    msgInfo.AddChild("类型", msg.GetType().Name);
-                    msgInfo.AddChild("消息ID", msg.MSG_ID.ToString());
-                    
-                    // 尝试解析参数
-                    ParseParameters(msg, ltkNode);
-                }
-                else
-                {
-                    root.AddChild("LTK解析", "无法解析消息", "LTK库无法识别此消息格式");
-                }
-            }
-            catch (Exception ex)
-            {
-                root.AddChild("LTK解析", "解析失败", ex.Message);
-            }
-        }
-
-        private void ParseParameters(Message msg, LLRPMessageNode parentNode)
-        {
-            try
-            {
-                // 使用反射获取消息的参数
-                var parameters = msg.GetType().GetProperties()
-                    .Where(p => p.PropertyType.IsClass && p.PropertyType != typeof(string))
-                    .ToList();
-
-                if (parameters.Any())
-                {
-                    var paramsNode = parentNode.AddChild("参数列表");
-                    
-                    foreach (var param in parameters)
-                    {
-                        try
-                        {
-                            var value = param.GetValue(msg);
-                            if (value != null)
-                            {
-                                var paramNode = paramsNode.AddChild(param.Name, description: param.PropertyType.Name);
-                                
-                                // 尝试解析嵌套属性
-                                ParseObjectProperties(value, paramNode);
-                            }
-                        }
-                        catch
-                        {
-                            // 忽略单个参数解析失败
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // 忽略参数解析失败
-            }
-        }
-
-        private void ParseObjectProperties(object obj, LLRPMessageNode parentNode)
-        {
-            try
-            {
-                var properties = obj.GetType().GetProperties()
-                    .Where(p => p.CanRead)
-                    .ToList();
-
-                foreach (var prop in properties)
-                {
-                    try
-                    {
-                        var value = prop.GetValue(obj);
-                        if (value != null)
-                        {
-                            string stringValue = value.ToString();
-                            if (!string.IsNullOrEmpty(stringValue) && stringValue != obj.GetType().FullName)
-                            {
-                                parentNode.AddChild(prop.Name, stringValue, prop.PropertyType.Name);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // 忽略单个属性解析失败
-                    }
-                }
-            }
-            catch
-            {
-                // 忽略属性解析失败
-            }
-        }
-        */
-
-        private string GetMessageTypeDescription(ushort messageType)
-        {
-            // LLRP标准消息类型映射
-            return messageType switch
-            {
-                1 => "GET_READER_CAPABILITIES",
-                11 => "GET_READER_CAPABILITIES_RESPONSE",
-                2 => "ADD_ROSPEC",
-                12 => "ADD_ROSPEC_RESPONSE",
-                3 => "DELETE_ROSPEC",
-                13 => "DELETE_ROSPEC_RESPONSE",
-                4 => "START_ROSPEC",
-                14 => "START_ROSPEC_RESPONSE",
-                5 => "STOP_ROSPEC",
-                15 => "STOP_ROSPEC_RESPONSE",
-                6 => "ENABLE_ROSPEC",
-                16 => "ENABLE_ROSPEC_RESPONSE",
-                7 => "DISABLE_ROSPEC",
-                17 => "DISABLE_ROSPEC_RESPONSE",
-                8 => "GET_ROSPECS",
-                18 => "GET_ROSPECS_RESPONSE",
-                20 => "RO_ACCESS_REPORT",
-                21 => "READER_EVENT_NOTIFICATION",
-                22 => "ENABLE_EVENTS_AND_REPORTS",
-                23 => "ERROR_MESSAGE",
-                24 => "GET_READER_CONFIG",
-                34 => "GET_READER_CONFIG_RESPONSE",
-                25 => "SET_READER_CONFIG",
-                35 => "SET_READER_CONFIG_RESPONSE",
-                26 => "CLOSE_CONNECTION",
-                36 => "CLOSE_CONNECTION_RESPONSE",
-                27 => "GET_REPORT",
-                28 => "KEEPALIVE",
-                38 => "KEEPALIVE_ACK",
-                40 => "ADD_ACCESSSPEC",
-                50 => "ADD_ACCESSSPEC_RESPONSE",
-                41 => "DELETE_ACCESSSPEC",
-                51 => "DELETE_ACCESSSPEC_RESPONSE",
-                42 => "ENABLE_ACCESSSPEC",
-                52 => "ENABLE_ACCESSSPEC_RESPONSE",
-                _ => $"未知类型 (0x{messageType:X4})"
-            };
         }
 
         private void TryParseWithLLRPBinaryDecoder(byte[] payload, LLRPMessageNode root)
         {
             try
             {
-                // 使用LLRPBinaryDecoder解析消息
-                var decoderNode = root.AddChild("LLRPBinaryDecoder解析", description: "使用LTK库完整解析");
-                
+                // 1. 解析信封头
+                LLRPBinaryDecoder.Decode_Envelope(payload, out var env);
+                var envelopeNode = root.AddChild("消息信封 (Envelope)");
+                envelopeNode.AddChild("版本", $"LLRP v{env.ver.ToString()}");
+                envelopeNode.AddChild("消息类型", LlrpDisplayHelper.FormatEnum((ENUM_LLRP_MSG_TYPE)env.msg_type));
+                envelopeNode.AddChild("消息长度", $"{env.msg_len} 字节");
+                envelopeNode.AddChild("消息ID", $"0x{env.msg_id:X8}");
+
+                // 2. 尝试解析完整消息
+                LLRPBinaryDecoder.Decode(ref payload, out var message);
+                if (message != null)
+                {
+                    var msgNode = root.AddChild("消息内容 (Message Body)", description: message.GetType().Name);
+                    ParseSpecificMessage(message, msgNode);
+                }
+                else
+                {
+                    root.AddChild("解析结果", "消息体为空", "LLRPBinaryDecoder未能解析出有效的消息对象");
+                }
+            }
+            catch (Exception ex)
+            {
+                root.AddChild("LLRP解析错误", ex.Message, "可能由于数据包不完整或格式错误导致");
+            }
+        }
+
+        private void ParseSpecificMessage(Message message, LLRPMessageNode parentNode)
+        {
+            parentNode.AddChild("消息类型", message.GetType().Name);
+
+            if (message is MSG_GET_READER_CAPABILITIES getReaderCapabilities)
+            {
+                parentNode.Children.Add(getReaderCapabilities.BuildTreeNode());
+                return;
+            }
+            else if (message is MSG_GET_READER_CAPABILITIES_RESPONSE getReaderCapabilitiesResponse)
+            {
+                parentNode.Children.Add(getReaderCapabilitiesResponse.BuildTreeNode());
+                return;
+            }
+            else if (message is MSG_RO_ACCESS_REPORT roAccessReport)
+            {
+                parentNode.Children.Add(roAccessReport.BuildTreeNode());
+                return;
+            }
+            else if (message is MSG_READER_EVENT_NOTIFICATION readerEventNotification)
+            {
+                parentNode.Children.Add(readerEventNotification.BuildTreeNode());
+                return;
+            }
+            else if (message is MSG_ERROR_MESSAGE errorMessage)
+            {
+                parentNode.Children.Add(errorMessage.BuildTreeNode());
+                return;
+            }
+
+
+
+        }
+
+ 
+       
+
+      
+
+
+        /// <summary>
+        /// 递归地将对象的属性添加到树节点。
+        /// </summary>
+        private void AddObjectProperties(LLRPMessageNode parent, object obj, int depth = 0)
+        {
+            const int maxDepth = 5;
+            if (depth >= maxDepth) return;
+
+            var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && !PropertyBlacklist.Contains(p.Name))
+                .OrderBy(p => p.Name);
+
+            foreach (var prop in properties)
+            {
                 try
                 {
-                    // 解析信封头
-                    LLRPBinaryDecoder.Decode_Envelope(payload, out var env);
-                    var envelopeNode = decoderNode.AddChild("消息信封");
-                    envelopeNode.AddChild("版本", $"0x{env.ver:X2}");
-                    envelopeNode.AddChild("消息类型", $"{env.msg_type} (0x{(ushort)env.msg_type:X4})");
-                    envelopeNode.AddChild("消息长度", $"{env.msg_len} bytes");
-                    envelopeNode.AddChild("消息ID", $"0x{env.msg_id:X8}");
-                    
-                    // 尝试解析完整消息
-                    try
-                    {
-                        LLRPBinaryDecoder.Decode(ref payload, out var message);
-                        if (message != null)
-                        {
-                            var msgNode = decoderNode.AddChild("完整消息", description: message.GetType().Name);
-                            
-                            // 添加消息基本信息
-                            var msgInfo = msgNode.AddChild("消息信息");
-                            msgInfo.AddChild("类型", message.GetType().Name);
-                            
-                            // 使用反射获取MSG_ID属性
-                            var msgIdProp = message.GetType().GetProperty("MSG_ID");
-                            if (msgIdProp != null)
-                            {
-                                var msgIdValue = msgIdProp.GetValue(message);
-                                msgInfo.AddChild("消息ID", msgIdValue?.ToString() ?? "N/A");
-                            }
-                            
-                            // 尝试解析参数
-                            ParseMessageParameters(message, msgNode);
-                        }
-                        else
-                        {
-                            decoderNode.AddChild("解析结果", "消息为空", "LLRPBinaryDecoder未能解析出有效消息");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        decoderNode.AddChild("完整解析错误", ex.Message, "解析完整消息时出错");
-                        
-                        // 仍然显示信封信息
-                        decoderNode.AddChild("状态", "部分解析完成", "已解析信封头，但完整消息解析失败");
-                    }
+                    var value = prop.GetValue(obj);
+                    AddValueNode(parent, prop.Name, value, depth + 1);
                 }
-                catch (Exception ex)
-                {
-                    decoderNode.AddChild("信封解析错误", ex.Message, "解析消息信封时出错");
-                }
-            }
-            catch (Exception ex)
-            {
-                root.AddChild("LLRPBinaryDecoder解析", "解析失败", ex.Message);
+                catch { /* 忽略单个属性的读取失败 */ }
             }
         }
 
-        private void ParseMessageParameters(Message msg, LLRPMessageNode parentNode)
+        private void AddValueNode(LLRPMessageNode parent, string name, object? value, int depth)
         {
-            try
-            {
-                // 获取所有公共属性
-                var properties = msg.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(p => p.CanRead)
-                    .OrderBy(p => p.Name)
-                    .ToList();
-
-                if (properties.Any())
-                {
-                    var paramsNode = parentNode.AddChild("参数列表");
-                    
-                    foreach (var prop in properties)
-                    {
-                        try
-                        {
-                            var value = prop.GetValue(msg);
-                            AddValueNode(paramsNode, prop.Name, value, prop.PropertyType, 0);
-                        }
-                        catch
-                        {
-                            // 忽略单个属性解析失败
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                parentNode.AddChild("参数解析错误", ex.Message, "解析消息参数时出错");
-            }
-        }
-
-        private void AddValueNode(LLRPMessageNode parent, string name, object? value, Type declaredType, int depth)
-        {
-            const int maxDepth = 3;
-            const int maxCollectionItems = 20;
-
             if (value == null)
             {
-                parent.AddChild(name, "null", declaredType.Name);
+                parent.AddChild(name, "null");
                 return;
             }
 
             var runtimeType = value.GetType();
-            if (IsSimpleType(runtimeType))
+
+            // 优先处理已知可格式化类型
+            if (value is Enum)
             {
-                parent.AddChild(name, value.ToString(), runtimeType.Name);
+                parent.AddChild(name, LlrpDisplayHelper.FormatEnum(value));
                 return;
             }
-
+            if (name.Contains("Timestamp") && value is ulong ulongVal)
+            {
+                parent.AddChild(name, LlrpDisplayHelper.FormatUtcMicroseconds(ulongVal));
+                return;
+            }
+            if (runtimeType.IsPrimitive || value is string || value is decimal || value is DateTime)
+            {
+                parent.AddChild(name, value.ToString());
+                return;
+            }
             if (value is byte[] bytes)
             {
-                var node = parent.AddChild(name, $"byte[{bytes.Length}]", runtimeType.Name);
-                if (bytes.Length > 0)
-                {
-                    var preview = bytes.Take(64).ToArray();
-                    var suffix = bytes.Length > 64 ? " ..." : string.Empty;
-                    node.AddChild("预览", BitConverter.ToString(preview).Replace("-", " ") + suffix);
-                }
+                parent.AddChild(name, $"byte[{bytes.Length}]", BitConverter.ToString(bytes.Take(32).ToArray()).Replace("-", " ") + (bytes.Length > 32 ? "..." : ""));
                 return;
             }
 
-            if (value is IEnumerable enumerable && value is not string)
+            // 处理集合
+            if (value is IEnumerable enumerable)
             {
-                var items = enumerable.Cast<object?>().Take(maxCollectionItems + 1).ToList();
-                var collectionNode = parent.AddChild(name, $"Count≈{Math.Min(items.Count, maxCollectionItems)}", runtimeType.Name);
-                int displayCount = Math.Min(items.Count, maxCollectionItems);
-                for (int i = 0; i < displayCount; i++)
-                {
-                    var item = items[i];
-                    AddValueNode(collectionNode, $"[{i}]", item, item?.GetType() ?? typeof(object), depth + 1);
-                }
+                var items = enumerable.Cast<object?>().ToList();
+                var collectionNode = parent.AddChild(name, $"{runtimeType.Name}, Count = {items.Count}");
 
-                if (items.Count > maxCollectionItems)
+                int i = 0;
+                foreach (var item in items.Take(20)) // 最多显示前20项
                 {
-                    collectionNode.AddChild("...", $"仅展示前 {maxCollectionItems} 项");
+                    AddValueNode(collectionNode, $"[{i++}]", item, depth + 1);
                 }
-
+                if (items.Count > 20) collectionNode.AddChild("...", "更多项被省略");
                 return;
             }
 
-            if (depth >= maxDepth)
-            {
-                parent.AddChild(name, value.ToString(), runtimeType.Name);
-                return;
-            }
-
+            // 处理复杂对象
             var objectNode = parent.AddChild(name, description: runtimeType.Name);
-            var props = runtimeType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.CanRead)
-                .OrderBy(p => p.Name)
-                .Take(40)
-                .ToList();
-
-            foreach (var property in props)
-            {
-                try
-                {
-                    var propertyValue = property.GetValue(value);
-                    AddValueNode(objectNode, property.Name, propertyValue, property.PropertyType, depth + 1);
-                }
-                catch
-                {
-                    objectNode.AddChild(property.Name, "<读取失败>", property.PropertyType.Name);
-                }
-            }
+            AddObjectProperties(objectNode, value, depth);
         }
 
-        private static bool IsSimpleType(Type type)
-        {
-            return type.IsPrimitive
-                   || type.IsEnum
-                   || type == typeof(string)
-                   || type == typeof(decimal)
-                   || type == typeof(DateTime)
-                   || type == typeof(DateTimeOffset)
-                   || type == typeof(TimeSpan)
-                   || type == typeof(Guid);
-        }
 
-        [RelayCommand]
-        private void ClearSelection()
-        {
-            SelectedRawFrame = null;
-            MessageTree.Clear();
-            RawHexString = string.Empty;
-            StatusText = "已清除选择";
-        }
+        #region UI Commands and Helpers
 
-        [RelayCommand]
-        private async Task RefreshData()
-        {
-            await LoadRawFrames();
-        }
+       
+
+        [RelayCommand] private void ClearSelection() { SelectedRawFrame = null; }
+        [RelayCommand] private async Task RefreshData() => await LoadRawFrames();
 
         [RelayCommand]
         private void ExportToText()
@@ -595,21 +291,242 @@ namespace LLRPReaderUI_WPF.ViewModels
                 StatusText = "请先选择一条消息";
                 return;
             }
-
             try
             {
                 var treeText = MessageTree[0].BuildTreeString();
-                var fileName = $"LLRP_Message_{SelectedRawFrame.Timestamp:yyyyMMdd_HHmmss}.txt";
-                
+                var fileName = $"LLRP_Message_{SelectedRawFrame.Timestamp:yyyyMMdd_HHmmss}_{SelectedRawFrame.Direction}.txt";
                 System.IO.File.WriteAllText(fileName, treeText);
                 StatusText = $"已导出到文件: {fileName}";
-                _logs.LogOperation($"导出LLRP消息到文件: {fileName}");
             }
             catch (Exception ex)
             {
                 StatusText = $"导出失败: {ex.Message}";
-                _logs.LogOperation($"导出LLRP消息失败: {ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
             }
         }
+        #endregion
+    }
+
+  
+
+
+    public static class LLRPMessageExtensions
+    {
+        public static LLRPMessageNode BuildTreeNode(this MSG_GET_READER_CAPABILITIES msg)
+        {
+            var root = new LLRPMessageNode("GET_READER_CAPABILITIES", description: $"MessageID={msg.MSG_ID}");
+            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            root.AddChild("RequestedData", LlrpDisplayHelper.FormatEnum(msg.RequestedData));
+            if (msg.Custom != null && msg.Custom.Length > 0)
+            {
+                var customNode = root.AddChild("Custom参数", msg.Custom.Length.ToString());
+                for (int i = 0; i < msg.Custom.Length; i++)
+                {
+                    var param = msg.Custom[i];
+                    var child = customNode.AddChild($"Custom[{i}]", description: param?.GetType().Name);
+                    if (param == null)
+                    {
+                        child.AddChild("值", "null");
+                        continue;
+                    }
+                    // 直接按字段语义组织
+                    foreach (var prop in param.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                    {
+                        var val = prop.GetValue(param);
+                        child.AddChild(prop.Name, val?.ToString() ?? "null");
+                    }
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_GET_READER_CAPABILITIES_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("GET_READER_CAPABILITIES_RESPONSE", description: $"MessageID={msg.MSG_ID}");
+            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            if (msg.LLRPStatus != null)
+            {
+                var statusNode = root.AddChild("LLRPStatus", description: msg.LLRPStatus.StatusCode.ToString());
+                foreach (var prop in msg.LLRPStatus.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                {
+                    var val = prop.GetValue(msg.LLRPStatus);
+                    statusNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                }
+            }
+            if (msg.GeneralDeviceCapabilities != null)
+            {
+                var gdcNode = root.AddChild("GeneralDeviceCapabilities");
+                foreach (var prop in msg.GeneralDeviceCapabilities.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                {
+                    var val = prop.GetValue(msg.GeneralDeviceCapabilities);
+                    gdcNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                }
+            }
+            if (msg.LLRPCapabilities != null)
+            {
+                var llrpNode = root.AddChild("LLRPCapabilities");
+                foreach (var prop in msg.LLRPCapabilities.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                {
+                    var val = prop.GetValue(msg.LLRPCapabilities);
+                    llrpNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                }
+            }
+            if (msg.RegulatoryCapabilities != null)
+            {
+                var regNode = root.AddChild("RegulatoryCapabilities");
+                foreach (var prop in msg.RegulatoryCapabilities.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                {
+                    var val = prop.GetValue(msg.RegulatoryCapabilities);
+                    regNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                }
+            }
+            if (msg.AirProtocolLLRPCapabilities != null)
+            {
+                var apNode = root.AddChild("AirProtocolLLRPCapabilities");
+                for (int i = 0; i < msg.AirProtocolLLRPCapabilities.Count; i++)
+                {
+                    var item = msg.AirProtocolLLRPCapabilities[i];
+                    var itemNode = apNode.AddChild(item.GetType().Name);
+                    foreach (var prop in item.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                    {
+                        var val = prop.GetValue(item);
+                        itemNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                    }
+                }
+                
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_RO_ACCESS_REPORT msg)
+        {
+            var root = new LLRPMessageNode("RO_ACCESS_REPORT", description: $"MessageID={msg.MSG_ID}");
+            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            if (msg.TagReportData != null)
+            {
+                var tagsNode = root.AddChild("TagReportData", msg.TagReportData.Length.ToString());
+                for (int i = 0; i < msg.TagReportData.Length; i++)
+                {
+                    var tag = msg.TagReportData[i];
+                    var tagNode = tagsNode.AddChild($"Tag[{i}]", description: tag.GetType().Name);
+                    foreach (var prop in tag.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                    {
+                        var val = prop.GetValue(tag);
+                        if (val is Array arr && arr.Length > 0)
+                        {
+                            var arrNode = tagNode.AddChild(prop.Name, $"Count={arr.Length}");
+                            foreach (var elem in arr)
+                            {
+                                arrNode.AddChild(elem.GetType().Name, elem?.ToString() ?? "null");
+                            }
+                        }
+                        else
+                        {
+                            tagNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                        }
+                    }
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_READER_EVENT_NOTIFICATION msg)
+        {
+            var root = new LLRPMessageNode("READER_EVENT_NOTIFICATION", description: $"MessageID={msg.MSG_ID}");
+            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            if (msg.ReaderEventNotificationData != null)
+            {
+                var dataNode = root.AddChild("ReaderEventNotificationData");
+                foreach (var prop in msg.ReaderEventNotificationData.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                {
+                    var val = prop.GetValue(msg.ReaderEventNotificationData);
+                    dataNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_ERROR_MESSAGE msg)
+        {
+            var root = new LLRPMessageNode("ERROR_MESSAGE", description: $"MessageID={msg.MSG_ID}");
+            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            if (msg.LLRPStatus != null)
+            {
+                var statusNode = root.AddChild("LLRPStatus", description: msg.LLRPStatus.StatusCode.ToString());
+                foreach (var prop in msg.LLRPStatus.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                {
+                    var val = prop.GetValue(msg.LLRPStatus);
+                    statusNode.AddChild(prop.Name, val?.ToString() ?? "null");
+                }
+            }
+            return root;
+        }
+    
+
+    }
+
+    /// <summary>
+    /// 提供用于在UI中清晰显示LLRP数据的静态辅助方法。
+    /// </summary>
+    public static class LlrpDisplayHelper
+    {
+        /// <summary>
+        /// 将LLRP UTC微秒时间戳转换为本地化的、人类可读的字符串。
+        /// </summary>
+        public static string FormatUtcMicroseconds(ulong microseconds)
+        {
+            try
+            {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                // 1微秒 = 10 Ticks
+                var dateTime = epoch.AddTicks((long)microseconds * 10);
+                // 转换为本地时间以便查看
+                return dateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.ffffff");
+            }
+            catch
+            {
+                return $"{microseconds} µs (转换失败)";
+            }
+        }
+
+       
+
+        /// <summary>
+        /// 获取枚举值的名称，如果失败则返回其数字值。
+        /// </summary>
+        public static string FormatEnum(object? enumValue)
+        {
+            if (enumValue == null) return "N/A";
+            var type = enumValue.GetType();
+            if (!type.IsEnum) return enumValue.ToString() ?? "N/A";
+
+            try
+            {
+                // 显示名称和数字值，更清晰
+                return $"{Enum.GetName(type, enumValue)} ({(int)enumValue})";
+            }
+            catch
+            {
+                return enumValue.ToString() ?? "N/A";
+            }
+        }
+
+
+        public static string FormatHex(byte[] payload, int bytesPerLine = 16)
+        {
+            if (payload == null || payload.Length == 0) return string.Empty;
+            var sb = new StringBuilder();
+            for (int i = 0; i < payload.Length; i++)
+            {
+                if (i % bytesPerLine == 0)
+                {
+                    if (i > 0) sb.AppendLine();
+                    sb.Append(i.ToString("X4")).Append(": ");
+                }
+                sb.Append(payload[i].ToString("X2")).Append(" ");
+            }
+            return sb.ToString();
+        }
+
+
     }
 }
