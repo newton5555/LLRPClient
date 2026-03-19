@@ -108,14 +108,15 @@ namespace LLRPReaderUI_WPF.ViewModels
             MessageTree.Clear();
             try
             {
-                var root = new LLRPMessageNode("LLRP Message");
+                //根节点直接显示Decode_Envelope解析出来的内容
+                LLRPBinaryDecoder.Decode_Envelope(payload, out var env);
+
+                string details = $"{((ENUM_LLRP_MSG_TYPE)env.msg_type)}  Length={env.msg_len}";
+
+                var root = new LLRPMessageNode($"MSG V{env.ver.ToString()} {SelectedRawFrame?.Direction} ID={env.msg_id}", details);
+                
                 MessageTree.Add(root);
 
-                // 基本信息
-                var basicInfo = root.AddChild("基本信息");
-                basicInfo.AddChild("方向", SelectedRawFrame?.Direction);
-                basicInfo.AddChild("时间戳", SelectedRawFrame?.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                basicInfo.AddChild("长度", $"{payload.Length} 字节");
 
                 // 使用LLRPBinaryDecoder进行完整解析
                 TryParseWithLLRPBinaryDecoder(payload, root);
@@ -134,15 +135,7 @@ namespace LLRPReaderUI_WPF.ViewModels
         {
             try
             {
-                // 1. 解析信封头
-                LLRPBinaryDecoder.Decode_Envelope(payload, out var env);
-                var envelopeNode = root.AddChild("消息信封 (Envelope)");
-                envelopeNode.AddChild("版本", $"LLRP v{env.ver.ToString()}");
-                envelopeNode.AddChild("消息类型", LlrpDisplayHelper.FormatEnum((ENUM_LLRP_MSG_TYPE)env.msg_type));
-                envelopeNode.AddChild("消息长度", $"{env.msg_len} 字节");
-                envelopeNode.AddChild("消息ID", $"0x{env.msg_id:X8}");
-
-                // 2. 尝试解析完整消息
+                //  尝试解析完整消息
                 LLRPBinaryDecoder.Decode(ref payload, out var message);
                 if (message != null)
                 {
@@ -200,83 +193,10 @@ namespace LLRPReaderUI_WPF.ViewModels
       
 
 
-        /// <summary>
-        /// 递归地将对象的属性添加到树节点。
-        /// </summary>
-        private void AddObjectProperties(LLRPMessageNode parent, object obj, int depth = 0)
-        {
-            const int maxDepth = 5;
-            if (depth >= maxDepth) return;
-
-            var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.CanRead && !PropertyBlacklist.Contains(p.Name))
-                .OrderBy(p => p.Name);
-
-            foreach (var prop in properties)
-            {
-                try
-                {
-                    var value = prop.GetValue(obj);
-                    AddValueNode(parent, prop.Name, value, depth + 1);
-                }
-                catch { /* 忽略单个属性的读取失败 */ }
-            }
-        }
-
-        private void AddValueNode(LLRPMessageNode parent, string name, object? value, int depth)
-        {
-            if (value == null)
-            {
-                parent.AddChild(name, "null");
-                return;
-            }
-
-            var runtimeType = value.GetType();
-
-            // 优先处理已知可格式化类型
-            if (value is Enum)
-            {
-                parent.AddChild(name, LlrpDisplayHelper.FormatEnum(value));
-                return;
-            }
-            if (name.Contains("Timestamp") && value is ulong ulongVal)
-            {
-                parent.AddChild(name, LlrpDisplayHelper.FormatUtcMicroseconds(ulongVal));
-                return;
-            }
-            if (runtimeType.IsPrimitive || value is string || value is decimal || value is DateTime)
-            {
-                parent.AddChild(name, value.ToString());
-                return;
-            }
-            if (value is byte[] bytes)
-            {
-                parent.AddChild(name, $"byte[{bytes.Length}]", BitConverter.ToString(bytes.Take(32).ToArray()).Replace("-", " ") + (bytes.Length > 32 ? "..." : ""));
-                return;
-            }
-
-            // 处理集合
-            if (value is IEnumerable enumerable)
-            {
-                var items = enumerable.Cast<object?>().ToList();
-                var collectionNode = parent.AddChild(name, $"{runtimeType.Name}, Count = {items.Count}");
-
-                int i = 0;
-                foreach (var item in items.Take(20)) // 最多显示前20项
-                {
-                    AddValueNode(collectionNode, $"[{i++}]", item, depth + 1);
-                }
-                if (items.Count > 20) collectionNode.AddChild("...", "更多项被省略");
-                return;
-            }
-
-            // 处理复杂对象
-            var objectNode = parent.AddChild(name, description: runtimeType.Name);
-            AddObjectProperties(objectNode, value, depth);
-        }
+   
 
 
-        #region UI Commands and Helpers
+     
 
        
 
@@ -303,7 +223,7 @@ namespace LLRPReaderUI_WPF.ViewModels
                 StatusText = $"导出失败: {ex.Message}";
             }
         }
-        #endregion
+       
     }
 
   
