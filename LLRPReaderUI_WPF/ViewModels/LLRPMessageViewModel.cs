@@ -382,6 +382,318 @@ namespace LLRPReaderUI_WPF.ViewModels
             return root;
         }
 
+        public static LLRPMessageNode BuildTreeNode(this PARAM_EPCData p)
+        {
+            var root = new LLRPMessageNode("EPCData");
+            // ToString(): <EPC Count="...">...</EPC>
+            if (p.EPC != null)
+            {
+                var epcNode = root.AddChild("EPC");
+                epcNode.AddChild("Count", p.EPC.Count.ToString());
+                epcNode.AddChild("Hex", p.EPC.ToHexString());
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_EPC_96 p)
+        {
+            var root = new LLRPMessageNode("EPC_96");
+            if (p.EPC != null)
+                root.AddChild("EPC", p.EPC.ToHexString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ROSpecID p)
+        {
+            var root = new LLRPMessageNode("ROSpecID");
+            root.AddChild("ROSpecID", p.ROSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_SpecIndex p)
+        {
+            var root = new LLRPMessageNode("SpecIndex");
+            root.AddChild("SpecIndex", p.SpecIndex.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_InventoryParameterSpecID p)
+        {
+            var root = new LLRPMessageNode("InventoryParameterSpecID");
+            root.AddChild("InventoryParameterSpecID", p.InventoryParameterSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AntennaID p)
+        {
+            var root = new LLRPMessageNode("AntennaID");
+            root.AddChild("AntennaID", p.AntennaID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_PeakRSSI p)
+        {
+            var root = new LLRPMessageNode("PeakRSSI");
+            root.AddChild("PeakRSSI", p.PeakRSSI.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ChannelIndex p)
+        {
+            var root = new LLRPMessageNode("ChannelIndex");
+            root.AddChild("ChannelIndex", p.ChannelIndex.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_FirstSeenTimestampUTC p)
+        {
+            var root = new LLRPMessageNode("FirstSeenTimestampUTC");
+            root.AddChild("Microseconds", p.Microseconds.ToString(), LlrpDisplayHelper.FormatUtcMicroseconds(p.Microseconds));
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_FirstSeenTimestampUptime p)
+        {
+            var root = new LLRPMessageNode("FirstSeenTimestampUptime");
+            root.AddChild("Microseconds", p.Microseconds.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_LastSeenTimestampUTC p)
+        {
+            var root = new LLRPMessageNode("LastSeenTimestampUTC");
+            root.AddChild("Microseconds", p.Microseconds.ToString(), LlrpDisplayHelper.FormatUtcMicroseconds(p.Microseconds));
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_LastSeenTimestampUptime p)
+        {
+            var root = new LLRPMessageNode("LastSeenTimestampUptime");
+            root.AddChild("Microseconds", p.Microseconds.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_TagSeenCount p)
+        {
+            var root = new LLRPMessageNode("TagSeenCount");
+            root.AddChild("TagCount", p.TagCount.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2_PC p)
+        {
+            var root = new LLRPMessageNode("C1G2_PC");
+            root.AddChild("PC_Bits", p.PC_Bits.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2_CRC p)
+        {
+            var root = new LLRPMessageNode("C1G2_CRC");
+            root.AddChild("CRC", p.CRC.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AccessSpecID p)
+        {
+            var root = new LLRPMessageNode("AccessSpecID");
+            root.AddChild("AccessSpecID", p.AccessSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2ReadOpSpecResult p)
+        {
+            var root = new LLRPMessageNode("C1G2ReadOpSpecResult");
+            root.AddChild("Result", p.Result.ToString());
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            if (p.ReadData != null)
+                root.AddChild("ReadData", p.ReadData.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2WriteOpSpecResult p)
+        {
+            var root = new LLRPMessageNode("C1G2WriteOpSpecResult");
+            root.AddChild("Result", p.Result.ToString());
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("NumWordsWritten", p.NumWordsWritten.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2KillOpSpecResult p)
+        {
+            var root = new LLRPMessageNode("C1G2KillOpSpecResult");
+            root.AddChild("Result", p.Result.ToString());
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2LockOpSpecResult p)
+        {
+            var root = new LLRPMessageNode("C1G2LockOpSpecResult");
+            root.AddChild("Result", p.Result.ToString());
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2BlockEraseOpSpecResult p)
+        {
+            var root = new LLRPMessageNode("C1G2BlockEraseOpSpecResult");
+            root.AddChild("Result", p.Result.ToString());
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2BlockWriteOpSpecResult p)
+        {
+            var root = new LLRPMessageNode("C1G2BlockWriteOpSpecResult");
+            root.AddChild("Result", p.Result.ToString());
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("NumWordsWritten", p.NumWordsWritten.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ClientRequestOpSpecResult p)
+        {
+            var root = new LLRPMessageNode("ClientRequestOpSpecResult");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_HoppingEvent p)
+        {
+            var root = new LLRPMessageNode("HoppingEvent");
+            root.AddChild("HopTableID", p.HopTableID.ToString());
+            root.AddChild("NextChannelIndex", p.NextChannelIndex.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_GPIEvent p)
+        {
+            var root = new LLRPMessageNode("GPIEvent");
+            root.AddChild("GPIPortNumber", p.GPIPortNumber.ToString());
+            root.AddChild("GPIEvent", p.GPIEvent.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ROSpecEvent p)
+        {
+            var root = new LLRPMessageNode("ROSpecEvent");
+            root.AddChild("EventType", p.EventType.ToString());
+            root.AddChild("ROSpecID", p.ROSpecID.ToString());
+            root.AddChild("PreemptingROSpecID", p.PreemptingROSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ReportBufferLevelWarningEvent p)
+        {
+            var root = new LLRPMessageNode("ReportBufferLevelWarningEvent");
+            root.AddChild("ReportBufferPercentageFull", p.ReportBufferPercentageFull.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ReportBufferOverflowErrorEvent p)
+        {
+            // ToString() 为空元素
+            return new LLRPMessageNode("ReportBufferOverflowErrorEvent");
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_RFSurveyEvent p)
+        {
+            var root = new LLRPMessageNode("RFSurveyEvent");
+            root.AddChild("EventType", p.EventType.ToString());
+            root.AddChild("ROSpecID", p.ROSpecID.ToString());
+            root.AddChild("SpecIndex", p.SpecIndex.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2SingulationDetails p)
+        {
+            var root = new LLRPMessageNode("C1G2SingulationDetails");
+            root.AddChild("NumCollisionSlots", p.NumCollisionSlots.ToString());
+            root.AddChild("NumEmptySlots", p.NumEmptySlots.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AISpecEvent p)
+        {
+            var root = new LLRPMessageNode("AISpecEvent");
+            root.AddChild("EventType", p.EventType.ToString());
+            root.AddChild("ROSpecID", p.ROSpecID.ToString());
+            root.AddChild("SpecIndex", p.SpecIndex.ToString());
+
+            if (p.AirProtocolSingulationDetails != null && p.AirProtocolSingulationDetails.Count > 0)
+            {
+                var node = root.AddChild("AirProtocolSingulationDetails", $"Count={p.AirProtocolSingulationDetails.Count}");
+                for (int i = 0; i < p.AirProtocolSingulationDetails.Count; i++)
+                {
+                    var item = p.AirProtocolSingulationDetails[i];
+                    if (item is PARAM_C1G2SingulationDetails c1g2)
+                        node.Children.Add(c1g2.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AntennaEvent p)
+        {
+            var root = new LLRPMessageNode("AntennaEvent");
+            root.AddChild("EventType", p.EventType.ToString());
+            root.AddChild("AntennaID", p.AntennaID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ConnectionAttemptEvent p)
+        {
+            var root = new LLRPMessageNode("ConnectionAttemptEvent");
+            root.AddChild("Status", p.Status.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ConnectionCloseEvent p)
+        {
+            // ToString() 为空元素
+            return new LLRPMessageNode("ConnectionCloseEvent");
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_OpSpecID p)
+        {
+            var root = new LLRPMessageNode("OpSpecID");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ReaderExceptionEvent p)
+        {
+            var root = new LLRPMessageNode("ReaderExceptionEvent");
+            if (!string.IsNullOrEmpty(p.Message))
+                root.AddChild("Message", p.Message);
+
+            if (p.ROSpecID != null) root.Children.Add(p.ROSpecID.BuildTreeNode());
+            if (p.SpecIndex != null) root.Children.Add(p.SpecIndex.BuildTreeNode());
+            if (p.InventoryParameterSpecID != null) root.Children.Add(p.InventoryParameterSpecID.BuildTreeNode());
+            if (p.AntennaID != null) root.Children.Add(p.AntennaID.BuildTreeNode());
+            if (p.AccessSpecID != null) root.Children.Add(p.AccessSpecID.BuildTreeNode());
+            if (p.OpSpecID != null) root.Children.Add(p.OpSpecID.BuildTreeNode());
+
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var customNode = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var c = p.Custom[i];
+                    customNode.AddChild($"Custom[{i}]", description: c?.GetType().Name)
+                        .AddChild("ToString()", c?.ToString() ?? "null");
+                }
+            }
+
+            return root;
+        }
+
         public static LLRPMessageNode BuildTreeNode(this PARAM_TagReportData p)
         {
             var root = new LLRPMessageNode("TagReportData");
@@ -400,23 +712,28 @@ namespace LLRPReaderUI_WPF.ViewModels
                 for (int i = 0; i < p.EPCParameter.Count; i++)
                 {
                     var item = p.EPCParameter[i];
-                    node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
-                        .AddChild("ToString()", item?.ToString() ?? "null");
+                    if (item is PARAM_EPCData epcData)
+                        node.Children.Add(epcData.BuildTreeNode());
+                    else if (item is PARAM_EPC_96 epc96)
+                        node.Children.Add(epc96.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
                 }
             }
 
-            if (p.ROSpecID != null) root.AddChild("ROSpecID").AddChild("ToString()", p.ROSpecID.ToString());
-            if (p.SpecIndex != null) root.AddChild("SpecIndex").AddChild("ToString()", p.SpecIndex.ToString());
-            if (p.InventoryParameterSpecID != null) root.AddChild("InventoryParameterSpecID").AddChild("ToString()", p.InventoryParameterSpecID.ToString());
-            if (p.AntennaID != null) root.AddChild("AntennaID").AddChild("ToString()", p.AntennaID.ToString());
-            if (p.PeakRSSI != null) root.AddChild("PeakRSSI").AddChild("ToString()", p.PeakRSSI.ToString());
-            if (p.ChannelIndex != null) root.AddChild("ChannelIndex").AddChild("ToString()", p.ChannelIndex.ToString());
+            if (p.ROSpecID != null) root.Children.Add(p.ROSpecID.BuildTreeNode());
+            if (p.SpecIndex != null) root.Children.Add(p.SpecIndex.BuildTreeNode());
+            if (p.InventoryParameterSpecID != null) root.Children.Add(p.InventoryParameterSpecID.BuildTreeNode());
+            if (p.AntennaID != null) root.Children.Add(p.AntennaID.BuildTreeNode());
+            if (p.PeakRSSI != null) root.Children.Add(p.PeakRSSI.BuildTreeNode());
+            if (p.ChannelIndex != null) root.Children.Add(p.ChannelIndex.BuildTreeNode());
 
-            if (p.FirstSeenTimestampUTC != null) root.AddChild("FirstSeenTimestampUTC").AddChild("ToString()", p.FirstSeenTimestampUTC.ToString());
-            if (p.FirstSeenTimestampUptime != null) root.AddChild("FirstSeenTimestampUptime").AddChild("ToString()", p.FirstSeenTimestampUptime.ToString());
-            if (p.LastSeenTimestampUTC != null) root.AddChild("LastSeenTimestampUTC").AddChild("ToString()", p.LastSeenTimestampUTC.ToString());
-            if (p.LastSeenTimestampUptime != null) root.AddChild("LastSeenTimestampUptime").AddChild("ToString()", p.LastSeenTimestampUptime.ToString());
-            if (p.TagSeenCount != null) root.AddChild("TagSeenCount").AddChild("ToString()", p.TagSeenCount.ToString());
+            if (p.FirstSeenTimestampUTC != null) root.Children.Add(p.FirstSeenTimestampUTC.BuildTreeNode());
+            if (p.FirstSeenTimestampUptime != null) root.Children.Add(p.FirstSeenTimestampUptime.BuildTreeNode());
+            if (p.LastSeenTimestampUTC != null) root.Children.Add(p.LastSeenTimestampUTC.BuildTreeNode());
+            if (p.LastSeenTimestampUptime != null) root.Children.Add(p.LastSeenTimestampUptime.BuildTreeNode());
+            if (p.TagSeenCount != null) root.Children.Add(p.TagSeenCount.BuildTreeNode());
 
             if (p.AirProtocolTagData != null)
             {
@@ -424,12 +741,17 @@ namespace LLRPReaderUI_WPF.ViewModels
                 for (int i = 0; i < p.AirProtocolTagData.Count; i++)
                 {
                     var item = p.AirProtocolTagData[i];
-                    node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
-                        .AddChild("ToString()", item?.ToString() ?? "null");
+                    if (item is PARAM_C1G2_PC pc)
+                        node.Children.Add(pc.BuildTreeNode());
+                    else if (item is PARAM_C1G2_CRC crc)
+                        node.Children.Add(crc.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
                 }
             }
 
-            if (p.AccessSpecID != null) root.AddChild("AccessSpecID").AddChild("ToString()", p.AccessSpecID.ToString());
+            if (p.AccessSpecID != null) root.Children.Add(p.AccessSpecID.BuildTreeNode());
 
             if (p.AccessCommandOpSpecResult != null)
             {
@@ -437,8 +759,23 @@ namespace LLRPReaderUI_WPF.ViewModels
                 for (int i = 0; i < p.AccessCommandOpSpecResult.Count; i++)
                 {
                     var item = p.AccessCommandOpSpecResult[i];
-                    node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
-                        .AddChild("ToString()", item?.ToString() ?? "null");
+                    if (item is PARAM_C1G2ReadOpSpecResult read)
+                        node.Children.Add(read.BuildTreeNode());
+                    else if (item is PARAM_C1G2WriteOpSpecResult write)
+                        node.Children.Add(write.BuildTreeNode());
+                    else if (item is PARAM_C1G2KillOpSpecResult kill)
+                        node.Children.Add(kill.BuildTreeNode());
+                    else if (item is PARAM_C1G2LockOpSpecResult lockRes)
+                        node.Children.Add(lockRes.BuildTreeNode());
+                    else if (item is PARAM_C1G2BlockEraseOpSpecResult erase)
+                        node.Children.Add(erase.BuildTreeNode());
+                    else if (item is PARAM_C1G2BlockWriteOpSpecResult blockWrite)
+                        node.Children.Add(blockWrite.BuildTreeNode());
+                    else if (item is PARAM_ClientRequestOpSpecResult clientReq)
+                        node.Children.Add(clientReq.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
                 }
             }
 
@@ -473,17 +810,17 @@ namespace LLRPReaderUI_WPF.ViewModels
                 }
             }
 
-            if (p.HoppingEvent != null) root.AddChild("HoppingEvent").AddChild("ToString()", p.HoppingEvent.ToString());
-            if (p.GPIEvent != null) root.AddChild("GPIEvent").AddChild("ToString()", p.GPIEvent.ToString());
-            if (p.ROSpecEvent != null) root.AddChild("ROSpecEvent").AddChild("ToString()", p.ROSpecEvent.ToString());
-            if (p.ReportBufferLevelWarningEvent != null) root.AddChild("ReportBufferLevelWarningEvent").AddChild("ToString()", p.ReportBufferLevelWarningEvent.ToString());
-            if (p.ReportBufferOverflowErrorEvent != null) root.AddChild("ReportBufferOverflowErrorEvent").AddChild("ToString()", p.ReportBufferOverflowErrorEvent.ToString());
-            if (p.ReaderExceptionEvent != null) root.AddChild("ReaderExceptionEvent").AddChild("ToString()", p.ReaderExceptionEvent.ToString());
-            if (p.RFSurveyEvent != null) root.AddChild("RFSurveyEvent").AddChild("ToString()", p.RFSurveyEvent.ToString());
-            if (p.AISpecEvent != null) root.AddChild("AISpecEvent").AddChild("ToString()", p.AISpecEvent.ToString());
-            if (p.AntennaEvent != null) root.AddChild("AntennaEvent").AddChild("ToString()", p.AntennaEvent.ToString());
-            if (p.ConnectionAttemptEvent != null) root.AddChild("ConnectionAttemptEvent").AddChild("ToString()", p.ConnectionAttemptEvent.ToString());
-            if (p.ConnectionCloseEvent != null) root.AddChild("ConnectionCloseEvent").AddChild("ToString()", p.ConnectionCloseEvent.ToString());
+            if (p.HoppingEvent != null) root.Children.Add(p.HoppingEvent.BuildTreeNode());
+            if (p.GPIEvent != null) root.Children.Add(p.GPIEvent.BuildTreeNode());
+            if (p.ROSpecEvent != null) root.Children.Add(p.ROSpecEvent.BuildTreeNode());
+            if (p.ReportBufferLevelWarningEvent != null) root.Children.Add(p.ReportBufferLevelWarningEvent.BuildTreeNode());
+            if (p.ReportBufferOverflowErrorEvent != null) root.Children.Add(p.ReportBufferOverflowErrorEvent.BuildTreeNode());
+            if (p.ReaderExceptionEvent != null) root.Children.Add(p.ReaderExceptionEvent.BuildTreeNode());
+            if (p.RFSurveyEvent != null) root.Children.Add(p.RFSurveyEvent.BuildTreeNode());
+            if (p.AISpecEvent != null) root.Children.Add(p.AISpecEvent.BuildTreeNode());
+            if (p.AntennaEvent != null) root.Children.Add(p.AntennaEvent.BuildTreeNode());
+            if (p.ConnectionAttemptEvent != null) root.Children.Add(p.ConnectionAttemptEvent.BuildTreeNode());
+            if (p.ConnectionCloseEvent != null) root.Children.Add(p.ConnectionCloseEvent.BuildTreeNode());
 
             if (p.Custom != null && p.Custom.Length > 0)
             {
