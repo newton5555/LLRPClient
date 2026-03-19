@@ -11,17 +11,361 @@ namespace LLRPReaderUI_WPF.ViewModels
             root.AddChild("Version", msg.VERSION.ToString());
             root.AddChild("MessageID", msg.MSG_ID.ToString());
             root.AddChild("ResetToFactoryDefault", msg.ResetToFactoryDefault.ToString());
-            //todo
-            if (msg.Custom != null && msg.Custom.Length > 0)
+            if (msg.ReaderEventNotificationSpec != null)
+                root.Children.Add(msg.ReaderEventNotificationSpec.BuildTreeNode());
+
+            if (msg.AntennaProperties != null && msg.AntennaProperties.Length > 0)
             {
-                var customNode = root.AddChild("Custom", $"Count={msg.Custom.Length}");
-                for (int i = 0; i < msg.Custom.Length; i++)
+                var node = root.AddChild("AntennaProperties", $"Count={msg.AntennaProperties.Length}");
+                for (int i = 0; i < msg.AntennaProperties.Length; i++)
                 {
-                    var param = msg.Custom[i];
-                    customNode.AddChild($"Custom[{i}]", description: param?.GetType().Name)
-                        .AddChild("ToString()", param?.ToString() ?? "null");
+                    var item = msg.AntennaProperties[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"AntennaProperties[{i}]", description: "null");
                 }
             }
+
+            if (msg.AntennaConfiguration != null && msg.AntennaConfiguration.Length > 0)
+            {
+                var node = root.AddChild("AntennaConfiguration", $"Count={msg.AntennaConfiguration.Length}");
+                for (int i = 0; i < msg.AntennaConfiguration.Length; i++)
+                {
+                    var item = msg.AntennaConfiguration[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"AntennaConfiguration[{i}]", description: "null");
+                }
+            }
+
+            if (msg.ROReportSpec != null)
+                root.Children.Add(msg.ROReportSpec.BuildTreeNode());
+            if (msg.AccessReportSpec != null)
+                root.Children.Add(msg.AccessReportSpec.BuildTreeNode());
+            if (msg.KeepaliveSpec != null)
+                root.Children.Add(msg.KeepaliveSpec.BuildTreeNode());
+
+            if (msg.GPOWriteData != null && msg.GPOWriteData.Length > 0)
+            {
+                var node = root.AddChild("GPOWriteData", $"Count={msg.GPOWriteData.Length}");
+                for (int i = 0; i < msg.GPOWriteData.Length; i++)
+                {
+                    var item = msg.GPOWriteData[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"GPOWriteData[{i}]", description: "null");
+                }
+            }
+
+            if (msg.GPIPortCurrentState != null && msg.GPIPortCurrentState.Length > 0)
+            {
+                var node = root.AddChild("GPIPortCurrentState", $"Count={msg.GPIPortCurrentState.Length}");
+                for (int i = 0; i < msg.GPIPortCurrentState.Length; i++)
+                {
+                    var item = msg.GPIPortCurrentState[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"GPIPortCurrentState[{i}]", description: "null");
+                }
+            }
+
+            if (msg.EventsAndReports != null)
+                root.Children.Add(msg.EventsAndReports.BuildTreeNode());
+
+            if (msg.Custom != null && msg.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={msg.Custom.Length}");
+                for (int i = 0; i < msg.Custom.Length; i++)
+                {
+                    var item = msg.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
+                        .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ReaderEventNotificationSpec p)
+        {
+            var root = new LLRPMessageNode("ReaderEventNotificationSpec");
+            if (p.EventNotificationState != null && p.EventNotificationState.Length > 0)
+            {
+                var node = root.AddChild("EventNotificationState", $"Count={p.EventNotificationState.Length}");
+                for (int i = 0; i < p.EventNotificationState.Length; i++)
+                {
+                    var item = p.EventNotificationState[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"EventNotificationState[{i}]", description: "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_EventNotificationState p)
+        {
+            var root = new LLRPMessageNode("EventNotificationState");
+            root.AddChild("EventType", p.EventType.ToString());
+            root.AddChild("NotificationState", p.NotificationState.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AntennaProperties p)
+        {
+            var root = new LLRPMessageNode("AntennaProperties");
+            root.AddChild("AntennaConnected", p.AntennaConnected.ToString());
+            root.AddChild("AntennaID", p.AntennaID.ToString());
+            root.AddChild("AntennaGain", p.AntennaGain.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AntennaConfiguration p)
+        {
+            var root = new LLRPMessageNode("AntennaConfiguration");
+            root.AddChild("AntennaID", p.AntennaID.ToString());
+            if (p.RFReceiver != null) root.Children.Add(p.RFReceiver.BuildTreeNode());
+            if (p.RFTransmitter != null) root.Children.Add(p.RFTransmitter.BuildTreeNode());
+
+            if (p.AirProtocolInventoryCommandSettings != null && p.AirProtocolInventoryCommandSettings.Count > 0)
+            {
+                var node = root.AddChild("AirProtocolInventoryCommandSettings", $"Count={p.AirProtocolInventoryCommandSettings.Count}");
+                for (int i = 0; i < p.AirProtocolInventoryCommandSettings.Count; i++)
+                {
+                    var item = p.AirProtocolInventoryCommandSettings[i];
+                    if (item is PARAM_C1G2InventoryCommand c1g2)
+                        node.Children.Add(c1g2.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_RFReceiver p)
+        {
+            var root = new LLRPMessageNode("RFReceiver");
+            root.AddChild("ReceiverSensitivity", p.ReceiverSensitivity.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_RFTransmitter p)
+        {
+            var root = new LLRPMessageNode("RFTransmitter");
+            root.AddChild("HopTableID", p.HopTableID.ToString());
+            root.AddChild("ChannelIndex", p.ChannelIndex.ToString());
+            root.AddChild("TransmitPower", p.TransmitPower.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2InventoryCommand p)
+        {
+            var root = new LLRPMessageNode("C1G2InventoryCommand");
+            root.AddChild("TagInventoryStateAware", p.TagInventoryStateAware.ToString());
+
+            if (p.C1G2Filter != null && p.C1G2Filter.Length > 0)
+            {
+                var node = root.AddChild("C1G2Filter", $"Count={p.C1G2Filter.Length}");
+                for (int i = 0; i < p.C1G2Filter.Length; i++)
+                {
+                    var item = p.C1G2Filter[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"C1G2Filter[{i}]", description: "null");
+                }
+            }
+
+            if (p.C1G2RFControl != null)
+                root.Children.Add(p.C1G2RFControl.BuildTreeNode());
+            if (p.C1G2SingulationControl != null)
+                root.Children.Add(p.C1G2SingulationControl.BuildTreeNode());
+
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var item = p.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
+                        .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2Filter p)
+        {
+            var root = new LLRPMessageNode("C1G2Filter");
+            root.AddChild("T", p.T.ToString());
+            if (p.C1G2TagInventoryMask != null)
+                root.Children.Add(p.C1G2TagInventoryMask.BuildTreeNode());
+            if (p.C1G2TagInventoryStateAwareFilterAction != null)
+                root.Children.Add(p.C1G2TagInventoryStateAwareFilterAction.BuildTreeNode());
+            if (p.C1G2TagInventoryStateUnawareFilterAction != null)
+                root.Children.Add(p.C1G2TagInventoryStateUnawareFilterAction.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2TagInventoryMask p)
+        {
+            var root = new LLRPMessageNode("C1G2TagInventoryMask");
+            if (p.MB != null)
+                root.AddChild("MB", p.MB.ToString());
+            root.AddChild("Pointer", p.Pointer.ToString());
+            if (p.TagMask != null)
+            {
+                var tagMaskNode = root.AddChild("TagMask", $"Count={p.TagMask.Count}");
+                tagMaskNode.AddChild("Hex", p.TagMask.ToHexString());
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2TagInventoryStateAwareFilterAction p)
+        {
+            var root = new LLRPMessageNode("C1G2TagInventoryStateAwareFilterAction");
+            root.AddChild("Target", p.Target.ToString());
+            root.AddChild("Action", p.Action.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2TagInventoryStateUnawareFilterAction p)
+        {
+            var root = new LLRPMessageNode("C1G2TagInventoryStateUnawareFilterAction");
+            root.AddChild("Action", p.Action.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2RFControl p)
+        {
+            var root = new LLRPMessageNode("C1G2RFControl");
+            root.AddChild("ModeIndex", p.ModeIndex.ToString());
+            root.AddChild("Tari", p.Tari.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2SingulationControl p)
+        {
+            var root = new LLRPMessageNode("C1G2SingulationControl");
+            if (p.Session != null)
+                root.AddChild("Session", p.Session.ToString());
+            root.AddChild("TagPopulation", p.TagPopulation.ToString());
+            root.AddChild("TagTransitTime", p.TagTransitTime.ToString());
+            if (p.C1G2TagInventoryStateAwareSingulationAction != null)
+                root.Children.Add(p.C1G2TagInventoryStateAwareSingulationAction.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2TagInventoryStateAwareSingulationAction p)
+        {
+            var root = new LLRPMessageNode("C1G2TagInventoryStateAwareSingulationAction");
+            root.AddChild("I", p.I.ToString());
+            root.AddChild("S", p.S.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ROReportSpec p)
+        {
+            var root = new LLRPMessageNode("ROReportSpec");
+            root.AddChild("ROReportTrigger", p.ROReportTrigger.ToString());
+            root.AddChild("N", p.N.ToString());
+            if (p.TagReportContentSelector != null)
+                root.Children.Add(p.TagReportContentSelector.BuildTreeNode());
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var item = p.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
+                        .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_TagReportContentSelector p)
+        {
+            var root = new LLRPMessageNode("TagReportContentSelector");
+            root.AddChild("EnableROSpecID", p.EnableROSpecID.ToString());
+            root.AddChild("EnableSpecIndex", p.EnableSpecIndex.ToString());
+            root.AddChild("EnableInventoryParameterSpecID", p.EnableInventoryParameterSpecID.ToString());
+            root.AddChild("EnableAntennaID", p.EnableAntennaID.ToString());
+            root.AddChild("EnableChannelIndex", p.EnableChannelIndex.ToString());
+            root.AddChild("EnablePeakRSSI", p.EnablePeakRSSI.ToString());
+            root.AddChild("EnableFirstSeenTimestamp", p.EnableFirstSeenTimestamp.ToString());
+            root.AddChild("EnableLastSeenTimestamp", p.EnableLastSeenTimestamp.ToString());
+            root.AddChild("EnableTagSeenCount", p.EnableTagSeenCount.ToString());
+            root.AddChild("EnableAccessSpecID", p.EnableAccessSpecID.ToString());
+
+            if (p.AirProtocolEPCMemorySelector != null && p.AirProtocolEPCMemorySelector.Count > 0)
+            {
+                var node = root.AddChild("AirProtocolEPCMemorySelector", $"Count={p.AirProtocolEPCMemorySelector.Count}");
+                for (int i = 0; i < p.AirProtocolEPCMemorySelector.Count; i++)
+                {
+                    var item = p.AirProtocolEPCMemorySelector[i];
+                    if (item is PARAM_C1G2EPCMemorySelector c1g2)
+                        node.Children.Add(c1g2.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2EPCMemorySelector p)
+        {
+            var root = new LLRPMessageNode("C1G2EPCMemorySelector");
+            root.AddChild("EnableCRC", p.EnableCRC.ToString());
+            root.AddChild("EnablePCBits", p.EnablePCBits.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AccessReportSpec p)
+        {
+            var root = new LLRPMessageNode("AccessReportSpec");
+            root.AddChild("AccessReportTrigger", p.AccessReportTrigger.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_KeepaliveSpec p)
+        {
+            var root = new LLRPMessageNode("KeepaliveSpec");
+            root.AddChild("KeepaliveTriggerType", p.KeepaliveTriggerType.ToString());
+            root.AddChild("PeriodicTriggerValue", p.PeriodicTriggerValue.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_GPOWriteData p)
+        {
+            var root = new LLRPMessageNode("GPOWriteData");
+            root.AddChild("GPOPortNumber", p.GPOPortNumber.ToString());
+            root.AddChild("GPOData", p.GPOData.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_GPIPortCurrentState p)
+        {
+            var root = new LLRPMessageNode("GPIPortCurrentState");
+            root.AddChild("GPIPortNum", p.GPIPortNum.ToString());
+            root.AddChild("Config", p.Config.ToString());
+            root.AddChild("State", p.State.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_EventsAndReports p)
+        {
+            var root = new LLRPMessageNode("EventsAndReports");
+            root.AddChild("HoldEventsAndReportsUponReconnect", p.HoldEventsAndReportsUponReconnect.ToString());
             return root;
         }
 
@@ -31,7 +375,7 @@ namespace LLRPReaderUI_WPF.ViewModels
             root.AddChild("Version", msg.VERSION.ToString());
             root.AddChild("MessageID", msg.MSG_ID.ToString());
             if (msg.ROSpec != null)
-                root.AddChild("ROSpec").AddChild("ToString()", msg.ROSpec.ToString());
+                root.Children.Add(msg.ROSpec.BuildTreeNode());
 
             return root;
         }
@@ -108,11 +452,227 @@ namespace LLRPReaderUI_WPF.ViewModels
                 for (int i = 0; i < msg.ROSpec.Length; i++)
                 {
                     var item = msg.ROSpec[i];
-                    node.AddChild($"ROSpec[{i}]", description: item?.GetType().Name)
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"ROSpec[{i}]", description: "null");
+                }
+            }
+
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ROSpec p)
+        {
+            var root = new LLRPMessageNode("ROSpec");
+            root.AddChild("ROSpecID", p.ROSpecID.ToString());
+            root.AddChild("Priority", p.Priority.ToString());
+            root.AddChild("CurrentState", p.CurrentState.ToString());
+
+            if (p.ROBoundarySpec != null)
+                root.Children.Add(p.ROBoundarySpec.BuildTreeNode());
+
+            if (p.SpecParameter != null && p.SpecParameter.Count > 0)
+            {
+                var node = root.AddChild("SpecParameter", $"Count={p.SpecParameter.Count}");
+                for (int i = 0; i < p.SpecParameter.Count; i++)
+                {
+                    var item = p.SpecParameter[i];
+                    if (item is PARAM_AISpec ai)
+                        node.Children.Add(ai.BuildTreeNode());
+                    else if (item is PARAM_RFSurveySpec rf)
+                        node.Children.Add(rf.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            if (p.ROReportSpec != null)
+                root.Children.Add(p.ROReportSpec.BuildTreeNode());
+
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ROBoundarySpec p)
+        {
+            var root = new LLRPMessageNode("ROBoundarySpec");
+            if (p.ROSpecStartTrigger != null)
+                root.Children.Add(p.ROSpecStartTrigger.BuildTreeNode());
+            if (p.ROSpecStopTrigger != null)
+                root.Children.Add(p.ROSpecStopTrigger.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ROSpecStartTrigger p)
+        {
+            var root = new LLRPMessageNode("ROSpecStartTrigger");
+            root.AddChild("ROSpecStartTriggerType", p.ROSpecStartTriggerType.ToString());
+            if (p.PeriodicTriggerValue != null)
+                root.Children.Add(p.PeriodicTriggerValue.BuildTreeNode());
+            if (p.GPITriggerValue != null)
+                root.Children.Add(p.GPITriggerValue.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ROSpecStopTrigger p)
+        {
+            var root = new LLRPMessageNode("ROSpecStopTrigger");
+            root.AddChild("ROSpecStopTriggerType", p.ROSpecStopTriggerType.ToString());
+            root.AddChild("DurationTriggerValue", p.DurationTriggerValue.ToString());
+            if (p.GPITriggerValue != null)
+                root.Children.Add(p.GPITriggerValue.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_PeriodicTriggerValue p)
+        {
+            var root = new LLRPMessageNode("PeriodicTriggerValue");
+            root.AddChild("Offset", p.Offset.ToString());
+            root.AddChild("Period", p.Period.ToString());
+            if (p.UTCTimestamp != null)
+                root.Children.Add(p.UTCTimestamp.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_GPITriggerValue p)
+        {
+            var root = new LLRPMessageNode("GPITriggerValue");
+            root.AddChild("GPIPortNum", p.GPIPortNum.ToString());
+            root.AddChild("GPIEvent", p.GPIEvent.ToString());
+            root.AddChild("Timeout", p.Timeout.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_UTCTimestamp p)
+        {
+            var root = new LLRPMessageNode("UTCTimestamp");
+            root.AddChild("Microseconds", p.Microseconds.ToString(), LlrpDisplayHelper.FormatUtcMicroseconds(p.Microseconds));
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AISpec p)
+        {
+            var root = new LLRPMessageNode("AISpec");
+            if (p.AntennaIDs != null)
+            {
+                var node = root.AddChild("AntennaIDs", $"Count={p.AntennaIDs.Count}");
+                node.AddChild("Values", p.AntennaIDs.ToString());
+            }
+
+            if (p.AISpecStopTrigger != null)
+                root.Children.Add(p.AISpecStopTrigger.BuildTreeNode());
+
+            if (p.InventoryParameterSpec != null && p.InventoryParameterSpec.Length > 0)
+            {
+                var node = root.AddChild("InventoryParameterSpec", $"Count={p.InventoryParameterSpec.Length}");
+                for (int i = 0; i < p.InventoryParameterSpec.Length; i++)
+                {
+                    var item = p.InventoryParameterSpec[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"InventoryParameterSpec[{i}]", description: "null");
+                }
+            }
+
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var item = p.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
                         .AddChild("ToString()", item?.ToString() ?? "null");
                 }
             }
 
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AISpecStopTrigger p)
+        {
+            var root = new LLRPMessageNode("AISpecStopTrigger");
+            root.AddChild("AISpecStopTriggerType", p.AISpecStopTriggerType.ToString());
+            root.AddChild("DurationTrigger", p.DurationTrigger.ToString());
+            if (p.GPITriggerValue != null)
+                root.Children.Add(p.GPITriggerValue.BuildTreeNode());
+            if (p.TagObservationTrigger != null)
+                root.Children.Add(p.TagObservationTrigger.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_TagObservationTrigger p)
+        {
+            var root = new LLRPMessageNode("TagObservationTrigger");
+            root.AddChild("TriggerType", p.TriggerType.ToString());
+            root.AddChild("NumberOfTags", p.NumberOfTags.ToString());
+            root.AddChild("NumberOfAttempts", p.NumberOfAttempts.ToString());
+            root.AddChild("T", p.T.ToString());
+            root.AddChild("Timeout", p.Timeout.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_InventoryParameterSpec p)
+        {
+            var root = new LLRPMessageNode("InventoryParameterSpec");
+            root.AddChild("InventoryParameterSpecID", p.InventoryParameterSpecID.ToString());
+            root.AddChild("ProtocolID", p.ProtocolID.ToString());
+
+            if (p.AntennaConfiguration != null && p.AntennaConfiguration.Length > 0)
+            {
+                var node = root.AddChild("AntennaConfiguration", $"Count={p.AntennaConfiguration.Length}");
+                for (int i = 0; i < p.AntennaConfiguration.Length; i++)
+                {
+                    var item = p.AntennaConfiguration[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"AntennaConfiguration[{i}]", description: "null");
+                }
+            }
+
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var item = p.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
+                        .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_RFSurveySpec p)
+        {
+            var root = new LLRPMessageNode("RFSurveySpec");
+            root.AddChild("AntennaID", p.AntennaID.ToString());
+            root.AddChild("StartFrequency", p.StartFrequency.ToString());
+            root.AddChild("EndFrequency", p.EndFrequency.ToString());
+            if (p.RFSurveySpecStopTrigger != null)
+                root.Children.Add(p.RFSurveySpecStopTrigger.BuildTreeNode());
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var item = p.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
+                        .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_RFSurveySpecStopTrigger p)
+        {
+            var root = new LLRPMessageNode("RFSurveySpecStopTrigger");
+            root.AddChild("StopTriggerType", p.StopTriggerType.ToString());
+            root.AddChild("DurationPeriod", p.DurationPeriod.ToString());
+            root.AddChild("N", p.N.ToString());
             return root;
         }
 
@@ -165,7 +725,7 @@ namespace LLRPReaderUI_WPF.ViewModels
             root.AddChild("CommunicationsStandard", p.CommunicationsStandard.ToString());
 
             if (p.UHFBandCapabilities != null)
-                root.AddChild("UHFBandCapabilities").AddChild("ToString()", p.UHFBandCapabilities.ToString());
+                root.Children.Add(p.UHFBandCapabilities.BuildTreeNode());
 
             if (p.Custom != null && p.Custom.Length > 0)
             {
@@ -868,6 +1428,27 @@ namespace LLRPReaderUI_WPF.ViewModels
             return root;
         }
 
+        public static LLRPMessageNode BuildTreeNode(this PARAM_UHFBandCapabilities p)
+        {
+            var root = new LLRPMessageNode("UHFBandCapabilities");
+            if (p.TransmitPowerLevelTableEntry != null)
+            {
+                var transmitPowerLevelTableEntryNode = root.AddChild("TransmitPowerLevelTableEntry", $"Count={p.TransmitPowerLevelTableEntry.Length}");
+                for (int i = 0; i < p.TransmitPowerLevelTableEntry.Length; i++)
+                {
+                    var item = transmitPowerLevelTableEntryNode.AddChild($"TransmitPowerLevelTableEntry[{i}]");
+                    p.TransmitPowerLevelTableEntry[i].AddParamToTreeNode(item);
+                }
+            }
+            return root;
+        }
+
+        //Parameter
+        private static void AddParamToTreeNode(this PARAM_TransmitPowerLevelTableEntry p,LLRPMessageNode node)
+        {
+            node.AddChild("Index", p?.Index.ToString());
+            node.AddChild("TransmitPowerValue", p?.TransmitPowerValue.ToString());
+        }
 
     }
 }

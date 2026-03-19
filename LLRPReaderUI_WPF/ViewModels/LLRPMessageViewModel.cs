@@ -106,7 +106,7 @@ namespace LLRPReaderUI_WPF.ViewModels
                 //根节点直接显示Decode_Envelope解析出来的内容
                 LLRPBinaryDecoder.Decode_Envelope(payload, out var env);
 
-                string details = $"{((ENUM_LLRP_MSG_TYPE)env.msg_type)}  Length={env.msg_len}";
+                string details = $"{env.msg_type}  Length={env.msg_len}";
 
                 var root = new LLRPMessageNode($"MSG V{env.ver.ToString()} {SelectedRawFrame?.Direction} ID={env.msg_id}", details);
 
@@ -150,75 +150,52 @@ namespace LLRPReaderUI_WPF.ViewModels
         {
             parentNode.AddChild("消息类型", message.GetType().Name);
 
-            if (message is MSG_GET_READER_CAPABILITIES getReaderCapabilities)
+            switch (message)
             {
-                parentNode.Children.Add(getReaderCapabilities.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_GET_READER_CAPABILITIES_RESPONSE getReaderCapabilitiesResponse)
-            {
-                parentNode.Children.Add(getReaderCapabilitiesResponse.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_RO_ACCESS_REPORT roAccessReport)
-            {
-                parentNode.Children.Add(roAccessReport.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_READER_EVENT_NOTIFICATION readerEventNotification)
-            {
-                parentNode.Children.Add(readerEventNotification.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_ERROR_MESSAGE errorMessage)
-            {
-                parentNode.Children.Add(errorMessage.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_SET_READER_CONFIG setReaderConfig)
-            {
-                parentNode.Children.Add(setReaderConfig.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_ADD_ROSPEC addRoSpec)
-            {
-                parentNode.Children.Add(addRoSpec.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_START_ROSPEC startRoSpec)
-            {
-                parentNode.Children.Add(startRoSpec.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_STOP_ROSPEC stopRoSpec)
-            {
-                parentNode.Children.Add(stopRoSpec.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_DELETE_ROSPEC deleteRoSpec)
-            {
-                parentNode.Children.Add(deleteRoSpec.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_ENABLE_ROSPEC enableRoSpec)
-            {
-                parentNode.Children.Add(enableRoSpec.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_DISABLE_ROSPEC disableRoSpec)
-            {
-                parentNode.Children.Add(disableRoSpec.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_GET_ROSPECS getRoSpecs)
-            {
-                parentNode.Children.Add(getRoSpecs.BuildTreeNode());
-                return;
-            }
-            else if (message is MSG_GET_ROSPECS_RESPONSE getRoSpecsResp)
-            {
-                parentNode.Children.Add(getRoSpecsResp.BuildTreeNode());
-                return;
+                case MSG_GET_READER_CAPABILITIES getReaderCapabilities:
+                    parentNode.Children.Add(getReaderCapabilities.BuildTreeNode());
+                    return;
+                case MSG_GET_READER_CAPABILITIES_RESPONSE getReaderCapabilitiesResponse:
+                    parentNode.Children.Add(getReaderCapabilitiesResponse.BuildTreeNode());
+                    return;
+                case MSG_RO_ACCESS_REPORT roAccessReport:
+                    parentNode.Children.Add(roAccessReport.BuildTreeNode());
+                    return;
+                case MSG_READER_EVENT_NOTIFICATION readerEventNotification:
+                    parentNode.Children.Add(readerEventNotification.BuildTreeNode());
+                    return;
+                case MSG_ERROR_MESSAGE errorMessage:
+                    parentNode.Children.Add(errorMessage.BuildTreeNode());
+                    return;
+                case MSG_SET_READER_CONFIG setReaderConfig:
+                    parentNode.Children.Add(setReaderConfig.BuildTreeNode());
+                    return;
+                case MSG_ADD_ROSPEC addRoSpec:
+                    parentNode.Children.Add(addRoSpec.BuildTreeNode());
+                    return;
+                case MSG_START_ROSPEC startRoSpec:
+                    parentNode.Children.Add(startRoSpec.BuildTreeNode());
+                    return;
+                case MSG_STOP_ROSPEC stopRoSpec:
+                    parentNode.Children.Add(stopRoSpec.BuildTreeNode());
+                    return;
+                case MSG_DELETE_ROSPEC deleteRoSpec:
+                    parentNode.Children.Add(deleteRoSpec.BuildTreeNode());
+                    return;
+                case MSG_ENABLE_ROSPEC enableRoSpec:
+                    parentNode.Children.Add(enableRoSpec.BuildTreeNode());
+                    return;
+                case MSG_DISABLE_ROSPEC disableRoSpec:
+                    parentNode.Children.Add(disableRoSpec.BuildTreeNode());
+                    return;
+                case MSG_GET_ROSPECS getRoSpecs:
+                    parentNode.Children.Add(getRoSpecs.BuildTreeNode());
+                    return;
+                case MSG_GET_ROSPECS_RESPONSE getRoSpecsResp:
+                    parentNode.Children.Add(getRoSpecsResp.BuildTreeNode());
+                    return;
+                default:
+                    break;
             }
         }
 

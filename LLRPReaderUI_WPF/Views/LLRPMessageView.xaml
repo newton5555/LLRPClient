@@ -92,7 +92,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <!-- 消息树 -->
@@ -140,6 +140,9 @@
                         <TextBox Grid.Row="1" 
                                  Text="{Binding RawHexString, Mode=OneWay}" 
                                  IsReadOnly="True"
+                                 HorizontalContentAlignment="Left"
+                                 VerticalContentAlignment="Top"
+                                 
                                  TextWrapping="Wrap"
                                  FontFamily="Consolas, Courier New"
                                  VerticalScrollBarVisibility="Auto"
