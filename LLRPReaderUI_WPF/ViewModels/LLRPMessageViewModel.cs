@@ -179,8 +179,9 @@ namespace LLRPReaderUI_WPF.ViewModels
                 return;
             }
 
-
-
+            // 兜底：未手写的 MSG_* 也至少可展示（避免树为空）
+            parentNode.AddChild("未实现该消息的树转换", message.GetType().Name);
+            parentNode.AddChild("ToString()", message.ToString());
         }
 
  
