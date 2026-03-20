@@ -21,7 +21,7 @@ namespace LLRPReaderUI_WPF.Models
         /// <summary>
         /// 节点名称
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 节点值

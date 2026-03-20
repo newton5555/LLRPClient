@@ -133,7 +133,9 @@ namespace LLRPReaderUI_WPF.ViewModels
                 if (message != null)
                 {
                     var msgNode = root.AddChild("消息内容 (Message Body)", description: message.GetType().Name);
-                    ParseSpecificMessage(message, msgNode);
+                    //ParseSpecificMessage(message, msgNode);
+
+                    ParseSpecificMessageXML(message, msgNode);
                 }
                 else
                 {
@@ -173,20 +175,38 @@ namespace LLRPReaderUI_WPF.ViewModels
                 case MSG_ADD_ROSPEC addRoSpec:
                     parentNode.Children.Add(addRoSpec.BuildTreeNode());
                     return;
+                case MSG_ADD_ROSPEC_RESPONSE addRoSpecResponse:
+                    parentNode.Children.Add(addRoSpecResponse.BuildTreeNode());
+                    return;
                 case MSG_START_ROSPEC startRoSpec:
                     parentNode.Children.Add(startRoSpec.BuildTreeNode());
+                    return;
+                case MSG_START_ROSPEC_RESPONSE startRoSpecResponse:
+                    parentNode.Children.Add(startRoSpecResponse.BuildTreeNode());
                     return;
                 case MSG_STOP_ROSPEC stopRoSpec:
                     parentNode.Children.Add(stopRoSpec.BuildTreeNode());
                     return;
+                case MSG_STOP_ROSPEC_RESPONSE stopRoSpecResponse:
+                    parentNode.Children.Add(stopRoSpecResponse.BuildTreeNode());
+                    return;
                 case MSG_DELETE_ROSPEC deleteRoSpec:
                     parentNode.Children.Add(deleteRoSpec.BuildTreeNode());
+                    return;
+                case MSG_DELETE_ROSPEC_RESPONSE deleteRoSpecResponse:
+                    parentNode.Children.Add(deleteRoSpecResponse.BuildTreeNode());
                     return;
                 case MSG_ENABLE_ROSPEC enableRoSpec:
                     parentNode.Children.Add(enableRoSpec.BuildTreeNode());
                     return;
+                case MSG_ENABLE_ROSPEC_RESPONSE enableRoSpecResponse:
+                    parentNode.Children.Add(enableRoSpecResponse.BuildTreeNode());
+                    return;
                 case MSG_DISABLE_ROSPEC disableRoSpec:
                     parentNode.Children.Add(disableRoSpec.BuildTreeNode());
+                    return;
+                case MSG_DISABLE_ROSPEC_RESPONSE disableRoSpecResponse:
+                    parentNode.Children.Add(disableRoSpecResponse.BuildTreeNode());
                     return;
                 case MSG_GET_ROSPECS getRoSpecs:
                     parentNode.Children.Add(getRoSpecs.BuildTreeNode());
@@ -194,10 +214,66 @@ namespace LLRPReaderUI_WPF.ViewModels
                 case MSG_GET_ROSPECS_RESPONSE getRoSpecsResp:
                     parentNode.Children.Add(getRoSpecsResp.BuildTreeNode());
                     return;
+                case MSG_ADD_ACCESSSPEC addAccessSpec:
+                    parentNode.Children.Add(addAccessSpec.BuildTreeNode());
+                    return;
+                case MSG_ADD_ACCESSSPEC_RESPONSE addAccessSpecResponse:
+                    parentNode.Children.Add(addAccessSpecResponse.BuildTreeNode());
+                    return;
+                case MSG_DISABLE_ACCESSSPEC disableAccessSpec:
+                    parentNode.Children.Add(disableAccessSpec.BuildTreeNode());
+                    return;
+                case MSG_DISABLE_ACCESSSPEC_RESPONSE disableAccessSpecResponse:
+                    parentNode.Children.Add(disableAccessSpecResponse.BuildTreeNode());
+                    return;
+                case MSG_DELETE_ACCESSSPEC deleteAccessSpec:
+                    parentNode.Children.Add(deleteAccessSpec.BuildTreeNode());
+                    return;
+                case MSG_DELETE_ACCESSSPEC_RESPONSE deleteAccessSpecResponse:
+                    parentNode.Children.Add(deleteAccessSpecResponse.BuildTreeNode());
+                    return;
+                case MSG_ENABLE_ACCESSSPEC enableAccessSpec:
+                    parentNode.Children.Add(enableAccessSpec.BuildTreeNode());
+                    return;
+                case MSG_ENABLE_ACCESSSPEC_RESPONSE enableAccessSpecResponse:
+                    parentNode.Children.Add(enableAccessSpecResponse.BuildTreeNode());
+                    return;
+                case MSG_GET_ACCESSSPECS getAccessSpecs:
+                    parentNode.Children.Add(getAccessSpecs.BuildTreeNode());
+                    return;
+                case MSG_GET_ACCESSSPECS_RESPONSE getAccessSpecsResponse:
+                    parentNode.Children.Add(getAccessSpecsResponse.BuildTreeNode());
+                    return;
+                case MSG_CUSTOM_MESSAGE customMessage:
+                    parentNode.Children.Add(customMessage.BuildTreeNode());
+                    return;
+                case MSG_CLOSE_CONNECTION closeConnection:
+                    parentNode.Children.Add(closeConnection.BuildTreeNode());
+                    return;
+                case MSG_CLOSE_CONNECTION_RESPONSE closeConnectionResponse:
+                    parentNode.Children.Add(closeConnectionResponse.BuildTreeNode());
+                    return;
+                case MSG_KEEPALIVE_ACK keepAliveAck:
+                    parentNode.Children.Add(keepAliveAck.BuildTreeNode());
+                    return;
+                case MSG_GET_READER_CONFIG getReaderConfig:
+                    parentNode.Children.Add(getReaderConfig.BuildTreeNode());
+                    return;
                 default:
                     break;
             }
         }
+
+
+        private void ParseSpecificMessageXML(Message message, LLRPMessageNode parentNode)
+        {
+            parentNode.AddChild("消息类型", message.GetType().Name);
+
+            var child=message.BuildTreeFromMSG();
+
+            parentNode.Children.Add(child); 
+        }
+
 
         [RelayCommand] private void ClearSelection() { SelectedRawFrame = null; }
         [RelayCommand] private async Task RefreshData() => await LoadRawFrames();

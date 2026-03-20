@@ -8,8 +8,6 @@ namespace LLRPReaderUI_WPF.ViewModels
         public static LLRPMessageNode BuildTreeNode(this MSG_SET_READER_CONFIG msg)
         {
             var root = new LLRPMessageNode("SET_READER_CONFIG", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
             root.AddChild("ResetToFactoryDefault", msg.ResetToFactoryDefault.ToString());
             if (msg.ReaderEventNotificationSpec != null)
                 root.Children.Add(msg.ReaderEventNotificationSpec.BuildTreeNode());
@@ -88,6 +86,14 @@ namespace LLRPReaderUI_WPF.ViewModels
             }
             return root;
         }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_GET_READER_CONFIG msg)
+        {
+            var root = new LLRPMessageNode("GET_READER_CONFIG");
+            root.AddChild("ToString()", msg.ToString());
+            return root;
+        }
+
 
         public static LLRPMessageNode BuildTreeNode(this PARAM_ReaderEventNotificationSpec p)
         {
@@ -371,79 +377,104 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         public static LLRPMessageNode BuildTreeNode(this MSG_ADD_ROSPEC msg)
         {
-            var root = new LLRPMessageNode("ADD_ROSPEC", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            var root = new LLRPMessageNode("ADD_ROSPEC");
             if (msg.ROSpec != null)
                 root.Children.Add(msg.ROSpec.BuildTreeNode());
+            return root;
+        }
 
+        public static LLRPMessageNode BuildTreeNode(this MSG_ADD_ROSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("ADD_ROSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
             return root;
         }
 
         public static LLRPMessageNode BuildTreeNode(this MSG_START_ROSPEC msg)
         {
-            var root = new LLRPMessageNode("START_ROSPEC", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            var root = new LLRPMessageNode("START_ROSPEC");
             root.AddChild("ROSpecID", msg.ROSpecID.ToString());
+            return root;
+        }
 
+        public static LLRPMessageNode BuildTreeNode(this MSG_START_ROSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("START_ROSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
             return root;
         }
 
         public static LLRPMessageNode BuildTreeNode(this MSG_STOP_ROSPEC msg)
         {
-            var root = new LLRPMessageNode("STOP_ROSPEC", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            var root = new LLRPMessageNode("STOP_ROSPEC");
             root.AddChild("ROSpecID", msg.ROSpecID.ToString());
+            return root;
+        }
 
+        public static LLRPMessageNode BuildTreeNode(this MSG_STOP_ROSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("STOP_ROSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
             return root;
         }
 
         public static LLRPMessageNode BuildTreeNode(this MSG_DELETE_ROSPEC msg)
         {
-            var root = new LLRPMessageNode("DELETE_ROSPEC", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            var root = new LLRPMessageNode("DELETE_ROSPEC");
             root.AddChild("ROSpecID", msg.ROSpecID.ToString());
+            return root;
+        }
 
+        public static LLRPMessageNode BuildTreeNode(this MSG_DELETE_ROSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("DELETE_ROSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
             return root;
         }
 
         public static LLRPMessageNode BuildTreeNode(this MSG_ENABLE_ROSPEC msg)
         {
-            var root = new LLRPMessageNode("ENABLE_ROSPEC", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            var root = new LLRPMessageNode("ENABLE_ROSPEC");
             root.AddChild("ROSpecID", msg.ROSpecID.ToString());
+            return root;
+        }
 
+        public static LLRPMessageNode BuildTreeNode(this MSG_ENABLE_ROSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("ENABLE_ROSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
             return root;
         }
 
         public static LLRPMessageNode BuildTreeNode(this MSG_DISABLE_ROSPEC msg)
         {
-            var root = new LLRPMessageNode("DISABLE_ROSPEC", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            var root = new LLRPMessageNode("DISABLE_ROSPEC");
             root.AddChild("ROSpecID", msg.ROSpecID.ToString());
+            return root;
+        }
 
+        public static LLRPMessageNode BuildTreeNode(this MSG_DISABLE_ROSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("DISABLE_ROSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
             return root;
         }
 
         public static LLRPMessageNode BuildTreeNode(this MSG_GET_ROSPECS msg)
         {
-            var root = new LLRPMessageNode("GET_ROSPECS", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
-
+            var root = new LLRPMessageNode("GET_ROSPECS");
             return root;
         }
 
         public static LLRPMessageNode BuildTreeNode(this MSG_GET_ROSPECS_RESPONSE msg)
         {
-            var root = new LLRPMessageNode("GET_ROSPECS_RESPONSE", $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
+            var root = new LLRPMessageNode("GET_ROSPECS_RESPONSE");
             if (msg.LLRPStatus != null)
                 root.Children.Add(msg.LLRPStatus.BuildTreeNode());
             if (msg.ROSpec != null && msg.ROSpec.Length > 0)
@@ -458,7 +489,6 @@ namespace LLRPReaderUI_WPF.ViewModels
                         node.AddChild($"ROSpec[{i}]", description: "null");
                 }
             }
-
             return root;
         }
 
@@ -548,6 +578,13 @@ namespace LLRPReaderUI_WPF.ViewModels
         {
             var root = new LLRPMessageNode("UTCTimestamp");
             root.AddChild("Microseconds", p.Microseconds.ToString(), LlrpDisplayHelper.FormatUtcMicroseconds(p.Microseconds));
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_Uptime p)
+        {
+            var root = new LLRPMessageNode("Uptime");
+            root.AddChild("Microseconds", p.Microseconds.ToString());
             return root;
         }
 
@@ -1244,14 +1281,29 @@ namespace LLRPReaderUI_WPF.ViewModels
             // ToString(): Timestamp* -> HoppingEvent -> GPIEvent -> ROSpecEvent -> ReportBufferLevelWarningEvent ->
             //            ReportBufferOverflowErrorEvent -> ReaderExceptionEvent -> RFSurveyEvent -> AISpecEvent ->
             //            AntennaEvent -> ConnectionAttemptEvent -> ConnectionCloseEvent -> Custom*
-            if (p.Timestamp != null)
+            if (p.Timestamp != null && p.Timestamp.Count > 0)
             {
-                var node = root.AddChild("Timestamp", $"Count={p.Timestamp.Count}");
                 for (int i = 0; i < p.Timestamp.Count; i++)
                 {
                     var item = p.Timestamp[i];
-                    node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
-                        .AddChild("ToString()", item?.ToString() ?? "null");
+                    LLRPMessageNode itemNode;
+                    if (item is PARAM_UTCTimestamp utcTimestamp)
+                    {
+                        itemNode = utcTimestamp.BuildTreeNode();
+                        itemNode.Name = $"[{i}] UTCTimestamp";
+                    }
+                    else if (item is PARAM_Uptime uptime)
+                    {
+                        itemNode = uptime.BuildTreeNode();
+                        itemNode.Name = $"[{i}] Uptime";
+                    }
+                    else
+                    {
+                        itemNode = root.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
+                        continue;
+                    }
+                    root.Children.Add(itemNode);
                 }
             }
 
@@ -1284,13 +1336,9 @@ namespace LLRPReaderUI_WPF.ViewModels
         public static LLRPMessageNode BuildTreeNode(this MSG_GET_READER_CAPABILITIES msg)
         {
             var root = new LLRPMessageNode("GET_READER_CAPABILITIES", description: $"MessageID={msg.MSG_ID}");
-            // 参考 SDK 的 ToString()：根元素属性 Version / MessageID
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
             root.AddChild("RequestedData", LlrpDisplayHelper.FormatEnum(msg.RequestedData));
             if (msg.Custom != null && msg.Custom.Length > 0)
             {
-                // ToString() 里是把每个 Custom 参数作为子元素直接拼出来；这里用容器仅用于 UI 归类
                 var customNode = root.AddChild("Custom", $"Count={msg.Custom.Length}");
                 for (int i = 0; i < msg.Custom.Length; i++)
                 {
@@ -1310,8 +1358,6 @@ namespace LLRPReaderUI_WPF.ViewModels
         public static LLRPMessageNode BuildTreeNode(this MSG_GET_READER_CAPABILITIES_RESPONSE msg)
         {
             var root = new LLRPMessageNode("GET_READER_CAPABILITIES_RESPONSE", description: $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
             // 参考 ToString() 的层级与顺序：LLRPStatus → GeneralDeviceCapabilities → LLRPCapabilities → RegulatoryCapabilities → AirProtocolLLRPCapabilities(items...) → Custom(items...)
             if (msg.LLRPStatus != null)
             {
@@ -1365,8 +1411,6 @@ namespace LLRPReaderUI_WPF.ViewModels
         public static LLRPMessageNode BuildTreeNode(this MSG_RO_ACCESS_REPORT msg)
         {
             var root = new LLRPMessageNode("RO_ACCESS_REPORT", description: $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
             // 参考 ToString()：TagReportData、RFSurveyReportData、Custom 都是根的直接子元素（重复多次）
             if (msg.TagReportData != null)
             {
@@ -1407,8 +1451,6 @@ namespace LLRPReaderUI_WPF.ViewModels
         public static LLRPMessageNode BuildTreeNode(this MSG_READER_EVENT_NOTIFICATION msg)
         {
             var root = new LLRPMessageNode("READER_EVENT_NOTIFICATION", description: $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
             if (msg.ReaderEventNotificationData != null)
             {
                 root.Children.Add(msg.ReaderEventNotificationData.BuildTreeNode());
@@ -1419,8 +1461,6 @@ namespace LLRPReaderUI_WPF.ViewModels
         public static LLRPMessageNode BuildTreeNode(this MSG_ERROR_MESSAGE msg)
         {
             var root = new LLRPMessageNode("ERROR_MESSAGE", description: $"MessageID={msg.MSG_ID}");
-            root.AddChild("Version", msg.VERSION.ToString());
-            root.AddChild("MessageID", msg.MSG_ID.ToString());
             if (msg.LLRPStatus != null)
             {
                 root.Children.Add(msg.LLRPStatus.BuildTreeNode());
@@ -1434,21 +1474,367 @@ namespace LLRPReaderUI_WPF.ViewModels
             if (p.TransmitPowerLevelTableEntry != null)
             {
                 var transmitPowerLevelTableEntryNode = root.AddChild("TransmitPowerLevelTableEntry", $"Count={p.TransmitPowerLevelTableEntry.Length}");
-                for (int i = 0; i < p.TransmitPowerLevelTableEntry.Length; i++)
+                var nodes = p.TransmitPowerLevelTableEntry.BuildTreeNodes();
+                for (int i = 0; i < nodes.Length; i++)
                 {
-                    var item = transmitPowerLevelTableEntryNode.AddChild($"TransmitPowerLevelTableEntry[{i}]");
-                    p.TransmitPowerLevelTableEntry[i].AddParamToTreeNode(item);
+                    transmitPowerLevelTableEntryNode.Children.Add(nodes[i]);
+                }
+
+            }
+            return root;
+        }
+
+
+        private static LLRPMessageNode[] BuildTreeNodes(this PARAM_TransmitPowerLevelTableEntry[] ps)
+        {
+            LLRPMessageNode[] nodes = new LLRPMessageNode[ps.Length];
+            for (int i = 0; i < ps.Length; i++)
+            {
+                nodes[i] = new LLRPMessageNode($"TransmitPowerLevelTableEntry[{i}]");
+                nodes[i].AddChild("Index", ps[i]?.Index.ToString());
+                nodes[i].AddChild("TransmitPowerValue", ps[i]?.TransmitPowerValue.ToString());
+            }
+            return nodes;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_CLIENT_REQUEST_OP msg)
+        {
+            var root = new LLRPMessageNode("CLIENT_REQUEST_OP", $"MessageID={msg.MSG_ID}");
+            root.AddChild("ToString", msg.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_ADD_ACCESSSPEC msg)
+        {
+            var root = new LLRPMessageNode("ADD_ACCESSSPEC");
+            if (msg.AccessSpec != null)
+                root.Children.Add(msg.AccessSpec.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_ADD_ACCESSSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("ADD_ACCESSSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_DISABLE_ACCESSSPEC msg)
+        {
+            var root = new LLRPMessageNode("DISABLE_ACCESSSPEC");
+            root.AddChild("AccessSpecID", msg.AccessSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_DISABLE_ACCESSSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("DISABLE_ACCESSSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_DELETE_ACCESSSPEC msg)
+        {
+            var root = new LLRPMessageNode("DELETE_ACCESSSPEC");
+            root.AddChild("AccessSpecID", msg.AccessSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_DELETE_ACCESSSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("DELETE_ACCESSSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_ENABLE_ACCESSSPEC msg)
+        {
+            var root = new LLRPMessageNode("ENABLE_ACCESSSPEC");
+            root.AddChild("AccessSpecID", msg.AccessSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_ENABLE_ACCESSSPEC_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("ENABLE_ACCESSSPEC_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_GET_ACCESSSPECS msg)
+        {
+            var root = new LLRPMessageNode("GET_ACCESSSPECS");
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_GET_ACCESSSPECS_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("GET_ACCESSSPECS_RESPONSE");
+            if (msg.LLRPStatus != null)
+                root.Children.Add(msg.LLRPStatus.BuildTreeNode());
+            if (msg.AccessSpec != null && msg.AccessSpec.Length > 0)
+            {
+                var node = root.AddChild("AccessSpec", $"Count={msg.AccessSpec.Length}");
+                for (int i = 0; i < msg.AccessSpec.Length; i++)
+                {
+                    var item = msg.AccessSpec[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"AccessSpec[{i}]", description: "null");
                 }
             }
             return root;
         }
 
-        //Parameter
-        private static void AddParamToTreeNode(this PARAM_TransmitPowerLevelTableEntry p,LLRPMessageNode node)
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AccessSpec p)
         {
-            node.AddChild("Index", p?.Index.ToString());
-            node.AddChild("TransmitPowerValue", p?.TransmitPowerValue.ToString());
+            var root = new LLRPMessageNode("AccessSpec");
+            root.AddChild("AccessSpecID", p.AccessSpecID.ToString());
+            root.AddChild("AntennaID", p.AntennaID.ToString());
+            root.AddChild("ProtocolID", p.ProtocolID.ToString());
+            root.AddChild("CurrentState", p.CurrentState.ToString());
+            root.AddChild("ROSpecID", p.ROSpecID.ToString());
+
+            if (p.AccessSpecStopTrigger != null)
+                root.Children.Add(p.AccessSpecStopTrigger.BuildTreeNode());
+            if (p.AccessCommand != null)
+                root.Children.Add(p.AccessCommand.BuildTreeNode());
+            if (p.AccessReportSpec != null)
+                root.Children.Add(p.AccessReportSpec.BuildTreeNode());
+
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var item = p.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
+                        .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+            return root;
         }
 
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AccessSpecStopTrigger p)
+        {
+            var root = new LLRPMessageNode("AccessSpecStopTrigger");
+            root.AddChild("AccessSpecStopTrigger", p.AccessSpecStopTrigger.ToString());
+            root.AddChild("OperationCountValue", p.OperationCountValue.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_AccessCommand p)
+        {
+            var root = new LLRPMessageNode("AccessCommand");
+
+            if (p.AirProtocolTagSpec != null && p.AirProtocolTagSpec.Count > 0)
+            {
+                var node = root.AddChild("AirProtocolTagSpec", $"Count={p.AirProtocolTagSpec.Count}");
+                for (int i = 0; i < p.AirProtocolTagSpec.Count; i++)
+                {
+                    var item = p.AirProtocolTagSpec[i];
+                    if (item is PARAM_C1G2TagSpec tagSpec)
+                        node.Children.Add(tagSpec.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            if (p.AccessCommandOpSpec != null && p.AccessCommandOpSpec.Count > 0)
+            {
+                var node = root.AddChild("AccessCommandOpSpec", $"Count={p.AccessCommandOpSpec.Count}");
+                for (int i = 0; i < p.AccessCommandOpSpec.Count; i++)
+                {
+                    var item = p.AccessCommandOpSpec[i];
+                    if (item is PARAM_C1G2Read read)
+                        node.Children.Add(read.BuildTreeNode());
+                    else if (item is PARAM_C1G2Write write)
+                        node.Children.Add(write.BuildTreeNode());
+                    else if (item is PARAM_C1G2Kill kill)
+                        node.Children.Add(kill.BuildTreeNode());
+                    else if (item is PARAM_C1G2Lock lockOp)
+                        node.Children.Add(lockOp.BuildTreeNode());
+                    else if (item is PARAM_C1G2BlockErase erase)
+                        node.Children.Add(erase.BuildTreeNode());
+                    else if (item is PARAM_C1G2BlockWrite blockWrite)
+                        node.Children.Add(blockWrite.BuildTreeNode());
+                    else if (item is PARAM_ClientRequestOpSpec clientReq)
+                        node.Children.Add(clientReq.BuildTreeNode());
+                    else
+                        node.AddChild($"[{i}] {item?.GetType().Name}", description: item?.GetType().Name)
+                            .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+
+            if (p.Custom != null && p.Custom.Length > 0)
+            {
+                var node = root.AddChild("Custom", $"Count={p.Custom.Length}");
+                for (int i = 0; i < p.Custom.Length; i++)
+                {
+                    var item = p.Custom[i];
+                    node.AddChild($"Custom[{i}]", description: item?.GetType().Name)
+                        .AddChild("ToString()", item?.ToString() ?? "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2TagSpec p)
+        {
+            var root = new LLRPMessageNode("C1G2TagSpec");
+            if (p.C1G2TargetTag != null && p.C1G2TargetTag.Length > 0)
+            {
+                var node = root.AddChild("C1G2TargetTag", $"Count={p.C1G2TargetTag.Length}");
+                for (int i = 0; i < p.C1G2TargetTag.Length; i++)
+                {
+                    var item = p.C1G2TargetTag[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"C1G2TargetTag[{i}]", description: "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2TargetTag p)
+        {
+            var root = new LLRPMessageNode("C1G2TargetTag");
+            root.AddChild("MB", p.MB.ToString());
+            root.AddChild("Pointer", p.Pointer.ToString());
+            if (p.Match != null)
+                root.AddChild("Match", p.Match.ToString());
+            if (p.TagMask != null)
+                root.AddChild("TagMask", p.TagMask.ToHexString());
+            if (p.TagData != null)
+                root.AddChild("TagData", p.TagData.ToHexString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2Read p)
+        {
+            var root = new LLRPMessageNode("C1G2Read");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("AccessPassword", p.AccessPassword.ToString());
+            root.AddChild("MB", p.MB.ToString());
+            root.AddChild("WordPointer", p.WordPointer.ToString());
+            root.AddChild("WordCount", p.WordCount.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2Write p)
+        {
+            var root = new LLRPMessageNode("C1G2Write");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("AccessPassword", p.AccessPassword.ToString());
+            root.AddChild("MB", p.MB.ToString());
+            root.AddChild("WordPointer", p.WordPointer.ToString());
+            if (p.WriteData != null)
+                root.AddChild("WriteData", p.WriteData.ToHexString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2Kill p)
+        {
+            var root = new LLRPMessageNode("C1G2Kill");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("KillPassword", p.KillPassword.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2Lock p)
+        {
+            var root = new LLRPMessageNode("C1G2Lock");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("AccessPassword", p.AccessPassword.ToString());
+            if (p.C1G2LockPayload != null && p.C1G2LockPayload.Length > 0)
+            {
+                var node = root.AddChild("C1G2LockPayload", $"Count={p.C1G2LockPayload.Length}");
+                for (int i = 0; i < p.C1G2LockPayload.Length; i++)
+                {
+                    var item = p.C1G2LockPayload[i];
+                    if (item != null)
+                        node.Children.Add(item.BuildTreeNode());
+                    else
+                        node.AddChild($"C1G2LockPayload[{i}]", description: "null");
+                }
+            }
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2LockPayload p)
+        {
+            var root = new LLRPMessageNode("C1G2LockPayload");
+            root.AddChild("Privilege", p.Privilege.ToString());
+            root.AddChild("DataField", p.DataField.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2BlockErase p)
+        {
+            var root = new LLRPMessageNode("C1G2BlockErase");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("AccessPassword", p.AccessPassword.ToString());
+            root.AddChild("MB", p.MB.ToString());
+            root.AddChild("WordPointer", p.WordPointer.ToString());
+            root.AddChild("WordCount", p.WordCount.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_C1G2BlockWrite p)
+        {
+            var root = new LLRPMessageNode("C1G2BlockWrite");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            root.AddChild("AccessPassword", p.AccessPassword.ToString());
+            root.AddChild("MB", p.MB.ToString());
+            root.AddChild("WordPointer", p.WordPointer.ToString());
+            if (p.WriteData != null)
+                root.AddChild("WriteData", p.WriteData.ToHexString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this PARAM_ClientRequestOpSpec p)
+        {
+            var root = new LLRPMessageNode("ClientRequestOpSpec");
+            root.AddChild("OpSpecID", p.OpSpecID.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_CUSTOM_MESSAGE msg)
+        {
+            var root = new LLRPMessageNode("CUSTOM_MESSAGE", $"MessageID={msg.MSG_ID}");
+            root.AddChild("ToString", msg.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_CLOSE_CONNECTION msg)
+        {
+            var root = new LLRPMessageNode("CLOSE_CONNECTION", $"MessageID={msg.MSG_ID}");
+            root.AddChild("ToString", msg.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_CLOSE_CONNECTION_RESPONSE msg)
+        {
+            var root = new LLRPMessageNode("CLOSE_CONNECTION_RESPONSE", $"MessageID={msg.MSG_ID}");
+            root.AddChild("ToString", msg.ToString());
+            return root;
+        }
+
+        public static LLRPMessageNode BuildTreeNode(this MSG_KEEPALIVE_ACK msg)
+        {
+            var root = new LLRPMessageNode("KEEPALIVE_ACK", $"MessageID={msg.MSG_ID}");
+            root.AddChild("ToString", msg.ToString());
+            return root;
+        }
     }
+
+
+   
 }
