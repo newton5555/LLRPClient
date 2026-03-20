@@ -1,5 +1,7 @@
 # LLRPClient
 
+[English](README_EN.md) | 简体中文
+
 ## 1. LLRP 介绍
 
 LLRP（Low Level Reader Protocol，低层读写器协议）是 GS1 EPCglobal 定义的 RFID 读写器与上位机客户端之间的标准通信接口。之所以称为“低层”，是因为它提供了对 RFID 空口协议时序、读写器行为以及标签操作参数的细粒度控制，适合需要直接管理读写器能力、天线、盘点流程和标签命令的应用场景。
