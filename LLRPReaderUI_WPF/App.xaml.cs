@@ -36,6 +36,13 @@ namespace LLRPReaderUI_WPF
                     "LLRPReaderUI_WPF",
                     "llrp_rawframes.db");
 
+                // 确保数据库目录存在
+                var dbDir = System.IO.Path.GetDirectoryName(dbPath);
+                if (!string.IsNullOrEmpty(dbDir) && !System.IO.Directory.Exists(dbDir))
+                {
+                    System.IO.Directory.CreateDirectory(dbDir);
+                }
+
                 // 注册 DbContext 和 EF 实现的仓库
                 services.AddDbContext<RawFrameDbContext>(options =>
                     options.UseSqlite($"Data Source={dbPath}"));

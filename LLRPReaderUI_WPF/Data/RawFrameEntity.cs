@@ -13,6 +13,11 @@ namespace LLRPReaderUI_WPF.Data
         public byte[] Payload { get; set; }
         public int? Length => Payload?.Length;
 
+        /// <summary>
+        /// 设备标识，优先使用 ReaderIdentity（MAC地址），无则使用 IP 地址
+        /// </summary>
+        public string? DeviceId { get; set; }
+
         private string? _msgTypeName;
         public string MsgTypeName
         {

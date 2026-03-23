@@ -1,4 +1,6 @@
+using LLRPSdk;
 using LLRPReaderUI_WPF.Data;
+using LLRPReaderUI_WPF.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -12,14 +14,22 @@ public sealed class AppLogService : IAppLogService
     private readonly List<AppLogEntry> entries = new();
     private readonly ILogger<AppLogService> logger;
     private readonly IRawFrameRepository? repository;
-    private readonly ConcurrentQueue<(string Direction, byte[] Payload)> rawFrameQueue = new();
+    private readonly LlrpReader? reader;
+    private readonly ReaderStatusStore? statusStore;
+    private readonly ConcurrentQueue<(string? DeviceId, string Direction, byte[] Payload)> rawFrameQueue = new();
     private readonly CancellationTokenSource rawFrameCts = new();
     private readonly Task? rawFrameWorker;
 
-    public AppLogService(ILogger<AppLogService> logger, IRawFrameRepository? repository = null)
+    public AppLogService(
+        ILogger<AppLogService> logger,
+        IRawFrameRepository? repository = null,
+        LlrpReader? reader = null,
+        ReaderStatusStore? statusStore = null)
     {
         this.logger = logger;
         this.repository = repository;
+        this.reader = reader;
+        this.statusStore = statusStore;
         if (this.repository != null)
         {
             // 启动后台工作线程，负责从队列消费并写入持久化
@@ -33,10 +43,10 @@ public sealed class AppLogService : IAppLogService
                         {
                             try
                             {
-                                await this.repository.LogRawAsync(item.Direction, item.Payload).ConfigureAwait(false);
+                                await this.repository.LogRawAsync(item.DeviceId, item.Direction, item.Payload).ConfigureAwait(false);
                             }
-                            catch 
-                            { 
+                            catch
+                            {
                                 /* swallow */
                             }
                         }
@@ -134,8 +144,24 @@ public sealed class AppLogService : IAppLogService
         {
             // shallow copy payload to avoid buffer reuse issues
             var copy = payload != null ? (byte[])payload.Clone() : Array.Empty<byte>();
-            rawFrameQueue.Enqueue((direction, copy));
+            var deviceId = GetDeviceId();
+            rawFrameQueue.Enqueue((deviceId, direction, copy));
         }
+    }
+
+    private string? GetDeviceId()
+    {
+        // 优先使用 ReaderIdentity（MAC 地址）
+        //if (statusStore != null && statusStore.TryGetSnapshot(out var status) && status.ReaderIdentity != null)
+        //{
+        //    return status.ReaderIdentity.ToString();
+        //}
+        // 退回到 IP 地址
+        if (reader != null && !string.IsNullOrEmpty(reader.Address))
+        {
+            return reader.Address;
+        }
+        return null;
     }
 
     private void AddEntry(AppLogEntry entry)

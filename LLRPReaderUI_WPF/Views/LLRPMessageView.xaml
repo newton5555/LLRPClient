@@ -72,74 +72,95 @@
 
         <!-- 筛选栏 -->
         <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <StackPanel>
+                <!-- 第一行：日期和方向 -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <!-- 日期筛选 -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,16,0">
-                    <TextBlock Text="开始日期" VerticalAlignment="Center" Margin="0,0,8,0"
-                               Foreground="{DynamicResource MahApps.Brushes.Text}"/>
-                    <DatePicker SelectedDate="{Binding FilterStartDate}"
-                                Width="130" Height="28" VerticalContentAlignment="Center"/>
-                </StackPanel>
+                    <!-- 日期筛选 -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,16,0">
+                        <TextBlock Text="开始日期" VerticalAlignment="Center" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource MahApps.Brushes.Text}"/>
+                        <DatePicker SelectedDate="{Binding FilterStartDate}"
+                                    Width="130" Height="28" VerticalContentAlignment="Center"/>
+                    </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,16,0">
-                    <TextBlock Text="结束日期" VerticalAlignment="Center" Margin="0,0,8,0"
-                               Foreground="{DynamicResource MahApps.Brushes.Text}"/>
-                    <DatePicker SelectedDate="{Binding FilterEndDate}"
-                                Width="130" Height="28" VerticalContentAlignment="Center"/>
-                </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,16,0">
+                        <TextBlock Text="结束日期" VerticalAlignment="Center" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource MahApps.Brushes.Text}"/>
+                        <DatePicker SelectedDate="{Binding FilterEndDate}"
+                                    Width="130" Height="28" VerticalContentAlignment="Center"/>
+                    </StackPanel>
 
-                <!-- 方向筛选 -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,16,0">
-                    <TextBlock Text="方向" VerticalAlignment="Center" Margin="0,0,8,0"
-                               Foreground="{DynamicResource MahApps.Brushes.Text}"/>
-                    <ComboBox ItemsSource="{Binding DirectionOptions}"
-                              SelectedItem="{Binding FilterDirection}"
-                              Width="80" Height="28" VerticalContentAlignment="Center"/>
-                </StackPanel>
+                    <!-- 方向筛选 -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,16,0">
+                        <TextBlock Text="方向" VerticalAlignment="Center" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource MahApps.Brushes.Text}"/>
+                        <ComboBox ItemsSource="{Binding DirectionOptions}"
+                                  SelectedItem="{Binding FilterDirection}"
+                                  Width="80" Height="28" VerticalContentAlignment="Center"/>
+                    </StackPanel>
 
-                <!-- 消息类型筛选 -->
-                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,16,0">
-                    <TextBlock Text="消息类型" VerticalAlignment="Center" Margin="0,0,8,0"
-                               Foreground="{DynamicResource MahApps.Brushes.Text}"/>
-                    <ComboBox ItemsSource="{Binding MsgTypeOptions}"
-                              SelectedItem="{Binding FilterMsgType}"
-                              Width="200" Height="28" VerticalContentAlignment="Center"/>
-                </StackPanel>
+                    <!-- 设备 ID 筛选 -->
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,16,0">
+                        <TextBlock Text="设备" VerticalAlignment="Center" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource MahApps.Brushes.Text}"/>
+                        <ComboBox ItemsSource="{Binding DeviceIdOptions}"
+                                  SelectedItem="{Binding FilterDeviceId}"
+                                  Width="140" Height="28" VerticalContentAlignment="Center"/>
+                    </StackPanel>
 
-                <!-- 搜索框 -->
-                <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="0,0,16,0">
-                    <TextBlock Text="搜索" VerticalAlignment="Center" Margin="0,0,8,0"
-                               Foreground="{DynamicResource MahApps.Brushes.Text}"/>
-                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                             Width="140" Height="28" VerticalContentAlignment="Center"/>
-                </StackPanel>
+                  
+                </Grid>
 
-                <!-- 操作按钮 -->
-                <StackPanel Grid.Column="5" Orientation="Horizontal">
-                    <Button Height="28" Command="{Binding ApplyFilterCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="12" Height="12" Margin="0,0,4,0" Icon="Filter" IconFont="Auto"/>
-                            <TextBlock Text="筛选"/>
+                <!-- 第二行：消息类型 -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <TextBlock Text="消息类型" VerticalAlignment="Center" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource MahApps.Brushes.Text}"/>
+                        <ComboBox ItemsSource="{Binding MsgTypeOptions}"
+                                  SelectedItem="{Binding FilterMsgType}"
+                                  Width="220" Height="28" VerticalContentAlignment="Center"/>
+
+                        <!-- 搜索框 -->
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="0,0,16,0">
+                            <TextBlock Text="搜索" VerticalAlignment="Center" Margin="0,0,8,0"
+                 Foreground="{DynamicResource MahApps.Brushes.Text}"/>
+                            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+               Width="140" Height="28" VerticalContentAlignment="Center"/>
                         </StackPanel>
-                    </Button>
-                    <Button Height="28" Margin="8,0,0,0" Command="{Binding ClearFilterCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="12" Height="12" Margin="0,0,4,0"
-                                          Foreground="{StaticResource IconWarningBrush}" Icon="Times" IconFont="Auto"/>
-                            <TextBlock Text="清除"/>
+
+                        <!-- 操作按钮 -->
+                        <StackPanel Grid.Column="5" Orientation="Horizontal">
+                            <Button Height="28" Command="{Binding ApplyFilterCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:IconBlock Width="12" Height="12" Margin="0,0,4,0" Icon="Filter" IconFont="Auto"/>
+                                    <TextBlock Text="筛选"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Height="28" Margin="8,0,0,0" Command="{Binding ClearFilterCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:IconBlock Width="12" Height="12" Margin="0,0,4,0"
+                            Foreground="{StaticResource IconWarningBrush}" Icon="Times" IconFont="Auto"/>
+                                    <TextBlock Text="清除"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Grid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
         </Border>
 
         <!-- 主内容区 -->
@@ -190,8 +211,13 @@
                                                        Foreground="{DynamicResource MahApps.Brushes.Text}"/>
                                             <TextBlock Text="{Binding MsgTypeName}" FontSize="11" Foreground="DarkGreen"/>
                                         </StackPanel>
-                                        <TextBlock Text="{Binding Length, StringFormat='{}{0} bytes'}"
-                                                   FontSize="10" Foreground="Gray" Margin="0,2,0,0"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="{Binding Length, StringFormat='{}{0} bytes'}"
+                                                       FontSize="10" Foreground="Gray"/>
+                                            <TextBlock Text="{Binding DeviceId, StringFormat=' | {0}'}"
+                                                       FontSize="10" Foreground="Gray"
+                                                       Visibility="{Binding DeviceId, Converter={StaticResource StringToVisibilityConverter}}"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>

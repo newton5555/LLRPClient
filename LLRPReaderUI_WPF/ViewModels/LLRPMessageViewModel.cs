@@ -62,6 +62,9 @@ namespace LLRPReaderUI_WPF.ViewModels
         private string _filterMsgType = "全部";
 
         [ObservableProperty]
+        private string _filterDeviceId = "全部";
+
+        [ObservableProperty]
         private string _searchText = string.Empty;
 
         // 下拉选项
@@ -69,6 +72,9 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         private List<string> _msgTypeOptions = new List<string> { "全部" };
         public ObservableCollection<string> MsgTypeOptions { get; private set; } = new ObservableCollection<string> { "全部" };
+
+        private List<string> _deviceIdOptions = new List<string> { "全部" };
+        public ObservableCollection<string> DeviceIdOptions { get; private set; } = new ObservableCollection<string> { "全部" };
 
         public LLRPMessageViewModel(
             LlrpReader reader,
@@ -102,6 +108,7 @@ namespace LLRPReaderUI_WPF.ViewModels
 
                 // 更新消息类型选项
                 UpdateMsgTypeOptions();
+                UpdateDeviceIdOptions();
 
                 ApplyFilter();
                 StatusText = $"已加载 {RawFrames.Count} 条原始帧记录";
@@ -126,6 +133,23 @@ namespace LLRPReaderUI_WPF.ViewModels
             foreach (var t in types)
             {
                 MsgTypeOptions.Add(t);
+            }
+        }
+
+        private void UpdateDeviceIdOptions()
+        {
+            var deviceIds = RawFrames
+                .Where(f => !string.IsNullOrEmpty(f.DeviceId))
+                .Select(f => f.DeviceId!)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
+            deviceIds.Insert(0, "全部");
+            _deviceIdOptions = deviceIds;
+            DeviceIdOptions.Clear();
+            foreach (var d in deviceIds)
+            {
+                DeviceIdOptions.Add(d);
             }
         }
 
@@ -157,12 +181,19 @@ namespace LLRPReaderUI_WPF.ViewModels
                 query = query.Where(f => f.MsgTypeName == FilterMsgType);
             }
 
+            // 设备 ID 筛选
+            if (!string.IsNullOrEmpty(FilterDeviceId) && FilterDeviceId != "全部")
+            {
+                query = query.Where(f => f.DeviceId == FilterDeviceId);
+            }
+
             // 文本搜索
             if (!string.IsNullOrEmpty(SearchText))
             {
                 query = query.Where(f =>
                     f.MsgTypeName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                    f.Direction.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+                    f.Direction.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                    (f.DeviceId != null && f.DeviceId.Contains(SearchText, StringComparison.OrdinalIgnoreCase)));
             }
 
             FilteredFrames.Clear();
@@ -181,6 +212,7 @@ namespace LLRPReaderUI_WPF.ViewModels
             FilterEndDate = null;
             FilterDirection = "全部";
             FilterMsgType = "全部";
+            FilterDeviceId = "全部";
             SearchText = string.Empty;
             ApplyFilter();
         }

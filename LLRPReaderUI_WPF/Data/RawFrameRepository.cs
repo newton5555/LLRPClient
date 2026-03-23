@@ -16,7 +16,7 @@ namespace LLRPReaderUI_WPF.Data
             _ctx = ctx;
         }
 
-        public async Task LogRawAsync(string direction, byte[] payload)
+        public async Task LogRawAsync(string? deviceId, string direction, byte[] payload)
         {
             try
             {
@@ -24,7 +24,8 @@ namespace LLRPReaderUI_WPF.Data
                 {
                     Timestamp = DateTime.UtcNow,
                     Direction = direction,
-                    Payload = payload
+                    Payload = payload,
+                    DeviceId = deviceId
                 };
 
                 _ctx.RawFrames.Add(entity);
@@ -48,7 +49,7 @@ namespace LLRPReaderUI_WPF.Data
                 .ConfigureAwait(false);
         }
 
-        public async Task<List<RawFrameEntity>> GetByFilterAsync(DateTime? startDate, DateTime? endDate, string? direction, int take = 1000)
+        public async Task<List<RawFrameEntity>> GetByFilterAsync(DateTime? startDate, DateTime? endDate, string? direction, string? deviceId, int take = 1000)
         {
             var size = take <= 0 ? 1000 : take;
             var query = _ctx.RawFrames.AsNoTracking();
@@ -67,6 +68,11 @@ namespace LLRPReaderUI_WPF.Data
             if (!string.IsNullOrEmpty(direction) && direction != "全部")
             {
                 query = query.Where(f => f.Direction == direction);
+            }
+
+            if (!string.IsNullOrEmpty(deviceId) && deviceId != "全部")
+            {
+                query = query.Where(f => f.DeviceId == deviceId);
             }
 
             return await query
