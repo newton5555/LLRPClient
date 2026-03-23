@@ -6,6 +6,8 @@ namespace LLRPReaderUI_WPF.Data
 {
     public class RawFrameEntity
     {
+
+        public DateTime LocalTimestamp => Timestamp.ToLocalTime();
         public int Id { get; set; }
         public DateTime Timestamp { get; set; }
         // "RX" or "TX"

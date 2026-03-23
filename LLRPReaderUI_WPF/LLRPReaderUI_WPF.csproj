@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\rfid-icon.ico</ApplicationIcon>
     <VersionPrefix>1.0.6</VersionPrefix>
-    <VersionSuffix>Alpha-260320</VersionSuffix>
+    <VersionSuffix>Alpha-260323</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

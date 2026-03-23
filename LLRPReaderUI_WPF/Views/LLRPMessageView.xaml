@@ -293,7 +293,7 @@
                                             FontSize="12"
                                             FontWeight="SemiBold"
                                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                                            Text="{Binding Timestamp, StringFormat='MM/dd HH:mm:ss'}" />
+                                            Text="{Binding LocalTimestamp, StringFormat='MM/dd HH:mm:ss'}" />
                                         <StackPanel Margin="0,2,0,0" Orientation="Horizontal">
                                             <TextBlock
                                                 FontSize="11"
