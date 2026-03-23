@@ -47,5 +47,33 @@ namespace LLRPReaderUI_WPF.Data
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
+
+        public async Task<List<RawFrameEntity>> GetByFilterAsync(DateTime? startDate, DateTime? endDate, string? direction, int take = 1000)
+        {
+            var size = take <= 0 ? 1000 : take;
+            var query = _ctx.RawFrames.AsNoTracking();
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(f => f.Timestamp >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                var endOfDay = endDate.Value.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(f => f.Timestamp <= endOfDay);
+            }
+
+            if (!string.IsNullOrEmpty(direction) && direction != "全部")
+            {
+                query = query.Where(f => f.Direction == direction);
+            }
+
+            return await query
+                .OrderByDescending(f => f.Timestamp)
+                .Take(size)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
     }
 }

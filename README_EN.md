@@ -1,5 +1,7 @@
 # LLRPClient
 
+English | [简体中文](README.md)
+
 ## 1. Introduction to LLRP
 
 LLRP (Low Level Reader Protocol) is a standard communication interface between RFID readers and host computer clients defined by GS1 EPCglobal. It is called "low level" because it provides fine-grained control over RFID air interface protocol timing, reader behavior, and tag operation parameters, making it suitable for application scenarios that require direct management of reader capabilities, antennas, inventory processes, and tag commands.
