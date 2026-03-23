@@ -28,6 +28,9 @@ namespace LLRPReaderUI_WPF.ViewModels
         private ObservableCollection<RawFrameEntity> _rawFrames = new ObservableCollection<RawFrameEntity>();
 
         [ObservableProperty]
+        private ObservableCollection<RawFrameEntity> _filteredFrames = new ObservableCollection<RawFrameEntity>();
+
+        [ObservableProperty]
         private RawFrameEntity? _selectedRawFrame;
 
         [ObservableProperty]
@@ -45,7 +48,27 @@ namespace LLRPReaderUI_WPF.ViewModels
         [ObservableProperty]
         private bool _isLoading;
 
+        // 筛选属性
+        [ObservableProperty]
+        private DateTime? _filterStartDate;
 
+        [ObservableProperty]
+        private DateTime? _filterEndDate;
+
+        [ObservableProperty]
+        private string _filterDirection = "全部";
+
+        [ObservableProperty]
+        private string _filterMsgType = "全部";
+
+        [ObservableProperty]
+        private string _searchText = string.Empty;
+
+        // 下拉选项
+        public ObservableCollection<string> DirectionOptions { get; } = new ObservableCollection<string> { "全部", "RX", "TX" };
+
+        private List<string> _msgTypeOptions = new List<string> { "全部" };
+        public ObservableCollection<string> MsgTypeOptions { get; private set; } = new ObservableCollection<string> { "全部" };
 
         public LLRPMessageViewModel(
             LlrpReader reader,
@@ -57,6 +80,7 @@ namespace LLRPReaderUI_WPF.ViewModels
             _rawFrameRepository = rawFrameRepository;
 
             BindingOperations.EnableCollectionSynchronization(RawFrames, new object());
+            BindingOperations.EnableCollectionSynchronization(FilteredFrames, new object());
             BindingOperations.EnableCollectionSynchronization(MessageTree, new object());
 
             _ = LoadRawFrames();
@@ -75,6 +99,11 @@ namespace LLRPReaderUI_WPF.ViewModels
                 {
                     RawFrames.Add(frame);
                 }
+
+                // 更新消息类型选项
+                UpdateMsgTypeOptions();
+
+                ApplyFilter();
                 StatusText = $"已加载 {RawFrames.Count} 条原始帧记录";
             }
             catch (Exception ex)
@@ -86,6 +115,74 @@ namespace LLRPReaderUI_WPF.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        private void UpdateMsgTypeOptions()
+        {
+            var types = RawFrames.Select(f => f.MsgTypeName).Distinct().OrderBy(t => t).ToList();
+            types.Insert(0, "全部");
+            _msgTypeOptions = types;
+            MsgTypeOptions.Clear();
+            foreach (var t in types)
+            {
+                MsgTypeOptions.Add(t);
+            }
+        }
+
+        [RelayCommand]
+        private void ApplyFilter()
+        {
+            var query = RawFrames.AsEnumerable();
+
+            // 日期筛选
+            if (FilterStartDate.HasValue)
+            {
+                query = query.Where(f => f.Timestamp >= FilterStartDate.Value);
+            }
+            if (FilterEndDate.HasValue)
+            {
+                var endOfDay = FilterEndDate.Value.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(f => f.Timestamp <= endOfDay);
+            }
+
+            // 方向筛选
+            if (!string.IsNullOrEmpty(FilterDirection) && FilterDirection != "全部")
+            {
+                query = query.Where(f => f.Direction == FilterDirection);
+            }
+
+            // 消息类型筛选
+            if (!string.IsNullOrEmpty(FilterMsgType) && FilterMsgType != "全部")
+            {
+                query = query.Where(f => f.MsgTypeName == FilterMsgType);
+            }
+
+            // 文本搜索
+            if (!string.IsNullOrEmpty(SearchText))
+            {
+                query = query.Where(f =>
+                    f.MsgTypeName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                    f.Direction.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+            }
+
+            FilteredFrames.Clear();
+            foreach (var frame in query.OrderBy(f => f.Timestamp))
+            {
+                FilteredFrames.Add(frame);
+            }
+
+            StatusText = $"筛选结果: {FilteredFrames.Count} 条记录";
+        }
+
+        [RelayCommand]
+        private void ClearFilter()
+        {
+            FilterStartDate = null;
+            FilterEndDate = null;
+            FilterDirection = "全部";
+            FilterMsgType = "全部";
+            SearchText = string.Empty;
+            ApplyFilter();
         }
 
         partial void OnSelectedRawFrameChanged(RawFrameEntity? value)
@@ -275,7 +372,6 @@ namespace LLRPReaderUI_WPF.ViewModels
         }
 
 
-        [RelayCommand] private void ClearSelection() { SelectedRawFrame = null; }
         [RelayCommand] private async Task RefreshData() => await LoadRawFrames();
 
         [RelayCommand]
