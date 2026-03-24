@@ -558,8 +558,8 @@ namespace LLRPSdk
         {
             if (this.reader != null)
                 this.reader.Dispose();
-            //this.reader = new LLRPClient(port);
-            this.reader = new LLRPClient<TCPIPClientOptimized>(port);
+            this.reader = new (port);
+            //this.reader = new LLRPClient<TCPIPClientOptimized>(port);
             this.reader.OnRoAccessReportReceived += new delegateRoAccessReport(this.OnTagReportAvailableInternal);
             this.reader.OnReaderEventNotification += new delegateReaderEventNotification(this.OnReaderEventInternal);
             this.reader.OnKeepAlive += new delegateKeepAlive(this.OnKeepAliveInternal);

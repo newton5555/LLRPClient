@@ -124,11 +124,15 @@ public partial class InventoryViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanStopInventory))]
-    private void StopInventory()
+    private async void StopInventory()
     {
         try
         {
+            InventoryState = "正在停止...";
             reader.Stop();
+            // 等待一段时间让阅读器发送缓存的标签数据
+            // 阅读器在停止时会发送最后一批 RO_ACCESS_REPORT
+            await Task.Delay(100);
             IsRunning = false;
             InventoryState = "已停止";
             logs.LogOperation("停止寻卡");
@@ -136,6 +140,7 @@ public partial class InventoryViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            IsRunning = false;
             InventoryState = $"停止失败：{ex.Message}";
             logs.LogOperation($"停止寻卡失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }

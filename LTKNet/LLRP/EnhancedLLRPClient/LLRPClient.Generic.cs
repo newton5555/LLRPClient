@@ -345,16 +345,19 @@ label_4:
         case 61:
           try
           {
+            //System.Diagnostics.Debug.WriteLine($"[DEBUG] RO_ACCESS_REPORT: len={data.Length}, msg_id={msg_id}");
             BitArray bitArray = Util.ConvertByteArrayToBitArray(data);
             int count = bitArray.Count;
             MSG_RO_ACCESS_REPORT msgRoAccessReport = MSG_RO_ACCESS_REPORT.FromBitArray(ref bitArray, ref cursor, count);
+            //System.Diagnostics.Debug.WriteLine($"[DEBUG] RO_ACCESS_REPORT parsed OK, TagReportData count: {msgRoAccessReport.TagReportData?.Length ?? 0}");
             if (this.notificationQueue == null)
               break;
             this.notificationQueue.Add(msgRoAccessReport);
             break;
           }
-          catch
+          catch (Exception ex)
           {
+            System.Diagnostics.Debug.WriteLine($"[ERROR] RO_ACCESS_REPORT parse failed: {ex.Message}\n{ex.StackTrace}");
             break;
           }
         case 62:
