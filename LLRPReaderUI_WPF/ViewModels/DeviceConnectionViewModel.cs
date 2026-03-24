@@ -10,6 +10,7 @@ using Nager.Country;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace LLRPReaderUI_WPF.ViewModels;
@@ -41,7 +42,36 @@ public partial class DeviceConnectionViewModel : ObservableObject
         this.settingsStore = settingsStore;
         this.statusStore = statusStore;
 
+        // Subscribe to connection lost event (TCP disconnect)
+        this.reader.ConnectionLost += OnConnectionLost;
+
         LoadRecentEndpoints();
+    }
+
+    private void OnConnectionLost(LlrpReader _)
+    {
+        // TCP connection lost unexpectedly (e.g., network cable unplugged)
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            // Show global busy overlay briefly to indicate disconnection
+            WeakReferenceMessenger.Default.Send(new BusyStateChangedMessage(true, "连接已断开，正在清理..."));
+
+            settingsStore.Clear();
+            statusStore.Clear();
+            IsConnected = false;
+            ConnectionState = "连接已断开（网络异常）";
+            logs.LogOperation("TCP连接已断开", Microsoft.Extensions.Logging.LogLevel.Warning);
+            WeakReferenceMessenger.Default.Send(new ConnectionStateChangedMessage(false));
+
+            // Hide busy overlay after a short delay
+            Task.Delay(800).ContinueWith(_ =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    WeakReferenceMessenger.Default.Send(new BusyStateChangedMessage(false, null));
+                });
+            });
+        });
     }
 
     [ObservableProperty]
@@ -78,12 +108,12 @@ public partial class DeviceConnectionViewModel : ObservableObject
 
     partial void OnIsBusyChanged(bool value)
     {
-        //WeakReferenceMessenger.Default.Send(new LLRPReaderUI_WPF.Messages.BusyStateChangedMessage(value, ConnectionState));
+        WeakReferenceMessenger.Default.Send(new BusyStateChangedMessage(value, ConnectionState));
     }
 
     partial void OnConnectionStateChanged(string value)
     {
-        WeakReferenceMessenger.Default.Send(new LLRPReaderUI_WPF.Messages.BusyStateChangedMessage(IsBusy, value));
+        // Connection state changed, but we rely on OnIsBusyChanged for the overlay
     }
 
     public FeatureItemCollection FeatureSetItems { get; } =
@@ -120,6 +150,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
     {
         try
         {
+            ConnectionState = "正在连接设备...";
             IsBusy = true;
             var endpoint = ReaderEndpoint.Trim();
             if (string.IsNullOrWhiteSpace(endpoint))
@@ -167,44 +198,54 @@ public partial class DeviceConnectionViewModel : ObservableObject
 
     private void OnConnectAsyncComplete(LlrpReader _, ConnectAsyncResult result, string errorMessage)
     {
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
-            IsBusy = false;
+        reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
 
-            if (result == ConnectAsyncResult.Success && reader.IsConnected)
+        if (result == ConnectAsyncResult.Success && reader.IsConnected)
+        {
+            // Run initialization on background thread
+            Task.Run(() =>
             {
                 try
                 {
                     var status = EnsureStoppedIfSingulating();
                     var settings = QueryInitialSettings();
-
-                    settingsStore.Set(settings);
-                    statusStore.Set(status);
-
                     var featureSet = reader.ReaderCapabilities;
-                    UpdateFeatureSetItems(featureSet);
-                    AddRecentEndpoint(pendingEndpoint);
-                   
-                    
-                    IsConnected = true;
-                    ConnectionState = status.IsSingulating
-                        ? $"已连接：{pendingAddress}（检测到设备盘点中，已自动停止）"
-                        : $"已连接：{pendingAddress}";
-                    logs.LogOperation(ConnectionState);
+
+                    // Update UI on dispatcher
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        settingsStore.Set(settings);
+                        statusStore.Set(status);
+                        UpdateFeatureSetItems(featureSet);
+                        AddRecentEndpoint(pendingEndpoint);
+                        IsConnected = true;
+                        ConnectionState = status.IsSingulating
+                            ? $"已连接：{pendingAddress}（检测到设备盘点中，已自动停止）"
+                            : $"已连接：{pendingAddress}";
+                        IsBusy = false; // This will hide the overlay
+                        logs.LogOperation(ConnectionState);
+                    });
                 }
                 catch (Exception ex)
                 {
-                    IsConnected = false;
-                    ConnectionState = $"连接失败：{ex.Message}";
-                    logs.LogOperation($"连接后初始化失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        IsConnected = false;
+                        ConnectionState = $"连接失败：{ex.Message}";
+                        IsBusy = false; // This will hide the overlay
+                        logs.LogOperation($"连接后初始化失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+                    });
                 }
+            });
+            return;
+        }
 
-                return;
-            }
-            
+        // Failed case
+        Application.Current.Dispatcher.Invoke(() =>
+        {
             IsConnected = false;
             ConnectionState = $"连接失败：{errorMessage}";
+            IsBusy = false; // This will hide the overlay
             logs.LogOperation($"连接失败：{errorMessage}", Microsoft.Extensions.Logging.LogLevel.Warning);
         });
     }
@@ -237,14 +278,28 @@ public partial class DeviceConnectionViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanDisconnect))]
-    private void Disconnect()
+    private async void Disconnect()
     {
+        ConnectionState = "正在断开连接...";
+        IsBusy = true;
+
         try
         {
             reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
             if (reader.IsConnected)
             {
-                reader.Disconnect();
+                // Run disconnect on background thread to avoid UI freeze
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        reader.Disconnect();
+                    }
+                    catch
+                    {
+                        // Ignore errors during disconnect (connection may already be lost)
+                    }
+                });
             }
         }
         finally
@@ -252,8 +307,8 @@ public partial class DeviceConnectionViewModel : ObservableObject
             settingsStore.Clear();
             statusStore.Clear();
             IsConnected = false;
-            IsBusy = false;
             ConnectionState = "未连接";
+            IsBusy = false; // This will hide the overlay
             logs.LogOperation("设备断开连接");
         }
     }

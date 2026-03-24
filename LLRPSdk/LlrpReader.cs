@@ -240,6 +240,7 @@ namespace LLRPSdk
             this.reader.OnKeepAlive -= new delegateKeepAlive(this.OnKeepAliveInternal);
             this.reader.OnRawReceived -= new delegateRawFrame(this.OnRawFrameReceivedInternal);
             this.reader.OnRawSent -= new delegateRawFrame(this.OnRawFrameSentInternal);
+            this.reader.OnConnectionStatusChanged -= new delegateConnectionStatusChange(this.OnTransportConnectionStatusChanged);
         }
 
         /// <summary>Stops the reader. Tags will no longer be read.</summary>
@@ -566,6 +567,7 @@ namespace LLRPSdk
             this.reader.OnErrorNotification += new delegateErrorNotification(this.OnErrorNotification);
             this.reader.OnRawReceived += new delegateRawFrame(this.OnRawFrameReceivedInternal);
             this.reader.OnRawSent += new delegateRawFrame(this.OnRawFrameSentInternal);
+            this.reader.OnConnectionStatusChanged += new delegateConnectionStatusChange(this.OnTransportConnectionStatusChanged);
             ENUM_ConnectionAttemptStatusType status;
             this.reader.Open(address, this.ConnectTimeout, useTLS, LlrpReader.ToLLRP(tlsProtocol), out status);
             string str = "Error connecting to the reader (" + address + ") : ";
@@ -615,6 +617,17 @@ namespace LLRPSdk
             if (errorNotification == null)
                 return;
             errorNotification(this, error);
+        }
+
+        private void OnTransportConnectionStatusChanged(ENUM_CONNECTION_STATUS status)
+        {
+            if (status == ENUM_CONNECTION_STATUS.DISCONNECTED)
+            {
+                // TCP connection lost unexpectedly
+                this.keepaliveTimer.Stop();
+                this.cachedReaderEventNotifications = null;
+                ConnectionLost?.Invoke(this);
+            }
         }
 
         private void OnRawFrameReceivedInternal(byte[] raw)
@@ -2845,10 +2858,22 @@ namespace LLRPSdk
 
         private void OnKeepaliveMissed(object sender, ElapsedEventArgs e)
         {
-            LlrpReader.ConnectionLostHandler connectionLost = this.ConnectionLost;
-            if (connectionLost == null)
-                return;
-            connectionLost(this);
+            // Keepalive timeout - connection is lost
+            this.keepaliveTimer.Stop();
+            this.cachedReaderEventNotifications = null;
+
+            // Clean up underlying connection
+            try
+            {
+                this.reader?.Close();
+            }
+            catch
+            {
+                // Ignore errors during cleanup
+            }
+
+            // Notify listeners
+            ConnectionLost?.Invoke(this);
         }
 
         private void OnTagReportAvailableInternal(MSG_RO_ACCESS_REPORT msg)

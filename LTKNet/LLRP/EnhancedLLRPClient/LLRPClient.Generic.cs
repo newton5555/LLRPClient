@@ -40,6 +40,11 @@ namespace Org.LLRP.LTK.LLRPV1
 
     public event delegateRawFrame OnRawSent;
 
+    /// <summary>
+    /// Event raised when the underlying TCP connection status changes.
+    /// </summary>
+    public event delegateConnectionStatusChange OnConnectionStatusChanged;
+
     public T Transport => (T)this.cI;
 
     public string ReaderName => this.reader_name;
@@ -57,6 +62,7 @@ namespace Org.LLRP.LTK.LLRPV1
       this.cI = (CommunicationInterface)(object)(transport ?? throw new ArgumentNullException(nameof(transport)));
       this.cI.OnRawReceived += new delegateRawFrame(this.TriggerRawReceived);
       this.cI.OnRawSent += new delegateRawFrame(this.TriggerRawSent);
+      this.cI.OnClientConnectionStatusChange += new delegateConnectionStatusChange(this.OnTransportConnectionStatusChanged);
       this.notificationQueue = new();
       this.keepalivesQueue = new();
       this.CheckNotificationAndKeepaliveThreads();
@@ -88,6 +94,21 @@ namespace Org.LLRP.LTK.LLRPV1
         if (this.OnRawSent == null)
           return;
         this.OnRawSent(raw);
+      }
+      catch
+      {
+      }
+    }
+
+    private void OnTransportConnectionStatusChanged(ENUM_CONNECTION_STATUS status)
+    {
+      if (status == ENUM_CONNECTION_STATUS.DISCONNECTED)
+      {
+        this.connected = false;
+      }
+      try
+      {
+        this.OnConnectionStatusChanged?.Invoke(status);
       }
       catch
       {
