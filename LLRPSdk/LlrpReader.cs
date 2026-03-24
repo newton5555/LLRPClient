@@ -1621,7 +1621,11 @@ namespace LLRPSdk
                 this.keepaliveTimer.Interval = (double)config.Keepalives.PeriodInMs * 1.5;
                 this.keepaliveTimer.AutoReset = false;
                 this.keepaliveTimer.Start();
-
+            }
+            else
+            {
+                // Keepalive disabled - stop the connection monitoring timer
+                this.keepaliveTimer.Stop();
             }
             readerConfig.GPIPortCurrentState = new PARAM_GPIPortCurrentState[(int)this._readerCapabilities.GpiCount];
             readerConfig.ReaderEventNotificationSpec = new PARAM_ReaderEventNotificationSpec()
