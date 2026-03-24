@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
 using LLRPReaderUI_WPF.Models;
+using LLRPReaderUI_WPF.Services;
 using LLRPSdk;
 using Serilog;
 using System.Collections.ObjectModel;
@@ -18,7 +19,9 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly LlrpReader reader;
     private readonly ReaderStatusStore statusStore;
     private readonly IAppLogService logs;
+    private readonly LanguageService _languageService;
 
+    public ThemeLanguageViewModel ThemeLanguageViewModel { get; }
 
     [ObservableProperty]
     private NavigationItem? selectedNavigationItem;
@@ -79,24 +82,31 @@ public partial class MainWindowViewModel : ObservableObject
         AdvancedTagOpsViewModel advancedTagOpsViewModel,
         IAppLogService logs,
         LogViewModel logViewModel,
-        LLRPMessageViewModel llrpMessageViewModel)
+        LLRPMessageViewModel llrpMessageViewModel,
+        ThemeLanguageViewModel themeLanguageViewModel,
+        LanguageService languageService)
     {
         this.reader = reader;
         this.statusStore = statusStore;
         this.logs = logs;
+        _languageService = languageService;
+        ThemeLanguageViewModel = themeLanguageViewModel;
 
         NavigationItems =
         [
-            new NavigationItem { Title = "设备连接", Icon = IconChar.PlugCircleBolt, IconBrush = CreateBrush("#0EA5E9"), ViewModel = deviceConnectionViewModel },
-            new NavigationItem { Title = "参数配置", Icon = IconChar.Sliders, IconBrush = CreateBrush("#8B5CF6"), ViewModel = settingsViewModel },
-            new NavigationItem { Title = "GPIO 配置", Icon = IconChar.Microchip, IconBrush = CreateBrush("#F59E0B"), ViewModel = gpioViewModel },
-            new NavigationItem { Title = "盘点配置", Icon = IconChar.ScrewdriverWrench, IconBrush = CreateBrush("#14B8A6"), ViewModel = inventoryConfigViewModel },
-            new NavigationItem { Title = "盘点操作", Icon = IconChar.Tags, IconBrush = CreateBrush("#10B981"), ViewModel = inventoryViewModel },
-            new NavigationItem { Title = "读写操作", Icon = IconChar.PenToSquare, IconBrush = CreateBrush("#F97316"), ViewModel = readWriteViewModel },
-            new NavigationItem { Title = "高级标签操作", Icon = IconChar.Flask, IconBrush = CreateBrush("#EF4444"), ViewModel = advancedTagOpsViewModel },
-            new NavigationItem { Title = "日志", Icon = IconChar.ClipboardList, IconBrush = CreateBrush("#6366F1"), ViewModel = logViewModel },
-            new NavigationItem { Title = "历史LLRP MSG", Icon = IconChar.CodeBranch, IconBrush = CreateBrush("#8B5CF6"), ViewModel = llrpMessageViewModel }
+            new NavigationItem { Title = "设备连接", TitleResourceKey = "Menu.DeviceConnection", Icon = IconChar.PlugCircleBolt, IconBrush = CreateBrush("#0EA5E9"), ViewModel = deviceConnectionViewModel },
+            new NavigationItem { Title = "参数配置", TitleResourceKey = "Menu.Settings", Icon = IconChar.Sliders, IconBrush = CreateBrush("#8B5CF6"), ViewModel = settingsViewModel },
+            new NavigationItem { Title = "GPIO 配置", TitleResourceKey = "Menu.GPIO", Icon = IconChar.Microchip, IconBrush = CreateBrush("#F59E0B"), ViewModel = gpioViewModel },
+            new NavigationItem { Title = "盘点配置", TitleResourceKey = "Menu.InventoryConfig", Icon = IconChar.ScrewdriverWrench, IconBrush = CreateBrush("#14B8A6"), ViewModel = inventoryConfigViewModel },
+            new NavigationItem { Title = "盘点操作", TitleResourceKey = "Menu.Inventory", Icon = IconChar.Tags, IconBrush = CreateBrush("#10B981"), ViewModel = inventoryViewModel },
+            new NavigationItem { Title = "读写操作", TitleResourceKey = "Menu.ReadWrite", Icon = IconChar.PenToSquare, IconBrush = CreateBrush("#F97316"), ViewModel = readWriteViewModel },
+            new NavigationItem { Title = "高级标签操作", TitleResourceKey = "Menu.AdvancedTagOps", Icon = IconChar.Flask, IconBrush = CreateBrush("#EF4444"), ViewModel = advancedTagOpsViewModel },
+            new NavigationItem { Title = "日志", TitleResourceKey = "Menu.Log", Icon = IconChar.ClipboardList, IconBrush = CreateBrush("#6366F1"), ViewModel = logViewModel },
+            new NavigationItem { Title = "历史LLRP MSG", TitleResourceKey = "Menu.LLRPMessage", Icon = IconChar.CodeBranch, IconBrush = CreateBrush("#8B5CF6"), ViewModel = llrpMessageViewModel }
         ];
+
+        // Subscribe to language changes
+        _languageService.OnLanguageChanged += OnLanguageChanged;
 
         WeakReferenceMessenger.Default.Register<MainWindowViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
@@ -263,5 +273,18 @@ public partial class MainWindowViewModel : ObservableObject
     private static Brush CreateBrush(string hex)
     {
         return new BrushConverter().ConvertFromString(hex) as Brush ?? Brushes.DodgerBlue;
+    }
+
+    private void OnLanguageChanged(AppLanguage language)
+    {
+        // Update navigation item titles
+        foreach (var item in NavigationItems)
+        {
+            if (!string.IsNullOrEmpty(item.TitleResourceKey))
+            {
+                var newTitle = _languageService.GetLocalizedString(item.TitleResourceKey);
+                item.UpdateTitle(newTitle);
+            }
+        }
     }
 }

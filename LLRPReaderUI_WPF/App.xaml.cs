@@ -4,6 +4,7 @@ using LLRPSdk;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Models;
 using LLRPReaderUI_WPF.ViewModels;
+using LLRPReaderUI_WPF.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -77,6 +78,12 @@ namespace LLRPReaderUI_WPF
             services.AddSingleton<ReaderSettingsStore>();
             services.AddSingleton<ReaderStatusStore>();
             services.AddSingleton<LlrpLoggingBridge>();
+            
+            // Theme and Language services
+            services.AddSingleton<ThemeService>();
+            services.AddSingleton<LanguageService>();
+            services.AddSingleton<ThemeLanguageViewModel>();
+            
             services.AddSingleton<MainWindowViewModel>();
 
             services.AddTransient<DeviceConnectionViewModel>();

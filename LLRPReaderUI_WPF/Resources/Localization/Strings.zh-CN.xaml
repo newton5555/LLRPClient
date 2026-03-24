@@ -1,0 +1,87 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- App Title -->
+    <sys:String x:Key="App.Title">LLRP 读写器</sys:String>
+
+    <!-- Navigation Menu -->
+    <sys:String x:Key="Menu.DeviceConnection">设备连接</sys:String>
+    <sys:String x:Key="Menu.Settings">参数配置</sys:String>
+    <sys:String x:Key="Menu.GPIO">GPIO 配置</sys:String>
+    <sys:String x:Key="Menu.InventoryConfig">盘点配置</sys:String>
+    <sys:String x:Key="Menu.Inventory">盘点操作</sys:String>
+    <sys:String x:Key="Menu.ReadWrite">读写操作</sys:String>
+    <sys:String x:Key="Menu.AdvancedTagOps">高级标签操作</sys:String>
+    <sys:String x:Key="Menu.Log">日志</sys:String>
+    <sys:String x:Key="Menu.LLRPMessage">历史LLRP消息</sys:String>
+
+    <!-- Device Connection -->
+    <sys:String x:Key="DeviceConnection.Title">设备连接</sys:String>
+    <sys:String x:Key="DeviceConnection.Address">地址</sys:String>
+    <sys:String x:Key="DeviceConnection.Connect">连接</sys:String>
+    <sys:String x:Key="DeviceConnection.Disconnect">断开连接</sys:String>
+    <sys:String x:Key="DeviceConnection.Connecting">正在连接...</sys:String>
+    <sys:String x:Key="DeviceConnection.Connected">已连接</sys:String>
+    <sys:String x:Key="DeviceConnection.Disconnected">未连接</sys:String>
+    <sys:String x:Key="DeviceConnection.ConnectionFailed">连接失败</sys:String>
+    <sys:String x:Key="DeviceConnection.KeepaliveMonitor">连接监控</sys:String>
+    <sys:String x:Key="DeviceConnection.KeepaliveMonitorTip">自动检测断开连接</sys:String>
+
+    <!-- Status -->
+    <sys:String x:Key="Status.Device">设备</sys:String>
+    <sys:String x:Key="Status.Inventory">盘点</sys:String>
+    <sys:String x:Key="Status.GPI">GPI</sys:String>
+    <sys:String x:Key="Status.GPO">GPO</sys:String>
+    <sys:String x:Key="Status.MAC">MAC</sys:String>
+    <sys:String x:Key="Status.Unknown">未知</sys:String>
+    <sys:String x:Key="Status.NotConnected">未连接</sys:String>
+    <sys:String x:Key="Status.Running">进行中</sys:String>
+    <sys:String x:Key="Status.Idle">空闲</sys:String>
+    <sys:String x:Key="Status.NoData">无数据</sys:String>
+
+    <!-- Inventory -->
+    <sys:String x:Key="Inventory.Start">开始</sys:String>
+    <sys:String x:Key="Inventory.Stop">停止</sys:String>
+    <sys:String x:Key="Inventory.Clear">清空</sys:String>
+    <sys:String x:Key="Inventory.Running">寻卡中</sys:String>
+    <sys:String x:Key="Inventory.Stopped">已停止</sys:String>
+    <sys:String x:Key="Inventory.TotalReports">报告总数</sys:String>
+    <sys:String x:Key="Inventory.TotalTags">标签总数</sys:String>
+    <sys:String x:Key="Inventory.UniqueTags">唯一标签</sys:String>
+    <sys:String x:Key="Inventory.EPC">EPC</sys:String>
+    <sys:String x:Key="Inventory.Antenna">天线</sys:String>
+    <sys:String x:Key="Inventory.RSSI">信号强度</sys:String>
+    <sys:String x:Key="Inventory.Count">次数</sys:String>
+    <sys:String x:Key="Inventory.Time">时间</sys:String>
+    <sys:String x:Key="Inventory.ConnectFirst">请先连接设备</sys:String>
+
+    <!-- Settings -->
+    <sys:String x:Key="Settings.Title">参数配置</sys:String>
+    <sys:String x:Key="Settings.Save">保存</sys:String>
+    <sys:String x:Key="Settings.Query">查询</sys:String>
+    <sys:String x:Key="Settings.Saved">参数已保存</sys:String>
+    <sys:String x:Key="Settings.SaveFailed">保存失败</sys:String>
+
+    <!-- Actions -->
+    <sys:String x:Key="Action.Save">保存</sys:String>
+    <sys:String x:Key="Action.Cancel">取消</sys:String>
+    <sys:String x:Key="Action.Refresh">刷新</sys:String>
+    <sys:String x:Key="Action.Clear">清空</sys:String>
+    <sys:String x:Key="Action.Start">开始</sys:String>
+    <sys:String x:Key="Action.Stop">停止</sys:String>
+    <sys:String x:Key="Action.Connect">连接</sys:String>
+    <sys:String x:Key="Action.Disconnect">断开</sys:String>
+
+    <!-- Theme & Language -->
+    <sys:String x:Key="Theme.Light">浅色</sys:String>
+    <sys:String x:Key="Theme.Dark">深色</sys:String>
+    <sys:String x:Key="Language.EnUS">English</sys:String>
+    <sys:String x:Key="Language.ZhCN">中文</sys:String>
+
+    <!-- Error Messages -->
+    <sys:String x:Key="Error.ConnectionFailed">连接失败</sys:String>
+    <sys:String x:Key="Error.NotConnected">设备未连接</sys:String>
+    <sys:String x:Key="Error.OperationFailed">操作失败</sys:String>
+
+</ResourceDictionary>
