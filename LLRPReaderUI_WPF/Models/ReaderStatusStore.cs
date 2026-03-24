@@ -26,6 +26,37 @@ public class ReaderStatusStore
         }
     }
 
+    /// <summary>
+    /// Update only the IsSingulating state without full status refresh.
+    /// </summary>
+    public void SetSingulating(bool isSingulating)
+    {
+        lock (syncRoot)
+        {
+            if (current is not null)
+            {
+                current.IsSingulating = isSingulating;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Get only the IsSingulating state.
+    /// </summary>
+    public bool TryGetSingulating(out bool isSingulating)
+    {
+        lock (syncRoot)
+        {
+            if (current is null)
+            {
+                isSingulating = false;
+                return false;
+            }
+            isSingulating = current.IsSingulating;
+            return true;
+        }
+    }
+
     public bool TryGetSnapshot(out Status? snapshot)
     {
         lock (syncRoot)

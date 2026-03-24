@@ -356,6 +356,43 @@ label_4:
       }
     }
 
+    /// <summary>
+    /// Force close without sending CLOSE_CONNECTION message.
+    /// Use this when network is already disconnected.
+    /// </summary>
+    public void ForceClose()
+    {
+      try
+      {
+        try
+        {
+          this.cI.Close();
+        }
+        catch
+        {
+        }
+        this.cI.OnFrameReceived -= new delegateFrameReceived(this.ProcessFrame);
+        this.connected = false;
+        if (this.notificationThread != null)
+        {
+          this.notificationThread.Interrupt();
+          if (!this.notificationThread.Join(new TimeSpan(0, 0, 1)))
+            Console.WriteLine("Error: Join timed out.");
+          this.notificationThread = (Thread)null;
+        }
+        if (this.keepalivesThread != null)
+        {
+          this.keepalivesThread.Interrupt();
+          if (!this.keepalivesThread.Join(new TimeSpan(0, 0, 1)))
+            Console.WriteLine("Error: Join timed out.");
+          this.keepalivesThread = (Thread)null;
+        }
+      }
+      catch
+      {
+      }
+    }
+
     public void Dispose() => this.Close();
 
     private void ProcessFrame(short ver, short msg_type, int msg_id, byte[] data)

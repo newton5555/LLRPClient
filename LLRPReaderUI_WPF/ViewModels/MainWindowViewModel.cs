@@ -109,7 +109,13 @@ public partial class MainWindowViewModel : ObservableObject
         });
         WeakReferenceMessenger.Default.Register<MainWindowViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
         {
-            if (ShouldRefreshStatus(m.Value))
+            var reason = m.Value;
+            if (reason.Contains("Inventory", StringComparison.OrdinalIgnoreCase))
+            {
+                // Use lightweight query for inventory state changes
+                r.QuerySingulatingState();
+            }
+            else
             {
                 r.QueryStatus();
             }
@@ -121,10 +127,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void OnDeviceConnectionStateChanged(bool isConnected)
     {
-        //if (isConnected)
-        {
-            QueryStatus();
-        }
+        QueryStatus();
     }
 
     [RelayCommand]
@@ -186,6 +189,22 @@ public partial class MainWindowViewModel : ObservableObject
     private static bool ShouldRefreshStatus(string reason)
     {
         return reason.Contains("Inventory", StringComparison.OrdinalIgnoreCase);
+    }
+
+    [RelayCommand]
+    private void QuerySingulatingState()
+    {
+        if (!reader.IsConnected)
+        {
+            InventoryStatusText = "盘点: 未知";
+            IsInventoryRunning = false;
+            return;
+        }
+
+        bool isSingulating = reader.QuerySingulatingState();
+        statusStore.SetSingulating(isSingulating);
+        InventoryStatusText = $"盘点: {(isSingulating ? "进行中" : "空闲")}";
+        IsInventoryRunning = isSingulating;
     }
 
     private static string FormatIdentification(object? readerIdentity)

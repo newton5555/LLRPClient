@@ -156,10 +156,10 @@ namespace LLRPSdk
         public event LlrpReader.KeepaliveHandler KeepaliveReceived;
 
         /// <summary>
-        /// Event to provide notification that the TCP/IP connection to the
-        /// LLRP Reader has been lost.
+        /// Event to provide notification that the keepalive timeout occurred.
+        /// The reader stopped responding to keepalive messages.
         /// </summary>
-        public event LlrpReader.ConnectionLostHandler ConnectionLost;
+        public event LlrpReader.KeepaliveTimeoutHandler KeepaliveTimeout;
 
         /// <summary>
         /// Event to provide notification of a completed asynchronous connection attempt.
@@ -235,6 +235,25 @@ namespace LLRPSdk
             this.keepaliveTimer.Stop();
             this.cachedReaderEventNotifications = null;
             this.reader.Close();
+            this.reader.OnRoAccessReportReceived -= new delegateRoAccessReport(this.OnTagReportAvailableInternal);
+            this.reader.OnReaderEventNotification -= new delegateReaderEventNotification(this.OnReaderEventInternal);
+            this.reader.OnKeepAlive -= new delegateKeepAlive(this.OnKeepAliveInternal);
+            this.reader.OnRawReceived -= new delegateRawFrame(this.OnRawFrameReceivedInternal);
+            this.reader.OnRawSent -= new delegateRawFrame(this.OnRawFrameSentInternal);
+            this.reader.OnConnectionStatusChanged -= new delegateConnectionStatusChange(this.OnTransportConnectionStatusChanged);
+        }
+
+        /// <summary>
+        /// Force close without sending CLOSE_CONNECTION message.
+        /// Use this when network is already disconnected (e.g., keepalive timeout).
+        /// </summary>
+        public void ForceDisconnect()
+        {
+            if (!this.IsConnected)
+                return;
+            this.keepaliveTimer.Stop();
+            this.cachedReaderEventNotifications = null;
+            this.reader.ForceClose();
             this.reader.OnRoAccessReportReceived -= new delegateRoAccessReport(this.OnTagReportAvailableInternal);
             this.reader.OnReaderEventNotification -= new delegateReaderEventNotification(this.OnReaderEventInternal);
             this.reader.OnKeepAlive -= new delegateKeepAlive(this.OnKeepAliveInternal);
@@ -623,10 +642,11 @@ namespace LLRPSdk
         {
             if (status == ENUM_CONNECTION_STATUS.DISCONNECTED)
             {
-                // TCP connection lost unexpectedly
+                // TCP connection closed (either by user, keepalive timeout handled, or TCP error)
+                // Just clean up state, don't trigger additional events
+                // Upper layer will know via LLRPClient.OnConnectionStatusChanged event
                 this.keepaliveTimer.Stop();
                 this.cachedReaderEventNotifications = null;
-                ConnectionLost?.Invoke(this);
             }
         }
 
@@ -2139,6 +2159,27 @@ namespace LLRPSdk
             return status1;
         }
 
+        /// <summary>
+        /// Query only the singulating (inventory) state of the reader.
+        /// This is a lightweight alternative to QueryStatus() when only IsSingulating is needed.
+        /// </summary>
+        /// <returns>True if the reader is currently inventorying tags.</returns>
+        public bool QuerySingulatingState()
+        {
+            if (!this.IsConnected)
+                return false;
+
+            try
+            {
+                PARAM_ROSpec[] roSpec = this.GetRoSpecs().ROSpec;
+                return roSpec != null && roSpec.Length > 0 && roSpec[0].CurrentState == ENUM_ROSpecState.Active;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private void DeleteAccessSpecs()
         {
             MSG_ERROR_MESSAGE msg_err;
@@ -2862,22 +2903,12 @@ namespace LLRPSdk
 
         private void OnKeepaliveMissed(object sender, ElapsedEventArgs e)
         {
-            // Keepalive timeout - connection is lost
+            // Keepalive timeout - reader stopped responding
+            // Only notify, let upper layer decide whether to disconnect
             this.keepaliveTimer.Stop();
-            this.cachedReaderEventNotifications = null;
-
-            // Clean up underlying connection
-            try
-            {
-                this.reader?.Close();
-            }
-            catch
-            {
-                // Ignore errors during cleanup
-            }
 
             // Notify listeners
-            ConnectionLost?.Invoke(this);
+            KeepaliveTimeout?.Invoke(this);
         }
 
         private void OnTagReportAvailableInternal(MSG_RO_ACCESS_REPORT msg)
@@ -3149,11 +3180,11 @@ namespace LLRPSdk
 
         /// <summary>
         /// Delegate declaration required to support declaration of
-        /// ConnectionLostHandler event.
-        /// Internal use only - bind to ConnectionLost event.
+        /// KeepaliveTimeoutHandler event.
+        /// Triggered when the reader stops responding to keepalive messages.
         /// </summary>
         /// <param name="reader">LLRPReader object</param>
-        public delegate void ConnectionLostHandler(LlrpReader reader);
+        public delegate void KeepaliveTimeoutHandler(LlrpReader reader);
 
         /// <summary>
         /// Delegate declaration required to support declaration of
