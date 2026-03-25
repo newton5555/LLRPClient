@@ -77,7 +77,7 @@
                         <Run Text="总计:" />
                         <Run
                             FontWeight="Bold"
-                            Foreground="DodgerBlue"
+                            Foreground="{DynamicResource PrimaryBrush}"
                             Text="{Binding RawFrames.Count, Mode=OneWay}" />
                         <Run Text="条" />
                     </TextBlock>
@@ -88,7 +88,7 @@
                         <Run Text="筛选:" />
                         <Run
                             FontWeight="Bold"
-                            Foreground="DodgerBlue"
+                            Foreground="{DynamicResource PrimaryBrush}"
                             Text="{Binding FilteredFrames.Count, Mode=OneWay}" />
                         <Run Text="条" />
                     </TextBlock>
@@ -307,17 +307,17 @@
                                                 Text=" | " />
                                             <TextBlock
                                                 FontSize="11"
-                                                Foreground="DarkGreen"
+                                                Foreground="{DynamicResource TreeMessageTypeBrush}"
                                                 Text="{Binding MsgTypeName}" />
                                         </StackPanel>
                                         <StackPanel Margin="0,2,0,0" Orientation="Horizontal">
                                             <TextBlock
                                                 FontSize="10"
-                                                Foreground="Gray"
+                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                 Text="{Binding Length, StringFormat='{}{0} bytes'}" />
                                             <TextBlock
                                                 FontSize="10"
-                                                Foreground="Gray"
+                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                 Text="{Binding DeviceId, StringFormat=' | {0}'}"
                                                 Visibility="{Binding DeviceId, Converter={StaticResource StringToVisibilityConverter}}" />
                                         </StackPanel>
@@ -385,7 +385,7 @@
                                             Text=": "
                                             Visibility="{Binding Value, Converter={StaticResource StringToVisibilityConverter}}" />
                                         <TextBlock
-                                            Foreground="DarkBlue"
+                                            Foreground="{DynamicResource TreeValueBrush}"
                                             Text="{Binding Value}"
                                             Visibility="{Binding Value, Converter={StaticResource StringToVisibilityConverter}}" />
                                         <TextBlock
@@ -395,7 +395,7 @@
                                             Visibility="{Binding Description, Converter={StaticResource StringToVisibilityConverter}}" />
                                         <TextBlock
                                             FontStyle="Italic"
-                                            Foreground="Gray"
+                                            Foreground="{DynamicResource TreeDescriptionBrush}"
                                             Text="{Binding Description}"
                                             Visibility="{Binding Description, Converter={StaticResource StringToVisibilityConverter}}" />
                                     </StackPanel>

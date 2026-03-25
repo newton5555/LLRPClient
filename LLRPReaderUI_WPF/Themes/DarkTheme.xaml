@@ -68,6 +68,32 @@
     <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#1E3A5F" />
     <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="#1F3B82F6" />
 
+    <!-- Read/Write required field brushes -->
+    <SolidColorBrush x:Key="ReadRequiredForeground" Color="#60A5FA" />
+    <SolidColorBrush x:Key="WriteRequiredForeground" Color="#FB923C" />
+    <SolidColorBrush x:Key="ReadRequiredBackground" Color="#1E3A5F" />
+    <SolidColorBrush x:Key="WriteRequiredBackground" Color="#422006" />
+    <DrawingBrush x:Key="BothRequiredBackground"
+                  Viewbox="0,0,6,6"
+                  ViewboxUnits="Absolute"
+                  Viewport="0,0,6,6"
+                  ViewportUnits="Absolute"
+                  TileMode="Tile"
+                  Stretch="None">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#1E293B" Geometry="M0,0 H6 V6 H0 Z" />
+                <GeometryDrawing Brush="#1E3A5F" Geometry="M0,0 H3 V3 H0 Z" />
+                <GeometryDrawing Brush="#422006" Geometry="M3,3 H6 V6 H3 Z" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- TreeView text brushes -->
+    <SolidColorBrush x:Key="TreeValueBrush" Color="#93C5FD" /> <!-- Light blue for dark theme -->
+    <SolidColorBrush x:Key="TreeDescriptionBrush" Color="#94A3B8" /> <!-- Light gray for dark theme -->
+    <SolidColorBrush x:Key="TreeMessageTypeBrush" Color="#4ADE80" /> <!-- Light green for dark theme -->
+
     <!-- Icon brushes (project-wide) -->
     <SolidColorBrush x:Key="IconInfoBrush" Color="#38BDF8" />
     <SolidColorBrush x:Key="IconSuccessBrush" Color="#34D399" />
