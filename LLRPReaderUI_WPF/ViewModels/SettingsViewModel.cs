@@ -5,6 +5,7 @@ using LLRPSdk;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
 using LLRPReaderUI_WPF.Models;
+using LLRPReaderUI_WPF.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -15,16 +16,30 @@ public partial class SettingsViewModel : ObservableObject
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
+    private readonly LanguageService _languageService;
 
-    public SettingsViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore)
+    public SettingsViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore, LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
         this.settingsStore = settingsStore;
+        _languageService = languageService;
         WeakReferenceMessenger.Default.Register<SettingsViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnConnectionStateChanged(m.Value);
         });
+
+        // Set initial state
+        SaveResult = _languageService.GetLocalizedString("Settings.NotSaved");
+    }
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
     }
 
     [ObservableProperty]
@@ -61,7 +76,7 @@ public partial class SettingsViewModel : ObservableObject
     private ObservableCollection<string> readerEventNotifications = new();
 
     [ObservableProperty]
-    private string saveResult = "未保存";
+    private string saveResult = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<AntennaItemViewModel> antennas = new();
@@ -139,8 +154,8 @@ public partial class SettingsViewModel : ObservableObject
         {
             if (!reader.IsConnected)
             {
-                SaveResult = "请先在设备连接页连接读写器";
-                logs.LogOperation("保存参数失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("Settings.SaveFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
@@ -190,14 +205,14 @@ public partial class SettingsViewModel : ObservableObject
 
             reader.ApplySettings(settings);
             settingsStore.Set(settings);
-            SaveResult = "参数已下发到设备";
-            logs.LogOperation("参数配置已下发到设备");
+            SaveResult = _languageService.GetLocalizedString("Settings.SavedToDevice");
+            logs.LogOperation(_languageService.GetLocalizedString("Settings.SavedLog"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("AttachedDataConfigChanged"));
         }
         catch (Exception ex)
         {
-            SaveResult = $"保存失败：{ex.Message}";
-            logs.LogOperation($"保存参数失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            SaveResult = GetLocalizedString("Settings.SaveFailedMsg", ex.Message);
+            logs.LogOperation(GetLocalizedString("Settings.SaveFailedMsg", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -208,8 +223,8 @@ public partial class SettingsViewModel : ObservableObject
         {
             if (!reader.IsConnected)
             {
-                SaveResult = "请先在设备连接页连接读写器";
-                logs.LogOperation("获取参数失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("Settings.GetFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
@@ -225,20 +240,20 @@ public partial class SettingsViewModel : ObservableObject
                 reader.ApplyDefaultSettings();
                 settings = reader.QuerySettings();
                 //settings=reader.QueryDefaultSettings();//测试使用 假的数据
-                SaveResult = "设备尚未配置，已自动下发默认参数";
+                SaveResult = _languageService.GetLocalizedString("Settings.DefaultApplied");
             }
 
             ApplySettingsToUi(settings);
             UpdateReaderEventNotifications();
             settingsStore.Set(settings);
-            SaveResult = "已从设备获取参数";
-            logs.LogOperation("已从设备获取参数");
+            SaveResult = _languageService.GetLocalizedString("Settings.GotFromDevice");
+            logs.LogOperation(_languageService.GetLocalizedString("Settings.GotLog"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("AttachedDataConfigChanged"));
         }
         catch (Exception ex)
         {
-            SaveResult = $"获取失败：{ex.Message}";
-            logs.LogOperation($"获取参数失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            SaveResult = GetLocalizedString("Settings.GetFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("Settings.GetFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -249,20 +264,20 @@ public partial class SettingsViewModel : ObservableObject
         {
             if (!reader.IsConnected)
             {
-                SaveResult = "请先在设备连接页连接读写器";
-                logs.LogOperation("恢复出厂失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("Settings.ResetFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
             reader.ResetToFactoryDefaultsOnly();
             settingsStore.Clear();
-            SaveResult = "已恢复设备出厂默认";
-            logs.LogOperation("已恢复设备出厂默认");
+            SaveResult = _languageService.GetLocalizedString("Settings.ResetSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("Settings.ResetLog"));
         }
         catch (Exception ex)
         {
-            SaveResult = $"恢复失败：{ex.Message}";
-            logs.LogOperation($"恢复出厂失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            SaveResult = GetLocalizedString("Settings.ResetFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("Settings.ResetFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -278,7 +293,7 @@ public partial class SettingsViewModel : ObservableObject
             settingsStore.Clear();
             SelectedRfMode = null;
             SelectedRfModeOption = null;
-            SaveResult = "请先在设备连接页连接读写器";
+            SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
             return;
         }
 
@@ -286,7 +301,7 @@ public partial class SettingsViewModel : ObservableObject
         {
             ApplySettingsToUi(settings);
             UpdateReaderEventNotifications();
-            SaveResult = "已加载连接初始化参数";
+            SaveResult = _languageService.GetLocalizedString("Settings.LoadedInitParams");
             return;
         }
 

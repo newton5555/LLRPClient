@@ -33,7 +33,7 @@ public partial class MainWindowViewModel : ObservableObject
     private string statusText = "Ready";
 
     [ObservableProperty]
-    private string deviceStatusText = "设备: 未连接";
+    private string deviceStatusText = string.Empty;
 
     [ObservableProperty]
     private bool isDeviceConnected;
@@ -45,7 +45,7 @@ public partial class MainWindowViewModel : ObservableObject
     private string busyText = string.Empty;
 
     [ObservableProperty]
-    private string inventoryStatusText = "盘点: 未知";
+    private string inventoryStatusText = string.Empty;
 
     [ObservableProperty]
     private bool isInventoryRunning;
@@ -54,16 +54,16 @@ public partial class MainWindowViewModel : ObservableObject
     //private string temperatureStatusText = "温度: --°C";
 
     [ObservableProperty]
-    private string antennaStatusText = "天线: --";
+    private string antennaStatusText = string.Empty;
 
     [ObservableProperty]
-    private string gpiStatusText = "GPI: --";
+    private string gpiStatusText = string.Empty;
 
     [ObservableProperty]
-    private string gpoStatusText = "GPO: --";
+    private string gpoStatusText = string.Empty;
 
     [ObservableProperty]
-    private string identificationStatusText = "MAC: --";
+    private string identificationStatusText = string.Empty;
 
     [ObservableProperty]
     private string windowTitle = BuildWindowTitle();
@@ -131,8 +131,21 @@ public partial class MainWindowViewModel : ObservableObject
             }
         });
 
+        // Initialize status texts with localized strings
+        InitializeStatusTexts();
+
         SelectedNavigationItem = NavigationItems[0];
         CurrentPageViewModel = SelectedNavigationItem.ViewModel;
+    }
+
+    private void InitializeStatusTexts()
+    {
+        DeviceStatusText = _languageService.GetLocalizedString("MainWindow.DeviceNotConnected");
+        InventoryStatusText = _languageService.GetLocalizedString("MainWindow.InventoryUnknown");
+        AntennaStatusText = _languageService.GetLocalizedString("MainWindow.AntennaDefault");
+        GpiStatusText = _languageService.GetLocalizedString("MainWindow.GPIDefault");
+        GpoStatusText = _languageService.GetLocalizedString("MainWindow.GPODefault");
+        IdentificationStatusText = _languageService.GetLocalizedString("MainWindow.MACDefault");
     }
 
     private void OnDeviceConnectionStateChanged(bool isConnected)
@@ -155,7 +168,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         var status = reader.QueryStatus();
         statusStore.Set(status);
-        logs.LogOperation("已更新设备状态");
+        logs.LogOperation(_languageService.GetLocalizedString("MainWindow.StatusUpdated"));
         UpdateStatusTexts(status);
         IsDeviceConnected = status.IsConnected;
         IsInventoryRunning = status.IsSingulating;
@@ -256,7 +269,16 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         CurrentPageViewModel = value.ViewModel;
-        StatusText = $"当前页面：{value.Title}";
+        StatusText = GetLocalizedString("MainWindow.CurrentPage", value.Title);
+    }
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
     }
 
     private static string BuildWindowTitle()

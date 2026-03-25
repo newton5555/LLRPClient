@@ -5,6 +5,7 @@ using LLRPSdk;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
 using LLRPReaderUI_WPF.Models;
+using LLRPReaderUI_WPF.Services;
 using System.Collections.ObjectModel;
 
 namespace LLRPReaderUI_WPF.ViewModels;
@@ -16,6 +17,7 @@ public partial class InventoryConfigViewModel : ObservableObject
         this.reader = null!;
         this.logs = null!;
         this.settingsStore = null!;
+        _languageService = null!;
     }
 
 
@@ -23,16 +25,21 @@ public partial class InventoryConfigViewModel : ObservableObject
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
+    private readonly LanguageService _languageService;
 
-    public InventoryConfigViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore)
+    public InventoryConfigViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore, LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
         this.settingsStore = settingsStore;
+        _languageService = languageService;
         WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnConnectionStateChanged(m.Value);
         });
+
+        // Set initial state
+        OperationResult = _languageService.GetLocalizedString("InventoryConfig.Waiting");
     }
 
     public IReadOnlyList<AutoStartMode> AutoStartModes { get; } = Enum.GetValues<AutoStartMode>();
@@ -44,7 +51,7 @@ public partial class InventoryConfigViewModel : ObservableObject
     public IReadOnlyList<ReportMode> ReportModes { get; } = Enum.GetValues<ReportMode>();
 
     [ObservableProperty]
-    private string operationResult = "未操作";
+    private string operationResult = string.Empty;
 
     [ObservableProperty]
     private AutoStartMode autoStartMode;
@@ -157,6 +164,15 @@ public partial class InventoryConfigViewModel : ObservableObject
     [ObservableProperty]
     private string attachedDataAccessPassword = "00000000";
 
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
+    }
+
     [RelayCommand]
     private void AddTagSelectFilter()
     {
@@ -186,14 +202,14 @@ public partial class InventoryConfigViewModel : ObservableObject
         {
             if (!reader.IsConnected)
             {
-                OperationResult = "请先连接读写器";
-                logs.LogOperation("读取寻卡配置失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                OperationResult = _languageService.GetLocalizedString("InventoryConfig.ConnectReaderFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.ReadFailed"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
             if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
             {
-                OperationResult = "请先在参数配置页点击获取参数";
+                OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
 
@@ -253,13 +269,13 @@ public partial class InventoryConfigViewModel : ObservableObject
             AttachedDataWordCount = settings.AttachedData?.WordCount ?? (ushort)6;
             AttachedDataAccessPassword = settings.AttachedData?.AccessPassword ?? "00000000";
 
-            OperationResult = "已读取寻卡配置";
-            logs.LogOperation("已读取寻卡配置");
+            OperationResult = _languageService.GetLocalizedString("InventoryConfig.ReadSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.ReadSuccess"));
         }
         catch (Exception ex)
         {
-            OperationResult = $"读取失败：{ex.Message}";
-            logs.LogOperation($"读取寻卡配置失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            OperationResult = GetLocalizedString("InventoryConfig.ReadError", ex.Message);
+            logs.LogOperation(GetLocalizedString("InventoryConfig.ReadError", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -270,14 +286,14 @@ public partial class InventoryConfigViewModel : ObservableObject
         {
             if (!reader.IsConnected)
             {
-                OperationResult = "请先连接读写器";
-                logs.LogOperation("保存寻卡配置失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                OperationResult = _languageService.GetLocalizedString("InventoryConfig.ConnectReaderFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.SaveFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
             if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
             {
-                OperationResult = "请先在参数配置页点击获取参数";
+                OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
 
@@ -337,14 +353,14 @@ public partial class InventoryConfigViewModel : ObservableObject
 
             reader.ApplySettings(settings);
             settingsStore.Set(settings);
-            OperationResult = "寻卡配置已下发";
-            logs.LogOperation("寻卡配置已下发");
+            OperationResult = _languageService.GetLocalizedString("InventoryConfig.SaveSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.SaveSuccess"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("AttachedDataConfigChanged"));
         }
         catch (Exception ex)
         {
-            OperationResult = $"保存失败：{ex.Message}";
-            logs.LogOperation($"保存寻卡配置失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            OperationResult = GetLocalizedString("InventoryConfig.SaveError", ex.Message);
+            logs.LogOperation(GetLocalizedString("InventoryConfig.SaveError", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -352,11 +368,13 @@ public partial class InventoryConfigViewModel : ObservableObject
     {
         if (!isConnected)
         {
-            OperationResult = "请先连接读写器";
+            OperationResult = _languageService.GetLocalizedString("InventoryConfig.ConnectReaderFirst");
             return;
         }
 
-        OperationResult = settingsStore.HasValue ? "可读取缓存参数" : "请先在参数配置页点击获取参数";
+        OperationResult = settingsStore.HasValue
+            ? _languageService.GetLocalizedString("InventoryConfig.CanReadCache")
+            : _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
 
         if (settingsStore.TryGetSnapshot(out _)
             && QueryInventoryConfigCommand.CanExecute(null))

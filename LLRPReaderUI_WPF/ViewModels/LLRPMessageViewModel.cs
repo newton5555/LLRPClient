@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using LLRPReaderUI_WPF.Data;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Models;
+using LLRPReaderUI_WPF.Services;
 using LLRPSdk;
 using Org.LLRP.LTK.LLRPV1;
 using Org.LLRP.LTK.LLRPV1.DataType;
@@ -23,6 +24,7 @@ namespace LLRPReaderUI_WPF.ViewModels
         private readonly LlrpReader _reader;
         private readonly IAppLogService _logs;
         private readonly IRawFrameRepository _rawFrameRepository;
+        private readonly LanguageService _languageService;
 
         [ObservableProperty]
         private ObservableCollection<RawFrameEntity> _rawFrames = new ObservableCollection<RawFrameEntity>();
@@ -43,7 +45,7 @@ namespace LLRPReaderUI_WPF.ViewModels
         private string _rawHexString = string.Empty;
 
         [ObservableProperty]
-        private string _statusText = "就绪";
+        private string _statusText = string.Empty;
 
         [ObservableProperty]
         private bool _isLoading;
@@ -56,34 +58,50 @@ namespace LLRPReaderUI_WPF.ViewModels
         private DateTime? _filterEndDate;
 
         [ObservableProperty]
-        private string _filterDirection = "全部";
+        private string _filterDirection = string.Empty;
 
         [ObservableProperty]
-        private string _filterMsgType = "全部";
+        private string _filterMsgType = string.Empty;
 
         [ObservableProperty]
-        private string _filterDeviceId = "全部";
+        private string _filterDeviceId = string.Empty;
 
         [ObservableProperty]
         private string _searchText = string.Empty;
 
         // 下拉选项
-        public ObservableCollection<string> DirectionOptions { get; } = new ObservableCollection<string> { "全部", "RX", "TX" };
+        public ObservableCollection<string> DirectionOptions { get; private set; }
 
-        private List<string> _msgTypeOptions = new List<string> { "全部" };
-        public ObservableCollection<string> MsgTypeOptions { get; private set; } = new ObservableCollection<string> { "全部" };
+        private List<string> _msgTypeOptions = new List<string>();
+        public ObservableCollection<string> MsgTypeOptions { get; private set; } = new ObservableCollection<string>();
 
-        private List<string> _deviceIdOptions = new List<string> { "全部" };
-        public ObservableCollection<string> DeviceIdOptions { get; private set; } = new ObservableCollection<string> { "全部" };
+        private List<string> _deviceIdOptions = new List<string>();
+        public ObservableCollection<string> DeviceIdOptions { get; private set; } = new ObservableCollection<string>();
 
         public LLRPMessageViewModel(
             LlrpReader reader,
             IAppLogService logs,
-            IRawFrameRepository rawFrameRepository)
+            IRawFrameRepository rawFrameRepository,
+            LanguageService languageService)
         {
             _reader = reader;
             _logs = logs;
             _rawFrameRepository = rawFrameRepository;
+            _languageService = languageService;
+
+            // Initialize with localized "All"
+            var allText = _languageService.GetLocalizedString("Common.All");
+            _filterDirection = allText;
+            _filterMsgType = allText;
+            _filterDeviceId = allText;
+            DirectionOptions = new ObservableCollection<string> { allText, "RX", "TX" };
+            _msgTypeOptions = new List<string> { allText };
+            MsgTypeOptions = new ObservableCollection<string> { allText };
+            _deviceIdOptions = new List<string> { allText };
+            DeviceIdOptions = new ObservableCollection<string> { allText };
+
+            // Set initial status
+            StatusText = _languageService.GetLocalizedString("LLRPMessage.Ready");
 
             BindingOperations.EnableCollectionSynchronization(RawFrames, new object());
             BindingOperations.EnableCollectionSynchronization(FilteredFrames, new object());
@@ -92,11 +110,20 @@ namespace LLRPReaderUI_WPF.ViewModels
             _ = LoadRawFrames();
         }
 
+        /// <summary>
+        /// Get a localized string with format arguments.
+        /// </summary>
+        private string GetLocalizedString(string key, params object[] args)
+        {
+            var format = _languageService.GetLocalizedString(key);
+            return args.Length > 0 ? string.Format(format, args) : format;
+        }
+
         [RelayCommand]
         private async Task LoadRawFrames()
         {
             IsLoading = true;
-            StatusText = "正在加载原始帧数据...";
+            StatusText = _languageService.GetLocalizedString("LLRPMessage.Loading");
             try
             {
                 var frames = await _rawFrameRepository.GetRecentAsync(1000);
@@ -111,12 +138,12 @@ namespace LLRPReaderUI_WPF.ViewModels
                 UpdateDeviceIdOptions();
 
                 ApplyFilter();
-                StatusText = $"已加载 {RawFrames.Count} 条原始帧记录";
+                StatusText = GetLocalizedString("LLRPMessage.Loaded", RawFrames.Count);
             }
             catch (Exception ex)
             {
-                StatusText = $"加载数据失败: {ex.Message}";
-                _logs.LogOperation($"加载原始帧数据失败: {ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+                StatusText = GetLocalizedString("LLRPMessage.LoadFailed", ex.Message);
+                _logs.LogOperation(GetLocalizedString("LLRPMessage.LoadFailedLog", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
             }
             finally
             {
@@ -126,8 +153,9 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         private void UpdateMsgTypeOptions()
         {
+            var allText = _languageService.GetLocalizedString("Common.All");
             var types = RawFrames.Select(f => f.MsgTypeName).Distinct().OrderBy(t => t).ToList();
-            types.Insert(0, "全部");
+            types.Insert(0, allText);
             _msgTypeOptions = types;
             MsgTypeOptions.Clear();
             foreach (var t in types)
@@ -138,13 +166,14 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         private void UpdateDeviceIdOptions()
         {
+            var allText = _languageService.GetLocalizedString("Common.All");
             var deviceIds = RawFrames
                 .Where(f => !string.IsNullOrEmpty(f.DeviceId))
                 .Select(f => f.DeviceId!)
                 .Distinct()
                 .OrderBy(d => d)
                 .ToList();
-            deviceIds.Insert(0, "全部");
+            deviceIds.Insert(0, allText);
             _deviceIdOptions = deviceIds;
             DeviceIdOptions.Clear();
             foreach (var d in deviceIds)
@@ -156,6 +185,7 @@ namespace LLRPReaderUI_WPF.ViewModels
         [RelayCommand]
         private void ApplyFilter()
         {
+            var allText = _languageService.GetLocalizedString("Common.All");
             var query = RawFrames.AsEnumerable();
 
             // 日期筛选
@@ -170,19 +200,19 @@ namespace LLRPReaderUI_WPF.ViewModels
             }
 
             // 方向筛选
-            if (!string.IsNullOrEmpty(FilterDirection) && FilterDirection != "全部")
+            if (!string.IsNullOrEmpty(FilterDirection) && FilterDirection != allText)
             {
                 query = query.Where(f => f.Direction == FilterDirection);
             }
 
             // 消息类型筛选
-            if (!string.IsNullOrEmpty(FilterMsgType) && FilterMsgType != "全部")
+            if (!string.IsNullOrEmpty(FilterMsgType) && FilterMsgType != allText)
             {
                 query = query.Where(f => f.MsgTypeName == FilterMsgType);
             }
 
             // 设备 ID 筛选
-            if (!string.IsNullOrEmpty(FilterDeviceId) && FilterDeviceId != "全部")
+            if (!string.IsNullOrEmpty(FilterDeviceId) && FilterDeviceId != allText)
             {
                 query = query.Where(f => f.DeviceId == FilterDeviceId);
             }
@@ -202,17 +232,18 @@ namespace LLRPReaderUI_WPF.ViewModels
                 FilteredFrames.Add(frame);
             }
 
-            StatusText = $"筛选结果: {FilteredFrames.Count} 条记录";
+            StatusText = GetLocalizedString("LLRPMessage.FilterResult", FilteredFrames.Count);
         }
 
         [RelayCommand]
         private void ClearFilter()
         {
+            var allText = _languageService.GetLocalizedString("Common.All");
             FilterStartDate = null;
             FilterEndDate = null;
-            FilterDirection = "全部";
-            FilterMsgType = "全部";
-            FilterDeviceId = "全部";
+            FilterDirection = allText;
+            FilterMsgType = allText;
+            FilterDeviceId = allText;
             SearchText = string.Empty;
             ApplyFilter();
         }
@@ -245,10 +276,10 @@ namespace LLRPReaderUI_WPF.ViewModels
             }
             catch (Exception ex)
             {
-                StatusText = $"解析LLRP消息时出错: {ex.Message}";
-                var errorNode = new LLRPMessageNode("LLRP Message", description: "解析失败");
-                errorNode.AddChild("错误信息", ex.Message);
-                errorNode.AddChild("原始数据 (Hex)", BitConverter.ToString(payload).Replace("-", " "));
+                StatusText = GetLocalizedString("LLRPMessage.ParseError", ex.Message);
+                var errorNode = new LLRPMessageNode("LLRP Message", description: _languageService.GetLocalizedString("LLRPMessage.ParseFailed"));
+                errorNode.AddChild(_languageService.GetLocalizedString("LLRPMessage.ErrorInfo"), ex.Message);
+                errorNode.AddChild(_languageService.GetLocalizedString("LLRPMessage.RawDataHex"), BitConverter.ToString(payload).Replace("-", " "));
                 MessageTree.Add(errorNode);
             }
         }
@@ -261,25 +292,25 @@ namespace LLRPReaderUI_WPF.ViewModels
                 LLRPBinaryDecoder.Decode(ref payload, out var message);
                 if (message != null)
                 {
-                    var msgNode = root.AddChild("消息内容 (Message Body)", description: message.GetType().Name);
+                    var msgNode = root.AddChild(_languageService.GetLocalizedString("LLRPMessage.MessageBody"), description: message.GetType().Name);
                     //ParseSpecificMessage(message, msgNode);
 
                     ParseSpecificMessageXML(message, msgNode);
                 }
                 else
                 {
-                    root.AddChild("解析结果", "消息体为空", "LLRPBinaryDecoder未能解析出有效的消息对象");
+                    root.AddChild(_languageService.GetLocalizedString("LLRPMessage.ParseResult"), _languageService.GetLocalizedString("LLRPMessage.BodyEmpty"), "LLRPBinaryDecoder未能解析出有效的消息对象");
                 }
             }
             catch (Exception ex)
             {
-                root.AddChild("LLRP解析错误", ex.Message, "可能由于数据包不完整或格式错误导致");
+                root.AddChild(_languageService.GetLocalizedString("LLRPMessage.LLRPParseError"), ex.Message, _languageService.GetLocalizedString("LLRPMessage.PossibleReason"));
             }
         }
 
         private void ParseSpecificMessage(Message message, LLRPMessageNode parentNode)
         {
-            parentNode.AddChild("消息类型", message.GetType().Name);
+            parentNode.AddChild(_languageService.GetLocalizedString("LLRPMessage.MsgType"), message.GetType().Name);
 
             switch (message)
             {
@@ -396,11 +427,11 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         private void ParseSpecificMessageXML(Message message, LLRPMessageNode parentNode)
         {
-            parentNode.AddChild("消息类型", message.GetType().Name);
+            parentNode.AddChild(_languageService.GetLocalizedString("LLRPMessage.MsgType"), message.GetType().Name);
 
             var child=message.BuildTreeFromMSG();
 
-            parentNode.Children.Add(child); 
+            parentNode.Children.Add(child);
         }
 
 
@@ -411,7 +442,7 @@ namespace LLRPReaderUI_WPF.ViewModels
         {
             if (SelectedRawFrame == null || MessageTree.Count == 0)
             {
-                StatusText = "请先选择一条消息";
+                StatusText = _languageService.GetLocalizedString("LLRPMessage.SelectFirst");
                 return;
             }
             try
@@ -419,11 +450,11 @@ namespace LLRPReaderUI_WPF.ViewModels
                 var treeText = MessageTree[0].BuildTreeString();
                 var fileName = $"LLRP_Message_{SelectedRawFrame.Timestamp:yyyyMMdd_HHmmss}_{SelectedRawFrame.Direction}.txt";
                 System.IO.File.WriteAllText(fileName, treeText);
-                StatusText = $"已导出到文件: {fileName}";
+                StatusText = GetLocalizedString("LLRPMessage.Exported", fileName);
             }
             catch (Exception ex)
             {
-                StatusText = $"导出失败: {ex.Message}";
+                StatusText = GetLocalizedString("LLRPMessage.ExportFailed", ex.Message);
             }
         }
 

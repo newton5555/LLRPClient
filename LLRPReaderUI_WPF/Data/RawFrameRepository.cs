@@ -65,12 +65,13 @@ namespace LLRPReaderUI_WPF.Data
                 query = query.Where(f => f.Timestamp <= endOfDay);
             }
 
-            if (!string.IsNullOrEmpty(direction) && direction != "全部")
+            // Empty or null direction/deviceId means "all" - no filtering
+            if (!string.IsNullOrEmpty(direction))
             {
                 query = query.Where(f => f.Direction == direction);
             }
 
-            if (!string.IsNullOrEmpty(deviceId) && deviceId != "全部")
+            if (!string.IsNullOrEmpty(deviceId))
             {
                 query = query.Where(f => f.DeviceId == deviceId);
             }

@@ -30,6 +30,19 @@
     <sys:String x:Key="DeviceConnection.KeepaliveMonitorTip">Auto-detect disconnection</sys:String>
     <sys:String x:Key="DeviceConnection.FeatureSetProperty">FeatureSet Property</sys:String>
     <sys:String x:Key="DeviceConnection.Value">Value</sys:String>
+    <sys:String x:Key="DeviceConnection.ConnectingDevice">Connecting to device...</sys:String>
+    <sys:String x:Key="DeviceConnection.ConnectingTo">Connecting: {0}</sys:String>
+    <sys:String x:Key="DeviceConnection.ConnectedTo">Connected: {0}</sys:String>
+    <sys:String x:Key="DeviceConnection.ConnectedAutoStopped">Connected: {0} (Inventory detected, auto-stopped)</sys:String>
+    <sys:String x:Key="DeviceConnection.Disconnecting">Disconnecting...</sys:String>
+    <sys:String x:Key="DeviceConnection.KeepaliveTimeout">Keepalive timeout, disconnecting...</sys:String>
+    <sys:String x:Key="DeviceConnection.DisconnectedKeepalive">Disconnected (Keepalive timeout)</sys:String>
+    <sys:String x:Key="DeviceConnection.ConnectionFailedMsg">Connection failed: {0}</sys:String>
+    <sys:String x:Key="DeviceConnection.EnterAddress">Please enter reader address. Example: 192.168.1.10 or 192.168.1.10:5084</sys:String>
+    <sys:String x:Key="DeviceConnection.AddressEmpty">Address cannot be empty. Example: 192.168.1.10:5084</sys:String>
+    <sys:String x:Key="DeviceConnection.InitFailed">Initialization failed after connection: {0}</sys:String>
+    <sys:String x:Key="DeviceConnection.DeviceDisconnected">Device disconnected</sys:String>
+    <sys:String x:Key="DeviceConnection.KeepaliveNoResponse">Keepalive timeout, reader not responding</sys:String>
 
     <!-- Status -->
     <sys:String x:Key="Status.Device">Device</sys:String>
@@ -173,5 +186,168 @@
     <sys:String x:Key="Error.ConnectionFailed">Connection failed</sys:String>
     <sys:String x:Key="Error.NotConnected">Not connected to device</sys:String>
     <sys:String x:Key="Error.OperationFailed">Operation failed</sys:String>
+
+    <!-- Common -->
+    <sys:String x:Key="Common.All">All</sys:String>
+    <sys:String x:Key="Common.Copy">Copy</sys:String>
+    <sys:String x:Key="Common.Success">Success</sys:String>
+    <sys:String x:Key="Common.Failed">Failed</sys:String>
+    <sys:String x:Key="Common.Executing">Executing...</sys:String>
+    <sys:String x:Key="Common.ConnectFirst">Please connect device first</sys:String>
+    <sys:String x:Key="Common.Waiting">Waiting for operation</sys:String>
+    <sys:String x:Key="Common.NotOperated">Not operated</sys:String>
+    <sys:String x:Key="Common.High">High</sys:String>
+    <sys:String x:Key="Common.Low">Low</sys:String>
+    <sys:String x:Key="Common.Unknown">Unknown</sys:String>
+    <sys:String x:Key="Common.NoResponse">No response from device</sys:String>
+    <sys:String x:Key="Common.Saved">Saved</sys:String>
+    <sys:String x:Key="Common.Cleared">Cleared</sys:String>
+
+    <!-- AdvancedTagOps -->
+    <sys:String x:Key="AdvancedTagOps.Waiting">Waiting for operation</sys:String>
+    <sys:String x:Key="AdvancedTagOps.BlockErase">Block Erase</sys:String>
+    <sys:String x:Key="AdvancedTagOps.BlockEraseFailed">Block erase failed: {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.BlockEraseSuccess">Block erase successful</sys:String>
+    <sys:String x:Key="AdvancedTagOps.WordCountRequired">Word count must be greater than 0</sys:String>
+    <sys:String x:Key="AdvancedTagOps.LockOp">Lock Operation</sys:String>
+    <sys:String x:Key="AdvancedTagOps.LockSuccess">Lock operation successful</sys:String>
+    <sys:String x:Key="AdvancedTagOps.LockFailed">Lock operation failed: {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillOp">Kill Operation</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillSuccess">Kill successful</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillFailed">Kill failed: {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillPasswordInvalid">Kill password must be 8 hex digits</sys:String>
+    <sys:String x:Key="AdvancedTagOps.TargetRequired">{0} failed: Please enter target {1}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.OpStarted">Started {0} (OpSequence ID: {1})</sys:String>
+    <sys:String x:Key="AdvancedTagOps.OpFailed">Execution failed: {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.Ready">Device connected, ready for advanced tag operations</sys:String>
+    <sys:String x:Key="AdvancedTagOps.CleanupFailed">Cleanup failed: {0}</sys:String>
+
+    <!-- GPIO -->
+    <sys:String x:Key="GPIO.ConnectReaderFirst">Please connect reader first</sys:String>
+    <sys:String x:Key="GPIO.GetSettingsFirst">Please get settings from Settings page first</sys:String>
+    <sys:String x:Key="GPIO.GotConfig">GPIO configuration and status retrieved</sys:String>
+    <sys:String x:Key="GPIO.GetFailed">Get failed: {0}</sys:String>
+    <sys:String x:Key="GPIO.GpiSaved">GPI configuration sent</sys:String>
+    <sys:String x:Key="GPIO.GpiSaveFailed">Send failed: {0}</sys:String>
+    <sys:String x:Key="GPIO.GpoApplied">GPO output sent</sys:String>
+    <sys:String x:Key="GPIO.GpoApplyFailed">Send failed: {0}</sys:String>
+    <sys:String x:Key="GPIO.CanReadCache">Can read cached settings</sys:String>
+
+    <!-- InventoryConfig -->
+    <sys:String x:Key="InventoryConfig.Waiting">Not operated</sys:String>
+    <sys:String x:Key="InventoryConfig.ConnectReaderFirst">Please connect reader first</sys:String>
+    <sys:String x:Key="InventoryConfig.GetSettingsFirst">Please get settings from Settings page first</sys:String>
+    <sys:String x:Key="InventoryConfig.ReadFailed">Read inventory config failed: Device not connected</sys:String>
+    <sys:String x:Key="InventoryConfig.ReadSuccess">Inventory configuration loaded</sys:String>
+    <sys:String x:Key="InventoryConfig.ReadError">Read failed: {0}</sys:String>
+    <sys:String x:Key="InventoryConfig.SaveFailedNotConnected">Save inventory config failed: Device not connected</sys:String>
+    <sys:String x:Key="InventoryConfig.SaveSuccess">Inventory configuration sent</sys:String>
+    <sys:String x:Key="InventoryConfig.SaveError">Save failed: {0}</sys:String>
+    <sys:String x:Key="InventoryConfig.CanReadCache">Can read cached settings</sys:String>
+
+    <!-- Inventory (additional keys) -->
+    <sys:String x:Key="Inventory.NotStarted">Not started</sys:String>
+    <sys:String x:Key="Inventory.StartFailedNotConnected">Inventory start failed: Device not connected</sys:String>
+    <sys:String x:Key="Inventory.StartFailed">Start failed: {0}</sys:String>
+    <sys:String x:Key="Inventory.Stopping">Stopping...</sys:String>
+    <sys:String x:Key="Inventory.StopFailed">Stop failed: {0}</sys:String>
+    <sys:String x:Key="Inventory.DataCleared">Inventory data cleared</sys:String>
+    <sys:String x:Key="Inventory.PullFailedNotConnected">Pull buffer failed: Device not connected</sys:String>
+    <sys:String x:Key="Inventory.PullNotSupported">Pull buffer only supported in WaitForQuery mode</sys:String>
+    <sys:String x:Key="Inventory.PullSent">Pull buffer request sent</sys:String>
+    <sys:String x:Key="Inventory.PullFailed">Pull failed: {0}</sys:String>
+    <sys:String x:Key="Inventory.ReaderStopped">Reader event: Inventory stopped</sys:String>
+    <sys:String x:Key="Inventory.TagReport">Tag report received: {0} tags</sys:String>
+    <sys:String x:Key="Inventory.ConnectedReady">Connected, ready to start</sys:String>
+    <sys:String x:Key="Inventory.StartLog">Started inventory</sys:String>
+    <sys:String x:Key="Inventory.StopLog">Stopped inventory</sys:String>
+    <sys:String x:Key="Inventory.StartFailedLog">Start inventory failed: {0}</sys:String>
+    <sys:String x:Key="Inventory.StopFailedLog">Stop inventory failed: {0}</sys:String>
+    <sys:String x:Key="Inventory.PullFailedLog">Pull buffer failed: {0}</sys:String>
+    <sys:String x:Key="Inventory.PullNotSupportedLog">Pull buffer failed: Current mode is not WaitForQuery</sys:String>
+    <sys:String x:Key="Inventory.PullSentLog">Manual pull buffer request sent (GET_REPORT)</sys:String>
+
+    <!-- LLRPMessage -->
+    <sys:String x:Key="LLRPMessage.Ready">Ready</sys:String>
+    <sys:String x:Key="LLRPMessage.Loading">Loading raw frame data...</sys:String>
+    <sys:String x:Key="LLRPMessage.Loaded">Loaded {0} raw frame records</sys:String>
+    <sys:String x:Key="LLRPMessage.LoadFailed">Load data failed: {0}</sys:String>
+    <sys:String x:Key="LLRPMessage.FilterResult">Filter result: {0} records</sys:String>
+    <sys:String x:Key="LLRPMessage.ParseError">Error parsing LLRP message: {0}</sys:String>
+    <sys:String x:Key="LLRPMessage.ParseFailed">Parse failed</sys:String>
+    <sys:String x:Key="LLRPMessage.ErrorInfo">Error Info</sys:String>
+    <sys:String x:Key="LLRPMessage.RawDataHex">Raw Data (Hex)</sys:String>
+    <sys:String x:Key="LLRPMessage.MessageBody">Message Body</sys:String>
+    <sys:String x:Key="LLRPMessage.ParseResult">Parse Result</sys:String>
+    <sys:String x:Key="LLRPMessage.BodyEmpty">Message body is empty</sys:String>
+    <sys:String x:Key="LLRPMessage.LLRPParseError">LLRP Parse Error</sys:String>
+    <sys:String x:Key="LLRPMessage.PossibleReason">May be caused by incomplete or malformed packet</sys:String>
+    <sys:String x:Key="LLRPMessage.MsgType">Message Type</sys:String>
+    <sys:String x:Key="LLRPMessage.SelectFirst">Please select a message first</sys:String>
+    <sys:String x:Key="LLRPMessage.Exported">Exported to file: {0}</sys:String>
+    <sys:String x:Key="LLRPMessage.ExportFailed">Export failed: {0}</sys:String>
+    <sys:String x:Key="LLRPMessage.LoadFailedLog">Load raw frame data failed: {0}</sys:String>
+
+    <!-- ReadWrite -->
+    <sys:String x:Key="ReadWrite.Waiting">Waiting for operation</sys:String>
+    <sys:String x:Key="ReadWrite.EnterTarget">Please enter target {0}</sys:String>
+    <sys:String x:Key="ReadWrite.Reading">Reading...</sys:String>
+    <sys:String x:Key="ReadWrite.Writing">Writing...</sys:String>
+    <sys:String x:Key="ReadWrite.ReadFailedNotConnected">Read memory failed: Device not connected</sys:String>
+    <sys:String x:Key="ReadWrite.ReadFailedNoTarget">Read memory failed: Target {0} is empty</sys:String>
+    <sys:String x:Key="ReadWrite.WriteFailedNotConnected">Write memory failed: Device not connected</sys:String>
+    <sys:String x:Key="ReadWrite.WriteFailedNoTarget">Write memory failed: Target {0} is empty</sys:String>
+    <sys:String x:Key="ReadWrite.WriteFailedNoData">Write memory failed: Write data is empty</sys:String>
+    <sys:String x:Key="ReadWrite.WriteFailedInvalidLength">Write memory failed: Write data length not multiple of 4</sys:String>
+    <sys:String x:Key="ReadWrite.EnterWriteData">Please enter write data (hex)</sys:String>
+    <sys:String x:Key="ReadWrite.WriteDataLengthError">Write data length must be multiple of 4 (by Word)</sys:String>
+    <sys:String x:Key="ReadWrite.ReadStarted">Read started (OpSequence ID: {0})</sys:String>
+    <sys:String x:Key="ReadWrite.WriteStarted">Write started (OpSequence ID: {0})</sys:String>
+    <sys:String x:Key="ReadWrite.ReadFailed">Read failed: {0}</sys:String>
+    <sys:String x:Key="ReadWrite.WriteFailed">Write failed: {0}</sys:String>
+    <sys:String x:Key="ReadWrite.ReadSuccess">Read successful, read {0} words</sys:String>
+    <sys:String x:Key="ReadWrite.ReadResultFailed">Read failed: {0}</sys:String>
+    <sys:String x:Key="ReadWrite.BlockWriteMode">Block Write</sys:String>
+    <sys:String x:Key="ReadWrite.NormalWrite">Normal Write</sys:String>
+    <sys:String x:Key="ReadWrite.WriteSuccess">{0} successful, wrote {1} words</sys:String>
+    <sys:String x:Key="ReadWrite.WriteResultFailed">{0} failed: {1}</sys:String>
+    <sys:String x:Key="ReadWrite.Timeout">Operation timeout: Target tag not matched ({0} ms)</sys:String>
+    <sys:String x:Key="ReadWrite.Cleared">Cleared</sys:String>
+    <sys:String x:Key="ReadWrite.Ready">Device connected, ready for read/write</sys:String>
+    <sys:String x:Key="ReadWrite.ReadLog">Read memory started, OpSequence={0}, TargetBank={1}, Target={2}, MB={3}, WordPointer={4}, WordCount={5}</sys:String>
+    <sys:String x:Key="ReadWrite.WriteLog">Write memory started, OpSequence={0}, TargetBank={1}, Target={2}, MB={3}, WordPointer={4}, WordCount={5}, BlockWrite={6}</sys:String>
+    <sys:String x:Key="ReadWrite.CleanupFailed">Cleanup old operations failed: {0}</sys:String>
+    <sys:String x:Key="ReadWrite.AOStateSaved">Saved attached data AO state: {0}</sys:String>
+    <sys:String x:Key="ReadWrite.AORestored">Restored attached data AccessSpec, Enable={0}</sys:String>
+    <sys:String x:Key="ReadWrite.ClearDataLog">Cleared read/write page data</sys:String>
+
+    <!-- Settings (additional keys) -->
+    <sys:String x:Key="Settings.NotSaved">Not saved</sys:String>
+    <sys:String x:Key="Settings.ConnectDeviceFirst">Please connect reader in Device Connection page first</sys:String>
+    <sys:String x:Key="Settings.SaveFailedNotConnected">Save settings failed: Device not connected</sys:String>
+    <sys:String x:Key="Settings.SavedToDevice">Settings sent to device</sys:String>
+    <sys:String x:Key="Settings.SaveFailedMsg">Save failed: {0}</sys:String>
+    <sys:String x:Key="Settings.GetFailedNotConnected">Get settings failed: Device not connected</sys:String>
+    <sys:String x:Key="Settings.DefaultApplied">Device not configured, default settings applied</sys:String>
+    <sys:String x:Key="Settings.GotFromDevice">Settings retrieved from device</sys:String>
+    <sys:String x:Key="Settings.GetFailed">Get failed: {0}</sys:String>
+    <sys:String x:Key="Settings.ResetFailedNotConnected">Factory reset failed: Device not connected</sys:String>
+    <sys:String x:Key="Settings.ResetSuccess">Factory default restored</sys:String>
+    <sys:String x:Key="Settings.ResetFailed">Reset failed: {0}</sys:String>
+    <sys:String x:Key="Settings.LoadedInitParams">Loaded connection initialization settings</sys:String>
+    <sys:String x:Key="Settings.SavedLog">Settings sent to device</sys:String>
+    <sys:String x:Key="Settings.GotLog">Settings retrieved from device</sys:String>
+    <sys:String x:Key="Settings.ResetLog">Factory default restored</sys:String>
+
+    <!-- MainWindow -->
+    <sys:String x:Key="MainWindow.Ready">Ready</sys:String>
+    <sys:String x:Key="MainWindow.DeviceNotConnected">Device: Not connected</sys:String>
+    <sys:String x:Key="MainWindow.InventoryUnknown">Inventory: Unknown</sys:String>
+    <sys:String x:Key="MainWindow.AntennaDefault">Antenna: --</sys:String>
+    <sys:String x:Key="MainWindow.GPIDefault">GPI: --</sys:String>
+    <sys:String x:Key="MainWindow.GPODefault">GPO: --</sys:String>
+    <sys:String x:Key="MainWindow.MACDefault">MAC: --</sys:String>
+    <sys:String x:Key="MainWindow.StatusUpdated">Device status updated</sys:String>
+    <sys:String x:Key="MainWindow.CurrentPage">Current page: {0}</sys:String>
 
 </ResourceDictionary>

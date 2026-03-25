@@ -15,6 +15,13 @@ public partial class LogView : UserControl
         AttachCopySupport(RawPacketListBox);
     }
 
+    private static string GetCopyText()
+    {
+        // Try to get the localized string from the application resources
+        var copyText = Application.Current.TryFindResource("Common.Copy") as string;
+        return copyText ?? "Copy";
+    }
+
     private static void AttachCopySupport(ListBox listBox)
     {
         if (listBox.ContextMenu == null)
@@ -22,7 +29,7 @@ public partial class LogView : UserControl
             listBox.ContextMenu = new ContextMenu();
         }
 
-        var copyMenuItem = new MenuItem { Header = "复制" };
+        var copyMenuItem = new MenuItem { Header = GetCopyText() };
         copyMenuItem.Click += (_, _) => CopySelectionToClipboard(listBox);
         listBox.ContextMenu.Items.Add(copyMenuItem);
 

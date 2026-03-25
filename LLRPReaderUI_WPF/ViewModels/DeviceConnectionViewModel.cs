@@ -6,6 +6,7 @@ using LLRPSdk;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
 using LLRPReaderUI_WPF.Models;
+using LLRPReaderUI_WPF.Services;
 using Nager.Country;
 using System.IO;
 using System.Collections.ObjectModel;
@@ -27,6 +28,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
     private readonly ReaderStatusStore statusStore;
+    private readonly LanguageService _languageService;
     private static readonly CountryProvider countryProvider = new();
     private string pendingAddress = string.Empty;
     private string pendingEndpoint = string.Empty;
@@ -35,17 +37,34 @@ public partial class DeviceConnectionViewModel : ObservableObject
         LlrpReader reader,
         IAppLogService logs,
         ReaderSettingsStore settingsStore,
-        ReaderStatusStore statusStore)
+        ReaderStatusStore statusStore,
+        LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
         this.settingsStore = settingsStore;
         this.statusStore = statusStore;
+        _languageService = languageService;
 
         // Subscribe to keepalive timeout event
         this.reader.KeepaliveTimeout += OnKeepaliveTimeout;
 
+        // Subscribe to language changes
+        _languageService.OnLanguageChanged += OnLanguageChanged;
+
+        // Set initial connection state
+        ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnected");
+
         LoadRecentEndpoints();
+    }
+
+    private void OnLanguageChanged(AppLanguage language)
+    {
+        // Refresh connection state text
+        if (!IsConnected && !IsBusy)
+        {
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnected");
+        }
     }
 
     private void OnKeepaliveTimeout(LlrpReader _)
@@ -54,9 +73,9 @@ public partial class DeviceConnectionViewModel : ObservableObject
         // Use ForceDisconnect for fast close without waiting for CLOSE_CONNECTION response
         Application.Current.Dispatcher.Invoke(() =>
         {
-            ConnectionState = "心跳超时，正在断开连接...";
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.KeepaliveTimeout");
             IsBusy = true;
-            logs.LogOperation("心跳超时，阅读器无响应", Microsoft.Extensions.Logging.LogLevel.Warning);
+            logs.LogOperation(_languageService.GetLocalizedString("DeviceConnection.KeepaliveNoResponse"), Microsoft.Extensions.Logging.LogLevel.Warning);
 
             try
             {
@@ -67,7 +86,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
             settingsStore.Clear();
             statusStore.Clear();
             IsConnected = false;
-            ConnectionState = "已断开（心跳超时）";
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.DisconnectedKeepalive");
             WeakReferenceMessenger.Default.Send(new ConnectionStateChangedMessage(false));
             IsBusy = false;
         });
@@ -80,12 +99,21 @@ public partial class DeviceConnectionViewModel : ObservableObject
     private bool isConnected;
 
     [ObservableProperty]
-    private string connectionState = "未连接";
+    private string connectionState = string.Empty;
 
     [ObservableProperty]
     private bool isBusy;
 
     public ObservableCollection<string> RecentReaderEndpoints { get; } = new();
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
+    }
 
     partial void OnIsConnectedChanged(bool value)
     {
@@ -149,12 +177,12 @@ public partial class DeviceConnectionViewModel : ObservableObject
     {
         try
         {
-            ConnectionState = "正在连接设备...";
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.ConnectingDevice");
             IsBusy = true;
             var endpoint = ReaderEndpoint.Trim();
             if (string.IsNullOrWhiteSpace(endpoint))
             {
-                throw new LLRPSdkException("请先输入读写器地址。示例：192.168.1.10 或 192.168.1.10:5084");
+                throw new LLRPSdkException(_languageService.GetLocalizedString("DeviceConnection.EnterAddress"));
             }
 
             var (address, port) = ParseEndpoint(endpoint);
@@ -178,14 +206,14 @@ public partial class DeviceConnectionViewModel : ObservableObject
             {
                 reader.ConnectAsync(address);
             }
-            ConnectionState = $"连接中：{address}";
+            ConnectionState = GetLocalizedString("DeviceConnection.ConnectingTo", address);
         }
         catch (Exception ex)
         {
             reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
             IsConnected = false;
             IsBusy = false;
-            ConnectionState = $"连接失败：{ex.Message}";
+            ConnectionState = GetLocalizedString("DeviceConnection.ConnectionFailedMsg", ex.Message);
             logs.LogOperation($"连接失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
@@ -218,8 +246,8 @@ public partial class DeviceConnectionViewModel : ObservableObject
                         AddRecentEndpoint(pendingEndpoint);
                         IsConnected = true;
                         ConnectionState = wasSingulating
-                            ? $"已连接：{pendingAddress}（检测到设备盘点中，已自动停止）"
-                            : $"已连接：{pendingAddress}";
+                            ? GetLocalizedString("DeviceConnection.ConnectedAutoStopped", pendingAddress)
+                            : GetLocalizedString("DeviceConnection.ConnectedTo", pendingAddress);
                         IsBusy = false; // This will hide the overlay
                         logs.LogOperation(ConnectionState);
                     });
@@ -229,9 +257,9 @@ public partial class DeviceConnectionViewModel : ObservableObject
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         IsConnected = false;
-                        ConnectionState = $"连接失败：{ex.Message}";
+                        ConnectionState = GetLocalizedString("DeviceConnection.ConnectionFailedMsg", ex.Message);
                         IsBusy = false; // This will hide the overlay
-                        logs.LogOperation($"连接后初始化失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+                        logs.LogOperation(GetLocalizedString("DeviceConnection.InitFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
                     });
                 }
             });
@@ -242,9 +270,9 @@ public partial class DeviceConnectionViewModel : ObservableObject
         Application.Current.Dispatcher.Invoke(() =>
         {
             IsConnected = false;
-            ConnectionState = $"连接失败：{errorMessage}";
+            ConnectionState = GetLocalizedString("DeviceConnection.ConnectionFailedMsg", errorMessage);
             IsBusy = false; // This will hide the overlay
-            logs.LogOperation($"连接失败：{errorMessage}", Microsoft.Extensions.Logging.LogLevel.Warning);
+            logs.LogOperation(GetLocalizedString("DeviceConnection.ConnectionFailedMsg", errorMessage), Microsoft.Extensions.Logging.LogLevel.Warning);
         });
     }
 
@@ -277,7 +305,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanDisconnect))]
     private async void Disconnect()
     {
-        ConnectionState = "正在断开连接...";
+        ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnecting");
         IsBusy = true;
 
         try
@@ -304,9 +332,9 @@ public partial class DeviceConnectionViewModel : ObservableObject
             settingsStore.Clear();
             statusStore.Clear();
             IsConnected = false;
-            ConnectionState = "未连接";
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnected");
             IsBusy = false; // This will hide the overlay
-            logs.LogOperation("设备断开连接");
+            logs.LogOperation(_languageService.GetLocalizedString("DeviceConnection.DeviceDisconnected"));
         }
     }
 
@@ -315,7 +343,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
         return IsConnected;
     }
 
-    private static (string Address, int? Port) ParseEndpoint(string endpoint)
+    private (string Address, int? Port) ParseEndpoint(string endpoint)
     {
         var value = endpoint.Trim();
         var separatorIndex = value.LastIndexOf(':');
@@ -327,7 +355,7 @@ public partial class DeviceConnectionViewModel : ObservableObject
             var address = value[..separatorIndex].Trim();
             if (string.IsNullOrWhiteSpace(address))
             {
-                throw new LLRPSdkException("地址不能为空。示例：192.168.1.10:5084");
+                throw new LLRPSdkException(_languageService.GetLocalizedString("DeviceConnection.AddressEmpty"));
             }
 
             return (address, port);

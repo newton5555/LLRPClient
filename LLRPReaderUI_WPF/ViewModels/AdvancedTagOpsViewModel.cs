@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using LLRPSdk;
 using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
+using LLRPReaderUI_WPF.Services;
 using System.Threading;
 using System.Windows;
 
@@ -13,19 +14,24 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
 {
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
+    private readonly LanguageService _languageService;
     private uint? currentOpSequenceId;
     private bool? attachedDataWasEnabled;
 
-    public AdvancedTagOpsViewModel(LlrpReader reader, IAppLogService logs)
+    public AdvancedTagOpsViewModel(LlrpReader reader, IAppLogService logs, LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
+        _languageService = languageService;
         this.reader.TagOpComplete += OnTagOpComplete;
 
         WeakReferenceMessenger.Default.Register<AdvancedTagOpsViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnConnectionStateChanged(m.Value);
         });
+
+        // Set initial state
+        OperationResult = _languageService.GetLocalizedString("AdvancedTagOps.Waiting");
     }
 
     public IReadOnlyList<string> TargetTagBanks { get; } = new[] { "EPC", "TID" };
@@ -64,7 +70,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
     private string selectedLockAction = "Lock";
 
     [ObservableProperty]
-    private string operationResult = "等待操作";
+    private string operationResult = string.Empty;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(BlockEraseCommand))]
@@ -86,15 +92,24 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
 
     private bool CanExecuteBlockErase() => CanExecuteOperation() && IsBlockEraseSupported;
 
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
+    }
+
     [RelayCommand(CanExecute = nameof(CanExecuteBlockErase))]
     private void BlockErase()
     {
-        if (!ValidateConnectedAndTarget("块擦除"))
+        if (!ValidateConnectedAndTarget(_languageService.GetLocalizedString("AdvancedTagOps.BlockErase")))
             return;
 
         if (WordCount <= 0)
         {
-            OperationResult = "块擦除失败：Word 数量必须大于 0";
+            OperationResult = _languageService.GetLocalizedString("AdvancedTagOps.WordCountRequired");
             return;
         }
 
@@ -106,13 +121,13 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
             AccessPassword = TagData.FromHexString(AccessPassword)
         };
 
-        ExecuteSingleOp(eraseOp, $"块擦除，MB={SelectedMemoryBank}, WordPointer={WordPointer}, WordCount={WordCount}");
+        ExecuteSingleOp(eraseOp, $"{_languageService.GetLocalizedString("AdvancedTagOps.BlockErase")}, MB={SelectedMemoryBank}, WordPointer={WordPointer}, WordCount={WordCount}");
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteOperation))]
     private void Lock()
     {
-        if (!ValidateConnectedAndTarget("锁操作"))
+        if (!ValidateConnectedAndTarget(_languageService.GetLocalizedString("AdvancedTagOps.LockOp")))
             return;
 
         var lockOp = new TagLockOp
@@ -140,7 +155,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
                 break;
         }
 
-        ExecuteSingleOp(lockOp, $"锁操作，Bank={SelectedLockBank}, Action={SelectedLockAction}");
+        ExecuteSingleOp(lockOp, $"{_languageService.GetLocalizedString("AdvancedTagOps.LockOp")}, Bank={SelectedLockBank}, Action={SelectedLockAction}");
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteOperation))]
@@ -151,7 +166,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(KillPassword) || KillPassword.Trim().Length != 8)
         {
-            OperationResult = "Kill 失败：Kill 密码需为 8 位十六进制";
+            OperationResult = _languageService.GetLocalizedString("AdvancedTagOps.KillPasswordInvalid");
             return;
         }
 
@@ -160,20 +175,20 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
             KillPassword = TagData.FromHexString(KillPassword.Trim())
         };
 
-        ExecuteSingleOp(killOp, "Kill 操作");
+        ExecuteSingleOp(killOp, _languageService.GetLocalizedString("AdvancedTagOps.KillOp"));
     }
 
     private bool ValidateConnectedAndTarget(string opName)
     {
         if (!reader.IsConnected)
         {
-            OperationResult = "请先连接设备";
+            OperationResult = _languageService.GetLocalizedString("Common.ConnectFirst");
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(TargetTagData))
         {
-            OperationResult = $"{opName}失败：请输入目标 {SelectedTargetTagBank}";
+            OperationResult = GetLocalizedString("AdvancedTagOps.TargetRequired", opName, SelectedTargetTagBank);
             return false;
         }
 
@@ -185,7 +200,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
         try
         {
             IsBusy = true;
-            OperationResult = "执行中...";
+            OperationResult = _languageService.GetLocalizedString("Common.Executing");
 
             attachedDataWasEnabled = reader.IsAttachedDataAccessSpecEnabled();
 
@@ -215,13 +230,13 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
             currentOpSequenceId = sequence.Id;
 
             reader.Start();
-            OperationResult = $"已启动 {opDescription} (OpSequence ID: {sequence.Id})";
+            OperationResult = GetLocalizedString("AdvancedTagOps.OpStarted", opDescription, sequence.Id);
             logs.LogOperation(OperationResult);
         }
         catch (Exception ex)
         {
             IsBusy = false;
-            OperationResult = $"执行失败：{ex.Message}";
+            OperationResult = GetLocalizedString("AdvancedTagOps.OpFailed", ex.Message);
             logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
@@ -243,23 +258,23 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
                     if (result is TagBlockEraseOpResult blockErase)
                     {
                         OperationResult = blockErase.Result == BlockEraseResultStatus.Success
-                            ? "块擦除成功"
-                            : $"块擦除失败：{blockErase.Result}";
+                            ? _languageService.GetLocalizedString("AdvancedTagOps.BlockEraseSuccess")
+                            : GetLocalizedString("AdvancedTagOps.BlockEraseFailed", blockErase.Result);
                     }
                     else if (result is TagLockOpResult lockResult)
                     {
                         OperationResult = lockResult.Result == LockResultStatus.Success
-                            ? "锁操作成功"
-                            : $"锁操作失败：{lockResult.Result}";
+                            ? _languageService.GetLocalizedString("AdvancedTagOps.LockSuccess")
+                            : GetLocalizedString("AdvancedTagOps.LockFailed", lockResult.Result);
                     }
                     else if (result is TagKillOpResult killResult)
                     {
                         OperationResult = killResult.Result == KillResultStatus.Success
-                            ? "Kill 成功"
-                            : $"Kill 失败：{killResult.Result}";
+                            ? _languageService.GetLocalizedString("AdvancedTagOps.KillSuccess")
+                            : GetLocalizedString("AdvancedTagOps.KillFailed", killResult.Result);
                     }
 
-                    logs.LogOperation(OperationResult, OperationResult.Contains("失败") ? Microsoft.Extensions.Logging.LogLevel.Warning : Microsoft.Extensions.Logging.LogLevel.Information);
+                    logs.LogOperation(OperationResult, OperationResult.Contains(_languageService.GetLocalizedString("Common.Failed")) ? Microsoft.Extensions.Logging.LogLevel.Warning : Microsoft.Extensions.Logging.LogLevel.Information);
                 }
             }
             finally
@@ -291,7 +306,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            logs.LogOperation($"清理操作失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Warning);
+            logs.LogOperation(GetLocalizedString("AdvancedTagOps.CleanupFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Warning);
         }
     }
 
@@ -358,6 +373,8 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
             }
         }
 
-        OperationResult = connected ? "设备已连接，可执行高级标签操作" : "请先连接设备";
+        OperationResult = connected
+            ? _languageService.GetLocalizedString("AdvancedTagOps.Ready")
+            : _languageService.GetLocalizedString("Common.ConnectFirst");
     }
 }
