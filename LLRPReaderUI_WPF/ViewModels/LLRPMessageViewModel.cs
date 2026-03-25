@@ -89,8 +89,8 @@ namespace LLRPReaderUI_WPF.ViewModels
             _rawFrameRepository = rawFrameRepository;
             _languageService = languageService;
 
-            // Initialize with localized "All"
-            var allText = _languageService.GetLocalizedString("Common.All");
+            // Use "All" directly without localization to avoid filter issues when switching languages
+            const string allText = "All";
             _filterDirection = allText;
             _filterMsgType = allText;
             _filterDeviceId = allText;
@@ -137,6 +137,14 @@ namespace LLRPReaderUI_WPF.ViewModels
                 UpdateMsgTypeOptions();
                 UpdateDeviceIdOptions();
 
+                // 重置筛选条件
+                FilterStartDate = null;
+                FilterEndDate = null;
+                FilterDirection = "All";
+                FilterMsgType = "All";
+                FilterDeviceId = "All";
+                SearchText = string.Empty;
+
                 ApplyFilter();
                 StatusText = GetLocalizedString("LLRPMessage.Loaded", RawFrames.Count);
             }
@@ -153,7 +161,7 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         private void UpdateMsgTypeOptions()
         {
-            var allText = _languageService.GetLocalizedString("Common.All");
+            const string allText = "All";
             var types = RawFrames.Select(f => f.MsgTypeName).Distinct().OrderBy(t => t).ToList();
             types.Insert(0, allText);
             _msgTypeOptions = types;
@@ -166,7 +174,7 @@ namespace LLRPReaderUI_WPF.ViewModels
 
         private void UpdateDeviceIdOptions()
         {
-            var allText = _languageService.GetLocalizedString("Common.All");
+            const string allText = "All";
             var deviceIds = RawFrames
                 .Where(f => !string.IsNullOrEmpty(f.DeviceId))
                 .Select(f => f.DeviceId!)
@@ -185,7 +193,7 @@ namespace LLRPReaderUI_WPF.ViewModels
         [RelayCommand]
         private void ApplyFilter()
         {
-            var allText = _languageService.GetLocalizedString("Common.All");
+            const string allText = "All";
             var query = RawFrames.AsEnumerable();
 
             // 日期筛选
@@ -238,7 +246,7 @@ namespace LLRPReaderUI_WPF.ViewModels
         [RelayCommand]
         private void ClearFilter()
         {
-            var allText = _languageService.GetLocalizedString("Common.All");
+            const string allText = "All";
             FilterStartDate = null;
             FilterEndDate = null;
             FilterDirection = allText;
