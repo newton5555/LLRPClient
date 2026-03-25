@@ -46,7 +46,8 @@ namespace LLRPReaderUI_WPF
 
                 // 注册 DbContext 和 EF 实现的仓库
                 services.AddDbContext<RawFrameDbContext>(options =>
-                    options.UseSqlite($"Data Source={dbPath}"));
+                    options.UseSqlite($"Data Source={dbPath}")
+                           .UseLoggerFactory(Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory.Instance));
                 services.AddScoped<IRawFrameRepository, RawFrameRepository>();
             }
 
