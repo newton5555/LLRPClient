@@ -8,12 +8,47 @@
     <Color x:Key="SurfaceColor">#FFFFFFFF</Color>
     <Color x:Key="BorderColor">#E6EBF2</Color>
 
+    <!--  Text colors  -->
+    <Color x:Key="TextPrimaryColor">#0F172A</Color>
+    <Color x:Key="TextSecondaryColor">#334155</Color>
+
     <!--  Brushes (including keys used by MahApps to allow overrides)  -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryColorLight}" />
     <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
     <SolidColorBrush x:Key="BorderBrushCustom" Color="{StaticResource BorderColor}" />
+
+    <!--  Text brushes  -->
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#64748B" />
+
+    <!--  Overlay / interaction brushes  -->
+    <SolidColorBrush x:Key="HoverOverlayBrush" Color="#14007ACC" />
+    <SolidColorBrush x:Key="SelectedOverlayBrush" Color="#26007ACC" />
+    <SolidColorBrush x:Key="SubtleOverlayBrush" Color="#0D000000" />
+    <SolidColorBrush x:Key="ModalOverlayBrush" Color="#80000000" />
+    <SolidColorBrush x:Key="SubtleBorderBrush" Color="#12000000" />
+
+    <!--  Status bar text brushes  -->
+    <SolidColorBrush x:Key="StatusDefaultTextBrush" Color="#475569" />
+    <SolidColorBrush x:Key="StatusErrorTextBrush" Color="#991B1B" />
+    <SolidColorBrush x:Key="StatusSuccessTextBrush" Color="#166534" />
+    <SolidColorBrush x:Key="StatusActiveTextBrush" Color="#1D4ED8" />
+    <SolidColorBrush x:Key="WarningTextBrush" Color="#7A1F1F" />
+
+    <!--  Status bar chip backgrounds  -->
+    <SolidColorBrush x:Key="StatusChipErrorBrush" Color="#FEE2E2" />
+    <SolidColorBrush x:Key="StatusChipSuccessBrush" Color="#DCFCE7" />
+    <SolidColorBrush x:Key="StatusChipDefaultBrush" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="StatusChipActiveBrush" Color="#DBEAFE" />
+
+    <!--  Status dot brushes  -->
+    <SolidColorBrush x:Key="StatusDotErrorBrush" Color="#EF4444" />
+    <SolidColorBrush x:Key="StatusDotSuccessBrush" Color="#22C55E" />
+    <SolidColorBrush x:Key="StatusDotDefaultBrush" Color="#94A3B8" />
+    <SolidColorBrush x:Key="StatusDotActiveBrush" Color="#3B82F6" />
 
     <!--  Override MahApps brushes so existing styles pick up our flat theme  -->
     <SolidColorBrush x:Key="MahApps.Brushes.Accent" Color="{StaticResource PrimaryColor}" />

@@ -12,6 +12,13 @@ public enum AppTheme
 
 public class ThemeService
 {
+    public ThemeService()
+    {
+        Initialize();  // 构造时自动调用
+    }
+
+
+
     private AppTheme _currentTheme = AppTheme.Light;
 
     public AppTheme CurrentTheme
