@@ -65,8 +65,8 @@
         </Style>
 
         <Style x:Key="NavItemContainerStyle" TargetType="ListBoxItem">
-            <Setter Property="Margin" Value="0,4" />
-            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="Margin" Value="0,2" />
+            <Setter Property="Padding" Value="4,10" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -312,25 +312,22 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:NavigationItem}">
                                 <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                    <Border
-                                        Width="40"
-                                        Height="40"
-                                        Background="{DynamicResource SubtleOverlayBrush}"
-                                        CornerRadius="20">
-                                        <fa:IconBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontSize="20"
-                                            Foreground="{Binding IconBrush}"
-                                            Icon="{Binding Icon}"
-                                            IconFont="Auto"
-                                            TextAlignment="Center" />
-                                    </Border>
+                                    <fa:IconBlock
+                                        Width="24"
+                                        Height="24"
+                                        Margin="8,0,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="20"
+                                        Foreground="{Binding IconBrush}"
+                                        Icon="{Binding Icon}"
+                                        IconFont="Auto"
+                                        TextAlignment="Center" />
                                     <Label
-                                        Margin="10,0,0,0"
+                                        Margin="12,0,0,0"
                                         VerticalAlignment="Center"
                                         Content="{Binding Title}"
-                                        FontSize="15" />
+                                        FontSize="14" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
