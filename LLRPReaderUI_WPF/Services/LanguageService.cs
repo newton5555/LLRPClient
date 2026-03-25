@@ -31,15 +31,6 @@ public class LanguageService
     public AppLanguage CurrentLanguage
     {
         get => _currentLanguage;
-        private set
-        {
-            if (_currentLanguage != value)
-            {
-                _currentLanguage = value;
-                SaveLanguageToConfig(value);
-                OnLanguageChanged?.Invoke(value);
-            }
-        }
     }
 
     public event Action<AppLanguage>? OnLanguageChanged;
@@ -57,9 +48,11 @@ public class LanguageService
 
     public void SetLanguage(AppLanguage language)
     {
-        if (CurrentLanguage == language) return;
-        CurrentLanguage = language;
-        ApplyLanguage(language);
+        if (_currentLanguage == language) return;
+        _currentLanguage = language;
+        SaveLanguageToConfig(language);
+        ApplyLanguage(language);            // 先替换资源字典
+        OnLanguageChanged?.Invoke(language); // 再触发事件
     }
 
     private void ApplyLanguage(AppLanguage language)
@@ -69,18 +62,17 @@ public class LanguageService
 
         var dictionaries = app.Resources.MergedDictionaries;
 
-        // Remove existing language resource
+        // Remove ALL existing language resources
         for (int i = dictionaries.Count - 1; i >= 0; i--)
         {
             var dict = dictionaries[i];
             if (dict.Source != null && dict.Source.ToString().Contains("/Localization/"))
             {
                 dictionaries.RemoveAt(i);
-                break;
             }
         }
 
-        // Add new language resource
+        // Add new language resource at the end (WPF searches from end to beginning)
         var langDict = new ResourceDictionary { Source = LanguageUris[language] };
         dictionaries.Add(langDict);
     }

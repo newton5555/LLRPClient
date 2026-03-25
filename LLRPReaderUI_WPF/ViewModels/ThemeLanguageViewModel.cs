@@ -31,6 +31,7 @@ public partial class ThemeLanguageViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(CurrentLanguage));
         OnPropertyChanged(nameof(LanguageIcon));
+        OnPropertyChanged(nameof(LanguageSymbol));
         OnPropertyChanged(nameof(ThemeToolTip));
     }
 

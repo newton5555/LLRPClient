@@ -39,9 +39,15 @@
     <sys:String x:Key="Status.MAC">MAC</sys:String>
     <sys:String x:Key="Status.Unknown">未知</sys:String>
     <sys:String x:Key="Status.NotConnected">未连接</sys:String>
+    <sys:String x:Key="Status.Connected">已连接</sys:String>
     <sys:String x:Key="Status.Running">进行中</sys:String>
     <sys:String x:Key="Status.Idle">空闲</sys:String>
     <sys:String x:Key="Status.NoData">无数据</sys:String>
+    <sys:String x:Key="Status.High">高</sys:String>
+    <sys:String x:Key="Status.Low">低</sys:String>
+    <sys:String x:Key="Status.Conn">连</sys:String>
+    <sys:String x:Key="Status.Disc">断</sys:String>
+    <sys:String x:Key="Status.NoResponse">当前设备未返回</sys:String>
 
     <!-- Inventory -->
     <sys:String x:Key="Inventory.Start">开始寻卡</sys:String>

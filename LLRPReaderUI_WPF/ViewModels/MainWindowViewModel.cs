@@ -146,54 +146,61 @@ public partial class MainWindowViewModel : ObservableObject
         if (!reader.IsConnected)
         {
             statusStore.Clear();
-            DeviceStatusText = "设备: 未连接";
+            UpdateStatusTexts(null);
             IsDeviceConnected = false;
-            InventoryStatusText = "盘点: 未知";
             IsInventoryRunning = false;
-            //TemperatureStatusText = "温度: --°C";
-            AntennaStatusText = "天线: --";
-            GpiStatusText = "GPI: --";
-            GpoStatusText = "GPO: --";
-            IdentificationStatusText = "MAC: --";
+            IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: --";
             return;
         }
 
         var status = reader.QueryStatus();
         statusStore.Set(status);
         logs.LogOperation("已更新设备状态");
-        DeviceStatusText = $"设备: {(status.IsConnected ? "已连接" : "未连接")}";
+        UpdateStatusTexts(status);
         IsDeviceConnected = status.IsConnected;
-        InventoryStatusText = $"盘点: {(status.IsSingulating ? "进行中" : "空闲")}";
         IsInventoryRunning = status.IsSingulating;
-        //TemperatureStatusText = $"温度: {status.TemperatureInCelsius}°C";
-        IdentificationStatusText = $"MAC: {FormatIdentification(status.ReaderIdentity)}";
+        IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: {FormatIdentification(status.ReaderIdentity)}";
 
-        var antennaParts = status.Antennas
-            .Cast<AntennaStatus>()
-            .OrderBy(x => x.PortNumber)
-            .Select(x => $"{x.PortNumber}:{(x.IsConnected ? "连" : "断")}")
-            .ToList();
-        //AntennaStatusText = antennaParts.Count > 0
-        //    ? $"天线: {string.Join(" ", antennaParts)}"
-        //    : "天线: 无数据";
+        var highText = _languageService.GetLocalizedString("Status.High");
+        var lowText = _languageService.GetLocalizedString("Status.Low");
 
         var gpiParts = status.Gpis
             .Cast<GpiStatus>()
             .OrderBy(x => x.PortNumber)
-            .Select(x => $"{x.PortNumber}:{(x.State ? "高" : "低")}")
+            .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
             .ToList();
         GpiStatusText = gpiParts.Count > 0
-            ? $"GPI: {string.Join(" ", gpiParts)}"
-            : "GPI: 无数据";
+            ? $"{_languageService.GetLocalizedString("Status.GPI")}: {string.Join(" ", gpiParts)}"
+            : $"{_languageService.GetLocalizedString("Status.GPI")}: {_languageService.GetLocalizedString("Status.NoData")}";
 
         var gpoParts = status.GpoStates
             .Cast<GpoStatus>()
             .OrderBy(x => x.PortNumber)
-            .Select(x => $"{x.PortNumber}:{(x.State ? "高" : "低")}")
+            .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
             .ToList();
         GpoStatusText = gpoParts.Count > 0
-            ? $"GPO: {string.Join(" ", gpoParts)}"
-            : "GPO: 当前设备未返回";
+            ? $"{_languageService.GetLocalizedString("Status.GPO")}: {string.Join(" ", gpoParts)}"
+            : $"{_languageService.GetLocalizedString("Status.GPO")}: {_languageService.GetLocalizedString("Status.NoResponse")}";
+    }
+
+    private void UpdateStatusTexts(Status? status)
+    {
+        var deviceText = _languageService.GetLocalizedString("Status.Device");
+        var inventoryText = _languageService.GetLocalizedString("Status.Inventory");
+
+        if (status == null)
+        {
+            DeviceStatusText = $"{deviceText}: {_languageService.GetLocalizedString("Status.NotConnected")}";
+            InventoryStatusText = $"{inventoryText}: {_languageService.GetLocalizedString("Status.Unknown")}";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+            GpiStatusText = $"{_languageService.GetLocalizedString("Status.GPI")}: --";
+            GpoStatusText = $"{_languageService.GetLocalizedString("Status.GPO")}: --";
+        }
+        else
+        {
+            DeviceStatusText = $"{deviceText}: {(status.IsConnected ? _languageService.GetLocalizedString("Status.Connected") : _languageService.GetLocalizedString("Status.NotConnected"))}";
+            InventoryStatusText = $"{inventoryText}: {(status.IsSingulating ? _languageService.GetLocalizedString("Status.Running") : _languageService.GetLocalizedString("Status.Idle"))}";
+        }
     }
 
     private static bool ShouldRefreshStatus(string reason)
@@ -204,16 +211,18 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void QuerySingulatingState()
     {
+        var inventoryText = _languageService.GetLocalizedString("Status.Inventory");
+
         if (!reader.IsConnected)
         {
-            InventoryStatusText = "盘点: 未知";
+            InventoryStatusText = $"{inventoryText}: {_languageService.GetLocalizedString("Status.Unknown")}";
             IsInventoryRunning = false;
             return;
         }
 
         bool isSingulating = reader.QuerySingulatingState();
         statusStore.SetSingulating(isSingulating);
-        InventoryStatusText = $"盘点: {(isSingulating ? "进行中" : "空闲")}";
+        InventoryStatusText = $"{inventoryText}: {(isSingulating ? _languageService.GetLocalizedString("Status.Running") : _languageService.GetLocalizedString("Status.Idle"))}";
         IsInventoryRunning = isSingulating;
     }
 
@@ -285,6 +294,47 @@ public partial class MainWindowViewModel : ObservableObject
                 var newTitle = _languageService.GetLocalizedString(item.TitleResourceKey);
                 item.UpdateTitle(newTitle);
             }
+        }
+
+        // Refresh status display texts (no device query)
+        RefreshStatusDisplay();
+    }
+
+    /// <summary>
+    /// Refresh status display texts from cached state (no device query).
+    /// </summary>
+    private void RefreshStatusDisplay()
+    {
+        if (statusStore.TryGetSnapshot(out var status) && status != null)
+        {
+            UpdateStatusTexts(status);
+            var highText = _languageService.GetLocalizedString("Status.High");
+            var lowText = _languageService.GetLocalizedString("Status.Low");
+
+            var gpiParts = status.Gpis
+                .Cast<GpiStatus>()
+                .OrderBy(x => x.PortNumber)
+                .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
+                .ToList();
+            GpiStatusText = gpiParts.Count > 0
+                ? $"{_languageService.GetLocalizedString("Status.GPI")}: {string.Join(" ", gpiParts)}"
+                : $"{_languageService.GetLocalizedString("Status.GPI")}: {_languageService.GetLocalizedString("Status.NoData")}";
+
+            var gpoParts = status.GpoStates
+                .Cast<GpoStatus>()
+                .OrderBy(x => x.PortNumber)
+                .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
+                .ToList();
+            GpoStatusText = gpoParts.Count > 0
+                ? $"{_languageService.GetLocalizedString("Status.GPO")}: {string.Join(" ", gpoParts)}"
+                : $"{_languageService.GetLocalizedString("Status.GPO")}: {_languageService.GetLocalizedString("Status.NoResponse")}";
+
+            IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: {FormatIdentification(status.ReaderIdentity)}";
+        }
+        else
+        {
+            UpdateStatusTexts(null);
+            IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: --";
         }
     }
 }

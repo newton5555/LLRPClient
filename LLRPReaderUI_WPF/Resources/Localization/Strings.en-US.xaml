@@ -39,9 +39,15 @@
     <sys:String x:Key="Status.MAC">MAC</sys:String>
     <sys:String x:Key="Status.Unknown">Unknown</sys:String>
     <sys:String x:Key="Status.NotConnected">Not connected</sys:String>
+    <sys:String x:Key="Status.Connected">Connected</sys:String>
     <sys:String x:Key="Status.Running">Running</sys:String>
     <sys:String x:Key="Status.Idle">Idle</sys:String>
     <sys:String x:Key="Status.NoData">No data</sys:String>
+    <sys:String x:Key="Status.High">High</sys:String>
+    <sys:String x:Key="Status.Low">Low</sys:String>
+    <sys:String x:Key="Status.Conn">Conn</sys:String>
+    <sys:String x:Key="Status.Disc">Disc</sys:String>
+    <sys:String x:Key="Status.NoResponse">No response from device</sys:String>
 
     <!-- Inventory -->
     <sys:String x:Key="Inventory.Start">Start Inventory</sys:String>
