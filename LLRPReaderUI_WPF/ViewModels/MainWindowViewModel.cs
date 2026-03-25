@@ -213,6 +213,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             DeviceStatusText = $"{deviceText}: {(status.IsConnected ? _languageService.GetLocalizedString("Status.Connected") : _languageService.GetLocalizedString("Status.NotConnected"))}";
             InventoryStatusText = $"{inventoryText}: {(status.IsSingulating ? _languageService.GetLocalizedString("Status.Running") : _languageService.GetLocalizedString("Status.Idle"))}";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
         }
     }
 
@@ -352,6 +353,7 @@ public partial class MainWindowViewModel : ObservableObject
                 : $"{_languageService.GetLocalizedString("Status.GPO")}: {_languageService.GetLocalizedString("Status.NoResponse")}";
 
             IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: {FormatIdentification(status.ReaderIdentity)}";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
         }
         else
         {

@@ -350,4 +350,68 @@
     <sys:String x:Key="MainWindow.StatusUpdated">Device status updated</sys:String>
     <sys:String x:Key="MainWindow.CurrentPage">Current page: {0}</sys:String>
 
+    <!-- InventoryConfig UI -->
+    <sys:String x:Key="InventoryConfig.AutoStartConfig">Auto Start Config</sys:String>
+    <sys:String x:Key="InventoryConfig.Mode">Mode</sys:String>
+    <sys:String x:Key="InventoryConfig.GpiPortNum">GPI Port Number</sys:String>
+    <sys:String x:Key="InventoryConfig.GpiLevel">GPI Level</sys:String>
+    <sys:String x:Key="InventoryConfig.FirstDelayMs">First Delay (ms)</sys:String>
+    <sys:String x:Key="InventoryConfig.PeriodMs">Period (ms)</sys:String>
+    <sys:String x:Key="InventoryConfig.UtcTimestamp">UTC Timestamp</sys:String>
+    <sys:String x:Key="InventoryConfig.AutoStopConfig">Auto Stop Config</sys:String>
+    <sys:String x:Key="InventoryConfig.DurationMs">Duration (ms)</sys:String>
+    <sys:String x:Key="InventoryConfig.Timeout">Timeout</sys:String>
+    <sys:String x:Key="InventoryConfig.FilterConfig">Filter Config</sys:String>
+    <sys:String x:Key="InventoryConfig.TagFilter1">Tag Filter 1 (TagFilter1)</sys:String>
+    <sys:String x:Key="InventoryConfig.TagFilter2">Tag Filter 2 (TagFilter2)</sys:String>
+    <sys:String x:Key="InventoryConfig.TagMaskHex">TagMask (HEX)</sys:String>
+    <sys:String x:Key="InventoryConfig.TagSelectFilters">Tag Select Filters (TagSelectFilters)</sys:String>
+    <sys:String x:Key="InventoryConfig.AddFilter">Add Filter</sys:String>
+    <sys:String x:Key="InventoryConfig.Delete">Delete</sys:String>
+    <sys:String x:Key="InventoryConfig.BitPointer">Bit Pointer</sys:String>
+    <sys:String x:Key="InventoryConfig.BitCount">Bit Count</sys:String>
+    <sys:String x:Key="InventoryConfig.MemoryBank">Memory Bank</sys:String>
+    <sys:String x:Key="InventoryConfig.FilterOp">Filter Op</sys:String>
+    <sys:String x:Key="InventoryConfig.MatchAction">Match Action</sys:String>
+    <sys:String x:Key="InventoryConfig.TagMask">Tag Mask</sys:String>
+    <sys:String x:Key="InventoryConfig.NonMatchAction">Non-Match Action</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportConfig">Report Config</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportMode">Report Mode</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeAntenna">Include Antenna</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeChannel">Include Channel</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeFirstSeen">Include First Seen</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeLastSeen">Include Last Seen</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeSeenCount">Include Seen Count</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludePeakRssi">Include Peak RSSI</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludePcBits">Include PC Bits</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeCrc">Include CRC</sys:String>
+    <sys:String x:Key="InventoryConfig.AttachedDataConfig">Attached Data Config</sys:String>
+    <sys:String x:Key="InventoryConfig.EnableAttachedData">Enable Attached Data</sys:String>
+    <sys:String x:Key="InventoryConfig.WordStartAddr">Word Start Address</sys:String>
+    <sys:String x:Key="InventoryConfig.WordCount">Word Count</sys:String>
+    <sys:String x:Key="InventoryConfig.AccessPasswordHex">Access Password (HEX)</sys:String>
+    <sys:String x:Key="InventoryConfig.ReadConfig">Read Inventory Config</sys:String>
+    <sys:String x:Key="InventoryConfig.SaveConfig">Save Inventory Config</sys:String>
+
+    <!-- AdvancedTagOps UI -->
+    <sys:String x:Key="AdvancedTagOps.StandardSummary">Standard Summary (LLRP 1.0.1)</sys:String>
+    <sys:String x:Key="AdvancedTagOps.CommonParams">Common Parameters</sys:String>
+    <sys:String x:Key="AdvancedTagOps.Warning">Warning: This page contains high-risk operations (C1G2Lock/C1G2Kill/C1G2BlockErase). Please verify with test tags before production use.</sys:String>
+    <sys:String x:Key="AdvancedTagOps.TargetTagType">Target Tag Type</sys:String>
+    <sys:String x:Key="AdvancedTagOps.TargetTagValue">Target Tag Value</sys:String>
+    <sys:String x:Key="AdvancedTagOps.AccessPassword">Access Password</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillPassword">Kill Password</sys:String>
+    <sys:String x:Key="AdvancedTagOps.PermalockNote">In standard C1G2, Permalock/Permaunlock is expressed via C1G2LockPayload.Privilege; Lock actions on this page are covered.</sys:String>
+    <sys:String x:Key="AdvancedTagOps.MemoryBank">Memory Bank</sys:String>
+    <sys:String x:Key="AdvancedTagOps.WordStartAddr">Word Start Address</sys:String>
+    <sys:String x:Key="AdvancedTagOps.WordCount">Word Count</sys:String>
+    <sys:String x:Key="AdvancedTagOps.DeviceCapability">Device Capability: C1G2BlockErase {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.ExecuteBlockErase">Execute BlockErase</sys:String>
+    <sys:String x:Key="AdvancedTagOps.LockTarget">Lock Target</sys:String>
+    <sys:String x:Key="AdvancedTagOps.LockAction">Lock Action</sys:String>
+    <sys:String x:Key="AdvancedTagOps.ExecuteLock">Execute Lock</sys:String>
+    <sys:String x:Key="AdvancedTagOps.ExecuteKill">Execute Kill</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillWarning">Danger: Tag will be permanently disabled after successful Kill</sys:String>
+    <sys:String x:Key="AdvancedTagOps.Result">Result</sys:String>
+
 </ResourceDictionary>

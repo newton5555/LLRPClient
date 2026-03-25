@@ -21,7 +21,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Play" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
-                            <TextBlock Text="自动开始配置" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -43,22 +43,22 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="模式" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.Mode}" />
                         <ComboBox Grid.Row="0" Grid.Column="1" Height="30" ItemsSource="{Binding AutoStartModes}" SelectedItem="{Binding AutoStartMode}" />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="GPI端口号" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.GpiPortNum}" />
                         <TextBox Grid.Row="2" Grid.Column="1" Height="30" Text="{Binding AutoStartGpiPortNumber}" />
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="GPI电平" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.GpiLevel}" />
                         <CheckBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AutoStartGpiLevel}" />
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="首次延时(ms)" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.FirstDelayMs}" />
                         <TextBox Grid.Row="6" Grid.Column="1" Height="30" Text="{Binding AutoStartFirstDelayInMs}" />
 
-                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="周期(ms)" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.PeriodMs}" />
                         <TextBox Grid.Row="8" Grid.Column="1" Height="30" Text="{Binding AutoStartPeriodInMs}" />
 
-                        <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="UTC时间戳" />
+                        <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.UtcTimestamp}" />
                         <TextBox Grid.Row="10" Grid.Column="1" Height="30" Text="{Binding AutoStartUtcTimestamp}" />
                     </Grid>
                 </GroupBox>
@@ -67,7 +67,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Stop" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
-                            <TextBlock Text="自动停止配置" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -87,19 +87,19 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="模式" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.Mode}" />
                         <ComboBox Grid.Row="0" Grid.Column="1" Height="30" ItemsSource="{Binding AutoStopModes}" SelectedItem="{Binding AutoStopMode}" />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="持续时长(ms)" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.DurationMs}" />
                         <TextBox Grid.Row="2" Grid.Column="1" Height="30" Text="{Binding AutoStopDurationInMs}" />
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="GPI端口号" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.GpiPortNum}" />
                         <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding AutoStopGpiPortNumber}" />
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="GPI电平" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.GpiLevel}" />
                         <CheckBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AutoStopGpiLevel}" />
 
-                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="超时" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.Timeout}" />
                         <TextBox Grid.Row="8" Grid.Column="1" Height="30" Text="{Binding AutoStopTimeout}" />
                     </Grid>
                 </GroupBox>
@@ -108,7 +108,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Filter" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}"/>
-                            <TextBlock Text="筛选配置" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <StackPanel Margin="10">
@@ -117,11 +117,11 @@
                                 <ColumnDefinition Width="200" />
                                 <ColumnDefinition Width="220" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="模式" />
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.Mode}" />
                             <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding TagFilterModes}" SelectedItem="{Binding FilterMode}" />
                         </Grid>
 
-                        <GroupBox Header="标签筛选1 (TagFilter1)" Margin="0,0,0,8">
+                        <GroupBox Header="{DynamicResource InventoryConfig.TagFilter1}" Margin="0,0,0,8">
                             <Grid Margin="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140" />
@@ -138,24 +138,24 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="MemoryBank" />
+                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.MemoryBank}" />
                                 <ComboBox Grid.Row="0" Grid.Column="1" Height="28" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter1MemoryBank}" />
-                                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="FilterOp" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.FilterOp}" />
                                 <ComboBox Grid.Row="0" Grid.Column="3" Height="28" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter1FilterOp}" />
 
-                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="BitPointer" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitPointer}" />
                                 <TextBox Grid.Row="2" Grid.Column="1" Height="28" Text="{Binding Filter1BitPointer}" />
-                                <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="BitCount" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitCount}" />
                                 <TextBox Grid.Row="2" Grid.Column="3" Height="28" Text="{Binding Filter1BitCount}" />
 
-                                <TextBlock  Grid.Row="4" Margin="0,0,0,4" Text="TagFilter1 TagMask (HEX)" Grid.ColumnSpan="4"/>
+                                <TextBlock  Grid.Row="4" Margin="0,0,0,4" Text="{DynamicResource InventoryConfig.TagMaskHex}" Grid.ColumnSpan="4"/>
                                 <TextBox Grid.Row="5" Margin="0,0,0,8" Height="30" Text="{Binding Filter1TagMask}" Grid.ColumnSpan="4"/>
                             </Grid>
                         </GroupBox>
 
-                      
 
-                        <GroupBox Header="标签筛选2 (TagFilter2)" Margin="0,0,0,8">
+
+                        <GroupBox Header="{DynamicResource InventoryConfig.TagFilter2}" Margin="0,0,0,8">
                             <Grid Margin="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140" />
@@ -172,26 +172,26 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="MemoryBank" />
+                                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.MemoryBank}" />
                                 <ComboBox Grid.Row="0" Grid.Column="1" Height="28" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter2MemoryBank}" />
-                                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="FilterOp" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.FilterOp}" />
                                 <ComboBox Grid.Row="0" Grid.Column="3" Height="28" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter2FilterOp}" />
 
-                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="BitPointer" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitPointer}" />
                                 <TextBox Grid.Row="2" Grid.Column="1" Height="28" Text="{Binding Filter2BitPointer}" />
-                                <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="BitCount" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitCount}" />
                                 <TextBox Grid.Row="2" Grid.Column="3" Height="28" Text="{Binding Filter2BitCount}" />
 
-                                <TextBlock  Grid.Row="4" Margin="0,0,0,4" Text="TagFilter2 TagMask (HEX)" Grid.ColumnSpan="4"/>
+                                <TextBlock  Grid.Row="4" Margin="0,0,0,4" Text="{DynamicResource InventoryConfig.TagMaskHex}" Grid.ColumnSpan="4"/>
                                 <TextBox Grid.Row="5" Margin="0,0,0,8" Height="30" Text="{Binding Filter2TagMask}" Grid.ColumnSpan="4"/>
                             </Grid>
                         </GroupBox>
 
-                      
 
-                        <GroupBox Header="标签选择筛选 (TagSelectFilters)" Margin="0,6,0,0">
+
+                        <GroupBox Header="{DynamicResource InventoryConfig.TagSelectFilters}" Margin="0,6,0,0">
                             <StackPanel Margin="8">
-                                <Button Width="120" Height="30" Content="新增筛选" Command="{Binding AddTagSelectFilterCommand}" />
+                                <Button Width="120" Height="30" Content="{DynamicResource InventoryConfig.AddFilter}" Command="{Binding AddTagSelectFilterCommand}" />
                                 <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding TagSelectFilters}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -212,27 +212,27 @@
                                                         <RowDefinition Height="Auto" />
                                                     </Grid.RowDefinitions>
 
-                                                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="MemoryBank" />
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.MemoryBank}" />
                                                     <ComboBox Grid.Row="0" Grid.Column="1" Height="26"
                                                               ItemsSource="{Binding DataContext.MemoryBanks, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                               SelectedItem="{Binding MemoryBank}" />
-                                                    <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="位指针(BitPointer)" />
+                                                    <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitPointer}" />
                                                     <TextBox Grid.Row="0" Grid.Column="3" Height="26" Text="{Binding BitPointer}" />
                                                     <Button Grid.Row="0" Grid.Column="4" Width="72" Height="26" Margin="8,0,0,0"
-                                                            Content="删除"
+                                                            Content="{DynamicResource InventoryConfig.Delete}"
                                                             Command="{Binding DataContext.RemoveTagSelectFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                             CommandParameter="{Binding}" />
 
-                                                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="位长度(BitCount)" />
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitCount}" />
                                                     <TextBox Grid.Row="2" Grid.Column="1" Height="26" Text="{Binding BitCount}" />
-                                                    <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="MatchAction" />
+                                                    <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.MatchAction}" />
                                                     <ComboBox Grid.Row="2" Grid.Column="3" Height="26"
                                                               ItemsSource="{Binding DataContext.StateUnawareActions, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                               SelectedItem="{Binding MatchAction}" />
 
-                                                    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="TagMask" />
+                                                    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.TagMask}" />
                                                     <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding TagMask}" />
-                                                    <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Text="NonMatchAction" />
+                                                    <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.NonMatchAction}" />
                                                     <ComboBox Grid.Row="4" Grid.Column="3" Height="26"
                                                               ItemsSource="{Binding DataContext.StateUnawareActions, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                               SelectedItem="{Binding NonMatchAction}" />
@@ -250,7 +250,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="SquarePollVertical" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
-                            <TextBlock Text="上报配置" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <StackPanel Margin="10">
@@ -259,19 +259,19 @@
                                 <ColumnDefinition Width="200" />
                                 <ColumnDefinition Width="220" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="上报模式" />
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.ReportMode}" />
                             <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding ReportModes}" SelectedItem="{Binding ReportMode}" />
                         </Grid>
 
                         <UniformGrid Columns="2" Rows="4">
-                            <CheckBox Content="包含天线号" IsChecked="{Binding IncludeAntennaPortNumber}" />
-                            <CheckBox Content="包含信道" IsChecked="{Binding IncludeChannel}" />
-                            <CheckBox Content="包含首次时间" IsChecked="{Binding IncludeFirstSeenTime}" />
-                            <CheckBox Content="包含末次时间" IsChecked="{Binding IncludeLastSeenTime}" />
-                            <CheckBox Content="包含出现次数" IsChecked="{Binding IncludeSeenCount}" />
-                            <CheckBox Content="包含峰值RSSI" IsChecked="{Binding IncludePeakRssi}" />
-                            <CheckBox Content="包含PC位" IsChecked="{Binding IncludePcBits}" />
-                            <CheckBox Content="包含CRC" IsChecked="{Binding IncludeCrc}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludeAntenna}" IsChecked="{Binding IncludeAntennaPortNumber}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludeChannel}" IsChecked="{Binding IncludeChannel}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludeFirstSeen}" IsChecked="{Binding IncludeFirstSeenTime}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludeLastSeen}" IsChecked="{Binding IncludeLastSeenTime}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludeSeenCount}" IsChecked="{Binding IncludeSeenCount}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludePeakRssi}" IsChecked="{Binding IncludePeakRssi}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludePcBits}" IsChecked="{Binding IncludePcBits}" />
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludeCrc}" IsChecked="{Binding IncludeCrc}" />
                         </UniformGrid>
                     </StackPanel>
                 </GroupBox>
@@ -280,7 +280,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconTealBrush}" Icon="Database" IconFont="Auto" />
-                            <TextBlock Text="附加数据配置" />
+                            <TextBlock Text="{DynamicResource InventoryConfig.AttachedDataConfig}" />
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -300,19 +300,19 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="启用附加数据" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.EnableAttachedData}" />
                         <CheckBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AttachedDataEnabled}" />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="存储区" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.MemoryBank}" />
                         <ComboBox Grid.Row="2" Grid.Column="1" Height="30" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding AttachedDataMemoryBank}" />
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="起始字地址" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.WordStartAddr}" />
                         <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding AttachedDataWordPointer}" />
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="读取字数" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.WordCount}" />
                         <TextBox Grid.Row="6" Grid.Column="1" Height="30" Text="{Binding AttachedDataWordCount}" />
 
-                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="访问密码(HEX)" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.AccessPasswordHex}" />
                         <TextBox Grid.Row="8" Grid.Column="1" Height="30" Text="{Binding AttachedDataAccessPassword}" />
                     </Grid>
                 </GroupBox>
@@ -323,13 +323,13 @@
             <Button Height="32" Width="120" Margin="0,0,8,0" Command="{Binding QueryInventoryConfigCommand}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
-                    <TextBlock Text="读取寻卡配置" />
+                    <TextBlock Text="{DynamicResource InventoryConfig.ReadConfig}" />
                 </StackPanel>
             </Button>
             <Button Height="32" Width="120" Command="{Binding SaveInventoryConfigCommand}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
-                    <TextBlock Text="保存寻卡配置" />
+                    <TextBlock Text="{DynamicResource InventoryConfig.SaveConfig}" />
                 </StackPanel>
             </Button>
         </StackPanel>

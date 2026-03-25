@@ -350,4 +350,68 @@
     <sys:String x:Key="MainWindow.StatusUpdated">已更新设备状态</sys:String>
     <sys:String x:Key="MainWindow.CurrentPage">当前页面：{0}</sys:String>
 
+    <!-- InventoryConfig UI -->
+    <sys:String x:Key="InventoryConfig.AutoStartConfig">自动开始配置</sys:String>
+    <sys:String x:Key="InventoryConfig.Mode">模式</sys:String>
+    <sys:String x:Key="InventoryConfig.GpiPortNum">GPI端口号</sys:String>
+    <sys:String x:Key="InventoryConfig.GpiLevel">GPI电平</sys:String>
+    <sys:String x:Key="InventoryConfig.FirstDelayMs">首次延时(ms)</sys:String>
+    <sys:String x:Key="InventoryConfig.PeriodMs">周期(ms)</sys:String>
+    <sys:String x:Key="InventoryConfig.UtcTimestamp">UTC时间戳</sys:String>
+    <sys:String x:Key="InventoryConfig.AutoStopConfig">自动停止配置</sys:String>
+    <sys:String x:Key="InventoryConfig.DurationMs">持续时长(ms)</sys:String>
+    <sys:String x:Key="InventoryConfig.Timeout">超时</sys:String>
+    <sys:String x:Key="InventoryConfig.FilterConfig">筛选配置</sys:String>
+    <sys:String x:Key="InventoryConfig.TagFilter1">标签筛选1 (TagFilter1)</sys:String>
+    <sys:String x:Key="InventoryConfig.TagFilter2">标签筛选2 (TagFilter2)</sys:String>
+    <sys:String x:Key="InventoryConfig.TagMaskHex">TagMask (HEX)</sys:String>
+    <sys:String x:Key="InventoryConfig.TagSelectFilters">标签选择筛选 (TagSelectFilters)</sys:String>
+    <sys:String x:Key="InventoryConfig.AddFilter">新增筛选</sys:String>
+    <sys:String x:Key="InventoryConfig.Delete">删除</sys:String>
+    <sys:String x:Key="InventoryConfig.BitPointer">位指针(BitPointer)</sys:String>
+    <sys:String x:Key="InventoryConfig.BitCount">位长度(BitCount)</sys:String>
+    <sys:String x:Key="InventoryConfig.MemoryBank">内存区</sys:String>
+    <sys:String x:Key="InventoryConfig.FilterOp">筛选操作</sys:String>
+    <sys:String x:Key="InventoryConfig.MatchAction">匹配动作</sys:String>
+    <sys:String x:Key="InventoryConfig.TagMask">标签掩码</sys:String>
+    <sys:String x:Key="InventoryConfig.NonMatchAction">非匹配动作</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportConfig">上报配置</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportMode">上报模式</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeAntenna">包含天线号</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeChannel">包含信道</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeFirstSeen">包含首次时间</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeLastSeen">包含末次时间</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeSeenCount">包含出现次数</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludePeakRssi">包含峰值RSSI</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludePcBits">包含PC位</sys:String>
+    <sys:String x:Key="InventoryConfig.IncludeCrc">包含CRC</sys:String>
+    <sys:String x:Key="InventoryConfig.AttachedDataConfig">附加数据配置</sys:String>
+    <sys:String x:Key="InventoryConfig.EnableAttachedData">启用附加数据</sys:String>
+    <sys:String x:Key="InventoryConfig.WordStartAddr">起始字地址</sys:String>
+    <sys:String x:Key="InventoryConfig.WordCount">读取字数</sys:String>
+    <sys:String x:Key="InventoryConfig.AccessPasswordHex">访问密码(HEX)</sys:String>
+    <sys:String x:Key="InventoryConfig.ReadConfig">读取寻卡配置</sys:String>
+    <sys:String x:Key="InventoryConfig.SaveConfig">保存寻卡配置</sys:String>
+
+    <!-- AdvancedTagOps UI -->
+    <sys:String x:Key="AdvancedTagOps.StandardSummary">标准摘要 (LLRP 1.0.1)</sys:String>
+    <sys:String x:Key="AdvancedTagOps.CommonParams">公共参数</sys:String>
+    <sys:String x:Key="AdvancedTagOps.Warning">警告：本页包含高风险操作（C1G2Lock/C1G2Kill/C1G2BlockErase）。请在测试标签验证后再上生产环境。</sys:String>
+    <sys:String x:Key="AdvancedTagOps.TargetTagType">目标标签类型</sys:String>
+    <sys:String x:Key="AdvancedTagOps.TargetTagValue">目标标签值</sys:String>
+    <sys:String x:Key="AdvancedTagOps.AccessPassword">访问密码</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillPassword">Kill 密码</sys:String>
+    <sys:String x:Key="AdvancedTagOps.PermalockNote">标准 C1G2 中 Permalock/Permaunlock 通过 C1G2LockPayload.Privilege 表达；本页的 Lock 动作已覆盖。</sys:String>
+    <sys:String x:Key="AdvancedTagOps.MemoryBank">内存区</sys:String>
+    <sys:String x:Key="AdvancedTagOps.WordStartAddr">Word 起始地址</sys:String>
+    <sys:String x:Key="AdvancedTagOps.WordCount">Word 数量</sys:String>
+    <sys:String x:Key="AdvancedTagOps.DeviceCapability">设备能力: C1G2BlockErase {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.ExecuteBlockErase">执行 BlockErase</sys:String>
+    <sys:String x:Key="AdvancedTagOps.LockTarget">锁定目标</sys:String>
+    <sys:String x:Key="AdvancedTagOps.LockAction">锁定动作</sys:String>
+    <sys:String x:Key="AdvancedTagOps.ExecuteLock">执行 Lock</sys:String>
+    <sys:String x:Key="AdvancedTagOps.ExecuteKill">执行 Kill</sys:String>
+    <sys:String x:Key="AdvancedTagOps.KillWarning">危险：Kill 成功后标签永久失效</sys:String>
+    <sys:String x:Key="AdvancedTagOps.Result">结果</sys:String>
+
 </ResourceDictionary>
