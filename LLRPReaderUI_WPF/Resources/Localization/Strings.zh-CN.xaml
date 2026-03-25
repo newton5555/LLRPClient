@@ -6,6 +6,7 @@
     <sys:String x:Key="App.Title">LLRP 读写器</sys:String>
 
     <!-- Navigation Menu -->
+    <sys:String x:Key="Menu.Navigation">功能导航</sys:String>
     <sys:String x:Key="Menu.DeviceConnection">设备连接</sys:String>
     <sys:String x:Key="Menu.Settings">参数配置</sys:String>
     <sys:String x:Key="Menu.GPIO">GPIO 配置</sys:String>
@@ -20,13 +21,15 @@
     <sys:String x:Key="DeviceConnection.Title">设备连接</sys:String>
     <sys:String x:Key="DeviceConnection.Address">地址</sys:String>
     <sys:String x:Key="DeviceConnection.Connect">连接</sys:String>
-    <sys:String x:Key="DeviceConnection.Disconnect">断开连接</sys:String>
+    <sys:String x:Key="DeviceConnection.Disconnect">断开</sys:String>
     <sys:String x:Key="DeviceConnection.Connecting">正在连接...</sys:String>
     <sys:String x:Key="DeviceConnection.Connected">已连接</sys:String>
     <sys:String x:Key="DeviceConnection.Disconnected">未连接</sys:String>
     <sys:String x:Key="DeviceConnection.ConnectionFailed">连接失败</sys:String>
     <sys:String x:Key="DeviceConnection.KeepaliveMonitor">连接监控</sys:String>
     <sys:String x:Key="DeviceConnection.KeepaliveMonitorTip">自动检测断开连接</sys:String>
+    <sys:String x:Key="DeviceConnection.FeatureSetProperty">FeatureSet 属性</sys:String>
+    <sys:String x:Key="DeviceConnection.Value">值</sys:String>
 
     <!-- Status -->
     <sys:String x:Key="Status.Device">设备</sys:String>
@@ -41,27 +44,104 @@
     <sys:String x:Key="Status.NoData">无数据</sys:String>
 
     <!-- Inventory -->
-    <sys:String x:Key="Inventory.Start">开始</sys:String>
-    <sys:String x:Key="Inventory.Stop">停止</sys:String>
-    <sys:String x:Key="Inventory.Clear">清空</sys:String>
+    <sys:String x:Key="Inventory.Start">开始寻卡</sys:String>
+    <sys:String x:Key="Inventory.Stop">停止寻卡</sys:String>
+    <sys:String x:Key="Inventory.Clear">清空数据</sys:String>
+    <sys:String x:Key="Inventory.PullBuffer">手动拉缓存</sys:String>
     <sys:String x:Key="Inventory.Running">寻卡中</sys:String>
     <sys:String x:Key="Inventory.Stopped">已停止</sys:String>
-    <sys:String x:Key="Inventory.TotalReports">报告总数</sys:String>
+    <sys:String x:Key="Inventory.TotalReports">报告包</sys:String>
     <sys:String x:Key="Inventory.TotalTags">标签总数</sys:String>
-    <sys:String x:Key="Inventory.UniqueTags">唯一标签</sys:String>
+    <sys:String x:Key="Inventory.UniqueTags">唯一 EPC</sys:String>
     <sys:String x:Key="Inventory.EPC">EPC</sys:String>
     <sys:String x:Key="Inventory.Antenna">天线</sys:String>
-    <sys:String x:Key="Inventory.RSSI">信号强度</sys:String>
+    <sys:String x:Key="Inventory.RSSI">RSSI(dBm)</sys:String>
     <sys:String x:Key="Inventory.Count">次数</sys:String>
     <sys:String x:Key="Inventory.Time">时间</sys:String>
+    <sys:String x:Key="Inventory.ReceiveTime">接收时间</sys:String>
+    <sys:String x:Key="Inventory.Frequency">频率(MHz)</sys:String>
+    <sys:String x:Key="Inventory.AttachedData">附加数据</sys:String>
     <sys:String x:Key="Inventory.ConnectFirst">请先连接设备</sys:String>
+    <sys:String x:Key="Inventory.CopyEpc">复制 EPC</sys:String>
+    <sys:String x:Key="Inventory.CopyAttachedData">复制附加数据</sys:String>
+    <sys:String x:Key="Inventory.CopySelectedRows">复制选中行</sys:String>
 
     <!-- Settings -->
     <sys:String x:Key="Settings.Title">参数配置</sys:String>
-    <sys:String x:Key="Settings.Save">保存</sys:String>
-    <sys:String x:Key="Settings.Query">查询</sys:String>
+    <sys:String x:Key="Settings.KeepaliveConfig">Keepalive 配置</sys:String>
+    <sys:String x:Key="Settings.EnableKeepalive">启用 Keepalive</sys:String>
+    <sys:String x:Key="Settings.KeepaliveInterval">Keepalive 间隔(ms)</sys:String>
+    <sys:String x:Key="Settings.RfInventoryConfig">RF 与盘点配置</sys:String>
+    <sys:String x:Key="Settings.RfMode">RF Mode</sys:String>
+    <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
+    <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
+    <sys:String x:Key="Settings.HoldEventsOnReconnect">连接后暂缓上报（需 ENABLE_EVENTS_AND_REPORTS）</sys:String>
+    <sys:String x:Key="Settings.AntennaConfig">AntennaConfigGroup（按天线）</sys:String>
+    <sys:String x:Key="Settings.Port">端口</sys:String>
+    <sys:String x:Key="Settings.Enable">启用</sys:String>
+    <sys:String x:Key="Settings.TxPower">TxPower(dBm)</sys:String>
+    <sys:String x:Key="Settings.RxSensitivity">RxSensitivity(dBm)</sys:String>
+    <sys:String x:Key="Settings.ReaderEvents">Reader 上报事件（只读）</sys:String>
+    <sys:String x:Key="Settings.Query">获取参数</sys:String>
+    <sys:String x:Key="Settings.Save">保存参数</sys:String>
+    <sys:String x:Key="Settings.QueryStatus">获取设备状态</sys:String>
+    <sys:String x:Key="Settings.ResetFactory">恢复出厂</sys:String>
     <sys:String x:Key="Settings.Saved">参数已保存</sys:String>
     <sys:String x:Key="Settings.SaveFailed">保存失败</sys:String>
+
+    <!-- GPIO -->
+    <sys:String x:Key="GPIO.GpiConfig">GPI 配置（可保存）</sys:String>
+    <sys:String x:Key="GPIO.GpoOutput">GPO 输出（即时下发）</sys:String>
+    <sys:String x:Key="GPIO.Port">端口</sys:String>
+    <sys:String x:Key="GPIO.Enable">启用</sys:String>
+    <sys:String x:Key="GPIO.CurrentLevel">当前电平</sys:String>
+    <sys:String x:Key="GPIO.OutputHigh">输出高电平</sys:String>
+    <sys:String x:Key="GPIO.Query">获取GPIO</sys:String>
+    <sys:String x:Key="GPIO.SaveGpi">保存GPI</sys:String>
+    <sys:String x:Key="GPIO.ApplyGpo">下发GPO</sys:String>
+    <sys:String x:Key="GPIO.High">高</sys:String>
+    <sys:String x:Key="GPIO.Low">低</sys:String>
+
+    <!-- Read/Write -->
+    <sys:String x:Key="ReadWrite.ReadConfig">读取配置</sys:String>
+    <sys:String x:Key="ReadWrite.Legend">图例：蓝=读必填，橙=写必填；同时必填=蓝橙混合</sys:String>
+    <sys:String x:Key="ReadWrite.TargetTagType">目标标签类型</sys:String>
+    <sys:String x:Key="ReadWrite.TargetTagData">目标标签 *</sys:String>
+    <sys:String x:Key="ReadWrite.MemoryBank">内存区</sys:String>
+    <sys:String x:Key="ReadWrite.WordStartAddress">Word 起始地址 *</sys:String>
+    <sys:String x:Key="ReadWrite.WordCount">Word 数量 *</sys:String>
+    <sys:String x:Key="ReadWrite.WriteData">写入数据 *</sys:String>
+    <sys:String x:Key="ReadWrite.AccessPassword">访问密码</sys:String>
+    <sys:String x:Key="ReadWrite.Operations">操作</sys:String>
+    <sys:String x:Key="ReadWrite.ReadMemory">读取内存</sys:String>
+    <sys:String x:Key="ReadWrite.WriteMemory">写入内存</sys:String>
+    <sys:String x:Key="ReadWrite.BlockWrite">块写入</sys:String>
+    <sys:String x:Key="ReadWrite.ClearData">清空数据</sys:String>
+    <sys:String x:Key="ReadWrite.ReadResult">读取结果</sys:String>
+    <sys:String x:Key="ReadWrite.HexData">十六进制数据：</sys:String>
+    <sys:String x:Key="ReadWrite.TargetTagTooltip">读写都必填：输入目标标签值（十六进制）</sys:String>
+    <sys:String x:Key="ReadWrite.WordPointerTooltip">读写都必填：起始 Word 地址，从 0 开始</sys:String>
+    <sys:String x:Key="ReadWrite.WordCountTooltip">读取必填：要读取的 Word 数量</sys:String>
+    <sys:String x:Key="ReadWrite.WriteDataTooltip">写入必填：输入要写入的数据（十六进制，长度需为4的倍数）</sys:String>
+    <sys:String x:Key="ReadWrite.AccessPasswordTooltip">访问密码（十六进制，8位），默认 00000000</sys:String>
+    <sys:String x:Key="ReadWrite.BlockWriteTooltip">仅当设备能力集支持时可用</sys:String>
+
+    <!-- LLRP Message -->
+    <sys:String x:Key="LLRPMessage.Refresh">刷新数据</sys:String>
+    <sys:String x:Key="LLRPMessage.ExportText">导出文本</sys:String>
+    <sys:String x:Key="LLRPMessage.Total">总计:</sys:String>
+    <sys:String x:Key="LLRPMessage.Filtered">筛选:</sys:String>
+    <sys:String x:Key="LLRPMessage.Records">条</sys:String>
+    <sys:String x:Key="LLRPMessage.StartDate">开始日期</sys:String>
+    <sys:String x:Key="LLRPMessage.EndDate">结束日期</sys:String>
+    <sys:String x:Key="LLRPMessage.Direction">方向</sys:String>
+    <sys:String x:Key="LLRPMessage.Device">设备</sys:String>
+    <sys:String x:Key="LLRPMessage.MessageType">消息类型</sys:String>
+    <sys:String x:Key="LLRPMessage.Filter">筛选</sys:String>
+    <sys:String x:Key="LLRPMessage.ClearFilter">清除</sys:String>
+    <sys:String x:Key="LLRPMessage.RawFrameList">原始帧列表</sys:String>
+    <sys:String x:Key="LLRPMessage.MessageTree">LLRP 消息树</sys:String>
+    <sys:String x:Key="LLRPMessage.RawHexData">原始十六进制数据</sys:String>
 
     <!-- Actions -->
     <sys:String x:Key="Action.Save">保存</sys:String>
@@ -72,12 +152,16 @@
     <sys:String x:Key="Action.Stop">停止</sys:String>
     <sys:String x:Key="Action.Connect">连接</sys:String>
     <sys:String x:Key="Action.Disconnect">断开</sys:String>
+    <sys:String x:Key="Action.Query">查询</sys:String>
 
     <!-- Theme & Language -->
     <sys:String x:Key="Theme.Light">浅色</sys:String>
     <sys:String x:Key="Theme.Dark">深色</sys:String>
+    <sys:String x:Key="Theme.ToggleLight">切换到亮色主题</sys:String>
+    <sys:String x:Key="Theme.ToggleDark">切换到暗色主题</sys:String>
     <sys:String x:Key="Language.EnUS">English</sys:String>
     <sys:String x:Key="Language.ZhCN">中文</sys:String>
+    <sys:String x:Key="Language.Toggle">切换语言</sys:String>
 
     <!-- Error Messages -->
     <sys:String x:Key="Error.ConnectionFailed">连接失败</sys:String>

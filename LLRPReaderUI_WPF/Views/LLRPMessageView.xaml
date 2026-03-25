@@ -48,7 +48,7 @@
                                 Foreground="{StaticResource IconInfoBrush}"
                                 Icon="Refresh"
                                 IconFont="Auto" />
-                            <TextBlock Text="刷新数据" />
+                            <TextBlock Text="{DynamicResource LLRPMessage.Refresh}" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -64,7 +64,7 @@
                                 Foreground="{StaticResource IconSuccessBrush}"
                                 Icon="FileExport"
                                 IconFont="Auto" />
-                            <TextBlock Text="导出文本" />
+                            <TextBlock Text="{DynamicResource LLRPMessage.ExportText}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -74,23 +74,23 @@
                     Margin="24,0,0,0"
                     Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.Text}">
-                        <Run Text="总计:" />
+                        <Run Text="{DynamicResource LLRPMessage.Total}" />
                         <Run
                             FontWeight="Bold"
                             Foreground="{DynamicResource PrimaryBrush}"
                             Text="{Binding RawFrames.Count, Mode=OneWay}" />
-                        <Run Text="条" />
+                        <Run Text="{DynamicResource LLRPMessage.Records}" />
                     </TextBlock>
                     <TextBlock
                         Margin="16,0,0,0"
                         VerticalAlignment="Center"
                         Foreground="{DynamicResource MahApps.Brushes.Text}">
-                        <Run Text="筛选:" />
+                        <Run Text="{DynamicResource LLRPMessage.Filtered}" />
                         <Run
                             FontWeight="Bold"
                             Foreground="{DynamicResource PrimaryBrush}"
                             Text="{Binding FilteredFrames.Count, Mode=OneWay}" />
-                        <Run Text="条" />
+                        <Run Text="{DynamicResource LLRPMessage.Records}" />
                     </TextBlock>
                 </StackPanel>
 
@@ -122,7 +122,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                            Text="开始日期" />
+                            Text="{DynamicResource LLRPMessage.StartDate}" />
                         <DatePicker
                             Width="110"
                             Height="28"
@@ -136,7 +136,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                            Text="结束日期" />
+                            Text="{DynamicResource LLRPMessage.EndDate}" />
                         <DatePicker
                             Width="110"
                             Height="28"
@@ -154,7 +154,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                            Text="方向" />
+                            Text="{DynamicResource LLRPMessage.Direction}" />
                         <ComboBox
                             Width="110"
                             Height="28"
@@ -172,7 +172,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                            Text="设备" />
+                            Text="{DynamicResource LLRPMessage.Device}" />
                         <ComboBox
                             Width="110"
                             Height="28"
@@ -192,7 +192,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                            Text="消息类型" />
+                            Text="{DynamicResource LLRPMessage.MessageType}" />
                         <ComboBox
                             Width="110"
                             Height="28"
@@ -207,7 +207,7 @@
                 <!--  操作按钮  -->
                 <StackPanel
                     Grid.Row="1"
-                   
+
                     Orientation="Horizontal">
 
                     <Button Height="28" Command="{Binding ApplyFilterCommand}" Background="Transparent">
@@ -218,7 +218,7 @@
                                 Margin="0,0,4,0"
                                 Icon="Filter"
                                 IconFont="Auto" />
-                            <TextBlock Text="筛选" />
+                            <TextBlock Text="{DynamicResource LLRPMessage.Filter}" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -234,7 +234,7 @@
                                 Foreground="{StaticResource IconWarningBrush}"
                                 Icon="Times"
                                 IconFont="Auto" />
-                            <TextBlock Text="清除" />
+                            <TextBlock Text="{DynamicResource LLRPMessage.ClearFilter}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -265,7 +265,7 @@
                             FontSize="14"
                             FontWeight="SemiBold"
                             Foreground="{DynamicResource MahApps.Brushes.Text}"
-                            Text="原始帧列表" />
+                            Text="{DynamicResource LLRPMessage.RawFrameList}" />
                     </Border>
 
                     <ListBox
@@ -361,7 +361,7 @@
                                     FontSize="14"
                                     FontWeight="SemiBold"
                                     Foreground="{DynamicResource MahApps.Brushes.Text}"
-                                    Text="LLRP 消息树" />
+                                    Text="{DynamicResource LLRPMessage.MessageTree}" />
                             </StackPanel>
                         </Border>
 
@@ -429,7 +429,7 @@
                                     FontSize="14"
                                     FontWeight="SemiBold"
                                     Foreground="{DynamicResource MahApps.Brushes.Text}"
-                                    Text="原始十六进制数据" />
+                                    Text="{DynamicResource LLRPMessage.RawHexData}" />
                             </StackPanel>
                         </Border>
 

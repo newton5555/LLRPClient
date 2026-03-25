@@ -19,7 +19,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="HeartPulse" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
-                            <TextBlock Text="Keepalive 配置" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource Settings.KeepaliveConfig}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -33,10 +33,10 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="启用 Keepalive" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.EnableKeepalive}" />
                         <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding EnableKeepalive}" VerticalAlignment="Center" />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Keepalive 间隔(ms)" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.KeepaliveInterval}" />
                         <TextBox Grid.Row="2" Grid.Column="1" Height="30" Text="{Binding KeepaliveIntervalMs}" />
                     </Grid>
                 </GroupBox>
@@ -45,7 +45,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Sliders" IconFont="Auto" Foreground="{StaticResource IconVioletBrush}"/>
-                            <TextBlock Text="RF 与盘点配置" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource Settings.RfInventoryConfig}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -65,14 +65,14 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="RF Mode" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.RfMode}" />
                         <ComboBox Grid.Row="0" Grid.Column="1"
                                   Height="30"
                                   ItemsSource="{Binding RfModeOptions}"
                                   DisplayMemberPath="DisplayText"
                                   SelectedItem="{Binding SelectedRfModeOption}" />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Session (0-3)" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.Session}" />
                         <ComboBox Grid.Row="2" Grid.Column="1" Height="30" SelectedValuePath="Tag" SelectedValue="{Binding Session}">
                             <ComboBoxItem Content="0" Tag="0" />
                             <ComboBoxItem Content="1" Tag="1" />
@@ -80,13 +80,13 @@
                             <ComboBoxItem Content="3" Tag="3" />
                         </ComboBox>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="TagPopulationEstimate" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.TagPopulationEstimate}" />
                         <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding TagPopulationEstimate}" />
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="连接后暂缓上报（需 ENABLE_EVENTS_AND_REPORTS）" TextWrapping="WrapWithOverflow"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.HoldEventsOnReconnect}" TextWrapping="WrapWithOverflow"/>
                         <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding HoldEventsAndReportsUponReconnect}" VerticalAlignment="Center" />
 
-                       
+
                     </Grid>
                 </GroupBox>
 
@@ -94,7 +94,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="TowerBroadcast" IconFont="Auto" Foreground="{StaticResource IconTealBrush}"/>
-                            <TextBlock Text="AntennaConfigGroup（按天线）" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource Settings.AntennaConfig}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <StackPanel Margin="10">
@@ -105,10 +105,10 @@
                                 <ColumnDefinition Width="200" />
                                 <ColumnDefinition Width="200" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="端口" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="1" Text="启用" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="2" Text="TxPower(dBm)" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="3" Text="RxSensitivity(dBm)" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Settings.Port}" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="1" Text="{DynamicResource Settings.Enable}" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Settings.TxPower}" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="3" Text="{DynamicResource Settings.RxSensitivity}" FontWeight="SemiBold" />
                         </Grid>
 
                         <ItemsControl ItemsSource="{Binding Antennas}">
@@ -121,7 +121,11 @@
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="200" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=天线 {0}}" />
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                                            <Run Text="{DynamicResource Inventory.Antenna}" />
+                                            <Run Text=" " />
+                                            <Run Text="{Binding PortNumber}" />
+                                        </TextBlock>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsEnabled}" />
                                         <ComboBox Grid.Column="2"
                                                   Height="28"
@@ -136,7 +140,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                       
+
                     </StackPanel>
                 </GroupBox>
 
@@ -144,7 +148,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ListCheck" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
-                            <TextBlock Text="Reader 上报事件（只读）" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource Settings.ReaderEvents}" Foreground="White"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <ItemsControl Margin="10" ItemsSource="{Binding ReaderEventNotifications}">
@@ -165,17 +169,17 @@
                     Command="{Binding QueryDeviceSettingsCommand}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
-                    <TextBlock Text="获取参数" />
+                    <TextBlock Text="{DynamicResource Settings.Query}" />
                 </StackPanel>
             </Button>
-          
+
             <Button Height="32"
                     Width="120"
                     Margin="0,0,8,0"
                     Command="{Binding SaveSettingsCommand}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
-                    <TextBlock Text="保存参数" />
+                    <TextBlock Text="{DynamicResource Settings.Save}" />
                 </StackPanel>
             </Button>
 
@@ -186,7 +190,7 @@
       Command="{Binding DataContext.QueryStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="CircleInfo" IconFont="Auto" />
-                    <TextBlock Text="获取设备状态" />
+                    <TextBlock Text="{DynamicResource Settings.QueryStatus}" />
                 </StackPanel>
             </Button>
 
@@ -196,7 +200,7 @@
                     Command="{Binding ResetFactoryDefaultsCommand}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconWarningBrush}" Icon="RotateLeft" IconFont="Auto" />
-                    <TextBlock Text="恢复出厂" />
+                    <TextBlock Text="{DynamicResource Settings.ResetFactory}" />
                 </StackPanel>
             </Button>
         </StackPanel>

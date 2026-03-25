@@ -17,6 +17,7 @@ public partial class ThemeLanguageViewModel : ObservableObject
 
         // 订阅主题变化事件
         _themeService.OnThemeChanged += OnThemeChanged;
+        _languageService.OnLanguageChanged += OnLanguageChanged;
     }
 
     private void OnThemeChanged(AppTheme theme)
@@ -26,11 +27,18 @@ public partial class ThemeLanguageViewModel : ObservableObject
         OnPropertyChanged(nameof(ThemeToolTip));
     }
 
+    private void OnLanguageChanged(AppLanguage language)
+    {
+        OnPropertyChanged(nameof(CurrentLanguage));
+        OnPropertyChanged(nameof(LanguageIcon));
+        OnPropertyChanged(nameof(ThemeToolTip));
+    }
+
     [RelayCommand]
     private void ToggleTheme()
     {
-        var newTheme = _themeService.CurrentTheme == AppTheme.Light 
-            ? AppTheme.Dark 
+        var newTheme = _themeService.CurrentTheme == AppTheme.Light
+            ? AppTheme.Dark
             : AppTheme.Light;
         _themeService.SetTheme(newTheme);
     }
@@ -38,8 +46,8 @@ public partial class ThemeLanguageViewModel : ObservableObject
     [RelayCommand]
     private void ToggleLanguage()
     {
-        var newLanguage = _languageService.CurrentLanguage == AppLanguage.ZhCN 
-            ? AppLanguage.EnUS 
+        var newLanguage = _languageService.CurrentLanguage == AppLanguage.ZhCN
+            ? AppLanguage.EnUS
             : AppLanguage.ZhCN;
         _languageService.SetLanguage(newLanguage);
     }
@@ -48,16 +56,37 @@ public partial class ThemeLanguageViewModel : ObservableObject
     public AppLanguage CurrentLanguage => _languageService.CurrentLanguage;
 
     /// <summary>
-    /// 当前主题对应的图标：亮色主题显示灯泡，暗色主题显示月亮
+    /// 当前主题对应的图标：亮色主题显示太阳，暗色主题显示月亮
     /// </summary>
-    public IconChar ThemeIcon => _themeService.CurrentTheme == AppTheme.Light 
-        ? IconChar.Sun 
+    public IconChar ThemeIcon => _themeService.CurrentTheme == AppTheme.Light
+        ? IconChar.Sun
         : IconChar.Moon;
+
+    /// <summary>
+    /// 当前语言对应的图标：中文用亚洲地球，英文用美洲地球
+    /// </summary>
+    public IconChar LanguageIcon => _languageService.CurrentLanguage == AppLanguage.ZhCN
+        ? IconChar.EarthAsia
+        : IconChar.EarthAmericas;
+
+    /// <summary>
+    /// 当前语言的文字符号
+    /// </summary>
+    public string LanguageSymbol => _languageService.CurrentLanguage == AppLanguage.ZhCN
+        ? "中"
+        : "EN";
 
     /// <summary>
     /// 主题切换按钮的工具提示
     /// </summary>
-    public string ThemeToolTip => _themeService.CurrentTheme == AppTheme.Light 
-        ? "切换到暗色主题" 
-        : "切换到亮色主题";
+    public string ThemeToolTip
+    {
+        get
+        {
+            var key = _themeService.CurrentTheme == AppTheme.Light
+                ? "Theme.ToggleDark"
+                : "Theme.ToggleLight";
+            return _languageService.GetLocalizedString(key);
+        }
+    }
 }

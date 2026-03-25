@@ -7,9 +7,9 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:LLRPReaderUI_WPF.Models"
+    xmlns:services="clr-namespace:LLRPReaderUI_WPF.Services"
     xmlns:views="clr-namespace:LLRPReaderUI_WPF.Views"
     xmlns:vm="clr-namespace:LLRPReaderUI_WPF.ViewModels"
-    xmlns:services="clr-namespace:LLRPReaderUI_WPF.Services"
     Title="{Binding WindowTitle}"
     Width="1200"
     Height="760"
@@ -19,7 +19,7 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>
-        <!-- Theme/Language popup styles -->
+        <!--  Theme/Language popup styles  -->
         <Style x:Key="SettingsButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32" />
             <Setter Property="Height" Value="32" />
@@ -51,7 +51,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
@@ -262,16 +262,42 @@
 
                     <Grid Grid.Row="0" Margin="6,6,6,12">
                         <TextBlock
+                            VerticalAlignment="Center"
                             FontSize="16"
                             FontWeight="SemiBold"
-                            Text="功能导航"
-                            VerticalAlignment="Center" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Style="{StaticResource SettingsButtonStyle}" Command="{Binding ThemeLanguageViewModel.ToggleThemeCommand}" ToolTip="{Binding ThemeLanguageViewModel.ThemeToolTip}">
-                                <fa:IconBlock FontSize="18" Foreground="{DynamicResource TextMutedBrush}" Icon="{Binding ThemeLanguageViewModel.ThemeIcon}" IconFont="Auto" />
+                            Text="{DynamicResource Menu.Navigation}" />
+                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                            <Button
+                                Command="{Binding ThemeLanguageViewModel.ToggleThemeCommand}"
+                                Style="{StaticResource SettingsButtonStyle}"
+                                ToolTip="{Binding ThemeLanguageViewModel.ThemeToolTip}">
+                                <fa:IconBlock
+                                    FontSize="18"
+                                    Foreground="{DynamicResource TextMutedBrush}"
+                                    Icon="{Binding ThemeLanguageViewModel.ThemeIcon}"
+                                    IconFont="Auto" />
                             </Button>
-                            <Button Style="{StaticResource SettingsButtonStyle}" Command="{Binding ThemeLanguageViewModel.ToggleLanguageCommand}" ToolTip="切换语言" Margin="4,0,0,0">
-                                <fa:IconBlock FontSize="18" Foreground="{DynamicResource TextMutedBrush}" Icon="Globe" IconFont="Auto" />
+                            <Button
+                                Margin="4,0,0,0"
+                                Command="{Binding ThemeLanguageViewModel.ToggleLanguageCommand}"
+                                Style="{StaticResource SettingsButtonStyle}"
+                                ToolTip="{DynamicResource Language.Toggle}">
+                                <Grid>
+                                    <fa:IconBlock
+                                        FontSize="18"
+                                        Foreground="{DynamicResource TextMutedBrush}"
+                                        Icon="Globe"
+                                        IconFont="Auto" />
+                                    <TextBlock
+                                        TextAlignment="Right"
+                                        Margin="0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        FontSize="10"
+                                        FontWeight="SemiBold"
+                                        Foreground="LightBlue"
+                                        Text="{Binding ThemeLanguageViewModel.LanguageSymbol}" />
+                                </Grid>
                             </Button>
                         </StackPanel>
                     </Grid>
@@ -292,19 +318,19 @@
                                         Background="{DynamicResource SubtleOverlayBrush}"
                                         CornerRadius="20">
                                         <fa:IconBlock
-                                            FontSize="20"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
+                                            FontSize="20"
                                             Foreground="{Binding IconBrush}"
                                             Icon="{Binding Icon}"
                                             IconFont="Auto"
                                             TextAlignment="Center" />
                                     </Border>
                                     <Label
-                                        FontSize="15"
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
-                                        Content="{Binding Title}" />
+                                        Content="{Binding Title}"
+                                        FontSize="15" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -353,15 +379,33 @@
             </StatusBar>
         </Border>
 
-        <!-- Global modal overlay (no animation) bound to MainWindowViewModel.IsGlobalBusy -->
-        <Grid Background="{DynamicResource ModalOverlayBrush}" Panel.ZIndex="100"
-              d:Visibility="Collapsed"
-              Visibility="{Binding IsGlobalBusy, Converter={StaticResource BoolToVisibilityConverter}}"
-              IsHitTestVisible="{Binding IsGlobalBusy}">
-            <Border Width="420" Padding="20" CornerRadius="8" Background="{DynamicResource SurfaceBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
-                    <ProgressBar IsIndeterminate="True" Width="360" Height="14" />
-                    <TextBlock Text="{Binding BusyText}" Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource StatusTextStyle}" />
+        <!--  Global modal overlay (no animation) bound to MainWindowViewModel.IsGlobalBusy  -->
+        <Grid
+            Panel.ZIndex="100"
+            d:Visibility="Collapsed"
+            Background="{DynamicResource ModalOverlayBrush}"
+            IsHitTestVisible="{Binding IsGlobalBusy}"
+            Visibility="{Binding IsGlobalBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border
+                Width="420"
+                Padding="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{DynamicResource SurfaceBrush}"
+                CornerRadius="8">
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical">
+                    <ProgressBar
+                        Width="360"
+                        Height="14"
+                        IsIndeterminate="True" />
+                    <TextBlock
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource StatusTextStyle}"
+                        Text="{Binding BusyText}" />
                 </StackPanel>
             </Border>
         </Grid>

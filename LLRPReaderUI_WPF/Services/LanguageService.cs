@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 using System.Windows;
 
 namespace LLRPReaderUI_WPF.Services;
@@ -12,7 +14,19 @@ public enum AppLanguage
 
 public class LanguageService
 {
-    private AppLanguage _currentLanguage = AppLanguage.ZhCN;
+    private static readonly string ConfigFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "LLRPReaderUI_WPF",
+        "language_config.json"
+    );
+
+    private AppLanguage _currentLanguage;
+
+    public LanguageService()
+    {
+        _currentLanguage = LoadLanguageFromConfig();
+        Initialize();
+    }
 
     public AppLanguage CurrentLanguage
     {
@@ -22,6 +36,7 @@ public class LanguageService
             if (_currentLanguage != value)
             {
                 _currentLanguage = value;
+                SaveLanguageToConfig(value);
                 OnLanguageChanged?.Invoke(value);
             }
         }
@@ -81,5 +96,54 @@ public class LanguageService
         }
 
         return key;
+    }
+
+    private static AppLanguage LoadLanguageFromConfig()
+    {
+        try
+        {
+            if (File.Exists(ConfigFilePath))
+            {
+                var json = File.ReadAllText(ConfigFilePath);
+                var config = JsonSerializer.Deserialize<LanguageConfig>(json);
+                if (config != null && Enum.IsDefined(typeof(AppLanguage), config.Language))
+                {
+                    return config.Language;
+                }
+            }
+        }
+        catch
+        {
+            // If loading fails, use default language
+        }
+
+        // Default to system language or Chinese
+        var systemLang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        return systemLang == "zh" ? AppLanguage.ZhCN : AppLanguage.EnUS;
+    }
+
+    private static void SaveLanguageToConfig(AppLanguage language)
+    {
+        try
+        {
+            var directory = Path.GetDirectoryName(ConfigFilePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            var config = new LanguageConfig { Language = language };
+            var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(ConfigFilePath, json);
+        }
+        catch
+        {
+            // Ignore save errors
+        }
+    }
+
+    private class LanguageConfig
+    {
+        public AppLanguage Language { get; set; }
     }
 }

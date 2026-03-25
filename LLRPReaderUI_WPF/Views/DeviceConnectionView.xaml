@@ -52,7 +52,7 @@
                             Foreground="{StaticResource IconSuccessBrush}"
                             Icon="PlugCircleCheck"
                             IconFont="Auto" />
-                        <TextBlock Text="连接" />
+                        <TextBlock Text="{DynamicResource DeviceConnection.Connect}" />
                     </StackPanel>
                 </Button>
 
@@ -68,7 +68,7 @@
                             Foreground="{StaticResource IconDangerBrush}"
                             Icon="PowerOff"
                             IconFont="Auto" />
-                        <TextBlock Text="断开" />
+                        <TextBlock Text="{DynamicResource DeviceConnection.Disconnect}" />
                     </StackPanel>
                 </Button>
 
@@ -90,11 +90,11 @@
                 <DataGridTextColumn
                     Width="2*"
                     Binding="{Binding Name}"
-                    Header="FeatureSet 属性" />
+                    Header="{DynamicResource DeviceConnection.FeatureSetProperty}" />
                 <DataGridTextColumn
                     Width="3*"
                     Binding="{Binding Value}"
-                    Header="值" />
+                    Header="{DynamicResource DeviceConnection.Value}" />
             </DataGrid.Columns>
         </DataGrid>
 

@@ -76,7 +76,7 @@
                         Foreground="{StaticResource IconSuccessBrush}"
                         Icon="Play"
                         IconFont="Auto" />
-                    <TextBlock Text="开始寻卡" />
+                    <TextBlock Text="{DynamicResource Inventory.Start}" />
                 </StackPanel>
             </Button>
             <Button
@@ -92,7 +92,7 @@
                         Foreground="{StaticResource IconDangerBrush}"
                         Icon="Stop"
                         IconFont="Auto" />
-                    <TextBlock Text="停止寻卡" />
+                    <TextBlock Text="{DynamicResource Inventory.Stop}" />
                 </StackPanel>
             </Button>
             <Button
@@ -108,7 +108,7 @@
                         Foreground="{StaticResource IconInfoBrush}"
                         Icon="Rotate"
                         IconFont="Auto" />
-                    <TextBlock Text="手动拉缓存" />
+                    <TextBlock Text="{DynamicResource Inventory.PullBuffer}" />
                 </StackPanel>
             </Button>
             <Button
@@ -124,7 +124,7 @@
                         Foreground="{StaticResource IconWarningBrush}"
                         Icon="TrashCan"
                         IconFont="Auto" />
-                    <TextBlock Text="清空数据" />
+                    <TextBlock Text="{DynamicResource Inventory.Clear}" />
                 </StackPanel>
             </Button>
             <TextBlock
@@ -134,9 +134,21 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <TextBlock Margin="0,0,16,0" Text="{Binding TotalReports, StringFormat=报告包: {0}}" />
-            <TextBlock Margin="0,0,16,0" Text="{Binding TotalTags, StringFormat=标签总数: {0}}" />
-            <TextBlock Text="{Binding UniqueTagCount, StringFormat=唯一 EPC: {0}}" />
+            <TextBlock Margin="0,0,16,0">
+                <Run Text="{DynamicResource Inventory.TotalReports}" />
+                <Run Text=": " />
+                <Run Text="{Binding TotalReports}" />
+            </TextBlock>
+            <TextBlock Margin="0,0,16,0">
+                <Run Text="{DynamicResource Inventory.TotalTags}" />
+                <Run Text=": " />
+                <Run Text="{Binding TotalTags}" />
+            </TextBlock>
+            <TextBlock>
+                <Run Text="{DynamicResource Inventory.UniqueTags}" />
+                <Run Text=": " />
+                <Run Text="{Binding UniqueTagCount}" />
+            </TextBlock>
         </StackPanel>
 
         <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}">
@@ -162,10 +174,10 @@
                 </DataGrid.CellStyle>
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Click="CopyEpcMenuItem_OnClick" Header="复制 EPC" />
-                        <MenuItem Click="CopyAttachedDataMenuItem_OnClick" Header="复制附加数据" />
+                        <MenuItem Click="CopyEpcMenuItem_OnClick" Header="{DynamicResource Inventory.CopyEpc}" />
+                        <MenuItem Click="CopyAttachedDataMenuItem_OnClick" Header="{DynamicResource Inventory.CopyAttachedData}" />
                         <Separator />
-                        <MenuItem Click="CopySelectedRowsMenuItem_OnClick" Header="复制选中行" />
+                        <MenuItem Click="CopySelectedRowsMenuItem_OnClick" Header="{DynamicResource Inventory.CopySelectedRows}" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
@@ -173,31 +185,31 @@
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding ReceiveTime, StringFormat=MM/dd HH:mm:ss.fff}"
-                        Header="接收时间" >
+                        Header="{DynamicResource Inventory.ReceiveTime}" >
                     </DataGridTextColumn>
                     <DataGridTextColumn
                         Width="*"
                         Binding="{Binding Epc}"
-                        Header="EPC" />
+                        Header="{DynamicResource Inventory.EPC}" />
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding Antenna}"
-                        Header="天线"
+                        Header="{DynamicResource Inventory.Antenna}"
                         Visibility="{Binding Data.ShowAntennaPortNumberColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding ChannelMhz}"
-                        Header="频率(MHz)"
+                        Header="{DynamicResource Inventory.Frequency}"
                         Visibility="{Binding Data.ShowChannelColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding Rssi}"
-                        Header="RSSI(dBm)"
+                        Header="{DynamicResource Inventory.RSSI}"
                         Visibility="{Binding Data.ShowPeakRssiColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding SeenCount}"
-                        Header="次数"
+                        Header="{DynamicResource Inventory.Count}"
                         Visibility="{Binding Data.ShowSeenCountColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <DataGridTextColumn
                         Width="auto"
@@ -222,7 +234,7 @@
                     <DataGridTextColumn
                         Width="220"
                         Binding="{Binding AttachedData}"
-                        Header="附加数据"
+                        Header="{DynamicResource Inventory.AttachedData}"
                         Visibility="{Binding Data.AttachedDataEnabled, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </DataGrid.Columns>
             </DataGrid>
