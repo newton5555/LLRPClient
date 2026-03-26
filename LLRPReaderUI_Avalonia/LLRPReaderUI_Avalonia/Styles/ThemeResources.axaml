@@ -71,6 +71,13 @@
             <SolidColorBrush x:Key="IconVioletBrush" Color="#8B5CF6" />
             <SolidColorBrush x:Key="IconSlateBrush" Color="#64748B" />
 
+            <!-- Read/Write required field brushes -->
+            <SolidColorBrush x:Key="ReadRequiredForeground" Color="#0B5CAD" />
+            <SolidColorBrush x:Key="WriteRequiredForeground" Color="#B54708" />
+            <SolidColorBrush x:Key="ReadRequiredBackground" Color="#EAF3FF" />
+            <SolidColorBrush x:Key="WriteRequiredBackground" Color="#FFF3E8" />
+            <SolidColorBrush x:Key="BothRequiredBackground" Color="#F0F7FF" />
+
             <!-- Page and Section Padding -->
             <Thickness x:Key="PagePadding">16</Thickness>
             <Thickness x:Key="SectionPadding">12</Thickness>
@@ -145,6 +152,13 @@
             <SolidColorBrush x:Key="IconTealBrush" Color="#2DD4BF" />
             <SolidColorBrush x:Key="IconVioletBrush" Color="#A78BFA" />
             <SolidColorBrush x:Key="IconSlateBrush" Color="#94A3B8" />
+
+            <!-- Read/Write required field brushes - Dark Theme -->
+            <SolidColorBrush x:Key="ReadRequiredForeground" Color="#60A5FA" />
+            <SolidColorBrush x:Key="WriteRequiredForeground" Color="#FBBF24" />
+            <SolidColorBrush x:Key="ReadRequiredBackground" Color="#1E3A5F" />
+            <SolidColorBrush x:Key="WriteRequiredBackground" Color="#422006" />
+            <SolidColorBrush x:Key="BothRequiredBackground" Color="#1E293B" />
 
             <!-- Page and Section Padding -->
             <Thickness x:Key="PagePadding">16</Thickness>

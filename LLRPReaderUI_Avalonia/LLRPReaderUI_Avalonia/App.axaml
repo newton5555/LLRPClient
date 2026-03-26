@@ -15,7 +15,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/Resources/Localization/Strings.zh-CN.axaml"/>
-                <MergeResourceInclude Source="/Styles/ThemeResources.axaml"/>
+                <!-- 主题资源 - 包含Light和Dark主题的颜色定义 -->
+                <ResourceInclude Source="/Styles/ThemeResources.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
@@ -24,12 +25,11 @@
         <!-- Material.Avalonia 主题 - 自动跟随 RequestedThemeVariant 切换亮暗 -->
         <themes:MaterialTheme PrimaryColor="Blue" SecondaryColor="Amber" />
 
-
         <!-- Material Icons 样式 -->
         <materialIcons:MaterialIconStyles />
 
         <!-- 自定义样式 - 颜色通过 DynamicResource 自动跟随主题切换 -->
-        <StyleInclude Source="/Styles/FlatTheme.Light.axaml"/>
+        <StyleInclude Source="/Styles/FlatTheme.axaml"/>
     </Application.Styles>
 
 </Application>

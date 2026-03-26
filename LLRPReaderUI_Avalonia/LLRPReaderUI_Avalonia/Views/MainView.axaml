@@ -5,10 +5,15 @@
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
              xmlns:models="clr-namespace:LLRPReaderUI_Avalonia.Models"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:converters="clr-namespace:LLRPReaderUI_Avalonia.Converters"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="760"
              x:Class="LLRPReaderUI_Avalonia.Views.MainView"
              x:DataType="vm:MainWindowViewModel"
              Background="{DynamicResource WindowBackgroundBrush}">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
 
     <UserControl.Styles>
         <!-- Navigation Item Style -->
@@ -111,45 +116,101 @@
         </Grid>
 
         <!-- Status Bar -->
-        <Border Grid.Row="1" Height="42" Background="{DynamicResource SurfaceBrush}"
+        <Border Grid.Row="1" Height="40" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="12,0">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <!-- Device Status Chip -->
-                <Border Padding="10,4" CornerRadius="10" Background="{DynamicResource StatusChipSuccessBrush}">
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,5">
+                <!-- Device Status Chip - Dynamic based on IsDeviceConnected -->
+                <Border Padding="10,4" CornerRadius="10">
+                    <Border.Background>
+                        <MultiBinding Converter="{x:Static converters:DeviceStatusConverter.Instance}">
+                            <Binding Path="IsDeviceConnected"/>
+                        </MultiBinding>
+                    </Border.Background>
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Width="8" Height="8" Margin="0,0,6,0" Fill="{DynamicResource StatusDotSuccessBrush}" />
-                        <TextBlock Text="{Binding DeviceStatusText}" FontSize="12" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource StatusSuccessTextBrush}" />
+                        <Ellipse Width="8" Height="8" Margin="0,0,6,0">
+                            <Ellipse.Fill>
+                                <MultiBinding Converter="{x:Static converters:DeviceStatusDotConverter.Instance}">
+                                    <Binding Path="IsDeviceConnected"/>
+                                </MultiBinding>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="{Binding DeviceStatusText}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center">
+                            <TextBlock.Foreground>
+                                <MultiBinding Converter="{x:Static converters:DeviceStatusTextConverter.Instance}">
+                                    <Binding Path="IsDeviceConnected"/>
+                                </MultiBinding>
+                            </TextBlock.Foreground>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
-                <!-- Inventory Status Chip -->
-                <Border Padding="10,4" CornerRadius="10" Background="{DynamicResource StatusChipDefaultBrush}">
+                <!-- Inventory Status Chip - Dynamic based on IsInventoryRunning -->
+                <Border Padding="10,4" CornerRadius="10">
+                    <Border.Background>
+                        <MultiBinding Converter="{x:Static converters:InventoryStatusConverter.Instance}">
+                            <Binding Path="IsInventoryRunning"/>
+                        </MultiBinding>
+                    </Border.Background>
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Width="8" Height="8" Margin="0,0,6,0" Fill="{DynamicResource StatusDotDefaultBrush}" />
-                        <TextBlock Text="{Binding InventoryStatusText}" FontSize="12" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                        <Ellipse Width="8" Height="8" Margin="0,0,6,0">
+                            <Ellipse.Fill>
+                                <MultiBinding Converter="{x:Static converters:InventoryStatusDotConverter.Instance}">
+                                    <Binding Path="IsInventoryRunning"/>
+                                </MultiBinding>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="{Binding InventoryStatusText}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center">
+                            <TextBlock.Foreground>
+                                <MultiBinding Converter="{x:Static converters:InventoryStatusTextConverter.Instance}">
+                                    <Binding Path="IsInventoryRunning"/>
+                                </MultiBinding>
+                            </TextBlock.Foreground>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
                 <!-- Other Status Chips -->
                 <Border Classes="statusChip">
                     <TextBlock Text="{Binding AntennaStatusText}" FontSize="12"
-                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" VerticalAlignment="Center"/>
                 </Border>
                 <Border Classes="statusChip">
                     <TextBlock Text="{Binding GpiStatusText}" FontSize="12"
-                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" VerticalAlignment="Center"/>
                 </Border>
                 <Border Classes="statusChip">
                     <TextBlock Text="{Binding GpoStatusText}" FontSize="12"
-                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" VerticalAlignment="Center"/>
                 </Border>
                 <Border Classes="statusChip" Margin="0">
                     <TextBlock Text="{Binding IdentificationStatusText}" FontSize="12"
-                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
         </Border>
+
+        <!-- Global Modal Overlay -->
+        <Panel Grid.RowSpan="2"
+               ZIndex="100"
+               Background="{DynamicResource ModalOverlayBrush}"
+               IsHitTestVisible="{Binding IsGlobalBusy}"
+               IsVisible="{Binding IsGlobalBusy}">
+            <Border Width="420"
+                    Padding="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource SurfaceBrush}"
+                    CornerRadius="8">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+                    <ProgressBar Width="360" Height="14" IsIndeterminate="True" />
+                    <TextBlock Margin="0,12,0,0"
+                               HorizontalAlignment="Center"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource StatusDefaultTextBrush}"
+                               Text="{Binding BusyText}" />
+                </StackPanel>
+            </Border>
+        </Panel>
     </Grid>
 </UserControl>

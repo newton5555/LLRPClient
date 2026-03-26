@@ -4,24 +4,34 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
+             xmlns:converters="clr-namespace:LLRPReaderUI_Avalonia.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="LLRPReaderUI_Avalonia.Views.DeviceConnectionView"
              x:DataType="vm:DeviceConnectionViewModel">
 
+    <UserControl.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </UserControl.Resources>
+
     <Grid Margin="{DynamicResource PagePadding}" RowDefinitions="Auto,12,*">
         <!-- Connection Bar -->
         <Border Grid.Row="0" Classes="card">
-            <Grid ColumnDefinitions="*,10,Auto,10,Auto,10,Auto">
-                <TextBox Grid.Column="0" Height="36"
-                         Text="{Binding ReaderEndpoint}"
-                         Watermark="Enter reader address (e.g., 192.168.1.100)" />
+            <Grid ColumnDefinitions="220,10,Auto,10,Auto,*">
+                <!-- ComboBox with history support -->
+                <ComboBox Grid.Column="0" 
+                          Height="36"
+                          VerticalContentAlignment="Center"
+                          IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBooleanConverter}}"
+                          ItemsSource="{Binding RecentReaderEndpoints}"
+                          SelectedItem="{Binding ReaderEndpoint}"
+                          ToolTip.Tip="{DynamicResource DeviceConnection.AddressTooltip}" />
 
                 <Button Grid.Column="2" Height="36" Classes="primary"
                         Command="{Binding ConnectCommand}"
                         IsEnabled="{Binding !IsConnected}">
                     <StackPanel Orientation="Horizontal">
                         <materialIcons:MaterialIcon Kind="Plug" Width="16" Height="16" Margin="0,0,8,0"
-                                                   Foreground="White" />
+                                                   Foreground="{DynamicResource IconSuccessBrush}" />
                         <TextBlock Text="{DynamicResource DeviceConnection.Connect}" />
                     </StackPanel>
                 </Button>
@@ -30,13 +40,14 @@
                         Command="{Binding DisconnectCommand}"
                         IsEnabled="{Binding IsConnected}">
                     <StackPanel Orientation="Horizontal">
-                        <materialIcons:MaterialIcon Kind="PowerPlugOff" Width="16" Height="16" Margin="0,0,8,0" />
+                        <materialIcons:MaterialIcon Kind="PowerPlugOff" Width="16" Height="16" Margin="0,0,8,0"
+                                                   Foreground="{DynamicResource IconDangerBrush}" />
                         <TextBlock Text="{DynamicResource DeviceConnection.Disconnect}" />
                     </StackPanel>
                 </Button>
 
                 <!-- Connection State Hint -->
-                <TextBlock Grid.Column="6" Classes="statusHint" Text="{Binding ConnectionState}" />
+                <TextBlock Grid.Column="5" Classes="statusHint" Text="{Binding ConnectionState}" Margin="12,0,0,0" />
             </Grid>
         </Border>
 
@@ -48,8 +59,12 @@
                       BorderThickness="0"
                       GridLinesVisibility="Horizontal">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Property" Binding="{Binding Name}" Width="2*" />
-                    <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="3*" />
+                    <DataGridTextColumn Header="{DynamicResource DeviceConnection.FeatureSetProperty}" 
+                                        Binding="{Binding Name}" 
+                                        Width="2*" />
+                    <DataGridTextColumn Header="{DynamicResource DeviceConnection.Value}" 
+                                        Binding="{Binding Value}" 
+                                        Width="3*" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

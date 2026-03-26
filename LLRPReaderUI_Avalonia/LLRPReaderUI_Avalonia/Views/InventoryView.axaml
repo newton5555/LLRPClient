@@ -4,68 +4,120 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
+             xmlns:converters="clr-namespace:LLRPReaderUI_Avalonia.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="LLRPReaderUI_Avalonia.Views.InventoryView"
              x:DataType="vm:InventoryViewModel">
 
-    <Grid Margin="16" RowDefinitions="Auto,8,Auto,8,*">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="{DynamicResource PagePadding}" RowDefinitions="Auto,8,Auto,8,*">
 
         <!-- Toolbar -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
-            <Button Command="{Binding StartInventoryCommand}" Classes="accent" Height="32">
+            <Button Command="{Binding StartInventoryCommand}" Classes="primary" Height="32" MinWidth="120">
                 <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Play" Width="16" Height="16" Margin="0,0,6,0" />
-                    <TextBlock Text="Start" />
+                    <materialIcons:MaterialIcon Kind="Play" Width="16" Height="16" Margin="0,0,6,0"
+                                               Foreground="{DynamicResource IconSuccessBrush}" />
+                    <TextBlock Text="{DynamicResource Inventory.Start}" />
                 </StackPanel>
             </Button>
-            <Button Command="{Binding StopInventoryCommand}" Height="32">
+            <Button Command="{Binding StopInventoryCommand}" Height="32" MinWidth="120">
                 <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Stop" Width="16" Height="16" Margin="0,0,6,0" />
-                    <TextBlock Text="Stop" />
+                    <materialIcons:MaterialIcon Kind="Stop" Width="16" Height="16" Margin="0,0,6,0"
+                                               Foreground="{DynamicResource IconDangerBrush}" />
+                    <TextBlock Text="{DynamicResource Inventory.Stop}" />
                 </StackPanel>
             </Button>
-            <Button Command="{Binding ManualPullBufferedReportsCommand}" Height="32">
+            <Button Command="{Binding ManualPullBufferedReportsCommand}" Height="32" MinWidth="120">
                 <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0" />
-                    <TextBlock Text="Pull Buffer" />
+                    <materialIcons:MaterialIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0"
+                                               Foreground="{DynamicResource IconInfoBrush}" />
+                    <TextBlock Text="{DynamicResource Inventory.PullBuffer}" />
                 </StackPanel>
             </Button>
-            <Button Command="{Binding ClearReceivedDataCommand}" Height="32">
+            <Button Command="{Binding ClearReceivedDataCommand}" Height="32" MinWidth="100">
                 <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Margin="0,0,6,0" />
-                    <TextBlock Text="Clear" />
+                    <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Margin="0,0,6,0"
+                                               Foreground="{DynamicResource IconWarningBrush}" />
+                    <TextBlock Text="{DynamicResource Inventory.Clear}" />
                 </StackPanel>
             </Button>
             <TextBlock Text="{Binding InventoryState}" Margin="12,0,0,0"
-                       VerticalAlignment="Center" Foreground="#1976D2" />
+                       VerticalAlignment="Center" Classes="statusHint" />
         </StackPanel>
 
         <!-- Stats -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16">
             <TextBlock>
-                <Run Text="Reports:" /> <Run Text="{Binding TotalReports}" FontWeight="Bold" />
+                <Run Text="{DynamicResource Inventory.TotalReports}" />: 
+                <Run Text="{Binding TotalReports}" FontWeight="Bold" />
             </TextBlock>
             <TextBlock>
-                <Run Text="Total Tags:" /> <Run Text="{Binding TotalTags}" FontWeight="Bold" />
+                <Run Text="{DynamicResource Inventory.TotalTags}" />: 
+                <Run Text="{Binding TotalTags}" FontWeight="Bold" />
             </TextBlock>
             <TextBlock>
-                <Run Text="Unique:" /> <Run Text="{Binding UniqueTagCount}" FontWeight="Bold" />
+                <Run Text="{DynamicResource Inventory.UniqueTags}" />: 
+                <Run Text="{Binding UniqueTagCount}" FontWeight="Bold" />
             </TextBlock>
         </StackPanel>
 
         <!-- Data Grid -->
-        <Border Grid.Row="4" Background="White" CornerRadius="8">
-            <DataGrid ItemsSource="{Binding ReceivedTags}"
+        <Border Grid.Row="4" Classes="card">
+            <DataGrid x:Name="InventoryDataGrid"
+                      ItemsSource="{Binding ReceivedTags}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       BorderThickness="0"
-                      GridLinesVisibility="Horizontal">
+                      GridLinesVisibility="Horizontal"
+                      SelectionMode="Extended">
+                
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{DynamicResource Inventory.CopyEpc}" Click="CopyEpcMenuItem_OnClick" />
+                        <MenuItem Header="{DynamicResource Inventory.CopyAttachedData}" Click="CopyAttachedDataMenuItem_OnClick" />
+                        <Separator />
+                        <MenuItem Header="{DynamicResource Inventory.CopySelectedRows}" Click="CopySelectedRowsMenuItem_OnClick" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Time" Binding="{Binding ReceiveTime, StringFormat='MM/dd HH:mm:ss.fff'}" Width="160" />
-                    <DataGridTextColumn Header="EPC" Binding="{Binding Epc}" Width="*" />
-                    <DataGridTextColumn Header="Ant" Binding="{Binding Antenna}" Width="60" />
-                    <DataGridTextColumn Header="RSSI" Binding="{Binding Rssi}" Width="80" />
-                    <DataGridTextColumn Header="Count" Binding="{Binding SeenCount}" Width="60" />
+                    <DataGridTextColumn Header="{DynamicResource Inventory.ReceiveTime}" 
+                                        Binding="{Binding ReceiveTime, StringFormat='MM/dd HH:mm:ss.fff'}" 
+                                        Width="Auto" />
+                    <DataGridTextColumn Header="{DynamicResource Inventory.EPC}" 
+                                        Binding="{Binding Epc}" 
+                                        Width="*" />
+                    <DataGridTextColumn Header="{DynamicResource Inventory.Antenna}" 
+                                        Binding="{Binding Antenna}" 
+                                        Width="Auto" />
+                    <DataGridTextColumn Header="{DynamicResource Inventory.Frequency}" 
+                                        Binding="{Binding ChannelMhz}" 
+                                        Width="Auto" />
+                    <DataGridTextColumn Header="{DynamicResource Inventory.RSSI}" 
+                                        Binding="{Binding Rssi}" 
+                                        Width="Auto" />
+                    <DataGridTextColumn Header="{DynamicResource Inventory.Count}" 
+                                        Binding="{Binding SeenCount}" 
+                                        Width="Auto" />
+                    <DataGridTextColumn Header="PC" 
+                                        Binding="{Binding Pc}" 
+                                        Width="Auto" />
+                    <DataGridTextColumn Header="CRC" 
+                                        Binding="{Binding Crc}" 
+                                        Width="Auto" />
+                    <DataGridTextColumn Header="FirstTimestamp" 
+                                        Binding="{Binding FirstSeenTimestampUtc}" 
+                                        Width="180" />
+                    <DataGridTextColumn Header="LastTimestamp" 
+                                        Binding="{Binding LastSeenTimestampUtc}" 
+                                        Width="180" />
+                    <DataGridTextColumn Header="{DynamicResource Inventory.AttachedData}" 
+                                        Binding="{Binding AttachedData}" 
+                                        Width="220" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
