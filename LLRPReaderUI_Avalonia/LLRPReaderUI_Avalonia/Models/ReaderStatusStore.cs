@@ -82,6 +82,7 @@ public class ReaderStatusStore
 
     private static Status Clone(Status source)
     {
+        //return source;
         return Status.FromXmlString(source.ToXmlString());
     }
 }

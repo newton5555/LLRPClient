@@ -112,9 +112,7 @@ public class LanguageService : INotifyPropertyChanged
         }
         catch { }
 
-        return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "zh"
-            ? AppLanguage.ZhCN
-            : AppLanguage.EnUS;
+        return  AppLanguage.EnUS;//д╛хос╒нд
     }
 
     private static void SaveLanguageToConfig(AppLanguage language)

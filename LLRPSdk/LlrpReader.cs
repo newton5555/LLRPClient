@@ -221,7 +221,7 @@ namespace LLRPSdk
         /// <summary>
         /// [Deprecated] Number of times to attempt a reader connection before an exception is thrown.
         /// </summary>
-        [Obsolete("This property is no longer supported.", true)]
+        [Obsolete("This property is no longer supported.", false)]
         public int MaxConnectionAttempts { get; set; }
 
         /// <summary>The message reply timeout.</summary>
@@ -846,12 +846,12 @@ namespace LLRPSdk
         }
 
         /// <summary>Obsolete method. Do not use.</summary>
-        [Obsolete("This method has been renamed QueryDefaultSettings.", true)]
+        [Obsolete("This method has been renamed QueryDefaultSettings.", false)]
         public Settings QueryFactorySettings() => (Settings)null;
 
         /// <summary>Obsolete method. Do not use.</summary>
         /// <returns></returns>
-        [Obsolete("This method has been renamed ApplyDefaultSettings.", true)]
+        [Obsolete("This method has been renamed ApplyDefaultSettings.", false)]
         public Settings ApplyFactorySettings() => (Settings)null;
 
         /// <summary>Returns the reader default settings.</summary>
@@ -990,7 +990,7 @@ namespace LLRPSdk
         }
 
         /// <summary />
-        [Obsolete("This method is now obsolete. Use ApplyDefaultSettings or QueryDefaultSettings instead", true)]
+        [Obsolete("This method is now obsolete. Use ApplyDefaultSettings or QueryDefaultSettings instead", false)]
         public void ClearSettings()
         {
         }

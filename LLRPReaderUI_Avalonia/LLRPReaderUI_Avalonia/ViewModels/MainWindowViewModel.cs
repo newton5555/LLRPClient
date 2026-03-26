@@ -37,7 +37,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool isDeviceConnected;
 
     [ObservableProperty]
-    private bool isGlobalBusy;
+    private bool isGlobalBusy=false;
 
     [ObservableProperty]
     private string busyText = string.Empty;

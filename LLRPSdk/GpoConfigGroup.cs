@@ -70,7 +70,7 @@ namespace LLRPSdk
     /// <summary />
     /// <param name="index" />
     /// <returns />
-    [Obsolete("You can no longer access GPOs by index. Use foreach or GetGpo() instead.", true)]
+    [Obsolete("You can no longer access GPOs by index. Use foreach or GetGpo() instead.", false)]
     public GpoConfig this[int index]
     {
       get => this.gpoConfigs[index];

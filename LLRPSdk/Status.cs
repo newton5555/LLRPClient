@@ -30,9 +30,7 @@ namespace LLRPSdk
 
 
 
-    /// <summary />
-    [Obsolete("There is no way to query the GPO state, so this has been removed.", true)]
-    public object Gpos { get; set; }
+
 
     /// <summary>The reader connection status.</summary>
     public bool IsConnected { get; set; }
@@ -48,17 +46,10 @@ namespace LLRPSdk
     public bool IsSingulating { get; set; }
 
 
+    [XmlIgnore]
     public object ReaderIdentity { get; set; }
 
-    /// <summary />
-    [Obsolete("This has been removed. Use IsConnected and IsSingulating instead.", true)]
-    public object OperationState { get; set; }
 
-    /// <summary>
-    /// Obsolete - this has been removed. Use IsConnected instead.
-    /// </summary>
-    [Obsolete("This has been removed. Use IsConnected instead.", true)]
-    public object Connection { get; set; }
 
     internal Status()
     {

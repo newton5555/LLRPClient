@@ -25,7 +25,7 @@ namespace LLRPSdk
     public ushort BlockWriteWordCount { get; set; }
 
     /// <summary />
-    [Obsolete("This property was removed because it is unnecessary. If BlockWriteWord count is set, a block write will be performed.", true)]
+    [Obsolete("This property was removed because it is unnecessary. If BlockWriteWord count is set, a block write will be performed.", false)]
     public bool IsBlockWriteUsed { get; set; }
 
     /// <summary>

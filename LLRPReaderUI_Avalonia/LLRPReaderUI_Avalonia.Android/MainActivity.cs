@@ -5,12 +5,13 @@ using Avalonia.Android;
 
 namespace LLRPReaderUI_Avalonia.Android
 {
-    [Activity(
-        Label = "LLRPReaderUI_Avalonia.Android",
-        Theme = "@style/MyTheme.NoActionBar",
-        Icon = "@drawable/icon",
-        MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
+[Activity(
+    Label = "LLRPReaderUI_Avalonia.Android",
+    Theme = "@style/MyTheme.NoActionBar",
+    Icon = "@drawable/icon",
+    MainLauncher = true,
+    ScreenOrientation = ScreenOrientation.Sensor,
+    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
     public class MainActivity : AvaloniaMainActivity<App>
     {
         protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)

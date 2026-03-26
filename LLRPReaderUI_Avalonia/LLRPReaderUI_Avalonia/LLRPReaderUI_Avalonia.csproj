@@ -13,6 +13,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Fonts\pets.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Resources\Fonts\pets.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Avalonia -->
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Controls.DataGrid" />
@@ -52,6 +60,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="LoggingConfig.json" />
     <None Update="LoggingConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

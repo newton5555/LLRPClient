@@ -93,7 +93,7 @@ public partial class DeviceConnectionViewModel : ViewModelBase
     }
 
     [ObservableProperty]
-    private string readerEndpoint = "192.168.40.233";
+    private string readerEndpoint = "192.168.41.155";
 
     [ObservableProperty]
     private bool isConnected;

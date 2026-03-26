@@ -18,12 +18,13 @@
         <Border Grid.Row="0" Classes="card" >
             <Grid ColumnDefinitions="220,10,Auto,10,Auto,*">
                 <!-- ComboBox with history support -->
-                <ComboBox Grid.Column="0" 
+                <AutoCompleteBox Grid.Column="0"
+                                 BorderThickness="1"
                           Height="36"
-                          VerticalContentAlignment="Center"
                           IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBooleanConverter}}"
                           ItemsSource="{Binding RecentReaderEndpoints}"
-                          SelectedItem="{Binding ReaderEndpoint}"
+                          Text="{Binding ReaderEndpoint}"
+                          FilterMode="Contains"
                           ToolTip.Tip="{DynamicResource DeviceConnection.AddressTooltip}" />
 
                 <Button Grid.Column="2" Height="36" Classes="primary"

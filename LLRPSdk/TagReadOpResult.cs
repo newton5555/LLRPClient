@@ -17,7 +17,7 @@ namespace LLRPSdk
     /// <summary>The data read from the tag.</summary>
     public TagData Data = new TagData();
     /// <summary />
-    [Obsolete("This property has been renamed Data.", true)]
+    [Obsolete("This property has been renamed Data.", false)]
     public TagData ReadData;
   }
 }

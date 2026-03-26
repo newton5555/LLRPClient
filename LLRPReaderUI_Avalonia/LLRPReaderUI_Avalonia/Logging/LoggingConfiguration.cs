@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Reflection;
 using System.Text.Json;
 using System.IO;
 
@@ -31,25 +32,81 @@ public static class LoggingConfigurationManager
 {
     private static LoggingConfiguration? _config;
     private const string ConfigFileName = "LoggingConfig.json";
+    private const string ConfigResourceName = "LLRPReaderUI_Avalonia.LoggingConfig.json";
+
+    /// <summary>
+    /// 获取日志存储目录（跨平台适配）
+    /// </summary>
+    private static string GetLogDirectory()
+    {
+        var basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        return Path.Combine(basePath, "LLRPReaderUI_Avalonia", "logs");
+    }
+
+    /// <summary>
+    /// 从嵌入资源读取配置文件内容
+    /// </summary>
+    private static JsonDocument? LoadEmbeddedConfig()
+    {
+        try
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream(ConfigResourceName);
+            if (stream != null)
+            {
+                using var reader = new StreamReader(stream);
+                var json = reader.ReadToEnd();
+                return JsonDocument.Parse(json);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load embedded logging configuration: {ex.Message}");
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 加载配置（优先从文件读取，失败则从嵌入资源读取）
+    /// </summary>
+    private static JsonDocument? LoadConfig()
+    {
+        // 桌面端：优先从文件读取（用户可修改）
+        var configPath = Path.Combine(AppContext.BaseDirectory, ConfigFileName);
+        if (File.Exists(configPath))
+        {
+            try
+            {
+                var json = File.ReadAllText(configPath);
+                return JsonDocument.Parse(json);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load logging config file: {ex.Message}");
+            }
+        }
+
+        // 安卓/移动端：从嵌入资源读取
+        return LoadEmbeddedConfig();
+    }
 
     /// <summary>
     /// 从配置文件构建 Serilog ILogger
     /// </summary>
     public static Serilog.ILogger BuildLogger()
     {
+        var logDir = GetLogDirectory();
+        Directory.CreateDirectory(logDir);
+
         try
         {
-            var configPath = Path.Combine(AppContext.BaseDirectory, ConfigFileName);
-            
-            if (File.Exists(configPath))
+            using var root = LoadConfig();
+            if (root != null)
             {
-                var json = File.ReadAllText(configPath);
-                var root = JsonDocument.Parse(json);
-                
                 // 尝试从配置文件读取 Serilog 配置
                 if (root.RootElement.TryGetProperty("serilog", out var serilogSection))
                 {
-                    return BuildLoggerFromConfig(serilogSection);
+                    return BuildLoggerFromConfig(serilogSection, logDir);
                 }
             }
         }
@@ -62,7 +119,7 @@ public static class LoggingConfigurationManager
         return new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Async(a => a.File(
-                path: Path.Combine(AppContext.BaseDirectory, "logs", "app-.log"),
+                path: Path.Combine(logDir, "app-.log"),
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 14,
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}"))
@@ -72,7 +129,7 @@ public static class LoggingConfigurationManager
     /// <summary>
     /// 从 JSON 配置构建 Serilog ILogger
     /// </summary>
-    private static Serilog.ILogger BuildLoggerFromConfig(JsonElement serilogSection)
+    private static Serilog.ILogger BuildLoggerFromConfig(JsonElement serilogSection, string logDir)
     {
         var config = new LoggerConfiguration();
 
@@ -118,13 +175,15 @@ public static class LoggingConfigurationManager
                                 {
                                     foreach (var fileSink in configureArray.EnumerateArray())
                                     {
-                                        if (fileSink.TryGetProperty("name", out var fileSinkName) && 
+                                        if (fileSink.TryGetProperty("name", out var fileSinkName) &&
                                             fileSinkName.GetString() == "File" &&
                                             fileSink.TryGetProperty("args", out var fileArgs))
                                         {
-                                            var path = fileArgs.TryGetProperty("path", out var pathElement) 
-                                                ? pathElement.GetString() ?? "logs/app-.log"
-                                                : "logs/app-.log";
+                                            // 使用平台适配的日志目录
+                                            var fileName = fileArgs.TryGetProperty("path", out var pathElement)
+                                                ? Path.GetFileName(pathElement.GetString() ?? "app-.log")
+                                                : "app-.log";
+                                            var path = Path.Combine(logDir, fileName);
                                             
                                             var rollingIntervalStr = fileArgs.TryGetProperty("rollingInterval", out var intervalElement)
                                                 ? intervalElement.GetString() ?? "Day"
@@ -161,7 +220,7 @@ public static class LoggingConfigurationManager
         {
             // 默认使用异步文件写入
             config.WriteTo.Async(a => a.File(
-                path: Path.Combine(AppContext.BaseDirectory, "logs", "app-.log"),
+                path: Path.Combine(logDir, "app-.log"),
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 14,
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}"));
@@ -180,13 +239,9 @@ public static class LoggingConfigurationManager
 
         try
         {
-            var configPath = Path.Combine(AppContext.BaseDirectory, ConfigFileName);
-            
-            if (File.Exists(configPath))
+            using var root = LoadConfig();
+            if (root != null)
             {
-                var json = File.ReadAllText(configPath);
-                var root = JsonDocument.Parse(json);
-                
                 _config = new LoggingConfiguration
                 {
                     RawFrameLogging = ParseFeatureConfig(root, "rawFrameLogging"),

@@ -14,11 +14,15 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Resources/Localization/Strings.zh-CN.axaml"/>
+                <ResourceInclude Source="/Resources/Localization/Strings.en-US.axaml"/>
                 <!-- 主题资源 - 包含Light和Dark主题的颜色定义 -->
                 <ResourceInclude Source="/Styles/ThemeResources.axaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+              <FontFamily x:Key="PetsFont">avares://LLRPReaderUI_Avalonia/Resources/Fonts/pets.ttf#iconfont</FontFamily>
         </ResourceDictionary>
+
+       
     </Application.Resources>
 
     <Application.Styles>

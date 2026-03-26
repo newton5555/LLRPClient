@@ -1,6 +1,7 @@
 ﻿
 
 using System;
+using System.Xml.Serialization;
 
 #nullable disable
 namespace LLRPSdk
@@ -17,7 +18,8 @@ namespace LLRPSdk
     public ushort PortNumber { get; set; }
 
     /// <summary />
-    [Obsolete("This property is no longer part of the reader status. It is now part of the reader settings, which can be retrieved using QuerySettings().", true)]
-    public bool IsEnabled { get; set; }
+    [Obsolete("This property is no longer part of the reader status. It is now part of the reader settings, which can be retrieved using QuerySettings().", false)]
+        [XmlIgnore]
+        public bool IsEnabled { get; set; }
   }
 }

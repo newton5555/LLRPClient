@@ -75,7 +75,7 @@ namespace LLRPSdk
     /// <summary />
     /// <param name="index" />
     /// <returns />
-    [Obsolete("You can longer access GPIs by index. Use foreach or GetGpi() instead.", true)]
+    [Obsolete("You can longer access GPIs by index. Use foreach or GetGpi() instead.", false)]
     public GpiConfig this[int index]
     {
       get => this.gpiConfigs[index];
