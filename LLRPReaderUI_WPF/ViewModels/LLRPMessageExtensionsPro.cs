@@ -37,7 +37,7 @@ namespace LLRPReaderUI_WPF.ViewModels
                 BuildTreeFromXmlNode(rootElement, rootNode);
                 return rootNode;
             }
-            catch (XmlException)
+            catch (XmlException ee)
             {
                 // XML 解析失败，返回原始字符串
                 var node = new LLRPMessageNode(msg.GetType().Name);

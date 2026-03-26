@@ -21,10 +21,10 @@
 
     <Application.Styles>
         <!-- Simple主题作为基础 -->
-        <SimpleTheme />
+        <FluentTheme />
 
         <!-- DataGrid样式 -->
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 
         <!-- Material Icons 样式 -->
         <materialIcons:MaterialIconStyles />
