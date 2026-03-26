@@ -2,17 +2,193 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
              x:Class="LLRPReaderUI_Avalonia.Views.InventoryConfigView"
              x:DataType="vm:InventoryConfigViewModel">
 
-    <Grid Margin="16">
-        <Border Background="White" CornerRadius="8" Padding="16">
-            <StackPanel Spacing="16">
-                <TextBlock Text="Inventory Configuration" FontSize="18" FontWeight="SemiBold" />
-                <TextBlock Text="Configure inventory parameters, antennas, and report settings" Foreground="#666" />
+    <Grid Margin="16" RowDefinitions="*,12,Auto,32">
+        <ScrollViewer Grid.Row="0">
+            <StackPanel Spacing="12">
+                <!-- Auto Start Configuration -->
+                <Border Background="White" CornerRadius="8" Padding="12">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <materialIcons:MaterialIcon Kind="PlayCircle" Width="16" Height="16" Foreground="#22C55E"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" FontWeight="SemiBold" FontSize="14"/>
+                        </StackPanel>
+                        <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AutoStartModes}" SelectedItem="{Binding AutoStartMode}" Height="30"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiPortNum}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AutoStartGpiPortNumber}" Height="30"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiLevel}" VerticalAlignment="Center"/>
+                            <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding AutoStartGpiLevel}" VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource InventoryConfig.FirstDelayMs}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding AutoStartFirstDelayInMs}" Height="30"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="{DynamicResource InventoryConfig.PeriodMs}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AutoStartPeriodInMs}" Height="30"/>
+
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="{DynamicResource InventoryConfig.UtcTimestamp}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding AutoStartUtcTimestamp}" Height="30"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Auto Stop Configuration -->
+                <Border Background="White" CornerRadius="8" Padding="12">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <materialIcons:MaterialIcon Kind="StopCircle" Width="16" Height="16" Foreground="#EF4444"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" FontWeight="SemiBold" FontSize="14"/>
+                        </StackPanel>
+                        <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AutoStopModes}" SelectedItem="{Binding AutoStopMode}" Height="30"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.DurationMs}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AutoStopDurationInMs}" Height="30"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiPortNum}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding AutoStopGpiPortNumber}" Height="30"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiLevel}" VerticalAlignment="Center"/>
+                            <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding AutoStopGpiLevel}" VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="{DynamicResource InventoryConfig.Timeout}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AutoStopTimeout}" Height="30"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Filter Configuration -->
+                <Border Background="White" CornerRadius="8" Padding="12">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <materialIcons:MaterialIcon Kind="Filter" Width="16" Height="16" Foreground="#F59E0B"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" FontWeight="SemiBold" FontSize="14"/>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="200,220" Margin="8,0,0,8">
+                            <TextBlock Grid.Column="0" Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding TagFilterModes}" SelectedItem="{Binding FilterMode}" Height="30"/>
+                        </Grid>
+
+                        <!-- Filter 1 -->
+                        <Border Background="#F5F5F5" CornerRadius="4" Padding="8" Margin="8,0,0,8">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter1}" FontWeight="SemiBold"/>
+                                <Grid ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto">
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter1MemoryBank}" Height="28"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource InventoryConfig.FilterOp}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter1FilterOp}" Height="28"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Filter1BitPointer}" Height="28"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Filter1BitCount}" Height="28"/>
+                                </Grid>
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagMaskHex}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding Filter1TagMask}" Height="30"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Filter 2 -->
+                        <Border Background="#F5F5F5" CornerRadius="4" Padding="8" Margin="8,0,0,0">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter2}" FontWeight="SemiBold"/>
+                                <Grid ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto">
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter2MemoryBank}" Height="28"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource InventoryConfig.FilterOp}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter2FilterOp}" Height="28"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Filter2BitPointer}" Height="28"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Filter2BitCount}" Height="28"/>
+                                </Grid>
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagMaskHex}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding Filter2TagMask}" Height="30"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Report Configuration -->
+                <Border Background="White" CornerRadius="8" Padding="12">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <materialIcons:MaterialIcon Kind="ChartBar" Width="16" Height="16" Foreground="#3B82F6"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" FontWeight="SemiBold" FontSize="14"/>
+                        </StackPanel>
+                        <Grid ColumnDefinitions="200,220" Margin="8,0,0,8">
+                            <TextBlock Grid.Column="0" Text="{DynamicResource InventoryConfig.ReportMode}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding ReportModes}" SelectedItem="{Binding ReportMode}" Height="30"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="180,180" Margin="8,0,0,0">
+                            <CheckBox Content="{DynamicResource InventoryConfig.IncludeAntenna}" IsChecked="{Binding IncludeAntennaPortNumber}" Margin="0,4"/>
+                            <CheckBox Grid.Column="1" Content="{DynamicResource InventoryConfig.IncludeChannel}" IsChecked="{Binding IncludeChannel}" Margin="0,4"/>
+                            <CheckBox Grid.Row="1" Content="{DynamicResource InventoryConfig.IncludeFirstSeen}" IsChecked="{Binding IncludeFirstSeenTime}" Margin="0,4"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" Content="{DynamicResource InventoryConfig.IncludeLastSeen}" IsChecked="{Binding IncludeLastSeenTime}" Margin="0,4"/>
+                            <CheckBox Grid.Row="2" Content="{DynamicResource InventoryConfig.IncludeSeenCount}" IsChecked="{Binding IncludeSeenCount}" Margin="0,4"/>
+                            <CheckBox Grid.Row="2" Grid.Column="1" Content="{DynamicResource InventoryConfig.IncludePeakRssi}" IsChecked="{Binding IncludePeakRssi}" Margin="0,4"/>
+                            <CheckBox Grid.Row="3" Content="{DynamicResource InventoryConfig.IncludePcBits}" IsChecked="{Binding IncludePcBits}" Margin="0,4"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" Content="{DynamicResource InventoryConfig.IncludeCrc}" IsChecked="{Binding IncludeCrc}" Margin="0,4"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Attached Data Configuration -->
+                <Border Background="White" CornerRadius="8" Padding="12">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <materialIcons:MaterialIcon Kind="Database" Width="16" Height="16" Foreground="#14B8A6"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.AttachedDataConfig}" FontWeight="SemiBold" FontSize="14"/>
+                        </StackPanel>
+                        <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.EnableAttachedData}" VerticalAlignment="Center"/>
+                            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding AttachedDataEnabled}" VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding AttachedDataMemoryBank}" Height="30"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource InventoryConfig.WordStartAddr}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding AttachedDataWordPointer}" Height="30"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource InventoryConfig.WordCount}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding AttachedDataWordCount}" Height="30"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="{DynamicResource InventoryConfig.AccessPasswordHex}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AttachedDataAccessPassword}" Height="30"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-        </Border>
+        </ScrollViewer>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+            <Button Height="32" Width="120" Command="{Binding QueryInventoryConfigCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <materialIcons:MaterialIcon Kind="Download" Width="14" Height="14" Margin="0,0,6,0" Foreground="#3B82F6"/>
+                    <TextBlock Text="{DynamicResource InventoryConfig.ReadConfig}"/>
+                </StackPanel>
+            </Button>
+            <Button Height="32" Width="120" Command="{Binding SaveInventoryConfigCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <materialIcons:MaterialIcon Kind="ContentSave" Width="14" Height="14" Margin="0,0,6,0" Foreground="#22C55E"/>
+                    <TextBlock Text="{DynamicResource InventoryConfig.SaveConfig}"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <TextBlock Grid.Row="3" Text="{Binding OperationResult}" Foreground="#1976D2" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>

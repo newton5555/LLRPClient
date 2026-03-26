@@ -12,7 +12,7 @@ using Avalonia.Threading;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class InventoryViewModel : ObservableObject
+public partial class InventoryViewModel : ViewModelBase
 {
     private const int MaxRows = 500;
     private static readonly TimeSpan ManualPullAcceptWindow = TimeSpan.FromSeconds(2);

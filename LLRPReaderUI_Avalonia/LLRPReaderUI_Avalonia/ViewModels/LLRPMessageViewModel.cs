@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace LLRPReaderUI_Avalonia.ViewModels
 {
-    public partial class LLRPMessageViewModel : ObservableObject
+    public partial class LLRPMessageViewModel : ViewModelBase
     {
         private readonly LlrpReader _reader;
         private readonly IAppLogService _logs;

@@ -4,67 +4,71 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="700"
              x:Class="LLRPReaderUI_Avalonia.Views.ReadWriteView"
              x:DataType="vm:ReadWriteViewModel">
 
-    <Grid Margin="16" RowDefinitions="Auto,12,*">
-        <!-- Toolbar -->
-        <StackPanel Orientation="Horizontal" Spacing="8">
-            <Button Command="{Binding ReadMemoryCommand}" Classes="accent" Height="32" IsEnabled="{Binding IsConnected}">
-                <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="BookOpen" Width="16" Height="16" Margin="0,0,6,0" />
-                    <TextBlock Text="Read" />
-                </StackPanel>
-            </Button>
-            <Button Command="{Binding WriteMemoryCommand}" Height="32" IsEnabled="{Binding IsConnected}">
-                <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Pencil" Width="16" Height="16" Margin="0,0,6,0" />
-                    <TextBlock Text="Write" />
-                </StackPanel>
-            </Button>
-            <Button Command="{Binding ClearDataCommand}" Height="32">
-                <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Margin="0,0,6,0" />
-                    <TextBlock Text="Clear" />
-                </StackPanel>
-            </Button>
-            <TextBlock Text="{Binding OperationResult}" Margin="12,0,0,0"
-                       VerticalAlignment="Center" Foreground="#1976D2" />
-        </StackPanel>
+    <ScrollViewer>
+        <StackPanel Margin="16" MaxWidth="900" Spacing="12">
+            <!-- Read/Write Configuration -->
+            <Border Background="White" CornerRadius="8" Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{DynamicResource ReadWrite.ReadConfig}" FontWeight="SemiBold" FontSize="14"/>
+                    <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto" Margin="0,8,0,0">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{DynamicResource ReadWrite.Legend}" Foreground="#666" FontSize="12"/>
 
-        <!-- Settings -->
-        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="16">
-            <Grid ColumnDefinitions="*,*" Margin="0,0,0,16">
-                <!-- Left: Read Settings -->
-                <StackPanel Grid.Column="0" Margin="0,0,16,0" Spacing="12">
-                    <TextBlock Text="Read/Write Settings" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource ReadWrite.TargetTagType}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding TargetTagBanks}" SelectedItem="{Binding SelectedTargetTagBank}" Height="32"/>
 
-                    <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto">
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Target Bank:" VerticalAlignment="Center" />
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding TargetTagBanks}"
-                                  SelectedItem="{Binding SelectedTargetTagBank}" Height="32" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource ReadWrite.TargetTagData}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <Border Grid.Row="4" Grid.Column="1" BorderBrush="#EF4444" BorderThickness="1" Height="32" CornerRadius="4">
+                            <TextBox Text="{Binding TargetTagData, UpdateSourceTrigger=PropertyChanged}" Background="#FFF3E0" BorderThickness="0" VerticalContentAlignment="Center" Padding="4"/>
+                        </Border>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Target Data:" VerticalAlignment="Center" />
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding TargetTagData}" Height="32" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource ReadWrite.MemoryBank}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding SelectedMemoryBank}" Height="32"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Memory Bank:" VerticalAlignment="Center" />
-                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding MemoryBanks}"
-                                  SelectedItem="{Binding SelectedMemoryBank}" Height="32" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="{DynamicResource ReadWrite.WordStartAddress}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <Border Grid.Row="8" Grid.Column="1" BorderBrush="#EF4444" BorderThickness="1" Height="32" CornerRadius="4">
+                            <TextBox Text="{Binding WordPointer, UpdateSourceTrigger=PropertyChanged}" Background="#FFF3E0" BorderThickness="0" VerticalContentAlignment="Center" Padding="4"/>
+                        </Border>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Word Pointer:" VerticalAlignment="Center" />
-                        <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding WordPointer}"
-                                       Minimum="0" Maximum="255" Height="32" />
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="{DynamicResource ReadWrite.WordCount}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#3B82F6"/>
+                        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding WordCount, UpdateSourceTrigger=PropertyChanged}" Background="#E3F2FD" BorderBrush="#3B82F6" Height="32"/>
+
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="{DynamicResource ReadWrite.WriteData}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#EF4444"/>
+                        <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding WriteData, UpdateSourceTrigger=PropertyChanged}" Background="#FFEBEE" BorderBrush="#EF4444" Height="32"/>
+
+                        <TextBlock Grid.Row="14" Grid.Column="0" Text="{DynamicResource ReadWrite.AccessPassword}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="14" Grid.Column="1" Text="{Binding AccessPassword, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
                     </Grid>
                 </StackPanel>
+            </Border>
 
-                <!-- Right: Result -->
-                <StackPanel Grid.Column="1" Spacing="12">
-                    <TextBlock Text="Result" FontSize="16" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding ReadData}" IsReadOnly="True" AcceptsReturn="True"
-                             TextWrapping="Wrap" Height="150" FontFamily="Consolas" />
+            <!-- Operations -->
+            <Border Background="White" CornerRadius="8" Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{DynamicResource ReadWrite.Operations}" FontWeight="SemiBold" FontSize="14"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                        <Button Height="36" Width="120" Command="{Binding ReadMemoryCommand}" Content="{DynamicResource ReadWrite.ReadMemory}"/>
+                        <Button Height="36" Width="120" Command="{Binding WriteMemoryCommand}" Content="{DynamicResource ReadWrite.WriteMemory}"/>
+                        <CheckBox VerticalAlignment="Center" Content="{DynamicResource ReadWrite.BlockWrite}" IsChecked="{Binding IsBlockWriteChecked}" IsEnabled="{Binding IsBlockWriteSupported}"/>
+                        <Button Height="36" Width="120" Command="{Binding ClearDataCommand}" Content="{DynamicResource ReadWrite.ClearData}"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding OperationResult}" Foreground="#1976D2" TextWrapping="Wrap" Margin="0,8,0,0"/>
                 </StackPanel>
-            </Grid>
-        </Border>
-    </Grid>
+            </Border>
+
+            <!-- Read Result -->
+            <Border Background="White" CornerRadius="8" Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{DynamicResource ReadWrite.ReadResult}" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Text="{DynamicResource ReadWrite.HexData}" Margin="0,8,0,0"/>
+                    <ScrollViewer Height="100">
+                        <TextBox Text="{Binding ReadData, Mode=OneWay}" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" FontFamily="Consolas"/>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

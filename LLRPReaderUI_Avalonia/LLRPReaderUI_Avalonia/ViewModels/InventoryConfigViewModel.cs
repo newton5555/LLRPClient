@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class InventoryConfigViewModel : ObservableObject
+public partial class InventoryConfigViewModel : ViewModelBase
 {
     public InventoryConfigViewModel()
     {
@@ -384,7 +384,7 @@ public partial class InventoryConfigViewModel : ObservableObject
     }
 }
 
-public partial class TagSelectFilterItemViewModel : ObservableObject
+public partial class TagSelectFilterItemViewModel : ViewModelBase
 {
     [ObservableProperty]
     private MemoryBank memoryBank = MemoryBank.Epc;

@@ -2,41 +2,166 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             xmlns:converters="clr-namespace:LLRPReaderUI_Avalonia.Converters"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="LLRPReaderUI_Avalonia.Views.LLRPMessageView"
              x:DataType="vm:LLRPMessageViewModel">
 
-    <Grid Margin="16" RowDefinitions="Auto,8,*">
-        <!-- Toolbar -->
-        <StackPanel Orientation="Horizontal" Spacing="8">
-            <Button Command="{Binding RefreshDataCommand}" Classes="accent" Height="32">Refresh</Button>
-            <Button Command="{Binding ClearFilterCommand}" Height="32">Clear Filter</Button>
-            <TextBlock Text="{Binding StatusText}" Margin="12,0,0,0" VerticalAlignment="Center" Foreground="#1976D2" />
-        </StackPanel>
+    <UserControl.Resources>
+        <converters:DirectionToBrushConverter x:Key="DirectionToBrushConverter"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </UserControl.Resources>
 
-        <!-- Content -->
-        <Grid Grid.Row="2" ColumnDefinitions="300,2,*">
-            <!-- Frame List -->
+    <Grid Margin="16" RowDefinitions="Auto,Auto,*">
+        <!-- Toolbar -->
+        <Border Background="White" CornerRadius="8" Padding="12">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Width="120" Height="32" Command="{Binding RefreshDataCommand}" Classes="accent">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Refresh" Width="14" Height="14" Margin="0,0,6,0"/>
+                            <TextBlock Text="{DynamicResource LLRPMessage.Refresh}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Width="120" Height="32" Command="{Binding ExportToTextCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Export" Width="14" Height="14" Margin="0,0,6,0" Foreground="#22C55E"/>
+                            <TextBlock Text="{DynamicResource LLRPMessage.ExportText}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="24,0,0,0">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="{DynamicResource LLRPMessage.Total}"/>
+                        <Run Text="{Binding RawFrames.Count, Mode=OneWay}" FontWeight="Bold" Foreground="#1976D2"/>
+                        <Run Text="{DynamicResource LLRPMessage.Records}"/>
+                    </TextBlock>
+                    <TextBlock VerticalAlignment="Center" Margin="16,0,0,0">
+                        <Run Text="{DynamicResource LLRPMessage.Filtered}"/>
+                        <Run Text="{Binding FilteredFrames.Count, Mode=OneWay}" FontWeight="Bold" Foreground="#1976D2"/>
+                        <Run Text="{DynamicResource LLRPMessage.Records}"/>
+                    </TextBlock>
+                </StackPanel>
+
+                <TextBlock Grid.Column="3" Text="{Binding StatusText}" Foreground="#1976D2" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Filter Bar -->
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="12" Margin="0,8,0,0">
+            <Grid RowDefinitions="Auto,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource LLRPMessage.StartDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <CalendarDatePicker Width="110" Height="28" SelectedDate="{Binding FilterStartDate}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource LLRPMessage.EndDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <CalendarDatePicker Width="110" Height="28" SelectedDate="{Binding FilterEndDate}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource LLRPMessage.Direction}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox Width="110" Height="28" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding FilterDirection}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource LLRPMessage.Device}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox Width="110" Height="28" ItemsSource="{Binding DeviceIdOptions}" SelectedItem="{Binding FilterDeviceId}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource LLRPMessage.MessageType}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox Width="110" Height="28" ItemsSource="{Binding MsgTypeOptions}" SelectedItem="{Binding FilterMsgType}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,0">
+                    <Button Height="28" Command="{Binding ApplyFilterCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Filter" Width="12" Height="12" Margin="0,0,4,0"/>
+                            <TextBlock Text="{DynamicResource LLRPMessage.Filter}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Height="28" Margin="8,0,0,0" Command="{Binding ClearFilterCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Close" Width="12" Height="12" Margin="0,0,4,0" Foreground="#EF4444"/>
+                            <TextBlock Text="{DynamicResource LLRPMessage.ClearFilter}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2" Margin="0,8,0,0" ColumnDefinitions="300,2,*">
+            <!-- Left: Raw Frame List -->
             <Border Background="White" CornerRadius="8">
                 <Grid RowDefinitions="Auto,*">
-                    <Border Grid.Row="0" Background="#F5F5F5" Padding="12,8">
-                        <TextBlock Text="Raw Frames" FontWeight="SemiBold" />
+                    <Border Grid.Row="0" Padding="12,8" Background="#F5F5F5">
+                        <TextBlock Text="{DynamicResource LLRPMessage.RawFrameList}" FontWeight="SemiBold" FontSize="14"/>
                     </Border>
-                    <ListBox Grid.Row="1" ItemsSource="{Binding FilteredFrames}"
-                             SelectedItem="{Binding SelectedRawFrame}" BorderThickness="0" />
+                    <ListBox Grid.Row="1" ItemsSource="{Binding FilteredFrames}" SelectedItem="{Binding SelectedRawFrame}"
+                              BorderThickness="0" Background="#FAFAFA">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="8" Background="#0D000000" CornerRadius="4">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding LocalTimestamp, StringFormat='MM/dd HH:mm:ss'}" FontSize="12" FontWeight="SemiBold"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="{Binding Direction}" FontSize="11" FontWeight="Bold"
+                                                       Foreground="{Binding Direction, Converter={StaticResource DirectionToBrushConverter}}"/>
+                                            <TextBlock Text=" | " FontSize="11" Margin="2,0"/>
+                                            <TextBlock Text="{Binding MsgTypeName}" FontSize="11" Foreground="#14B8A6"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="{Binding Length, StringFormat='{}{0} bytes'}" FontSize="10" Foreground="#666"/>
+                                            <TextBlock Text="{Binding DeviceId, StringFormat=' | {0}'}" FontSize="10" Foreground="#666"
+                                                       IsVisible="{Binding DeviceId, Converter={StaticResource StringToVisibilityConverter}}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Grid>
             </Border>
 
-            <!-- Message Tree -->
-            <Border Grid.Column="2" Background="White" CornerRadius="8">
-                <Grid RowDefinitions="Auto,*">
-                    <Border Grid.Row="0" Background="#F5F5F5" Padding="12,8">
-                        <TextBlock Text="Message Tree" FontWeight="SemiBold" />
-                    </Border>
-                    <TreeView Grid.Row="1" ItemsSource="{Binding MessageTree}" BorderThickness="0" />
-                </Grid>
-            </Border>
+            <!-- Right: Message Tree and Raw Data -->
+            <Grid Grid.Column="2" RowDefinitions="*,12,*">
+                <!-- Message Tree -->
+                <Border Grid.Row="0" Background="White" CornerRadius="8">
+                    <Grid RowDefinitions="Auto,*">
+                        <Border Grid.Row="0" Padding="12,8" Background="#F5F5F5">
+                            <StackPanel Orientation="Horizontal">
+                                <materialIcons:MaterialIcon Kind="Sitemap" Width="14" Height="14" Margin="0,0,8,0" Foreground="#3B82F6"/>
+                                <TextBlock Text="{DynamicResource LLRPMessage.MessageTree}" FontWeight="SemiBold" FontSize="14"/>
+                            </StackPanel>
+                        </Border>
+                        <TreeView Grid.Row="1" ItemsSource="{Binding MessageTree}" BorderThickness="0" Background="#FAFAFA">
+                           
+                        </TreeView>
+                    </Grid>
+                </Border>
+
+                <!-- Raw Hex Data -->
+                <Border Grid.Row="2" Background="White" CornerRadius="8">
+                    <Grid RowDefinitions="Auto,*">
+                        <Border Grid.Row="0" Padding="12,8" Background="#F5F5F5">
+                            <StackPanel Orientation="Horizontal">
+                                <materialIcons:MaterialIcon Kind="Code" Width="14" Height="14" Margin="0,0,8,0" Foreground="#3B82F6"/>
+                                <TextBlock Text="{DynamicResource LLRPMessage.RawHexData}" FontWeight="SemiBold" FontSize="14"/>
+                            </StackPanel>
+                        </Border>
+                        <ScrollViewer Grid.Row="1">
+                            <TextBox Text="{Binding RawHexString, Mode=OneWay}" Padding="8"
+                                     AcceptsReturn="True" IsReadOnly="True" BorderThickness="0"
+                                     FontFamily="Consolas" FontSize="12" Background="#FAFAFA"
+                                     TextWrapping="Wrap"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly LlrpReader reader;
     private readonly ReaderStatusStore statusStore;

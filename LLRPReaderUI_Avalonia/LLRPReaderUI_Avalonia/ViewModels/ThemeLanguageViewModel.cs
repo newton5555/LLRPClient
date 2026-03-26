@@ -4,7 +4,7 @@ using LLRPReaderUI_Avalonia.Services;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class ThemeLanguageViewModel : ObservableObject
+public partial class ThemeLanguageViewModel : ViewModelBase
 {
     private readonly ThemeService _themeService;
     private readonly LanguageService _languageService;

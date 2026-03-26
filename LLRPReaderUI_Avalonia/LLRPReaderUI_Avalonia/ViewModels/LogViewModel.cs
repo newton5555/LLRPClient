@@ -9,7 +9,7 @@ using LLRPReaderUI_Avalonia.Messages;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class LogViewModel : ObservableObject
+public partial class LogViewModel : ViewModelBase
 {
     private const int MaxRows = 500;
     private const int UIUpdateIntervalMs = 200;

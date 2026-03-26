@@ -1,7 +1,12 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="LLRPReaderUI_Avalonia.App"
+              xmlns:local="using:LLRPReaderUI_Avalonia"
              RequestedThemeVariant="Light">
+
+       <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
 
     <Application.Styles>
         <SimpleTheme />

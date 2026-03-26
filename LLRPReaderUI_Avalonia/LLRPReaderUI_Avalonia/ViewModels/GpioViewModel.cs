@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class GpioViewModel : ObservableObject
+public partial class GpioViewModel : ViewModelBase
 {
     private readonly LlrpReader reader;
     private readonly ReaderSettingsStore settingsStore;
@@ -240,7 +240,7 @@ public partial class GpioViewModel : ObservableObject
     }
 }
 
-public partial class GpiPortItemViewModel : ObservableObject
+public partial class GpiPortItemViewModel : ViewModelBase
 {
     [ObservableProperty]
     private ushort portNumber;
@@ -252,7 +252,7 @@ public partial class GpiPortItemViewModel : ObservableObject
     private string currentStateText = string.Empty;
 }
 
-public partial class GpoPortItemViewModel : ObservableObject
+public partial class GpoPortItemViewModel : ViewModelBase
 {
     [ObservableProperty]
     private ushort portNumber;

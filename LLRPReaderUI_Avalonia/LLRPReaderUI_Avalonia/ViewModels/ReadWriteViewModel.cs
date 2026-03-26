@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class ReadWriteViewModel : ObservableObject
+public partial class ReadWriteViewModel : ViewModelBase
 {
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;

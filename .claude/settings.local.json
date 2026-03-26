@@ -7,7 +7,8 @@
       "Bash(powershell -Command \"Remove-Item -Path ''f:\\\\Projects\\\\LLRP\\\\LLRPClient\\\\LLRPReaderUI_Avalonia\\\\LLRPReaderUI_Avalonia'' -Recurse -Force -ErrorAction SilentlyContinue\")",
       "Bash(sed -i 's/Application\\\\.Current\\\\.Dispatcher/Dispatcher.UIThread/g' ViewModels/*.cs)",
       "Bash(sed -i 's/Application\\\\.Current?.Dispatcher/Dispatcher.UIThread/g' ViewModels/*.cs)",
-      "Bash(grep -l \"Dispatcher.UIThread\" ViewModels/*.cs)"
+      "Bash(grep -l \"Dispatcher.UIThread\" ViewModels/*.cs)",
+      "Bash(taskkill /F /IM dotnet.exe)"
     ]
   }
 }

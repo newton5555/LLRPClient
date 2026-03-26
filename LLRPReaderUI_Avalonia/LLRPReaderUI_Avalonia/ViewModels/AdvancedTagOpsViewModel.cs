@@ -10,7 +10,7 @@ using Avalonia.Threading;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class AdvancedTagOpsViewModel : ObservableObject
+public partial class AdvancedTagOpsViewModel : ViewModelBase
 {
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;

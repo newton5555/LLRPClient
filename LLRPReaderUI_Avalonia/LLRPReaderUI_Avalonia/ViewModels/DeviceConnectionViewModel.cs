@@ -16,7 +16,7 @@ using Avalonia.Threading;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class DeviceConnectionViewModel : ObservableObject
+public partial class DeviceConnectionViewModel : ViewModelBase
 {
     private const int MaxRecentEndpoints = 3;
     private static readonly string RecentEndpointsFilePath = Path.Combine(
@@ -509,7 +509,7 @@ public sealed class FeatureItemCollection : ObservableCollection<FeatureItemView
     }
 }
 
-public partial class FeatureItemViewModel : ObservableObject
+public partial class FeatureItemViewModel : ViewModelBase
 {
     public FeatureItemViewModel(string name, string value)
     {

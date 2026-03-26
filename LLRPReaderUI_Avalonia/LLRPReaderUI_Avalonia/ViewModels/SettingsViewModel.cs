@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class SettingsViewModel : ObservableObject
+public partial class SettingsViewModel : ViewModelBase
 {
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
@@ -363,7 +363,7 @@ public sealed class RfModeOptionItem
     public string DisplayText { get; }
 }
 
-public partial class AntennaItemViewModel : ObservableObject
+public partial class AntennaItemViewModel : ViewModelBase
 {
     [ObservableProperty]
     private ushort portNumber;
