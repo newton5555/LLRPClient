@@ -1,14 +1,36 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="LLRPReaderUI_Avalonia.App"
-              xmlns:local="using:LLRPReaderUI_Avalonia"
+             xmlns:local="using:LLRPReaderUI_Avalonia"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              RequestedThemeVariant="Light">
 
-       <Application.DataTemplates>
+    <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+    <!-- 主题颜色资源 - 支持Light/Dark主题切换 -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <MergeResourceInclude Source="/Styles/ThemeResources.axaml"/>
+                <!-- 语言资源由 LanguageService 动态管理 -->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
+        <!-- Simple主题作为基础 -->
         <SimpleTheme />
+
+        <!-- DataGrid样式 -->
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
+
+        <!-- Material Icons 样式 -->
+        <materialIcons:MaterialIconStyles />
+
+        <!-- 自定义扁平化样式 -->
+        <StyleInclude Source="/Styles/FlatTheme.axaml"/>
     </Application.Styles>
+
 </Application>

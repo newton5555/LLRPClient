@@ -55,6 +55,13 @@ public partial class App : Application
 
         _ = Ioc.Default.GetRequiredService<LlrpLoggingBridge>();
 
+        // 初始化主题和语言服务
+        var themeService = Ioc.Default.GetRequiredService<ThemeService>();
+        themeService.Initialize();
+
+        var languageService = Ioc.Default.GetRequiredService<LanguageService>();
+        languageService.Initialize();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var mainWindow = Ioc.Default.GetRequiredService<MainWindow>();

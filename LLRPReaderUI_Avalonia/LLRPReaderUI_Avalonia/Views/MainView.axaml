@@ -1,0 +1,155 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
+             xmlns:models="clr-namespace:LLRPReaderUI_Avalonia.Models"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="760"
+             x:Class="LLRPReaderUI_Avalonia.Views.MainView"
+             x:DataType="vm:MainWindowViewModel"
+             Background="{DynamicResource WindowBackgroundBrush}">
+
+    <UserControl.Styles>
+        <!-- Navigation Item Style -->
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0,2" />
+            <Setter Property="Padding" Value="8,10" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+
+        <Style Selector="ListBoxItem:pointerover /template/ Border#BackgroundModifier">
+            <Setter Property="Background" Value="{DynamicResource HoverOverlayBrush}" />
+        </Style>
+
+        <Style Selector="ListBoxItem:selected /template/ Border#BackgroundModifier">
+            <Setter Property="Background" Value="{DynamicResource SelectedOverlayBrush}" />
+        </Style>
+
+        <!-- Settings Button Style -->
+        <Style Selector="Button.settingsBtn">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+
+        <Style Selector="Button.settingsBtn:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HoverOverlayBrush}" />
+        </Style>
+
+        <!-- Status Chip Base Style -->
+        <Style Selector="Border.statusChip">
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="{DynamicResource SubtleOverlayBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Main Content -->
+        <Grid Grid.Row="0" Margin="16" ColumnDefinitions="240,12,*">
+
+            <!-- Navigation Panel -->
+            <Border Grid.Column="0" Classes="card">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Header -->
+                    <Grid Grid.Row="0" Margin="8,8,8,16">
+                        <TextBlock Text="{DynamicResource Menu.Navigation}" FontSize="16" FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
+                            <Button Classes="settingsBtn"
+                                    Command="{Binding ThemeLanguageViewModel.ToggleThemeCommand}"
+                                    ToolTip.Tip="{Binding ThemeLanguageViewModel.ThemeToolTip}">
+                                <materialIcons:MaterialIcon Kind="{Binding ThemeLanguageViewModel.ThemeIcon}"
+                                                           Width="20" Height="20"
+                                                           Foreground="{DynamicResource TextMutedBrush}" />
+                            </Button>
+                            <Button Classes="settingsBtn"
+                                    Command="{Binding ThemeLanguageViewModel.ToggleLanguageCommand}"
+                                    ToolTip.Tip="{DynamicResource Language.Toggle}">
+                                <Grid>
+                                    <materialIcons:MaterialIcon Kind="{Binding ThemeLanguageViewModel.LanguageIcon}"
+                                                               Width="20" Height="20"
+                                                               Foreground="{DynamicResource TextMutedBrush}" />
+                                    <TextBlock Text="{Binding ThemeLanguageViewModel.LanguageSymbol}"
+                                               FontSize="8" FontWeight="Bold"
+                                               HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                               Foreground="#60A5FA" />
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Navigation List -->
+                    <ListBox Grid.Row="1" ItemsSource="{Binding NavigationItems}"
+                             SelectedItem="{Binding SelectedNavigationItem}"
+                             Background="Transparent" BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="models:NavigationItem">
+                                <StackPanel Orientation="Horizontal" Margin="4,0">
+                                    <materialIcons:MaterialIcon Kind="{Binding IconKind}"
+                                                               Width="22" Height="22"
+                                                               Foreground="{Binding IconBrush}" />
+                                    <TextBlock Text="{Binding Title}" Margin="12,0,0,0"
+                                               VerticalAlignment="Center" FontSize="14"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- Content Area -->
+            <Border Grid.Column="2" Classes="card">
+                <ContentControl Content="{Binding CurrentPageViewModel}" />
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="1" Height="42" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="12,0">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <!-- Device Status Chip -->
+                <Border Padding="10,4" CornerRadius="10" Background="{DynamicResource StatusChipSuccessBrush}">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="8" Height="8" Margin="0,0,6,0" Fill="{DynamicResource StatusDotSuccessBrush}" />
+                        <TextBlock Text="{Binding DeviceStatusText}" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource StatusSuccessTextBrush}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Inventory Status Chip -->
+                <Border Padding="10,4" CornerRadius="10" Background="{DynamicResource StatusChipDefaultBrush}">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="8" Height="8" Margin="0,0,6,0" Fill="{DynamicResource StatusDotDefaultBrush}" />
+                        <TextBlock Text="{Binding InventoryStatusText}" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Other Status Chips -->
+                <Border Classes="statusChip">
+                    <TextBlock Text="{Binding AntennaStatusText}" FontSize="12"
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                </Border>
+                <Border Classes="statusChip">
+                    <TextBlock Text="{Binding GpiStatusText}" FontSize="12"
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                </Border>
+                <Border Classes="statusChip">
+                    <TextBlock Text="{Binding GpoStatusText}" FontSize="12"
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                </Border>
+                <Border Classes="statusChip" Margin="0">
+                    <TextBlock Text="{Binding IdentificationStatusText}" FontSize="12"
+                               Foreground="{DynamicResource StatusDefaultTextBrush}" />
+                </Border>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

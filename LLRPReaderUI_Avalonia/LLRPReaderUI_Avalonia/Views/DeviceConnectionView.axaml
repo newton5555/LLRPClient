@@ -8,35 +8,40 @@
              x:Class="LLRPReaderUI_Avalonia.Views.DeviceConnectionView"
              x:DataType="vm:DeviceConnectionViewModel">
 
-    <Grid Margin="16" RowDefinitions="Auto,12,*">
+    <Grid Margin="{DynamicResource PagePadding}" RowDefinitions="Auto,12,*">
         <!-- Connection Bar -->
-        <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="16">
-            <Grid ColumnDefinitions="*,10,Auto,10,Auto">
+        <Border Grid.Row="0" Classes="card">
+            <Grid ColumnDefinitions="*,10,Auto,10,Auto,10,Auto">
                 <TextBox Grid.Column="0" Height="36"
                          Text="{Binding ReaderEndpoint}"
                          Watermark="Enter reader address (e.g., 192.168.1.100)" />
 
-                <Button Grid.Column="2" Height="36"
+                <Button Grid.Column="2" Height="36" Classes="primary"
                         Command="{Binding ConnectCommand}"
-                        Classes="accent">
+                        IsEnabled="{Binding !IsConnected}">
                     <StackPanel Orientation="Horizontal">
-                        <materialIcons:MaterialIcon Kind="PowerPlug" Width="16" Height="16" Margin="0,0,8,0" />
-                        <TextBlock Text="Connect" />
+                        <materialIcons:MaterialIcon Kind="Plug" Width="16" Height="16" Margin="0,0,8,0"
+                                                   Foreground="White" />
+                        <TextBlock Text="{DynamicResource DeviceConnection.Connect}" />
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="4" Height="36"
-                        Command="{Binding DisconnectCommand}">
+                <Button Grid.Column="4" Height="36" Classes="flat"
+                        Command="{Binding DisconnectCommand}"
+                        IsEnabled="{Binding IsConnected}">
                     <StackPanel Orientation="Horizontal">
                         <materialIcons:MaterialIcon Kind="PowerPlugOff" Width="16" Height="16" Margin="0,0,8,0" />
-                        <TextBlock Text="Disconnect" />
+                        <TextBlock Text="{DynamicResource DeviceConnection.Disconnect}" />
                     </StackPanel>
                 </Button>
+
+                <!-- Connection State Hint -->
+                <TextBlock Grid.Column="6" Classes="statusHint" Text="{Binding ConnectionState}" />
             </Grid>
         </Border>
 
         <!-- Feature Set DataGrid -->
-        <Border Grid.Row="2" Background="White" CornerRadius="8">
+        <Border Grid.Row="2" Classes="card">
             <DataGrid ItemsSource="{Binding FeatureSetItems}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"

@@ -1,0 +1,77 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=netstandard">
+
+    <!-- Language resource marker -->
+    <sys:Boolean x:Key="__LanguageResource__">True</sys:Boolean>
+
+    <!-- App Title -->
+    <sys:String x:Key="App.Title">LLRP Reader UI</sys:String>
+
+    <!-- Navigation Menu -->
+    <sys:String x:Key="Menu.Navigation">Navigation</sys:String>
+    <sys:String x:Key="Menu.DeviceConnection">Device Connection</sys:String>
+    <sys:String x:Key="Menu.Settings">Settings</sys:String>
+    <sys:String x:Key="Menu.GPIO">GPIO Config</sys:String>
+    <sys:String x:Key="Menu.InventoryConfig">Inventory Config</sys:String>
+    <sys:String x:Key="Menu.Inventory">Inventory</sys:String>
+    <sys:String x:Key="Menu.ReadWrite">Read/Write</sys:String>
+    <sys:String x:Key="Menu.AdvancedTagOps">Advanced Tag Ops</sys:String>
+    <sys:String x:Key="Menu.Log">Log</sys:String>
+    <sys:String x:Key="Menu.LLRPMessage">LLRP Messages</sys:String>
+
+    <!-- Device Connection -->
+    <sys:String x:Key="DeviceConnection.Connect">Connect</sys:String>
+    <sys:String x:Key="DeviceConnection.Disconnect">Disconnect</sys:String>
+
+    <!-- Status -->
+    <sys:String x:Key="Status.Device">Device</sys:String>
+    <sys:String x:Key="Status.Inventory">Inventory</sys:String>
+    <sys:String x:Key="Status.Connected">Connected</sys:String>
+    <sys:String x:Key="Status.NotConnected">Not Connected</sys:String>
+    <sys:String x:Key="Status.Running">Running</sys:String>
+    <sys:String x:Key="Status.Idle">Idle</sys:String>
+    <sys:String x:Key="Status.Unknown">Unknown</sys:String>
+    <sys:String x:Key="Status.GPI">GPI</sys:String>
+    <sys:String x:Key="Status.GPO">GPO</sys:String>
+    <sys:String x:Key="Status.MAC">MAC</sys:String>
+    <sys:String x:Key="Status.High">High</sys:String>
+    <sys:String x:Key="Status.Low">Low</sys:String>
+    <sys:String x:Key="Status.NoData">No Data</sys:String>
+    <sys:String x:Key="Status.NoResponse">No response from device</sys:String>
+
+    <!-- Theme & Language -->
+    <sys:String x:Key="Theme.ToggleLight">Switch to Light Theme</sys:String>
+    <sys:String x:Key="Theme.ToggleDark">Switch to Dark Theme</sys:String>
+    <sys:String x:Key="Language.Toggle">Switch Language</sys:String>
+
+    <!-- Common -->
+    <sys:String x:Key="Common.All">All</sys:String>
+    <sys:String x:Key="Common.ConnectFirst">Please connect device first</sys:String>
+
+    <!-- Inventory -->
+    <sys:String x:Key="Inventory.Start">Start Inventory</sys:String>
+    <sys:String x:Key="Inventory.Stop">Stop Inventory</sys:String>
+    <sys:String x:Key="Inventory.Clear">Clear Data</sys:String>
+    <sys:String x:Key="Inventory.PullBuffer">Pull Buffer</sys:String>
+    <sys:String x:Key="Inventory.Antenna">Antenna</sys:String>
+
+    <!-- MainWindow -->
+    <sys:String x:Key="MainWindow.DeviceNotConnected">Device: Not connected</sys:String>
+    <sys:String x:Key="MainWindow.InventoryUnknown">Inventory: Unknown</sys:String>
+    <sys:String x:Key="MainWindow.AntennaDefault">Antenna: --</sys:String>
+    <sys:String x:Key="MainWindow.GPIDefault">GPI: --</sys:String>
+    <sys:String x:Key="MainWindow.GPODefault">GPO: --</sys:String>
+    <sys:String x:Key="MainWindow.MACDefault">MAC: --</sys:String>
+
+    <!-- GPIO -->
+    <sys:String x:Key="GPIO.High">High</sys:String>
+    <sys:String x:Key="GPIO.Low">Low</sys:String>
+
+    <!-- ReadWrite -->
+    <sys:String x:Key="ReadWrite.Ready">Ready</sys:String>
+    <sys:String x:Key="ReadWrite.Waiting">Waiting for operation...</sys:String>
+    <sys:String x:Key="ReadWrite.Reading">Reading...</sys:String>
+    <sys:String x:Key="ReadWrite.Writing">Writing...</sys:String>
+
+</ResourceDictionary>
