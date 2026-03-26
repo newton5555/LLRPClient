@@ -56,6 +56,7 @@
             <!-- Card / surface -->
             <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFFFF" />
             <SolidColorBrush x:Key="CardBorderBrush" Color="#D1D9E6" />
+            <SolidColorBrush x:Key="CardInnerBackgroundBrush" Color="#F5F7FA" />
 
             <!-- DataGrid brushes -->
             <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#F8FAFC" />
@@ -77,6 +78,11 @@
             <SolidColorBrush x:Key="ReadRequiredBackground" Color="#EAF3FF" />
             <SolidColorBrush x:Key="WriteRequiredBackground" Color="#FFF3E8" />
             <SolidColorBrush x:Key="BothRequiredBackground" Color="#F0F7FF" />
+
+            <!-- ToolTip brushes -->
+            <SolidColorBrush x:Key="ToolTipBackgroundBrush" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#D1D9E6" />
+            <SolidColorBrush x:Key="ToolTipForegroundBrush" Color="#0F172A" />
 
             <!-- Page and Section Padding -->
             <Thickness x:Key="PagePadding">16</Thickness>
@@ -138,6 +144,7 @@
             <!-- Card / surface -->
             <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1A2332" />
             <SolidColorBrush x:Key="CardBorderBrush" Color="#3D4F65" />
+            <SolidColorBrush x:Key="CardInnerBackgroundBrush" Color="#243042" />
 
             <!-- DataGrid brushes -->
             <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#1E3A5F" />
@@ -159,6 +166,11 @@
             <SolidColorBrush x:Key="ReadRequiredBackground" Color="#1E3A5F" />
             <SolidColorBrush x:Key="WriteRequiredBackground" Color="#422006" />
             <SolidColorBrush x:Key="BothRequiredBackground" Color="#1E293B" />
+
+            <!-- ToolTip brushes - high contrast for dark theme -->
+            <SolidColorBrush x:Key="ToolTipBackgroundBrush" Color="#1E293B" />
+            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#475569" />
+            <SolidColorBrush x:Key="ToolTipForegroundBrush" Color="#F1F5F9" />
 
             <!-- Page and Section Padding -->
             <Thickness x:Key="PagePadding">16</Thickness>

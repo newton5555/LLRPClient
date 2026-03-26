@@ -52,7 +52,7 @@
         </Border>
 
         <!-- Feature Set DataGrid -->
-        <Border Grid.Row="2" Classes="card">
+        <Border Grid.Row="2" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
             <DataGrid ItemsSource="{Binding FeatureSetItems}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"

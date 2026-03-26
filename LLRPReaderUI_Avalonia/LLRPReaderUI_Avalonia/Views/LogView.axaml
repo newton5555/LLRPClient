@@ -24,7 +24,7 @@
         </Border>
 
         <!-- Log Tabs -->
-        <TabControl Grid.Row="2">
+        <TabControl Grid.Row="2" Padding="5" Background="{DynamicResource CardInnerBackgroundBrush}">
             <!-- Operation Logs -->
             <TabItem>
                 <TabItem.Header>

@@ -12,7 +12,7 @@
         <ScrollViewer Grid.Row="0">
             <StackPanel Spacing="12">
                 <!-- Auto Start Configuration -->
-                <Border Classes="card">
+                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <materialIcons:MaterialIcon Kind="PlayCircle" Width="16" Height="16" 
@@ -50,7 +50,7 @@
                 </Border>
 
                 <!-- Auto Stop Configuration -->
-                <Border Classes="card">
+                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <materialIcons:MaterialIcon Kind="StopCircle" Width="16" Height="16" 
@@ -84,7 +84,7 @@
                 </Border>
 
                 <!-- Filter Configuration -->
-                <Border Classes="card">
+                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <materialIcons:MaterialIcon Kind="Filter" Width="16" Height="16" 
@@ -127,7 +127,7 @@
                         </Border>
 
                         <!-- Filter 2 -->
-                        <Border Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="4" Padding="8" Margin="8,0,0,0">
+                        <Border Background="{DynamicResource CardInnerBackgroundBrush}" CornerRadius="4" Padding="8" Margin="8,0,0,0">
                             <StackPanel Spacing="8">
                                 <TextBlock Text="{DynamicResource InventoryConfig.TagFilter2}" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -155,7 +155,7 @@
                 </Border>
 
                 <!-- Report Configuration -->
-                <Border Classes="card">
+                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <materialIcons:MaterialIcon Kind="ChartBar" Width="16" Height="16" 
@@ -183,7 +183,7 @@
                 </Border>
 
                 <!-- Attached Data Configuration -->
-                <Border Classes="card">
+                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <materialIcons:MaterialIcon Kind="Database" Width="16" Height="16" 

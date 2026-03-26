@@ -7,10 +7,10 @@
              x:Class="LLRPReaderUI_Avalonia.Views.AdvancedTagOpsView"
              x:DataType="vm:AdvancedTagOpsViewModel">
 
-    <ScrollViewer>
-        <StackPanel Margin="{DynamicResource PagePadding}" MaxWidth="900" Spacing="12">
+    <ScrollViewer >
+        <StackPanel Margin="{DynamicResource PagePadding}" MaxWidth="900" Spacing="12" >
             <!-- Standard Summary -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="4">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.StandardSummary}" 
                                FontWeight="SemiBold" FontSize="14"
@@ -33,7 +33,7 @@
             </Border>
 
             <!-- Common Parameters -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.CommonParams}" 
                                FontWeight="SemiBold" FontSize="14"
@@ -66,7 +66,7 @@
             </Border>
 
             <!-- Block Erase -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.BlockErase}" 
                                FontWeight="SemiBold" FontSize="14"
@@ -94,7 +94,7 @@
             </Border>
 
             <!-- Lock Operation -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.LockOp}" 
                                FontWeight="SemiBold" FontSize="14"
@@ -116,7 +116,7 @@
             </Border>
 
             <!-- Kill Operation -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.KillOp}" 
                                FontWeight="SemiBold" FontSize="14"
@@ -132,7 +132,7 @@
             </Border>
 
             <!-- Result -->
-            <Border Classes="card">
+            <Border Classes="card" >
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.Result}" 
                                FontWeight="SemiBold" FontSize="14"

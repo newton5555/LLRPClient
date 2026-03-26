@@ -12,7 +12,7 @@
         <ScrollViewer Grid.Row="0">
             <StackPanel Spacing="12">
                 <!-- GPI Configuration -->
-                <Border Classes="card">
+                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <materialIcons:MaterialIcon Kind="ArrowDownBold" Width="16" Height="16" 
@@ -46,7 +46,7 @@
                 </Border>
 
                 <!-- GPO Configuration -->
-                <Border Classes="card">
+                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <materialIcons:MaterialIcon Kind="ArrowUpBold" Width="16" Height="16" 

@@ -68,6 +68,11 @@
     <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#1E3A5F" />
     <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="#1F3B82F6" />
 
+    <!-- ToolTip brushes - high contrast for dark theme -->
+    <SolidColorBrush x:Key="ToolTipBackgroundBrush" Color="#1E293B" />
+    <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#475569" />
+    <SolidColorBrush x:Key="ToolTipForegroundBrush" Color="#F1F5F9" />
+
     <!-- Read/Write required field brushes -->
     <SolidColorBrush x:Key="ReadRequiredForeground" Color="#60A5FA" />
     <SolidColorBrush x:Key="WriteRequiredForeground" Color="#FB923C" />
@@ -321,6 +326,33 @@
                 <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- ToolTip Style - high contrast for dark theme -->
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="{StaticResource ToolTipBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ToolTipBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{StaticResource ToolTipForegroundBrush}" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border 
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter 
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

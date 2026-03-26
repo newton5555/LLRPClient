@@ -66,7 +66,7 @@
         </StackPanel>
 
         <!-- Data Grid -->
-        <Border Grid.Row="4" Classes="card">
+        <Border Grid.Row="4" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
             <DataGrid x:Name="InventoryDataGrid"
                       ItemsSource="{Binding ReceivedTags}"
                       AutoGenerateColumns="False"

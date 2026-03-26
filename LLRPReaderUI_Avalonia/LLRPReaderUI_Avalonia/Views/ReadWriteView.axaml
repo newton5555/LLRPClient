@@ -11,7 +11,7 @@
     <ScrollViewer>
         <StackPanel Margin="{DynamicResource PagePadding}" MaxWidth="900" Spacing="12">
             <!-- Read/Write Configuration -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="12">
                     <!-- Header -->
                     <TextBlock Text="{DynamicResource ReadWrite.ReadConfig}" 
@@ -134,7 +134,7 @@
             </Border>
 
             <!-- Operations -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="12">
                     <!-- Header -->
                     <TextBlock Text="{DynamicResource ReadWrite.Operations}" 
@@ -172,7 +172,7 @@
             </Border>
 
             <!-- Read Result -->
-            <Border Classes="card">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="12">
                     <!-- Header -->
                     <TextBlock Text="{DynamicResource ReadWrite.ReadResult}" 

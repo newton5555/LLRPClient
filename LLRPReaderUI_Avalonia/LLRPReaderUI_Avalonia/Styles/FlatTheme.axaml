@@ -210,4 +210,15 @@
         <Setter Property="FontSize" Value="13" />
     </Style>
 
+    <!-- ToolTip Style -->
+    <Style Selector="ToolTip">
+        <Setter Property="Background" Value="{DynamicResource ToolTipBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolTipBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource ToolTipForegroundBrush}" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
 </Styles>
