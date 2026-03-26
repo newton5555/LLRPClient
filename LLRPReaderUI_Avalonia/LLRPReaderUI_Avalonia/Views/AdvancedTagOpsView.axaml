@@ -8,94 +8,137 @@
              x:DataType="vm:AdvancedTagOpsViewModel">
 
     <ScrollViewer>
-        <StackPanel Margin="16" MaxWidth="900" Spacing="12">
+        <StackPanel Margin="{DynamicResource PagePadding}" MaxWidth="900" Spacing="12">
             <!-- Standard Summary -->
-            <Border Background="White" CornerRadius="8" Padding="12">
+            <Border Classes="card">
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{DynamicResource AdvancedTagOps.StandardSummary}" FontWeight="SemiBold" FontSize="14"/>
-                    <TextBlock Text="15.2.1.3.2 C1G2 OpSpec Parameters" Foreground="#666" Margin="0,8,0,0"/>
-                    <TextBlock Text="15.2.1.3.2.1 C1G2Read" Foreground="#666"/>
-                    <TextBlock Text="15.2.1.3.2.2 C1G2Write" Foreground="#666"/>
-                    <TextBlock Text="15.2.1.3.2.3 C1G2Kill" Foreground="#666"/>
-                    <TextBlock Text="15.2.1.3.2.4 C1G2Lock" Foreground="#666"/>
-                    <TextBlock Text="15.2.1.3.2.5 C1G2BlockErase" Foreground="#666"/>
-                    <TextBlock Text="15.2.1.3.2.6 C1G2BlockWrite" Foreground="#666"/>
+                    <TextBlock Text="{DynamicResource AdvancedTagOps.StandardSummary}" 
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="15.2.1.3.2 C1G2 OpSpec Parameters" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,8,0,0"/>
+                    <TextBlock Text="15.2.1.3.2.1 C1G2Read" 
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="15.2.1.3.2.2 C1G2Write" 
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="15.2.1.3.2.3 C1G2Kill" 
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="15.2.1.3.2.4 C1G2Lock" 
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="15.2.1.3.2.5 C1G2BlockErase" 
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="15.2.1.3.2.6 C1G2BlockWrite" 
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
             </Border>
 
             <!-- Common Parameters -->
-            <Border Background="White" CornerRadius="8" Padding="12">
+            <Border Classes="card">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{DynamicResource AdvancedTagOps.CommonParams}" FontWeight="SemiBold" FontSize="14"/>
-                    <TextBlock Text="{DynamicResource AdvancedTagOps.Warning}" Foreground="#EF4444" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                    <TextBlock Text="{DynamicResource AdvancedTagOps.CommonParams}" 
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{DynamicResource AdvancedTagOps.Warning}" 
+                               Foreground="{DynamicResource IconDangerBrush}" FontWeight="SemiBold" Margin="0,8,0,0"/>
                     <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto" Margin="0,8,0,0">
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.TargetTagType}" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding TargetTagBanks}" SelectedItem="{Binding SelectedTargetTagBank}" Height="32"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.TargetTagType}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding TargetTagBanks}" 
+                                  SelectedItem="{Binding SelectedTargetTagBank}" Height="32"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.TargetTagValue}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.TargetTagValue}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding TargetTagData, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.AccessPassword}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.AccessPassword}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding AccessPassword, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.KillPassword}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.KillPassword}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding KillPassword, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
 
-                        <TextBlock Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Text="{DynamicResource AdvancedTagOps.PermalockNote}" Foreground="#666" FontSize="12"/>
+                        <TextBlock Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" 
+                                   Text="{DynamicResource AdvancedTagOps.PermalockNote}" 
+                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
             <!-- Block Erase -->
-            <Border Background="White" CornerRadius="8" Padding="12">
+            <Border Classes="card">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{DynamicResource AdvancedTagOps.BlockErase}" FontWeight="SemiBold" FontSize="14"/>
-                    <TextBlock Text="{Binding IsBlockEraseSupported, StringFormat='Device Capability: C1G2BlockErase {0}'}" Foreground="#666" Margin="0,8,0,0"/>
+                    <TextBlock Text="{DynamicResource AdvancedTagOps.BlockErase}" 
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding IsBlockEraseSupported, StringFormat='Device Capability: C1G2BlockErase {0}'}" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,8,0,0"/>
                     <Grid ColumnDefinitions="130,*,150" RowDefinitions="Auto,10,Auto,10,Auto" Margin="0,8,0,0">
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.MemoryBank}" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding SelectedMemoryBank}" Height="32"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.MemoryBank}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" 
+                                  SelectedItem="{Binding SelectedMemoryBank}" Height="32"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.WordStartAddr}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.WordStartAddr}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding WordPointer, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.WordCount}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.WordCount}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding WordCount, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
-                        <Button Grid.Row="4" Grid.Column="2" Height="36" Margin="10,0,0,0" Content="{DynamicResource AdvancedTagOps.ExecuteBlockErase}" IsEnabled="{Binding IsBlockEraseSupported}" Command="{Binding BlockEraseCommand}"/>
+                        <Button Grid.Row="4" Grid.Column="2" Height="36" Margin="10,0,0,0" 
+                                Content="{DynamicResource AdvancedTagOps.ExecuteBlockErase}" 
+                                IsEnabled="{Binding IsBlockEraseSupported}" Command="{Binding BlockEraseCommand}"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
             <!-- Lock Operation -->
-            <Border Background="White" CornerRadius="8" Padding="12">
+            <Border Classes="card">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{DynamicResource AdvancedTagOps.LockOp}" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Text="{DynamicResource AdvancedTagOps.LockOp}" 
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <Grid ColumnDefinitions="130,*,150" RowDefinitions="Auto,10,Auto" Margin="0,8,0,0">
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.LockTarget}" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding LockBanks}" SelectedItem="{Binding SelectedLockBank}" Height="32"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.LockTarget}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding LockBanks}" 
+                                  SelectedItem="{Binding SelectedLockBank}" Height="32"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.LockAction}" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LockActions}" SelectedItem="{Binding SelectedLockAction}" Height="32"/>
-                        <Button Grid.Row="2" Grid.Column="2" Height="36" Margin="10,0,0,0" Content="{DynamicResource AdvancedTagOps.ExecuteLock}" Command="{Binding LockCommand}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.LockAction}" 
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LockActions}" 
+                                  SelectedItem="{Binding SelectedLockAction}" Height="32"/>
+                        <Button Grid.Row="2" Grid.Column="2" Height="36" Margin="10,0,0,0" 
+                                Content="{DynamicResource AdvancedTagOps.ExecuteLock}" Command="{Binding LockCommand}"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
             <!-- Kill Operation -->
-            <Border Background="White" CornerRadius="8" Padding="12">
+            <Border Classes="card">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{DynamicResource AdvancedTagOps.KillOp}" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Text="{DynamicResource AdvancedTagOps.KillOp}" 
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <Button Height="36" Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" Command="{Binding KillCommand}"/>
-                        <TextBlock Text="{DynamicResource AdvancedTagOps.KillWarning}" Foreground="#EF4444" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <Button Height="36" Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" 
+                                Command="{Binding KillCommand}"/>
+                        <TextBlock Text="{DynamicResource AdvancedTagOps.KillWarning}" 
+                                   Foreground="{DynamicResource IconDangerBrush}" 
+                                   VerticalAlignment="Center" Margin="10,0,0,0"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
             <!-- Result -->
-            <Border Background="White" CornerRadius="8" Padding="12">
+            <Border Classes="card">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{DynamicResource AdvancedTagOps.Result}" FontWeight="SemiBold" FontSize="14"/>
-                    <TextBlock Text="{Binding OperationResult}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                    <TextBlock Text="{DynamicResource AdvancedTagOps.Result}" 
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding OperationResult}" TextWrapping="Wrap" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </StackPanel>
             </Border>
         </StackPanel>
