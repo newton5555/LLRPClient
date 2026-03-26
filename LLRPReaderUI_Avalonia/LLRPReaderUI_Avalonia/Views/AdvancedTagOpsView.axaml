@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="LLRPReaderUI_Avalonia.Views.AdvancedTagOpsView"
+             x:DataType="vm:AdvancedTagOpsViewModel">
+
+    <Grid Margin="16">
+        <Border Background="White" CornerRadius="8" Padding="16">
+            <StackPanel Spacing="16">
+                <TextBlock Text="Advanced Tag Operations" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="Lock, Kill, and other advanced tag operations" Foreground="#666" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

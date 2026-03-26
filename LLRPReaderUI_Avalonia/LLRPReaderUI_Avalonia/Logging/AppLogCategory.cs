@@ -6,4 +6,3 @@ public enum AppLogCategory
     LlrpMessage,
     RawFrame
 }
-

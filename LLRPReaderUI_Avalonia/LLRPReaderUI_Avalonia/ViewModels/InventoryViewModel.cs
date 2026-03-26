@@ -5,41 +5,23 @@ using LLRPSdk;
 using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Messages;
 using LLRPReaderUI_Avalonia.Models;
+using LLRPReaderUI_Avalonia.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Threading;
-using System;
-using Avalonia;
-using System.Collections.Generic;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class InventoryViewModel : ViewModelBase
+public partial class InventoryViewModel : ObservableObject
 {
     private const int MaxRows = 500;
     private static readonly TimeSpan ManualPullAcceptWindow = TimeSpan.FromSeconds(2);
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
+    private readonly LanguageService _languageService;
     private readonly HashSet<string> uniqueEpcs = new(StringComparer.OrdinalIgnoreCase);
     private DateTime manualPullAcceptUntilUtc = DateTime.MinValue;
-
-    public InventoryViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore)
-    {
-        this.reader = reader;
-        this.logs = logs;
-        this.settingsStore = settingsStore;
-        this.reader.TagsReported += OnTagsReported;
-        this.reader.ReaderStopped += OnReaderStopped;
-        WeakReferenceMessenger.Default.Register<InventoryViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
-        {
-            r.OnConnectionStateChanged(m.Value);
-        });
-        WeakReferenceMessenger.Default.Register<InventoryViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
-        {
-            r.OnStatusUpdateRequested(m.Value);
-        });
-    }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StartInventoryCommand))]
@@ -47,7 +29,7 @@ public partial class InventoryViewModel : ViewModelBase
     private bool isRunning;
 
     [ObservableProperty]
-    private string inventoryState = "未开始";
+    private string inventoryState = string.Empty;
 
     [ObservableProperty]
     private int totalReports;
@@ -68,6 +50,81 @@ public partial class InventoryViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(ManualPullBufferedReportsCommand))]
     private bool isManualPullAvailable;
 
+    [ObservableProperty]
+    private bool showPcColumn;
+
+    [ObservableProperty]
+    private bool showCrcColumn;
+
+    [ObservableProperty]
+    private bool showFirstSeenTimestampUtcColumn;
+
+    [ObservableProperty]
+    private bool showLastSeenTimestampUtcColumn;
+
+    [ObservableProperty]
+    private bool showAntennaPortNumberColumn;
+
+    [ObservableProperty]
+    private bool showChannelColumn;
+
+    [ObservableProperty]
+    private bool showPeakRssiColumn;
+
+    [ObservableProperty]
+    private bool showSeenCountColumn;
+
+    public InventoryViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore, LanguageService languageService)
+    {
+        this.reader = reader;
+        this.logs = logs;
+        this.settingsStore = settingsStore;
+        _languageService = languageService;
+        this.reader.TagsReported += OnTagsReported;
+        this.reader.ReaderStopped += OnReaderStopped;
+        WeakReferenceMessenger.Default.Register<InventoryViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
+        {
+            r.OnConnectionStateChanged(m.Value);
+        });
+        WeakReferenceMessenger.Default.Register<InventoryViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
+        {
+            r.OnStatusUpdateRequested(m.Value);
+        });
+
+        // Subscribe to language changes
+        _languageService.OnLanguageChanged += OnLanguageChanged;
+
+        // Set initial state
+        InventoryState = _languageService.GetLocalizedString("Inventory.NotStarted");
+
+        RefreshReportColumnVisibility();
+    }
+
+    private void OnLanguageChanged(AppLanguage language)
+    {
+        // Refresh UI state text if not running
+        if (!IsRunning)
+        {
+            if (reader.IsConnected)
+            {
+                InventoryState = _languageService.GetLocalizedString("Inventory.ConnectedReady");
+            }
+            else
+            {
+                InventoryState = _languageService.GetLocalizedString("Inventory.NotStarted");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
+    }
+
     private bool CanStartInventory() => !IsRunning;
 
     private bool CanStopInventory() => IsRunning;
@@ -77,8 +134,8 @@ public partial class InventoryViewModel : ViewModelBase
     {
         if (!reader.IsConnected)
         {
-            InventoryState = "请先连接设备";
-            logs.LogOperation("盘点开始失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+            InventoryState = _languageService.GetLocalizedString("Common.ConnectFirst");
+            logs.LogOperation(_languageService.GetLocalizedString("Inventory.StartFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
@@ -88,33 +145,38 @@ public partial class InventoryViewModel : ViewModelBase
             reader.Start();
             ClearReceivedData();
             IsRunning = true;
-            InventoryState = "寻卡中";
-            logs.LogOperation("开始寻卡");
+            InventoryState = _languageService.GetLocalizedString("Inventory.Running");
+            logs.LogOperation(_languageService.GetLocalizedString("Inventory.StartLog"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("InventoryStarted"));
         }
         catch (Exception ex)
         {
             IsRunning = false;
-            InventoryState = $"开始失败：{ex.Message}";
-            logs.LogOperation($"开始寻卡失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            InventoryState = GetLocalizedString("Inventory.StartFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("Inventory.StartFailedLog", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
     [RelayCommand(CanExecute = nameof(CanStopInventory))]
-    private void StopInventory()
+    private async void StopInventory()
     {
         try
         {
+            InventoryState = _languageService.GetLocalizedString("Inventory.Stopping");
             reader.Stop();
+            // 等待一段时间让阅读器发送缓存的标签数据
+            // 阅读器在停止时会发送最后一批 RO_ACCESS_REPORT
+            await Task.Delay(100);
             IsRunning = false;
-            InventoryState = "已停止";
-            logs.LogOperation("停止寻卡");
+            InventoryState = _languageService.GetLocalizedString("Inventory.Stopped");
+            logs.LogOperation(_languageService.GetLocalizedString("Inventory.StopLog"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("InventoryStopped"));
         }
         catch (Exception ex)
         {
-            InventoryState = $"停止失败：{ex.Message}";
-            logs.LogOperation($"停止寻卡失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            IsRunning = false;
+            InventoryState = GetLocalizedString("Inventory.StopFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("Inventory.StopFailedLog", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -126,7 +188,7 @@ public partial class InventoryViewModel : ViewModelBase
         TotalReports = 0;
         TotalTags = 0;
         UniqueTagCount = 0;
-        logs.LogOperation("清空盘点数据");
+        logs.LogOperation(_languageService.GetLocalizedString("Inventory.DataCleared"));
     }
 
     [RelayCommand(CanExecute = nameof(CanManualPullBufferedReports))]
@@ -134,15 +196,15 @@ public partial class InventoryViewModel : ViewModelBase
     {
         if (!reader.IsConnected)
         {
-            InventoryState = "请先连接设备";
-            logs.LogOperation("手动拉缓存失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+            InventoryState = _languageService.GetLocalizedString("Common.ConnectFirst");
+            logs.LogOperation(_languageService.GetLocalizedString("Inventory.PullFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
         if (!IsManualPullAvailable)
         {
-            InventoryState = "仅 WaitForQuery 模式支持手动拉缓存";
-            logs.LogOperation("手动拉缓存失败：当前上报模式不是 WaitForQuery", Microsoft.Extensions.Logging.LogLevel.Warning);
+            InventoryState = _languageService.GetLocalizedString("Inventory.PullNotSupported");
+            logs.LogOperation(_languageService.GetLocalizedString("Inventory.PullNotSupportedLog"), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
@@ -151,13 +213,13 @@ public partial class InventoryViewModel : ViewModelBase
             RefreshAttachedDataEnabled();
             manualPullAcceptUntilUtc = DateTime.UtcNow.Add(ManualPullAcceptWindow);
             reader.QueryTags();
-            InventoryState = "已发送拉取缓存请求";
-            logs.LogOperation("已发送手动拉取缓存请求(GET_REPORT)");
+            InventoryState = _languageService.GetLocalizedString("Inventory.PullSent");
+            logs.LogOperation(_languageService.GetLocalizedString("Inventory.PullSentLog"));
         }
         catch (Exception ex)
         {
-            InventoryState = $"拉取失败：{ex.Message}";
-            logs.LogOperation($"手动拉缓存失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            InventoryState = GetLocalizedString("Inventory.PullFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("Inventory.PullFailedLog", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -172,8 +234,8 @@ public partial class InventoryViewModel : ViewModelBase
         RunOnUi(() =>
         {
             IsRunning = false;
-            InventoryState = "已停止";
-            logs.LogOperation("读写器事件：盘点已停止");
+            InventoryState = _languageService.GetLocalizedString("Inventory.Stopped");
+            logs.LogOperation(_languageService.GetLocalizedString("Inventory.ReaderStopped"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("InventoryStoppedByReader"));
         });
     }
@@ -190,7 +252,7 @@ public partial class InventoryViewModel : ViewModelBase
         {
             TotalReports++;
             TotalTags += report.Tags.Count;
-            logs.LogOperation($"收到标签上报：{report.Tags.Count} 个");
+            logs.LogOperation(GetLocalizedString("Inventory.TagReport", report.Tags.Count));
 
             foreach (var tag in report.Tags)
             {
@@ -208,12 +270,16 @@ public partial class InventoryViewModel : ViewModelBase
 
                 ReceivedTags.Insert(0, new InventoryTagItemViewModel
                 {
-                    ReceiveTime = DateTime.Now,
+                    ReceiveTime = DateTime.Now,//From PC 
                     Epc = epc,
                     Antenna = tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber.ToString() : "-",
                     ChannelMhz = tag.IsChannelInMhzPresent ? tag.ChannelInMhz.ToString("F3") : "-",
                     Rssi = tag.IsPeakRssiPresent ? tag.PeakRssi.ToString("F1") : "-",
                     SeenCount = tag.IsSeenCountPresent ? tag.TagSeenCount.ToString() : "-",
+                    Pc = tag.IsPcBitsPresent ? $"0x{tag.PcBits:X4}" : "-",
+                    Crc = tag.IsCrcPresent ? $"0x{tag.Crc:X4}" : "-",
+                    FirstSeenTimestampUtc = FormatUtcTimestamp(tag.IsFirstSeenTimePresent, tag.FirstSeenTime),
+                    LastSeenTimestampUtc = FormatUtcTimestamp(tag.IsLastSeenTimePresent, tag.LastSeenTime),
                     AttachedData = attachedData
                 });
             }
@@ -236,7 +302,7 @@ public partial class InventoryViewModel : ViewModelBase
             return;
         }
 
-        dispatcher.Post(action);
+        dispatcher.Invoke(action);
     }
 
     public void OnConnectionStateChanged(bool isConnected)
@@ -246,17 +312,19 @@ public partial class InventoryViewModel : ViewModelBase
             if (!isConnected)
             {
                 IsRunning = false;
-                InventoryState = "请先连接设备";
+                InventoryState = _languageService.GetLocalizedString("Common.ConnectFirst");
                 AttachedDataEnabled = false;
                 IsManualPullAvailable = false;
+                RefreshReportColumnVisibility();
                 return;
             }
 
             RefreshAttachedDataEnabled();
             RefreshManualPullAvailability();
+            RefreshReportColumnVisibility();
             if (!IsRunning)
             {
-                InventoryState = "已连接，待开始";
+                InventoryState = _languageService.GetLocalizedString("Inventory.ConnectedReady");
             }
         });
     }
@@ -266,6 +334,7 @@ public partial class InventoryViewModel : ViewModelBase
         if (!reader.IsConnected)
         {
             AttachedDataEnabled = false;
+            RefreshReportColumnVisibility();
             return;
         }
 
@@ -275,6 +344,7 @@ public partial class InventoryViewModel : ViewModelBase
         {
             RefreshAttachedDataEnabled();
             RefreshManualPullAvailability();
+            RefreshReportColumnVisibility();
         }
     }
 
@@ -305,6 +375,50 @@ public partial class InventoryViewModel : ViewModelBase
 
         IsManualPullAvailable = false;
     }
+
+    private void RefreshReportColumnVisibility()
+    {
+        if (settingsStore.TryGetSnapshot(out var settings) && settings?.Report is not null)
+        {
+            ShowPcColumn = settings.Report.IncludePcBits;
+            ShowCrcColumn = settings.Report.IncludeCrc;
+            ShowFirstSeenTimestampUtcColumn = settings.Report.IncludeFirstSeenTime;
+            ShowLastSeenTimestampUtcColumn = settings.Report.IncludeLastSeenTime;
+            ShowAntennaPortNumberColumn = settings.Report.IncludeAntennaPortNumber;
+            ShowChannelColumn = settings.Report.IncludeChannel;
+            ShowPeakRssiColumn=settings.Report.IncludePeakRssi;
+            ShowSeenCountColumn=settings.Report.IncludeSeenCount;
+            return;
+        }
+
+        ShowPcColumn = false;
+        ShowCrcColumn = false;
+        ShowFirstSeenTimestampUtcColumn = false;
+        ShowLastSeenTimestampUtcColumn = false;
+
+        ShowAntennaPortNumberColumn = false;
+        ShowChannelColumn = false;
+        ShowPeakRssiColumn = false;
+        ShowSeenCountColumn = false;
+    }
+
+    private static string FormatUtcTimestamp(bool isPresent, Timestamp? timestamp)
+    {
+        if (!isPresent || timestamp is null)
+        {
+            return "-";
+        }
+
+        try
+        {
+            var utcDateTime = timestamp.UTCDateTime;
+            return utcDateTime.ToString("yy-MM-dd HH:mm:ss.fff");
+        }
+        catch
+        {
+            return timestamp.Utc.ToString();
+        }
+    }
 }
 
 public class InventoryTagItemViewModel
@@ -315,7 +429,9 @@ public class InventoryTagItemViewModel
     public string ChannelMhz { get; set; } = "-";
     public string Rssi { get; set; } = "-";
     public string SeenCount { get; set; } = "-";
+    public string Pc { get; set; } = "-";
+    public string Crc { get; set; } = "-";
+    public string FirstSeenTimestampUtc { get; set; } = "-";
+    public string LastSeenTimestampUtc { get; set; } = "-";
     public string AttachedData { get; set; } = "-";
 }
-
-

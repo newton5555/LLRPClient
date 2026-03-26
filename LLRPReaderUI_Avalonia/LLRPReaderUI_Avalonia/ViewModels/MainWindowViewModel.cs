@@ -1,21 +1,25 @@
-using System.Collections.ObjectModel;
-using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LLRPSdk;
+using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Messages;
 using LLRPReaderUI_Avalonia.Models;
-using Material.Icons;
-using System.Linq;
+using LLRPReaderUI_Avalonia.Services;
+using LLRPSdk;
+using Serilog;
+using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainWindowViewModel : ObservableObject
 {
     private readonly LlrpReader reader;
+    private readonly ReaderStatusStore statusStore;
+    private readonly IAppLogService logs;
+    private readonly LanguageService _languageService;
 
-
+    public ThemeLanguageViewModel ThemeLanguageViewModel { get; }
 
     [ObservableProperty]
     private NavigationItem? selectedNavigationItem;
@@ -27,73 +31,118 @@ public partial class MainViewModel : ViewModelBase
     private string statusText = "Ready";
 
     [ObservableProperty]
-    private string deviceStatusText = "设备: 未连接";
+    private string deviceStatusText = string.Empty;
 
     [ObservableProperty]
-    private string inventoryStatusText = "盘点: 未知";
-
-    //[ObservableProperty]
-    //private string temperatureStatusText = "温度: --°C";
+    private bool isDeviceConnected;
 
     [ObservableProperty]
-    private string antennaStatusText = "天线: --";
+    private bool isGlobalBusy;
 
     [ObservableProperty]
-    private string gpiStatusText = "GPI: --";
+    private string busyText = string.Empty;
 
     [ObservableProperty]
-    private string gpoStatusText = "GPO: --";
+    private string inventoryStatusText = string.Empty;
 
     [ObservableProperty]
-    private string identificationStatusText = "MAC: --";
+    private bool isInventoryRunning;
+
+    [ObservableProperty]
+    private string antennaStatusText = string.Empty;
+
+    [ObservableProperty]
+    private string gpiStatusText = string.Empty;
+
+    [ObservableProperty]
+    private string gpoStatusText = string.Empty;
+
+    [ObservableProperty]
+    private string identificationStatusText = string.Empty;
 
     [ObservableProperty]
     private string windowTitle = BuildWindowTitle();
 
     public ObservableCollection<NavigationItem> NavigationItems { get; } = new();
 
-    public MainViewModel(
+    public MainWindowViewModel(
         LlrpReader reader,
+        ReaderStatusStore statusStore,
         DeviceConnectionViewModel deviceConnectionViewModel,
         SettingsViewModel settingsViewModel,
         GpioViewModel gpioViewModel,
         InventoryConfigViewModel inventoryConfigViewModel,
         InventoryViewModel inventoryViewModel,
         ReadWriteViewModel readWriteViewModel,
-        LogViewModel logViewModel)
+        AdvancedTagOpsViewModel advancedTagOpsViewModel,
+        IAppLogService logs,
+        LogViewModel logViewModel,
+        LLRPMessageViewModel llrpMessageViewModel,
+        ThemeLanguageViewModel themeLanguageViewModel,
+        LanguageService languageService)
     {
         this.reader = reader;
+        this.statusStore = statusStore;
+        this.logs = logs;
+        _languageService = languageService;
+        ThemeLanguageViewModel = themeLanguageViewModel;
 
         NavigationItems =
         [
-            new NavigationItem { Title = "设备连接", IconKind = MaterialIconKind.LanConnect, ViewModel = deviceConnectionViewModel },
-            new NavigationItem { Title = "参数配置", IconKind = MaterialIconKind.Cog, ViewModel = settingsViewModel },
-            new NavigationItem { Title = "GPIO 配置", IconKind = MaterialIconKind.PowerPlug, ViewModel = gpioViewModel },
-            new NavigationItem { Title = "寻卡配置", IconKind = MaterialIconKind.Tune, ViewModel = inventoryConfigViewModel },
-            new NavigationItem { Title = "盘点操作", IconKind = MaterialIconKind.Radar, ViewModel = inventoryViewModel },
-            new NavigationItem { Title = "读写操作", IconKind = MaterialIconKind.PencilBoxOutline, ViewModel = readWriteViewModel },
-            new NavigationItem { Title = "日志", IconKind = MaterialIconKind.TextBoxSearchOutline, ViewModel = logViewModel }
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.DeviceConnection"), TitleResourceKey = "Menu.DeviceConnection", IconKind = MaterialIconKind.PowerPlug, IconBrush = CreateBrush("#0EA5E9"), ViewModel = deviceConnectionViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.Settings"), TitleResourceKey = "Menu.Settings", IconKind = MaterialIconKind.Cog, IconBrush = CreateBrush("#8B5CF6"), ViewModel = settingsViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.GPIO"), TitleResourceKey = "Menu.GPIO", IconKind = MaterialIconKind.Memory, IconBrush = CreateBrush("#F59E0B"), ViewModel = gpioViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.InventoryConfig"), TitleResourceKey = "Menu.InventoryConfig", IconKind = MaterialIconKind.Tools, IconBrush = CreateBrush("#14B8A6"), ViewModel = inventoryConfigViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.Inventory"), TitleResourceKey = "Menu.Inventory", IconKind = MaterialIconKind.TagMultiple, IconBrush = CreateBrush("#10B981"), ViewModel = inventoryViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.ReadWrite"), TitleResourceKey = "Menu.ReadWrite", IconKind = MaterialIconKind.Pencil, IconBrush = CreateBrush("#F97316"), ViewModel = readWriteViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.AdvancedTagOps"), TitleResourceKey = "Menu.AdvancedTagOps", IconKind = MaterialIconKind.Flask, IconBrush = CreateBrush("#EF4444"), ViewModel = advancedTagOpsViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.Log"), TitleResourceKey = "Menu.Log", IconKind = MaterialIconKind.TextBox, IconBrush = CreateBrush("#6366F1"), ViewModel = logViewModel },
+            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.LLRPMessage"), TitleResourceKey = "Menu.LLRPMessage", IconKind = MaterialIconKind.CodeTags, IconBrush = CreateBrush("#8B5CF6"), ViewModel = llrpMessageViewModel }
         ];
 
-        WeakReferenceMessenger.Default.Register<MainViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
+        _languageService.OnLanguageChanged += OnLanguageChanged;
+
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnDeviceConnectionStateChanged(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<MainViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, BusyStateChangedMessage>(this, static (r, m) =>
         {
-            r.QueryStatus();
+            r.IsGlobalBusy = m.Value;
+            r.BusyText = m.Text ?? string.Empty;
         });
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
+        {
+            var reason = m.Value;
+            if (reason.Contains("Inventory", StringComparison.OrdinalIgnoreCase))
+            {
+                r.QuerySingulatingState();
+            }
+            else
+            {
+                r.QueryStatus();
+            }
+        });
+
+        InitializeStatusTexts();
 
         SelectedNavigationItem = NavigationItems[0];
         CurrentPageViewModel = SelectedNavigationItem.ViewModel;
     }
 
+    private void InitializeStatusTexts()
+    {
+        DeviceStatusText = _languageService.GetLocalizedString("MainWindow.DeviceNotConnected");
+        InventoryStatusText = _languageService.GetLocalizedString("MainWindow.InventoryUnknown");
+        AntennaStatusText = _languageService.GetLocalizedString("MainWindow.AntennaDefault");
+        GpiStatusText = _languageService.GetLocalizedString("MainWindow.GPIDefault");
+        GpoStatusText = _languageService.GetLocalizedString("MainWindow.GPODefault");
+        IdentificationStatusText = _languageService.GetLocalizedString("MainWindow.MACDefault");
+    }
+
     private void OnDeviceConnectionStateChanged(bool isConnected)
     {
-        //if (isConnected)
-        {
-            QueryStatus();
-        }
+        QueryStatus();
     }
 
     [RelayCommand]
@@ -101,49 +150,81 @@ public partial class MainViewModel : ViewModelBase
     {
         if (!reader.IsConnected)
         {
-            DeviceStatusText = "设备: 未连接";
-            InventoryStatusText = "盘点: 未知";
-            //TemperatureStatusText = "温度: --°C";
-            AntennaStatusText = "天线: --";
-            GpiStatusText = "GPI: --";
-            GpoStatusText = "GPO: --";
-            IdentificationStatusText = "MAC: --";
+            statusStore.Clear();
+            UpdateStatusTexts(null);
+            IsDeviceConnected = false;
+            IsInventoryRunning = false;
+            IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: --";
             return;
         }
 
         var status = reader.QueryStatus();
+        statusStore.Set(status);
+        logs.LogOperation(_languageService.GetLocalizedString("MainWindow.StatusUpdated"));
+        UpdateStatusTexts(status);
+        IsDeviceConnected = status.IsConnected;
+        IsInventoryRunning = status.IsSingulating;
+        IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: {FormatIdentification(status.ReaderIdentity)}";
 
-        DeviceStatusText = $"设备: {(status.IsConnected ? "已连接" : "未连接")}";
-        InventoryStatusText = $"盘点: {(status.IsSingulating ? "进行中" : "空闲")}";
-        //TemperatureStatusText = $"温度: {status.TemperatureInCelsius}°C";
-        IdentificationStatusText = $"MAC: {FormatIdentification(status.ReaderIdentity)}";
-
-        var antennaParts = status.Antennas
-            .Cast<AntennaStatus>()
-            .OrderBy(x => x.PortNumber)
-            .Select(x => $"{x.PortNumber}:{(x.IsConnected ? "连" : "断")}")
-            .ToList();
-        //AntennaStatusText = antennaParts.Count > 0
-        //    ? $"天线: {string.Join(" ", antennaParts)}"
-        //    : "天线: 无数据";
+        var highText = _languageService.GetLocalizedString("Status.High");
+        var lowText = _languageService.GetLocalizedString("Status.Low");
 
         var gpiParts = status.Gpis
             .Cast<GpiStatus>()
             .OrderBy(x => x.PortNumber)
-            .Select(x => $"{x.PortNumber}:{(x.State ? "高" : "低")}")
+            .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
             .ToList();
         GpiStatusText = gpiParts.Count > 0
-            ? $"GPI: {string.Join(" ", gpiParts)}"
-            : "GPI: 无数据";
+            ? $"{_languageService.GetLocalizedString("Status.GPI")}: {string.Join(" ", gpiParts)}"
+            : $"{_languageService.GetLocalizedString("Status.GPI")}: {_languageService.GetLocalizedString("Status.NoData")}";
 
         var gpoParts = status.GpoStates
             .Cast<GpoStatus>()
             .OrderBy(x => x.PortNumber)
-            .Select(x => $"{x.PortNumber}:{(x.State ? "高" : "低")}")
+            .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
             .ToList();
         GpoStatusText = gpoParts.Count > 0
-            ? $"GPO: {string.Join(" ", gpoParts)}"
-            : "GPO: 当前设备未返回";
+            ? $"{_languageService.GetLocalizedString("Status.GPO")}: {string.Join(" ", gpoParts)}"
+            : $"{_languageService.GetLocalizedString("Status.GPO")}: {_languageService.GetLocalizedString("Status.NoResponse")}";
+    }
+
+    private void UpdateStatusTexts(Status? status)
+    {
+        var deviceText = _languageService.GetLocalizedString("Status.Device");
+        var inventoryText = _languageService.GetLocalizedString("Status.Inventory");
+
+        if (status == null)
+        {
+            DeviceStatusText = $"{deviceText}: {_languageService.GetLocalizedString("Status.NotConnected")}";
+            InventoryStatusText = $"{inventoryText}: {_languageService.GetLocalizedString("Status.Unknown")}";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+            GpiStatusText = $"{_languageService.GetLocalizedString("Status.GPI")}: --";
+            GpoStatusText = $"{_languageService.GetLocalizedString("Status.GPO")}: --";
+        }
+        else
+        {
+            DeviceStatusText = $"{deviceText}: {(status.IsConnected ? _languageService.GetLocalizedString("Status.Connected") : _languageService.GetLocalizedString("Status.NotConnected"))}";
+            InventoryStatusText = $"{inventoryText}: {(status.IsSingulating ? _languageService.GetLocalizedString("Status.Running") : _languageService.GetLocalizedString("Status.Idle"))}";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+        }
+    }
+
+    [RelayCommand]
+    private void QuerySingulatingState()
+    {
+        var inventoryText = _languageService.GetLocalizedString("Status.Inventory");
+
+        if (!reader.IsConnected)
+        {
+            InventoryStatusText = $"{inventoryText}: {_languageService.GetLocalizedString("Status.Unknown")}";
+            IsInventoryRunning = false;
+            return;
+        }
+
+        bool isSingulating = reader.QuerySingulatingState();
+        statusStore.SetSingulating(isSingulating);
+        InventoryStatusText = $"{inventoryText}: {(isSingulating ? _languageService.GetLocalizedString("Status.Running") : _languageService.GetLocalizedString("Status.Idle"))}";
+        IsInventoryRunning = isSingulating;
     }
 
     private static string FormatIdentification(object? readerIdentity)
@@ -176,7 +257,13 @@ public partial class MainViewModel : ViewModelBase
         }
 
         CurrentPageViewModel = value.ViewModel;
-        StatusText = $"当前页面：{value.Title}";
+        StatusText = GetLocalizedString("MainWindow.CurrentPage", value.Title);
+    }
+
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
     }
 
     private static string BuildWindowTitle()
@@ -198,6 +285,63 @@ public partial class MainViewModel : ViewModelBase
             ? appName
             : $"{appName} v{assemblyVersion}";
     }
+
+    private static IBrush CreateBrush(string hex)
+    {
+        if (Color.TryParse(hex, out var color))
+        {
+            return new SolidColorBrush(color);
+        }
+        return Brushes.DodgerBlue;
+    }
+
+    private void OnLanguageChanged(AppLanguage language)
+    {
+        foreach (var item in NavigationItems)
+        {
+            if (!string.IsNullOrEmpty(item.TitleResourceKey))
+            {
+                var newTitle = _languageService.GetLocalizedString(item.TitleResourceKey);
+                item.UpdateTitle(newTitle);
+            }
+        }
+
+        RefreshStatusDisplay();
+    }
+
+    private void RefreshStatusDisplay()
+    {
+        if (statusStore.TryGetSnapshot(out var status) && status != null)
+        {
+            UpdateStatusTexts(status);
+            var highText = _languageService.GetLocalizedString("Status.High");
+            var lowText = _languageService.GetLocalizedString("Status.Low");
+
+            var gpiParts = status.Gpis
+                .Cast<GpiStatus>()
+                .OrderBy(x => x.PortNumber)
+                .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
+                .ToList();
+            GpiStatusText = gpiParts.Count > 0
+                ? $"{_languageService.GetLocalizedString("Status.GPI")}: {string.Join(" ", gpiParts)}"
+                : $"{_languageService.GetLocalizedString("Status.GPI")}: {_languageService.GetLocalizedString("Status.NoData")}";
+
+            var gpoParts = status.GpoStates
+                .Cast<GpoStatus>()
+                .OrderBy(x => x.PortNumber)
+                .Select(x => $"{x.PortNumber}:{(x.State ? highText : lowText)}")
+                .ToList();
+            GpoStatusText = gpoParts.Count > 0
+                ? $"{_languageService.GetLocalizedString("Status.GPO")}: {string.Join(" ", gpoParts)}"
+                : $"{_languageService.GetLocalizedString("Status.GPO")}: {_languageService.GetLocalizedString("Status.NoResponse")}";
+
+            IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: {FormatIdentification(status.ReaderIdentity)}";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+        }
+        else
+        {
+            UpdateStatusTexts(null);
+            IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: --";
+        }
+    }
 }
-
-

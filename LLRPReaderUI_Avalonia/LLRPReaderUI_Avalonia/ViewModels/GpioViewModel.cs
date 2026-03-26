@@ -4,35 +4,55 @@ using CommunityToolkit.Mvvm.Messaging;
 using LLRPSdk;
 using LLRPReaderUI_Avalonia.Messages;
 using LLRPReaderUI_Avalonia.Models;
+using LLRPReaderUI_Avalonia.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class GpioViewModel : ViewModelBase
+public partial class GpioViewModel : ObservableObject
 {
     private readonly LlrpReader reader;
     private readonly ReaderSettingsStore settingsStore;
+    private readonly ReaderStatusStore statusStore;
+    private readonly LanguageService _languageService;
 
-    public GpioViewModel(LlrpReader reader, ReaderSettingsStore settingsStore)
+    public GpioViewModel(
+        LlrpReader reader,
+        ReaderSettingsStore settingsStore,
+        ReaderStatusStore statusStore,
+        LanguageService languageService)
     {
         this.reader = reader;
         this.settingsStore = settingsStore;
+        this.statusStore = statusStore;
+        _languageService = languageService;
         WeakReferenceMessenger.Default.Register<GpioViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnConnectionStateChanged(m.Value);
         });
+
+        // Set initial state
+        OperationResult = _languageService.GetLocalizedString("Common.NotOperated");
     }
 
     [ObservableProperty]
-    private string operationResult = "未操作";
+    private string operationResult = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<GpiPortItemViewModel> gpis = new();
 
     [ObservableProperty]
     private ObservableCollection<GpoPortItemViewModel> gpos = new();
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
+    }
 
     [RelayCommand]
     private void QueryGpioSettings()
@@ -41,17 +61,21 @@ public partial class GpioViewModel : ViewModelBase
         {
             if (!reader.IsConnected)
             {
-                OperationResult = "请先连接读写器";
+                OperationResult = _languageService.GetLocalizedString("GPIO.ConnectReaderFirst");
                 return;
             }
 
             if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
             {
-                OperationResult = "请先在参数配置页点击获取参数";
+                OperationResult = _languageService.GetLocalizedString("GPIO.GetSettingsFirst");
                 return;
             }
 
-            var status = reader.QueryStatus();
+            if (!statusStore.TryGetSnapshot(out var status) || status is null)
+            {
+                status = reader.QueryStatus();
+                statusStore.Set(status);
+            }
 
             var gpiConfigByPort = settings.Gpis.GpiConfigs
                 .GroupBy(x => x.PortNumber)
@@ -59,6 +83,10 @@ public partial class GpioViewModel : ViewModelBase
             var gpiStateByPort = status.Gpis
                 .Cast<GpiStatus>()
                 .ToDictionary(x => x.PortNumber, x => x.State);
+
+            var highText = _languageService.GetLocalizedString("Common.High");
+            var lowText = _languageService.GetLocalizedString("Common.Low");
+            var unknownText = _languageService.GetLocalizedString("Common.Unknown");
 
             Gpis.Clear();
             for (var port = 1; port <= reader.ReaderCapabilities.GpiCount; port++)
@@ -72,14 +100,16 @@ public partial class GpioViewModel : ViewModelBase
                     PortNumber = portNumber,
                     IsEnabled = gpiConfig?.IsEnabled ?? false,
                     CurrentStateText = gpiStateByPort.ContainsKey(portNumber)
-                        ? (gpiState ? "高" : "低")
-                        : "未知"
+                        ? (gpiState ? highText : lowText)
+                        : unknownText
                 });
             }
 
             var gpoStateByPort = status.GpoStates
                 .Cast<GpoStatus>()
                 .ToDictionary(x => x.PortNumber, x => x.State);
+
+            var noResponseText = _languageService.GetLocalizedString("Common.NoResponse");
 
             Gpos.Clear();
             for (var port = 1; port <= reader.ReaderCapabilities.GpoCount; port++)
@@ -90,15 +120,15 @@ public partial class GpioViewModel : ViewModelBase
                 {
                     PortNumber = portNumber,
                     DesiredState = hasState && gpoState,
-                    CurrentStateText = hasState ? (gpoState ? "高" : "低") : "设备未返回"
+                    CurrentStateText = hasState ? (gpoState ? highText : lowText) : noResponseText
                 });
             }
 
-            OperationResult = "已获取 GPIO 配置与状态";
+            OperationResult = _languageService.GetLocalizedString("GPIO.GotConfig");
         }
         catch (Exception ex)
         {
-            OperationResult = $"获取失败：{ex.Message}";
+            OperationResult = GetLocalizedString("GPIO.GetFailed", ex.Message);
         }
     }
 
@@ -109,13 +139,13 @@ public partial class GpioViewModel : ViewModelBase
         {
             if (!reader.IsConnected)
             {
-                OperationResult = "请先连接读写器";
+                OperationResult = _languageService.GetLocalizedString("GPIO.ConnectReaderFirst");
                 return;
             }
 
             if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
             {
-                OperationResult = "请先在参数配置页点击获取参数";
+                OperationResult = _languageService.GetLocalizedString("GPIO.GetSettingsFirst");
                 return;
             }
 
@@ -135,11 +165,11 @@ public partial class GpioViewModel : ViewModelBase
 
             reader.ApplySettings(settings);
             settingsStore.Set(settings);
-            OperationResult = "GPI 配置已下发";
+            OperationResult = _languageService.GetLocalizedString("GPIO.GpiSaved");
         }
         catch (Exception ex)
         {
-            OperationResult = $"下发失败：{ex.Message}";
+            OperationResult = GetLocalizedString("GPIO.GpiSaveFailed", ex.Message);
         }
     }
 
@@ -150,7 +180,7 @@ public partial class GpioViewModel : ViewModelBase
         {
             if (!reader.IsConnected)
             {
-                OperationResult = "请先连接读写器";
+                OperationResult = _languageService.GetLocalizedString("GPIO.ConnectReaderFirst");
                 return;
             }
 
@@ -160,26 +190,32 @@ public partial class GpioViewModel : ViewModelBase
             }
 
             var status = reader.QueryStatus();
+            statusStore.Set(status);
             var gpoStateByPort = status.GpoStates
                 .Cast<GpoStatus>()
                 .ToDictionary(x => x.PortNumber, x => x.State);
+
+            var highText = _languageService.GetLocalizedString("Common.High");
+            var lowText = _languageService.GetLocalizedString("Common.Low");
+            var noResponseText = _languageService.GetLocalizedString("Common.NoResponse");
+
             foreach (var gpo in Gpos)
             {
                 if (gpoStateByPort.TryGetValue(gpo.PortNumber, out var state))
                 {
-                    gpo.CurrentStateText = state ? "高" : "低";
+                    gpo.CurrentStateText = state ? highText : lowText;
                 }
                 else
                 {
-                    gpo.CurrentStateText = "设备未返回";
+                    gpo.CurrentStateText = noResponseText;
                 }
             }
 
-            OperationResult = "GPO 输出已下发";
+            OperationResult = _languageService.GetLocalizedString("GPIO.GpoApplied");
         }
         catch (Exception ex)
         {
-            OperationResult = $"下发失败：{ex.Message}";
+            OperationResult = GetLocalizedString("GPIO.GpoApplyFailed", ex.Message);
         }
     }
 
@@ -189,11 +225,18 @@ public partial class GpioViewModel : ViewModelBase
         {
             Gpis.Clear();
             Gpos.Clear();
-            OperationResult = "请先连接读写器";
+            OperationResult = _languageService.GetLocalizedString("GPIO.ConnectReaderFirst");
             return;
         }
 
-        OperationResult = settingsStore.HasValue ? "可读取缓存参数" : "请先在参数配置页点击获取参数";
+        OperationResult = settingsStore.HasValue
+            ? _languageService.GetLocalizedString("GPIO.CanReadCache")
+            : _languageService.GetLocalizedString("GPIO.GetSettingsFirst");
+
+        if(QueryGpioSettingsCommand.CanExecute(null))
+        {
+            QueryGpioSettingsCommand.Execute(null);
+        }
     }
 }
 
@@ -206,7 +249,7 @@ public partial class GpiPortItemViewModel : ObservableObject
     private bool isEnabled;
 
     [ObservableProperty]
-    private string currentStateText = "未知";
+    private string currentStateText = string.Empty;
 }
 
 public partial class GpoPortItemViewModel : ObservableObject
@@ -218,7 +261,5 @@ public partial class GpoPortItemViewModel : ObservableObject
     private bool desiredState;
 
     [ObservableProperty]
-    private string currentStateText = "设备未返回";
+    private string currentStateText = string.Empty;
 }
-
-

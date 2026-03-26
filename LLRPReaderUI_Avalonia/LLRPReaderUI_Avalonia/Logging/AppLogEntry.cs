@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace LLRPReaderUI_Avalonia.Logging;
 
@@ -11,4 +10,3 @@ public sealed class AppLogEntry
     public string Message { get; init; } = string.Empty;
     public string? Exception { get; init; }
 }
-

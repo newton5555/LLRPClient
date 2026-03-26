@@ -1,19 +1,18 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Messages;
-using Avalonia.Threading;
-using System;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class LogViewModel : ViewModelBase
+public partial class LogViewModel : ObservableObject
 {
     private const int MaxRows = 500;
-    private const int UIUpdateIntervalMs = 200; // 每 200ms 批量更新一次 UI
+    private const int UIUpdateIntervalMs = 200;
     private readonly IAppLogService appLogService;
     private readonly ConcurrentQueue<AppLogEntry> pendingEntries = new();
     private readonly DispatcherTimer uiUpdateTimer;
@@ -33,7 +32,6 @@ public partial class LogViewModel : ViewModelBase
 
         appLogService.EntryAdded += OnEntryAdded;
 
-        // 启动定时器批量更新 UI
         uiUpdateTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(UIUpdateIntervalMs)
@@ -99,13 +97,11 @@ public partial class LogViewModel : ViewModelBase
 
     private void OnEntryAdded(AppLogEntry entry)
     {
-        // 只是加入待处理队列，不立即更新 UI
         pendingEntries.Enqueue(entry);
     }
 
     private void OnUIUpdateTimerTick(object? sender, EventArgs e)
     {
-        // 批量处理所有待更新的日志条目
         while (pendingEntries.TryDequeue(out var entry))
         {
             AddEntryToView(entry);
@@ -148,12 +144,10 @@ public partial class LogViewModel : ViewModelBase
 
     private static void InsertCapped(ObservableCollection<string> collection, string line)
     {
-        collection.Insert(0, line);
+        collection.Add(line);
         while (collection.Count > MaxRows)
         {
-            collection.RemoveAt(collection.Count - 1);
+            collection.RemoveAt(0);
         }
     }
 }
-
-

@@ -1,37 +1,49 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LLRPSdk;
 using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Messages;
-using System.Threading;
-using System.Threading.Tasks;
+using LLRPReaderUI_Avalonia.Services;
+using LLRPSdk;
 using Avalonia.Threading;
-using System.Collections.Generic;
-using System;
+using System.Threading;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class ReadWriteViewModel : ViewModelBase
+public partial class ReadWriteViewModel : ObservableObject
 {
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
+    private readonly LanguageService _languageService;
     private uint? currentOpSequenceId;
     private bool? attachedDataWasEnabled; // 保存附加数据 AO 的 enable 状态
     private CancellationTokenSource? readTimeoutCts;
 
     private const int ReadOperationTimeoutMs = 5000;
 
-    public ReadWriteViewModel(LlrpReader reader, IAppLogService logs)
+    public ReadWriteViewModel(LlrpReader reader, IAppLogService logs, LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
+        _languageService = languageService;
         this.reader.TagOpComplete += OnTagOpComplete;
 
         WeakReferenceMessenger.Default.Register<ReadWriteViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnConnectionStateChanged(m.Value);
         });
+
+        // Set initial state
+        OperationResult = _languageService.GetLocalizedString("ReadWrite.Waiting");
+    }
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
     }
 
     public IReadOnlyList<string> MemoryBanks { get; } = new[] { "User", "TID", "Reserved", "EPC" };
@@ -63,13 +75,19 @@ public partial class ReadWriteViewModel : ViewModelBase
     private string writeData = string.Empty;
 
     [ObservableProperty]
-    private string operationResult = "等待操作";
+    private string operationResult = string.Empty;
 
     [ObservableProperty]
     private bool isConnected;
 
     [ObservableProperty]
     private bool isBusy;
+
+    [ObservableProperty]
+    private bool isBlockWriteChecked;
+
+    [ObservableProperty]
+    private bool isBlockWriteSupported;
 
     private bool CanExecuteOperation() => IsConnected && !IsBusy;
 
@@ -78,15 +96,15 @@ public partial class ReadWriteViewModel : ViewModelBase
     {
         if (!reader.IsConnected)
         {
-            OperationResult = "请先连接设备";
-            logs.LogOperation("读内存失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+            OperationResult = _languageService.GetLocalizedString("Common.ConnectFirst");
+            logs.LogOperation(_languageService.GetLocalizedString("ReadWrite.ReadFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
         if (string.IsNullOrWhiteSpace(TargetTagData))
         {
-            OperationResult = $"请输入目标 {SelectedTargetTagBank}";
-            logs.LogOperation($"读内存失败：目标{SelectedTargetTagBank}为空", Microsoft.Extensions.Logging.LogLevel.Warning);
+            OperationResult = GetLocalizedString("ReadWrite.EnterTarget", SelectedTargetTagBank);
+            logs.LogOperation(GetLocalizedString("ReadWrite.ReadFailedNoTarget", SelectedTargetTagBank), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
@@ -94,11 +112,11 @@ public partial class ReadWriteViewModel : ViewModelBase
         {
             IsBusy = true;
             ReadData = string.Empty;
-            OperationResult = "读取中...";
+            OperationResult = _languageService.GetLocalizedString("ReadWrite.Reading");
 
             // 保存附加数据 AO 的状态（如果存在）
             attachedDataWasEnabled = reader.IsAttachedDataAccessSpecEnabled();
-            logs.LogOperation($"保存附加数据 AO 状态：{(attachedDataWasEnabled.HasValue ? (attachedDataWasEnabled.Value ? "Enable" : "Disable") : "不存在")}");
+            logs.LogOperation(GetLocalizedString("ReadWrite.AOStateSaved", attachedDataWasEnabled.HasValue ? (attachedDataWasEnabled.Value ? "Enable" : "Disable") : "null"));
 
             // 先停止并清空所有现有的 OpSequence（包括附加数据的）
             if (reader.IsConnected)
@@ -112,7 +130,7 @@ public partial class ReadWriteViewModel : ViewModelBase
                 }
                 catch (Exception ex)
                 {
-                    logs.LogOperation($"清理旧操作失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Warning);
+                    logs.LogOperation(GetLocalizedString("ReadWrite.CleanupFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Warning);
                 }
             }
             currentOpSequenceId = null;
@@ -130,6 +148,8 @@ public partial class ReadWriteViewModel : ViewModelBase
                 AntennaId = 0, // 0 表示所有天线
                 State = SequenceState.Active
             };
+
+
 
             // 创建 TagReadOp
             TagReadOp readOp = new TagReadOp()
@@ -151,15 +171,15 @@ public partial class ReadWriteViewModel : ViewModelBase
 
             StartReadTimeout(sequence.Id);
 
-            OperationResult = $"已启动读取 (OpSequence ID: {sequence.Id})";
-            logs.LogOperation($"发起读内存操作，OpSequence={sequence.Id}, TargetBank={SelectedTargetTagBank}, Target={TargetTagData.Trim()}, MB={SelectedMemoryBank}, WordPointer={WordPointer}, WordCount={WordCount}");
+            OperationResult = GetLocalizedString("ReadWrite.ReadStarted", sequence.Id);
+            logs.LogOperation(GetLocalizedString("ReadWrite.ReadLog", sequence.Id, SelectedTargetTagBank, TargetTagData.Trim(), SelectedMemoryBank, WordPointer, WordCount));
         }
         catch (Exception ex)
         {
             IsBusy = false;
             CancelReadTimeout();
-            OperationResult = $"读取失败：{ex.Message}";
-            logs.LogOperation($"读内存失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            OperationResult = GetLocalizedString("ReadWrite.ReadFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("ReadWrite.ReadFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -168,30 +188,30 @@ public partial class ReadWriteViewModel : ViewModelBase
     {
         if (!reader.IsConnected)
         {
-            OperationResult = "请先连接设备";
-            logs.LogOperation("写内存失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+            OperationResult = _languageService.GetLocalizedString("Common.ConnectFirst");
+            logs.LogOperation(_languageService.GetLocalizedString("ReadWrite.WriteFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
         if (string.IsNullOrWhiteSpace(TargetTagData))
         {
-            OperationResult = $"请输入目标 {SelectedTargetTagBank}";
-            logs.LogOperation($"写内存失败：目标{SelectedTargetTagBank}为空", Microsoft.Extensions.Logging.LogLevel.Warning);
+            OperationResult = GetLocalizedString("ReadWrite.EnterTarget", SelectedTargetTagBank);
+            logs.LogOperation(GetLocalizedString("ReadWrite.WriteFailedNoTarget", SelectedTargetTagBank), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
         if (string.IsNullOrWhiteSpace(WriteData))
         {
-            OperationResult = "请输入写入数据(十六进制)";
-            logs.LogOperation("写内存失败：写入数据为空", Microsoft.Extensions.Logging.LogLevel.Warning);
+            OperationResult = _languageService.GetLocalizedString("ReadWrite.EnterWriteData");
+            logs.LogOperation(_languageService.GetLocalizedString("ReadWrite.WriteFailedNoData"), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
         var dataText = WriteData.Trim();
         if (dataText.Length % 4 != 0)
         {
-            OperationResult = "写入数据长度必须是 4 的倍数(按 Word)";
-            logs.LogOperation("写内存失败：写入数据长度不是 4 的倍数", Microsoft.Extensions.Logging.LogLevel.Warning);
+            OperationResult = _languageService.GetLocalizedString("ReadWrite.WriteDataLengthError");
+            logs.LogOperation(_languageService.GetLocalizedString("ReadWrite.WriteFailedInvalidLength"), Microsoft.Extensions.Logging.LogLevel.Warning);
             return;
         }
 
@@ -200,10 +220,10 @@ public partial class ReadWriteViewModel : ViewModelBase
             var writeTagData = TagData.FromHexString(dataText);
 
             IsBusy = true;
-            OperationResult = "写入中...";
+            OperationResult = _languageService.GetLocalizedString("ReadWrite.Writing");
 
             attachedDataWasEnabled = reader.IsAttachedDataAccessSpecEnabled();
-            logs.LogOperation($"保存附加数据 AO 状态：{(attachedDataWasEnabled.HasValue ? (attachedDataWasEnabled.Value ? "Enable" : "Disable") : "不存在")}");
+            logs.LogOperation(GetLocalizedString("ReadWrite.AOStateSaved", attachedDataWasEnabled.HasValue ? (attachedDataWasEnabled.Value ? "Enable" : "Disable") : "null"));
 
             if (reader.IsConnected)
             {
@@ -216,7 +236,7 @@ public partial class ReadWriteViewModel : ViewModelBase
                 }
                 catch (Exception ex)
                 {
-                    logs.LogOperation($"清理旧操作失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Warning);
+                    logs.LogOperation(GetLocalizedString("ReadWrite.CleanupFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Warning);
                 }
             }
             currentOpSequenceId = null;
@@ -234,6 +254,8 @@ public partial class ReadWriteViewModel : ViewModelBase
                 State = SequenceState.Active
             };
 
+            sequence.BlockWriteEnabled = IsBlockWriteChecked && IsBlockWriteSupported;
+
             TagWriteOp writeOp = new TagWriteOp()
             {
                 MemoryBank = ParseMemoryBank(SelectedMemoryBank),
@@ -242,6 +264,8 @@ public partial class ReadWriteViewModel : ViewModelBase
                 AccessPassword = TagData.FromHexString(AccessPassword)
             };
 
+
+
             sequence.Ops.Add(writeOp);
             reader.AddOpSequence(sequence);
             currentOpSequenceId = sequence.Id;
@@ -249,15 +273,15 @@ public partial class ReadWriteViewModel : ViewModelBase
             reader.Start();
             StartReadTimeout(sequence.Id);
 
-            OperationResult = $"已启动写入 (OpSequence ID: {sequence.Id})";
-            logs.LogOperation($"发起写内存操作，OpSequence={sequence.Id}, TargetBank={SelectedTargetTagBank}, Target={TargetTagData.Trim()}, MB={SelectedMemoryBank}, WordPointer={WordPointer}, WordCount={dataText.Length / 4}");
+            OperationResult = GetLocalizedString("ReadWrite.WriteStarted", sequence.Id);
+            logs.LogOperation(GetLocalizedString("ReadWrite.WriteLog", sequence.Id, SelectedTargetTagBank, TargetTagData.Trim(), SelectedMemoryBank, WordPointer, dataText.Length / 4, sequence.BlockWriteEnabled));
         }
         catch (Exception ex)
         {
             IsBusy = false;
             CancelReadTimeout();
-            OperationResult = $"写入失败：{ex.Message}";
-            logs.LogOperation($"写内存失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            OperationResult = GetLocalizedString("ReadWrite.WriteFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("ReadWrite.WriteFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -265,8 +289,8 @@ public partial class ReadWriteViewModel : ViewModelBase
     private void ClearData()
     {
         ReadData = string.Empty;
-        OperationResult = "已清空";
-        logs.LogOperation("清空读写页面数据");
+        OperationResult = _languageService.GetLocalizedString("ReadWrite.Cleared");
+        logs.LogOperation(_languageService.GetLocalizedString("ReadWrite.ClearDataLog"));
     }
 
     private void OnTagOpComplete(LlrpReader sender, TagOpReport results)
@@ -286,25 +310,28 @@ public partial class ReadWriteViewModel : ViewModelBase
                         if (readResult.Result == ReadResultStatus.Success)
                         {
                             ReadData = readResult.Data?.ToHexString() ?? "(empty)";
-                            OperationResult = $"读取成功，读取到 {readResult.Data?.ToList().Count ?? 0} 个字";
+                            OperationResult = GetLocalizedString("ReadWrite.ReadSuccess", readResult.Data?.ToList().Count ?? 0);
                             logs.LogOperation(OperationResult);
                         }
                         else
                         {
-                            OperationResult = $"读取失败：{readResult.Result}";
+                            OperationResult = GetLocalizedString("ReadWrite.ReadResultFailed", readResult.Result);
                             logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Warning);
                         }
                     }
                     else if (result is TagWriteOpResult writeResult)
                     {
+                        var writeModeText = writeResult.IsBlockWrite
+                            ? _languageService.GetLocalizedString("ReadWrite.BlockWriteMode")
+                            : _languageService.GetLocalizedString("ReadWrite.NormalWrite");
                         if (writeResult.Result == WriteResultStatus.Success)
                         {
-                            OperationResult = $"写入成功，写入 {writeResult.NumWordsWritten} 个字";
+                            OperationResult = GetLocalizedString("ReadWrite.WriteSuccess", writeModeText, writeResult.NumWordsWritten);
                             logs.LogOperation(OperationResult);
                         }
                         else
                         {
-                            OperationResult = $"写入失败：{writeResult.Result}";
+                            OperationResult = GetLocalizedString("ReadWrite.WriteResultFailed", writeModeText, writeResult.Result);
                             logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Warning);
                         }
                     }
@@ -312,7 +339,7 @@ public partial class ReadWriteViewModel : ViewModelBase
             }
             finally
             {
-                FinishOperationCleanup();
+               FinishOperationCleanup();
             }
         });
     }
@@ -342,7 +369,7 @@ public partial class ReadWriteViewModel : ViewModelBase
             if (!IsBusy || currentOpSequenceId != sequenceId)
                 return;
 
-            OperationResult = $"操作超时：未匹配到目标标签（{ReadOperationTimeoutMs} ms）";
+            OperationResult = GetLocalizedString("ReadWrite.Timeout", ReadOperationTimeoutMs);
             logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Warning);
             FinishOperationCleanup();
         });
@@ -382,14 +409,14 @@ public partial class ReadWriteViewModel : ViewModelBase
                 if (attachedDataWasEnabled.HasValue)
                 {
                     reader.RestoreAttachedDataAccessSpec(attachedDataWasEnabled.Value);
-                    logs.LogOperation($"已恢复附加数据 AccessSpec，Enable={attachedDataWasEnabled.Value}");
+                    logs.LogOperation(GetLocalizedString("ReadWrite.AORestored", attachedDataWasEnabled.Value));
                 }
 
                 currentOpSequenceId = null;
             }
             catch (Exception ex)
             {
-                logs.LogOperation($"清理操作失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Warning);
+                logs.LogOperation(GetLocalizedString("ReadWrite.CleanupFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Warning);
             }
         }
     }
@@ -417,14 +444,7 @@ public partial class ReadWriteViewModel : ViewModelBase
 
     private static void RunOnUi(Action action)
     {
-        var dispatcher = Dispatcher.UIThread;
-        if (dispatcher is null || dispatcher.CheckAccess())
-        {
-            action();
-            return;
-        }
-
-        dispatcher.Post(action);
+        Dispatcher.UIThread.Post(action);
     }
 
     private void OnConnectionStateChanged(bool connected)
@@ -436,9 +456,27 @@ public partial class ReadWriteViewModel : ViewModelBase
             IsBusy = false;
             currentOpSequenceId = null;
             attachedDataWasEnabled = null;
+            IsBlockWriteSupported = false;
+            IsBlockWriteChecked = false;
         }
-        OperationResult = connected ? "设备已连接，可执行读写" : "请先连接设备";
+        else
+        {
+            try
+            {
+                IsBlockWriteSupported = reader.ReaderCapabilities.IsMultiwordBlockWriteAvailable;
+                if (!IsBlockWriteSupported)
+                {
+                    IsBlockWriteChecked = false;
+                }
+            }
+            catch
+            {
+                IsBlockWriteSupported = false;
+                IsBlockWriteChecked = false;
+            }
+        }
+        OperationResult = connected
+            ? _languageService.GetLocalizedString("ReadWrite.Ready")
+            : _languageService.GetLocalizedString("Common.ConnectFirst");
     }
 }
-
-

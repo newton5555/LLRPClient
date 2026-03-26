@@ -1,48 +1,52 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:LLRPReaderUI_Avalonia.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="LLRPReaderUI_Avalonia.Views.DeviceConnectionView"
              x:DataType="vm:DeviceConnectionViewModel">
+
     <Grid Margin="16" RowDefinitions="Auto,12,*">
-        <Border Padding="12">
-            <Grid ColumnDefinitions="220,10,100,10,100,*">
-                <ComboBox Grid.Column="0"
-                          Height="32"
-                          IsEditable="True"
-                          ItemsSource="{Binding RecentReaderEndpoints}"
-                          Text="{Binding ReaderEndpoint}" />
+        <!-- Connection Bar -->
+        <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="16">
+            <Grid ColumnDefinitions="*,10,Auto,10,Auto">
+                <TextBox Grid.Column="0" Height="36"
+                         Text="{Binding ReaderEndpoint}"
+                         Watermark="Enter reader address (e.g., 192.168.1.100)" />
 
-                <Button Grid.Column="2"
-                        x:Name="btn1"
-                        Height="32"
-                        Content="连接"
-                        Command="{Binding ConnectCommand}"/>
+                <Button Grid.Column="2" Height="36"
+                        Command="{Binding ConnectCommand}"
+                        Classes="accent">
+                    <StackPanel Orientation="Horizontal">
+                        <materialIcons:MaterialIcon Kind="PowerPlug" Width="16" Height="16" Margin="0,0,8,0" />
+                        <TextBlock Text="Connect" />
+                    </StackPanel>
+                </Button>
 
-                <Button Grid.Column="4"
-                        Height="32"
-                        Content="断开"
-                        Command="{Binding DisconnectCommand}" />
-
-                <TextBlock 
-                x:Name="tbk1"
-                Grid.Column="5"
-                           Margin="12,0,0,0"
-                           VerticalAlignment="Center"
-                           Text="{Binding ConnectionState}" />
-
-
+                <Button Grid.Column="4" Height="36"
+                        Command="{Binding DisconnectCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialIcons:MaterialIcon Kind="PowerPlugOff" Width="16" Height="16" Margin="0,0,8,0" />
+                        <TextBlock Text="Disconnect" />
+                    </StackPanel>
+                </Button>
             </Grid>
         </Border>
 
-        <DataGrid Grid.Row="2"
-                  x:CompileBindings="False"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  ItemsSource="{Binding FeatureSetItems}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="FeatureSet 属性" Binding="{Binding Name}" Width="2*" />
-                <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="3*" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <!-- Feature Set DataGrid -->
+        <Border Grid.Row="2" Background="White" CornerRadius="8">
+            <DataGrid ItemsSource="{Binding FeatureSetItems}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      BorderThickness="0"
+                      GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Property" Binding="{Binding Name}" Width="2*" />
+                    <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="3*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
 </UserControl>

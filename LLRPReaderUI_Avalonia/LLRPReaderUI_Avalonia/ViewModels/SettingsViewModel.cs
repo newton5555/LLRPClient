@@ -5,27 +5,41 @@ using LLRPSdk;
 using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Messages;
 using LLRPReaderUI_Avalonia.Models;
+using LLRPReaderUI_Avalonia.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class SettingsViewModel : ViewModelBase
+public partial class SettingsViewModel : ObservableObject
 {
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
+    private readonly LanguageService _languageService;
 
-    public SettingsViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore)
+    public SettingsViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore, LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
         this.settingsStore = settingsStore;
+        _languageService = languageService;
         WeakReferenceMessenger.Default.Register<SettingsViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnConnectionStateChanged(m.Value);
         });
+
+        // Set initial state
+        SaveResult = _languageService.GetLocalizedString("Settings.NotSaved");
+    }
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
     }
 
     [ObservableProperty]
@@ -62,7 +76,7 @@ public partial class SettingsViewModel : ViewModelBase
     private ObservableCollection<string> readerEventNotifications = new();
 
     [ObservableProperty]
-    private string saveResult = "未保存";
+    private string saveResult = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<AntennaItemViewModel> antennas = new();
@@ -140,8 +154,8 @@ public partial class SettingsViewModel : ViewModelBase
         {
             if (!reader.IsConnected)
             {
-                SaveResult = "请先在设备连接页连接读写器";
-                logs.LogOperation("保存参数失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("Settings.SaveFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
@@ -191,14 +205,14 @@ public partial class SettingsViewModel : ViewModelBase
 
             reader.ApplySettings(settings);
             settingsStore.Set(settings);
-            SaveResult = "参数已下发到设备";
-            logs.LogOperation("参数配置已下发到设备");
+            SaveResult = _languageService.GetLocalizedString("Settings.SavedToDevice");
+            logs.LogOperation(_languageService.GetLocalizedString("Settings.SavedLog"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("AttachedDataConfigChanged"));
         }
         catch (Exception ex)
         {
-            SaveResult = $"保存失败：{ex.Message}";
-            logs.LogOperation($"保存参数失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            SaveResult = GetLocalizedString("Settings.SaveFailedMsg", ex.Message);
+            logs.LogOperation(GetLocalizedString("Settings.SaveFailedMsg", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -209,8 +223,8 @@ public partial class SettingsViewModel : ViewModelBase
         {
             if (!reader.IsConnected)
             {
-                SaveResult = "请先在设备连接页连接读写器";
-                logs.LogOperation("获取参数失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("Settings.GetFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
@@ -226,52 +240,20 @@ public partial class SettingsViewModel : ViewModelBase
                 reader.ApplyDefaultSettings();
                 settings = reader.QuerySettings();
                 //settings=reader.QueryDefaultSettings();//测试使用 假的数据
-                SaveResult = "设备尚未配置，已自动下发默认参数";
+                SaveResult = _languageService.GetLocalizedString("Settings.DefaultApplied");
             }
 
-            RefreshFeatureOptions();
-
-            EnableKeepalive = settings.Keepalives.Enabled;
-            KeepaliveIntervalMs = (int)settings.Keepalives.PeriodInMs;
-            SelectedRfMode = settings.RfMode;
-            SelectedRfModeOption = RfModeOptions.FirstOrDefault(x => x.Id == settings.RfMode);
-            TagPopulationEstimate = settings.TagPopulationEstimate;
-            HoldEventsAndReportsUponReconnect = settings.HoldReportsOnDisconnect;
+            ApplySettingsToUi(settings);
             UpdateReaderEventNotifications();
-
-            Antennas.Clear();
-            var configuredByPort = settings.Antennas.AntennaConfigs
-                .GroupBy(x => x.PortNumber)
-                .ToDictionary(x => x.Key, x => x.First());
-            var antennaCount = (int)reader.ReaderCapabilities.AntennaCount;
-            var defaultTxPower = TxPowerOptions.Count > 0 ? TxPowerOptions.Max(x=>x) : 0d;
-            var defaultRxSensitivity = RxSensitivityOptions.Count > 0 ? RxSensitivityOptions[0] : 0d;
-
-            for (var port = 1; port <= antennaCount; port++)
-            {
-                var portNumber = (ushort)port;
-                configuredByPort.TryGetValue(portNumber, out var antenna);
-
-                Antennas.Add(new AntennaItemViewModel
-                {
-                    PortNumber = portNumber,
-                    PortName = antenna?.PortName ?? $"Antenna Port {portNumber}",
-                    IsEnabled = antenna?.IsEnabled ?? false,
-                    TxPowerInDbm = antenna?.TxPowerInDbm ?? defaultTxPower,
-                    RxSensitivityInDbm = antenna?.RxSensitivityInDbm ?? defaultRxSensitivity
-                });
-            }
-
-            Session = settings.Session;
             settingsStore.Set(settings);
-            SaveResult = "已从设备获取参数";
-            logs.LogOperation("已从设备获取参数");
+            SaveResult = _languageService.GetLocalizedString("Settings.GotFromDevice");
+            logs.LogOperation(_languageService.GetLocalizedString("Settings.GotLog"));
             WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("AttachedDataConfigChanged"));
         }
         catch (Exception ex)
         {
-            SaveResult = $"获取失败：{ex.Message}";
-            logs.LogOperation($"获取参数失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            SaveResult = GetLocalizedString("Settings.GetFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("Settings.GetFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -282,20 +264,20 @@ public partial class SettingsViewModel : ViewModelBase
         {
             if (!reader.IsConnected)
             {
-                SaveResult = "请先在设备连接页连接读写器";
-                logs.LogOperation("恢复出厂失败：设备未连接", Microsoft.Extensions.Logging.LogLevel.Warning);
+                SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
+                logs.LogOperation(_languageService.GetLocalizedString("Settings.ResetFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
             reader.ResetToFactoryDefaultsOnly();
             settingsStore.Clear();
-            SaveResult = "已恢复设备出厂默认";
-            logs.LogOperation("已恢复设备出厂默认");
+            SaveResult = _languageService.GetLocalizedString("Settings.ResetSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("Settings.ResetLog"));
         }
         catch (Exception ex)
         {
-            SaveResult = $"恢复失败：{ex.Message}";
-            logs.LogOperation($"恢复出厂失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            SaveResult = GetLocalizedString("Settings.ResetFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("Settings.ResetFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -311,7 +293,15 @@ public partial class SettingsViewModel : ViewModelBase
             settingsStore.Clear();
             SelectedRfMode = null;
             SelectedRfModeOption = null;
-            SaveResult = "请先在设备连接页连接读写器";
+            SaveResult = _languageService.GetLocalizedString("Settings.ConnectDeviceFirst");
+            return;
+        }
+
+        if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
+        {
+            ApplySettingsToUi(settings);
+            UpdateReaderEventNotifications();
+            SaveResult = _languageService.GetLocalizedString("Settings.LoadedInitParams");
             return;
         }
 
@@ -319,6 +309,43 @@ public partial class SettingsViewModel : ViewModelBase
         {
             QueryDeviceSettingsCommand.Execute(null);
         }
+    }
+
+    private void ApplySettingsToUi(Settings settings)
+    {
+        RefreshFeatureOptions();
+
+        EnableKeepalive = settings.Keepalives.Enabled;
+        KeepaliveIntervalMs = (int)settings.Keepalives.PeriodInMs;
+        SelectedRfMode = settings.RfMode;
+        SelectedRfModeOption = RfModeOptions.FirstOrDefault(x => x.Id == settings.RfMode);
+        TagPopulationEstimate = settings.TagPopulationEstimate;
+        HoldEventsAndReportsUponReconnect = settings.HoldReportsOnDisconnect;
+
+        Antennas.Clear();
+        var configuredByPort = settings.Antennas.AntennaConfigs
+            .GroupBy(x => x.PortNumber)
+            .ToDictionary(x => x.Key, x => x.First());
+        var antennaCount = (int)reader.ReaderCapabilities.AntennaCount;
+        var defaultTxPower = TxPowerOptions.Count > 0 ? TxPowerOptions.Max(x => x) : 0d;
+        var defaultRxSensitivity = RxSensitivityOptions.Count > 0 ? RxSensitivityOptions[0] : 0d;
+
+        for (var port = 1; port <= antennaCount; port++)
+        {
+            var portNumber = (ushort)port;
+            configuredByPort.TryGetValue(portNumber, out var antenna);
+
+            Antennas.Add(new AntennaItemViewModel
+            {
+                PortNumber = portNumber,
+                PortName = antenna?.PortName ?? $"Antenna Port {portNumber}",
+                IsEnabled = antenna?.IsEnabled ?? false,
+                TxPowerInDbm = antenna?.TxPowerInDbm ?? defaultTxPower,
+                RxSensitivityInDbm = antenna?.RxSensitivityInDbm ?? defaultRxSensitivity
+            });
+        }
+
+        Session = settings.Session;
     }
 
 }
@@ -353,5 +380,3 @@ public partial class AntennaItemViewModel : ObservableObject
     [ObservableProperty]
     private double rxSensitivityInDbm;
 }
-
-

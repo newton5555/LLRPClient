@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Text.Json;
 using System.IO;
-using System;
 
 namespace LLRPReaderUI_Avalonia.Logging;
 
@@ -248,5 +247,4 @@ public static class LoggingConfigurationManager
         return new LogFeatureConfig { Enabled = true };
     }
 }
-
 

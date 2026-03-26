@@ -2,50 +2,30 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using LLRPReaderUI_Avalonia.ViewModels;
 using System;
-using System.Linq;
 
-namespace LLRPReaderUI_Avalonia
+namespace LLRPReaderUI_Avalonia;
+
+public class ViewLocator : IDataTemplate
 {
-    public class ViewLocator : IDataTemplate
+    public Control Build(object? data)
     {
-        public Control? Build(object? param)
+        if (data is null)
+            return new TextBlock { Text = "Data is null" };
+
+        var name = data.GetType().FullName!.Replace("ViewModel", "View");
+        var type = Type.GetType(name);
+
+        if (type != null)
         {
-            if (param is null)
-                return null;
-
-            if (param is not ViewModelBase)
-                return new TextBlock { Text = param.ToString() ?? "Unsupported content" };
-
-            if (param is Control control)
-                return control;
-
-            if (param is string text)
-                return new TextBlock { Text = text };
-
-            var viewModelTypeName = param.GetType().FullName;
-            if (string.IsNullOrWhiteSpace(viewModelTypeName)
-                || !viewModelTypeName.EndsWith("ViewModel", StringComparison.Ordinal))
-            {
-                return new TextBlock { Text = param.ToString() ?? "Unsupported content" };
-            }
-
-            var viewTypeName = viewModelTypeName.Replace("ViewModel", "View", StringComparison.Ordinal);
-            var viewType = AppDomain.CurrentDomain
-                .GetAssemblies()
-                .Select(assembly => assembly.GetType(viewTypeName))
-                .FirstOrDefault(candidate => candidate is not null);
-
-            if (viewType is not null && typeof(Control).IsAssignableFrom(viewType))
-            {
-                return (Control)Activator.CreateInstance(viewType)!;
-            }
-
-            return new TextBlock { Text = "Not Found: " + viewTypeName };
+            var control = (Control?)Activator.CreateInstance(type);
+            return control ?? new TextBlock { Text = "CreateInstance failed" };
         }
 
-        public bool Match(object? data)
-        {
-            return data is ViewModelBase;
-        }
+        return new TextBlock { Text = "Not Found: " + name };
+    }
+
+    public bool Match(object? data)
+    {
+        return data is ViewModelBase;
     }
 }

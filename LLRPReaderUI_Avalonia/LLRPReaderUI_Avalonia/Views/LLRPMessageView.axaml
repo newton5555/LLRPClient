@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="LLRPReaderUI_Avalonia.Views.LLRPMessageView"
+             x:DataType="vm:LLRPMessageViewModel">
+
+    <Grid Margin="16" RowDefinitions="Auto,8,*">
+        <!-- Toolbar -->
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Command="{Binding RefreshDataCommand}" Classes="accent" Height="32">Refresh</Button>
+            <Button Command="{Binding ClearFilterCommand}" Height="32">Clear Filter</Button>
+            <TextBlock Text="{Binding StatusText}" Margin="12,0,0,0" VerticalAlignment="Center" Foreground="#1976D2" />
+        </StackPanel>
+
+        <!-- Content -->
+        <Grid Grid.Row="2" ColumnDefinitions="300,2,*">
+            <!-- Frame List -->
+            <Border Background="White" CornerRadius="8">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Grid.Row="0" Background="#F5F5F5" Padding="12,8">
+                        <TextBlock Text="Raw Frames" FontWeight="SemiBold" />
+                    </Border>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding FilteredFrames}"
+                             SelectedItem="{Binding SelectedRawFrame}" BorderThickness="0" />
+                </Grid>
+            </Border>
+
+            <!-- Message Tree -->
+            <Border Grid.Column="2" Background="White" CornerRadius="8">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Grid.Row="0" Background="#F5F5F5" Padding="12,8">
+                        <TextBlock Text="Message Tree" FontWeight="SemiBold" />
+                    </Border>
+                    <TreeView Grid.Row="1" ItemsSource="{Binding MessageTree}" BorderThickness="0" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,6 +1,5 @@
 using LLRPSdk;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace LLRPReaderUI_Avalonia.Logging;
 
@@ -61,4 +60,3 @@ public sealed class LlrpLoggingBridge
         }
     }
 }
-

@@ -1,4 +1,5 @@
 using LLRPSdk;
+using System.Linq;
 
 namespace LLRPReaderUI_Avalonia.Models;
 
@@ -51,6 +52,35 @@ public class ReaderSettingsStore
 
     private static Settings Clone(Settings source)
     {
-        return Settings.FromXmlString(source.ToXmlString());
+        var clone = Settings.FromXmlString(source.ToXmlString());
+        CopyAntennaConfigs(source, clone);
+        return clone;
+    }
+
+    private static void CopyAntennaConfigs(Settings source, Settings clone)
+    {
+        if (source.Antennas?.AntennaConfigs is null || clone.Antennas?.AntennaConfigs is null)
+        {
+            return;
+        }
+
+        foreach (var sourceAntenna in source.Antennas.AntennaConfigs)
+        {
+            var targetAntenna = clone.Antennas.AntennaConfigs
+                .FirstOrDefault(x => x.PortNumber == sourceAntenna.PortNumber);
+
+            if (targetAntenna is null)
+            {
+                targetAntenna = new AntennaConfig(sourceAntenna.PortNumber);
+                clone.Antennas.AntennaConfigs.Add(targetAntenna);
+            }
+
+            targetAntenna.PortName = sourceAntenna.PortName;
+            targetAntenna.IsEnabled = sourceAntenna.IsEnabled;
+            targetAntenna.MaxTxPower = sourceAntenna.MaxTxPower;
+            targetAntenna.TxPowerInDbm = sourceAntenna.TxPowerInDbm;
+            targetAntenna.MaxRxSensitivity = sourceAntenna.MaxRxSensitivity;
+            targetAntenna.RxSensitivityInDbm = sourceAntenna.RxSensitivityInDbm;
+        }
     }
 }

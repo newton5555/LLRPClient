@@ -5,18 +5,18 @@ using CommunityToolkit.Mvvm.Messaging;
 using LLRPSdk;
 using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Messages;
+using LLRPReaderUI_Avalonia.Models;
+using LLRPReaderUI_Avalonia.Services;
 using Nager.Country;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Avalonia.Threading;
-using System.Linq;
-using System;
-using System.Collections.Generic;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
 
-public partial class DeviceConnectionViewModel : ViewModelBase
+public partial class DeviceConnectionViewModel : ObservableObject
 {
     private const int MaxRecentEndpoints = 3;
     private static readonly string RecentEndpointsFilePath = Path.Combine(
@@ -26,16 +26,70 @@ public partial class DeviceConnectionViewModel : ViewModelBase
 
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
+    private readonly ReaderSettingsStore settingsStore;
+    private readonly ReaderStatusStore statusStore;
+    private readonly LanguageService _languageService;
     private static readonly CountryProvider countryProvider = new();
     private string pendingAddress = string.Empty;
     private string pendingEndpoint = string.Empty;
 
-    public DeviceConnectionViewModel(LlrpReader reader, IAppLogService logs)
+    public DeviceConnectionViewModel(
+        LlrpReader reader,
+        IAppLogService logs,
+        ReaderSettingsStore settingsStore,
+        ReaderStatusStore statusStore,
+        LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
+        this.settingsStore = settingsStore;
+        this.statusStore = statusStore;
+        _languageService = languageService;
+
+        // Subscribe to keepalive timeout event
+        this.reader.KeepaliveTimeout += OnKeepaliveTimeout;
+
+        // Subscribe to language changes
+        _languageService.OnLanguageChanged += OnLanguageChanged;
+
+        // Set initial connection state
+        ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnected");
 
         LoadRecentEndpoints();
+    }
+
+    private void OnLanguageChanged(AppLanguage language)
+    {
+        // Refresh connection state text
+        if (!IsConnected && !IsBusy)
+        {
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnected");
+        }
+    }
+
+    private void OnKeepaliveTimeout(LlrpReader _)
+    {
+        // Keepalive timeout - reader stopped responding
+        // Use ForceDisconnect for fast close without waiting for CLOSE_CONNECTION response
+        Dispatcher.UIThread.Post(() =>
+        {
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.KeepaliveTimeout");
+            IsBusy = true;
+            logs.LogOperation(_languageService.GetLocalizedString("DeviceConnection.KeepaliveNoResponse"), Microsoft.Extensions.Logging.LogLevel.Warning);
+
+            try
+            {
+                reader.ForceDisconnect();
+            }
+            catch { }
+
+            settingsStore.Clear();
+            statusStore.Clear();
+            IsConnected = false;
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.DisconnectedKeepalive");
+            WeakReferenceMessenger.Default.Send(new ConnectionStateChangedMessage(false));
+            IsBusy = false;
+        });
     }
 
     [ObservableProperty]
@@ -45,13 +99,48 @@ public partial class DeviceConnectionViewModel : ViewModelBase
     private bool isConnected;
 
     [ObservableProperty]
-    private string connectionState = "未连接";
+    private string connectionState = string.Empty;
+
+    [ObservableProperty]
+    private bool isBusy;
 
     public ObservableCollection<string> RecentReaderEndpoints { get; } = new();
+
+    /// <summary>
+    /// Get a localized string with format arguments.
+    /// </summary>
+    private string GetLocalizedString(string key, params object[] args)
+    {
+        var format = _languageService.GetLocalizedString(key);
+        return args.Length > 0 ? string.Format(format, args) : format;
+    }
 
     partial void OnIsConnectedChanged(bool value)
     {
         WeakReferenceMessenger.Default.Send(new ConnectionStateChangedMessage(value));
+
+        // Refresh command CanExecute when connection state changes
+        try
+        {
+            ConnectCommand?.NotifyCanExecuteChanged();
+        }
+        catch { }
+
+        try
+        {
+            DisconnectCommand?.NotifyCanExecuteChanged();
+        }
+        catch { }
+    }
+
+    partial void OnIsBusyChanged(bool value)
+    {
+        WeakReferenceMessenger.Default.Send(new BusyStateChangedMessage(value, ConnectionState));
+    }
+
+    partial void OnConnectionStateChanged(string value)
+    {
+        // Connection state changed, but we rely on OnIsBusyChanged for the overlay
     }
 
     public FeatureItemCollection FeatureSetItems { get; } =
@@ -83,15 +172,17 @@ public partial class DeviceConnectionViewModel : ViewModelBase
         new("RfModes", "-")
     ];
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanConnect))]
     private void Connect()
     {
         try
         {
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.ConnectingDevice");
+            IsBusy = true;
             var endpoint = ReaderEndpoint.Trim();
             if (string.IsNullOrWhiteSpace(endpoint))
             {
-                throw new LLRPSdkException("请先输入读写器地址。示例：192.168.1.10 或 192.168.1.10:5084");
+                throw new LLRPSdkException(_languageService.GetLocalizedString("DeviceConnection.EnterAddress"));
             }
 
             var (address, port) = ParseEndpoint(endpoint);
@@ -115,87 +206,144 @@ public partial class DeviceConnectionViewModel : ViewModelBase
             {
                 reader.ConnectAsync(address);
             }
-            ConnectionState = $"连接中：{address}";
+            ConnectionState = GetLocalizedString("DeviceConnection.ConnectingTo", address);
         }
         catch (Exception ex)
         {
             reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
             IsConnected = false;
-            ConnectionState = $"连接失败：{ex.Message}";
+            IsBusy = false;
+            ConnectionState = GetLocalizedString("DeviceConnection.ConnectionFailedMsg", ex.Message);
             logs.LogOperation($"连接失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
+    private bool CanConnect()
+    {
+        return !IsConnected;
+    }
+
     private void OnConnectAsyncComplete(LlrpReader _, ConnectAsyncResult result, string errorMessage)
     {
-        Dispatcher.UIThread.Post(() =>
-        {
-            reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
+        reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
 
-            if (result == ConnectAsyncResult.Success && reader.IsConnected)
+        if (result == ConnectAsyncResult.Success && reader.IsConnected)
+        {
+            // Run initialization on background thread
+            Task.Run(() =>
             {
                 try
                 {
-                    var autoStopped = EnsureStoppedIfSingulating();
+                    bool wasSingulating = EnsureStoppedIfSingulating();
+                    var settings = QueryInitialSettings();
                     var featureSet = reader.ReaderCapabilities;
-                    UpdateFeatureSetItems(featureSet);
-                    AddRecentEndpoint(pendingEndpoint);
-                   
-                    
-                    IsConnected = true;
-                    ConnectionState = autoStopped
-                        ? $"已连接：{pendingAddress}（检测到设备盘点中，已自动停止）"
-                        : $"已连接：{pendingAddress}";
-                    logs.LogOperation(ConnectionState);
+
+                    // Update UI on dispatcher
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        settingsStore.Set(settings);
+                        UpdateFeatureSetItems(featureSet);
+                        AddRecentEndpoint(pendingEndpoint);
+                        IsConnected = true;
+                        ConnectionState = wasSingulating
+                            ? GetLocalizedString("DeviceConnection.ConnectedAutoStopped", pendingAddress)
+                            : GetLocalizedString("DeviceConnection.ConnectedTo", pendingAddress);
+                        IsBusy = false; // This will hide the overlay
+                        logs.LogOperation(ConnectionState);
+                    });
                 }
                 catch (Exception ex)
                 {
-                    IsConnected = false;
-                    ConnectionState = $"连接失败：{ex.Message}";
-                    logs.LogOperation($"连接后初始化失败：{ex.Message}", Microsoft.Extensions.Logging.LogLevel.Error, ex);
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        IsConnected = false;
+                        ConnectionState = GetLocalizedString("DeviceConnection.ConnectionFailedMsg", ex.Message);
+                        IsBusy = false; // This will hide the overlay
+                        logs.LogOperation(GetLocalizedString("DeviceConnection.InitFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
+                    });
                 }
+            });
+            return;
+        }
 
-                return;
-            }
-
+        // Failed case
+        Dispatcher.UIThread.Post(() =>
+        {
             IsConnected = false;
-            ConnectionState = $"连接失败：{errorMessage}";
-            logs.LogOperation($"连接失败：{errorMessage}", Microsoft.Extensions.Logging.LogLevel.Warning);
+            ConnectionState = GetLocalizedString("DeviceConnection.ConnectionFailedMsg", errorMessage);
+            IsBusy = false; // This will hide the overlay
+            logs.LogOperation(GetLocalizedString("DeviceConnection.ConnectionFailedMsg", errorMessage), Microsoft.Extensions.Logging.LogLevel.Warning);
         });
     }
 
     private bool EnsureStoppedIfSingulating()
     {
-        var status = reader.QueryStatus();
-        if (!status.IsSingulating)
+        bool isSingulating = reader.QuerySingulatingState();
+        if (isSingulating)
         {
-            return false;
+            reader.Stop();
         }
 
-        reader.Stop();
-        return true;
+        return isSingulating;
     }
 
-    [RelayCommand]
-    private void Disconnect()
+    private Settings QueryInitialSettings()
     {
+        try
+        {
+            return reader.QuerySettings();
+        }
+        catch (LLRPSdkException ex) when (
+            ex.Message.Contains("has not been configured", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("configuration is invalid", StringComparison.OrdinalIgnoreCase))
+        {
+            reader.ApplyDefaultSettings();
+            return reader.QuerySettings();
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDisconnect))]
+    private async void Disconnect()
+    {
+        ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnecting");
+        IsBusy = true;
+
         try
         {
             reader.ConnectAsyncComplete -= OnConnectAsyncComplete;
             if (reader.IsConnected)
             {
-                reader.Disconnect();
+                // Run disconnect on background thread to avoid UI freeze
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        reader.Disconnect();
+                    }
+                    catch
+                    {
+                        // Ignore errors during disconnect (connection may already be lost)
+                    }
+                });
             }
         }
         finally
         {
+            settingsStore.Clear();
+            statusStore.Clear();
             IsConnected = false;
-            ConnectionState = "未连接";
-            logs.LogOperation("设备断开连接");
+            ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnected");
+            IsBusy = false; // This will hide the overlay
+            logs.LogOperation(_languageService.GetLocalizedString("DeviceConnection.DeviceDisconnected"));
         }
     }
 
-    private static (string Address, int? Port) ParseEndpoint(string endpoint)
+    private bool CanDisconnect()
+    {
+        return IsConnected;
+    }
+
+    private (string Address, int? Port) ParseEndpoint(string endpoint)
     {
         var value = endpoint.Trim();
         var separatorIndex = value.LastIndexOf(':');
@@ -207,7 +355,7 @@ public partial class DeviceConnectionViewModel : ViewModelBase
             var address = value[..separatorIndex].Trim();
             if (string.IsNullOrWhiteSpace(address))
             {
-                throw new LLRPSdkException("地址不能为空。示例：192.168.1.10:5084");
+                throw new LLRPSdkException(_languageService.GetLocalizedString("DeviceConnection.AddressEmpty"));
             }
 
             return (address, port);
@@ -374,5 +522,3 @@ public partial class FeatureItemViewModel : ObservableObject
     [ObservableProperty]
     private string value;
 }
-
-

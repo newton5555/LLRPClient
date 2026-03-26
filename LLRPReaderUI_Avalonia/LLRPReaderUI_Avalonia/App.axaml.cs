@@ -1,161 +1,103 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Models;
+using LLRPReaderUI_Avalonia.Services;
 using LLRPReaderUI_Avalonia.ViewModels;
-using LLRPReaderUI_Avalonia.Views;
 using LLRPSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using System.Linq;
-using System.Runtime.InteropServices;
+using LLRPReaderUI_Avalonia.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace LLRPReaderUI_Avalonia
+namespace LLRPReaderUI_Avalonia;
+
+public partial class App : Application
 {
-    public partial class App : Application
+    public override void Initialize()
     {
-        private ServiceProvider? serviceProvider;
+        AvaloniaXamlLoader.Load(this);
+    }
 
-        public override void Initialize()
+    public override void OnFrameworkInitializationCompleted()
+    {
+        // Configure Serilog
+        Log.Logger = LoggingConfigurationManager.BuildLogger();
+
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+
+        // Configure EF Core if enabled
+        var loggingConfig = LoggingConfigurationManager.LoadConfiguration();
+        if (loggingConfig.RawFrameLogging?.Enabled == true)
         {
-            AvaloniaXamlLoader.Load(this);
-        }
+            var dbPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "LLRPReaderUI_Avalonia",
+                "llrp_rawframes.db");
 
-        private void OverrideFontWeight(Type controlType)
-        {
-            if (this.FindResource(controlType) is not ControlTheme baseTheme)
-                return;
-
-            var androidTheme = new ControlTheme(controlType)
+            var dbDir = Path.GetDirectoryName(dbPath);
+            if (!string.IsNullOrEmpty(dbDir) && !Directory.Exists(dbDir))
             {
-                BasedOn = baseTheme
-            };
-
-            androidTheme.Setters.Add(new Setter(
-                TextBlock.FontWeightProperty,
-                FontWeight.Normal
-            ));
-
-            this.Resources[controlType] = androidTheme;
-        }
-
-
-        public override void OnFrameworkInitializationCompleted()
-        {
-            if (RuntimeInformation.OSDescription.Contains("Android", StringComparison.OrdinalIgnoreCase))
-            {              // 安卓：覆盖 Button 默认样式，强制 Normal 字重
-                           // 安卓：覆盖控件默认样式，强制 Normal 字重
-
-                // Button
-                OverrideFontWeight(typeof(Button));
-
-                // CheckBox
-                OverrideFontWeight(typeof(CheckBox));
-
-                // RadioButton
-                OverrideFontWeight(typeof(RadioButton));
-
-                // ToggleButton
-                OverrideFontWeight(typeof(ToggleButton));
-
-                // RepeatButton
-                OverrideFontWeight(typeof(RepeatButton));
-
-                // DropDownButton / SplitButton（如果 Semi 有）
-                OverrideFontWeight(typeof(DropDownButton));
-                OverrideFontWeight(typeof(SplitButton));
-
-                // HyperlinkButton
-                OverrideFontWeight(typeof(HyperlinkButton));
-
-
-
-                Styles.Add(new Style(x => x.OfType<TextBlock>())
-                {
-                    Setters =
-            {
-                new Setter(TextBlock.FontWeightProperty, FontWeight.Normal)
-            }
-                });
+                Directory.CreateDirectory(dbDir);
             }
 
-
-
-
-
-
-            Log.Logger = LoggingConfigurationManager.BuildLogger();
-
-            var services = new ServiceCollection();
-            ConfigureServices(services);
-            serviceProvider = services.BuildServiceProvider();
-            Ioc.Default.ConfigureServices(serviceProvider);
-            _ = serviceProvider.GetRequiredService<LlrpLoggingBridge>();
-
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                
-
-                // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-                // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-                DisableAvaloniaDataAnnotationValidation();
-                desktop.MainWindow = new MainWindow(serviceProvider.GetRequiredService<MainViewModel>());
-            }
-            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-            {
-                singleViewPlatform.MainView = new MainView
-                {
-                    DataContext = serviceProvider.GetRequiredService<MainViewModel>()
-                };
-            }
-
-            base.OnFrameworkInitializationCompleted();
+            services.AddDbContext<RawFrameDbContext>(options =>
+                options.UseSqlite($"Data Source={dbPath}")
+                       .UseLoggerFactory(Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory.Instance));
+            services.AddScoped<IRawFrameRepository, RawFrameRepository>();
         }
 
-        private static void ConfigureServices(IServiceCollection services)
+        Ioc.Default.ConfigureServices(services.BuildServiceProvider());
+
+        _ = Ioc.Default.GetRequiredService<LlrpLoggingBridge>();
+
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            services.AddLogging(builder =>
-            {
-                builder.SetMinimumLevel(LogLevel.Debug);
-                builder.ClearProviders();
-                builder.AddSerilog(Log.Logger, dispose: false);
-            });
-
-            services.AddSingleton<IAppLogService, AppLogService>();
-            services.AddSingleton<LlrpReader>();
-            services.AddSingleton<ReaderSettingsStore>();
-            services.AddSingleton<LlrpLoggingBridge>();
-            services.AddSingleton<MainViewModel>();
-
-            services.AddTransient<DeviceConnectionViewModel>();
-            services.AddTransient<SettingsViewModel>();
-            services.AddTransient<GpioViewModel>();
-            services.AddTransient<InventoryConfigViewModel>();
-            services.AddTransient<InventoryViewModel>();
-            services.AddTransient<ReadWriteViewModel>();
-            services.AddTransient<LogViewModel>();
+            var mainWindow = Ioc.Default.GetRequiredService<MainWindow>();
+            var vm = Ioc.Default.GetRequiredService<MainWindowViewModel>();
+            mainWindow.DataContext = vm;
+            desktop.MainWindow = mainWindow;
         }
 
-        private void DisableAvaloniaDataAnnotationValidation()
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddLogging(builder =>
         {
-            // Get an array of plugins to remove
-            var dataValidationPluginsToRemove =
-                BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
+            builder.SetMinimumLevel(LogLevel.Debug);
+            builder.ClearProviders();
+            builder.AddSerilog(Log.Logger, dispose: false);
+        });
 
-            // remove each entry found
-            foreach (var plugin in dataValidationPluginsToRemove)
-            {
-                BindingPlugins.DataValidators.Remove(plugin);
-            }
-        }
+        services.AddSingleton<IAppLogService, AppLogService>();
+        services.AddSingleton<LlrpReader>();
+        services.AddSingleton<ReaderSettingsStore>();
+        services.AddSingleton<ReaderStatusStore>();
+        services.AddSingleton<LlrpLoggingBridge>();
+
+        // Theme and Language services
+        services.AddSingleton<ThemeService>();
+        services.AddSingleton<LanguageService>();
+        services.AddSingleton<ThemeLanguageViewModel>();
+
+        services.AddSingleton<MainWindowViewModel>();
+
+        services.AddTransient<DeviceConnectionViewModel>();
+        services.AddTransient<SettingsViewModel>();
+        services.AddTransient<GpioViewModel>();
+        services.AddTransient<InventoryConfigViewModel>();
+        services.AddTransient<InventoryViewModel>();
+        services.AddTransient<ReadWriteViewModel>();
+        services.AddTransient<AdvancedTagOpsViewModel>();
+        services.AddTransient<LogViewModel>();
+        services.AddTransient<LLRPMessageViewModel>();
+
+        services.AddSingleton<MainWindow>();
     }
 }

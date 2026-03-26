@@ -26,11 +26,10 @@
     },
     "llrpMessageLogging": {
       "enabled": true,
-      "isXml": true
+      "isXml": false
     },
     "eventNotificationLogging": {
       "enabled": true
     }
   }
 }
-
