@@ -3,6 +3,7 @@
              x:Class="LLRPReaderUI_Avalonia.App"
              xmlns:local="using:LLRPReaderUI_Avalonia"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              RequestedThemeVariant="Light">
 
     <Application.DataTemplates>
@@ -20,17 +21,15 @@
     </Application.Resources>
 
     <Application.Styles>
-        <!-- Simple主题作为基础 -->
-        <FluentTheme />
+        <!-- Material.Avalonia 主题 - 自动跟随 RequestedThemeVariant 切换亮暗 -->
+        <themes:MaterialTheme PrimaryColor="Blue" SecondaryColor="Amber" />
 
-        <!-- DataGrid样式 -->
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 
         <!-- Material Icons 样式 -->
         <materialIcons:MaterialIconStyles />
 
-        <!-- 自定义扁平化样式 -->
-        <StyleInclude Source="/Styles/FlatTheme.axaml"/>
+        <!-- 自定义样式 - 颜色通过 DynamicResource 自动跟随主题切换 -->
+        <StyleInclude Source="/Styles/FlatTheme.Light.axaml"/>
     </Application.Styles>
 
 </Application>

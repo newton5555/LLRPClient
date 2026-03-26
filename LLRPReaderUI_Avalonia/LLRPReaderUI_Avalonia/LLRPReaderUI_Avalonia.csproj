@@ -25,6 +25,7 @@
 
     <!-- Material Design -->
     <PackageReference Include="Material.Avalonia" />
+    <PackageReference Include="Material.Avalonia.DataGrid" />
     <PackageReference Include="Material.Icons.Avalonia" />
 
     <!-- MVVM -->

@@ -12,6 +12,7 @@
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.0" />
     <!-- Material Design -->
     <PackageVersion Include="Material.Avalonia" Version="3.14.0" />
+    <PackageVersion Include="Material.Avalonia.DataGrid" Version="3.14.0" />
     <PackageVersion Include="Material.Icons.Avalonia" Version="3.0.0" />
     <!-- MVVM -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />

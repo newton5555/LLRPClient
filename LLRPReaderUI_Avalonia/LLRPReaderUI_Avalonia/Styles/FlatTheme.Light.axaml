@@ -1,7 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- 控件样式 - 颜色资源在 ThemeResources.axaml 中通过 ThemeDictionaries 定义 -->
+    <!-- Light 主题自定义样式 - 颜色资源在 ThemeResources.axaml 中定义 -->
 
     <!-- Default Button Style -->
     <Style Selector="Button">
