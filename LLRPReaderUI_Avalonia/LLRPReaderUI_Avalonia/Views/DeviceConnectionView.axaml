@@ -15,7 +15,7 @@
 
     <Grid Margin="{DynamicResource PagePadding}" RowDefinitions="Auto,12,*">
         <!-- Connection Bar -->
-        <Border Grid.Row="0" Classes="card">
+        <Border Grid.Row="0" Classes="card" >
             <Grid ColumnDefinitions="220,10,Auto,10,Auto,*">
                 <!-- ComboBox with history support -->
                 <ComboBox Grid.Column="0" 
