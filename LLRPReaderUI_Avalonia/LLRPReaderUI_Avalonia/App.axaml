@@ -13,8 +13,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Resources/Localization/Strings.zh-CN.axaml"/>
                 <MergeResourceInclude Source="/Styles/ThemeResources.axaml"/>
-                <!-- 语言资源由 LanguageService 动态管理 -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
