@@ -863,7 +863,13 @@ namespace LLRPSdk
         {
             if (!this.IsConnected)
                 throw new LLRPSdkException("You must connect to the reader before getting the default configuration.");
-            return new Settings(this._readerCapabilities.AntennaCount, this._readerCapabilities.GpiCount, this._readerCapabilities.GpoCount, this._readerCapabilities.FirmwareVersion);
+            return new Settings(
+                this._readerCapabilities.AntennaCount,
+                this._readerCapabilities.GpiCount,
+                this._readerCapabilities.GpoCount,
+                this._readerCapabilities.FirmwareVersion,
+                this._readerCapabilities.RfModes.FirstOrDefault()
+                );
         }
 
         /// <summary>
@@ -886,7 +892,12 @@ namespace LLRPSdk
         {
             if (!this.IsConnected)
                 throw new LLRPSdkException("You must connect to the reader before configuring it.");
-            this.ApplySettings(new Settings(this._readerCapabilities.AntennaCount, this._readerCapabilities.GpiCount, this._readerCapabilities.GpoCount, this._readerCapabilities.FirmwareVersion));
+            this.ApplySettings(new Settings(this._readerCapabilities.AntennaCount,
+                this._readerCapabilities.GpiCount,
+                this._readerCapabilities.GpoCount,
+                this._readerCapabilities.FirmwareVersion,
+                this._readerCapabilities.RfModes.FirstOrDefault()
+                ));
         }
 
         /// <summary>

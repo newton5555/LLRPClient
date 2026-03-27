@@ -248,10 +248,10 @@ namespace LLRPSdk
           uint numberOfAntennas,
           ushort numberOfGpis,
           ushort numberOfGpos,
-          string firmwareVersion)
+          string firmwareVersion,uint? defaultRFModeId=null)
         {
             this.InitVars();
-            this.SetConfigDefaults(numberOfAntennas, numberOfGpis, numberOfGpos, firmwareVersion);
+            this.SetConfigDefaults(numberOfAntennas, numberOfGpis, numberOfGpos, firmwareVersion, defaultRFModeId);
         }
 
         internal void LoadFilterData(PARAM_C1G2Filter[] filters)
@@ -309,7 +309,9 @@ namespace LLRPSdk
           uint numberOfAntennas,
           ushort numberOfGpis,
           ushort numberOfGpos,
-          string firmwareVersion)
+          string firmwareVersion
+            , uint? defaultRFModeId = null
+            )
         {
             this.Antennas = new AntennaConfigGroup(numberOfAntennas);
             foreach (AntennaConfig antenna in this.Antennas)
@@ -339,7 +341,11 @@ namespace LLRPSdk
             this.AutoStop.Mode = AutoStopMode.None;
 
 
-            this.Session = (ushort)2;
+            this.Session = (ushort)0;//更改默认值
+            //if(this.RfMode == null)
+            //    this.RfMode = defaultRFModeId.HasValue ? (uint?)defaultRFModeId.Value : (uint?)null;
+
+
             this.TagPopulationEstimate = (ushort)32;
             this.Report.IncludeAntennaPortNumber = false;
             this.Report.IncludeChannel = false;
