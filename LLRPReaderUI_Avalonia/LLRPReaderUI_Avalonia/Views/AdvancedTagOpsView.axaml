@@ -13,7 +13,7 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="4">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.StandardSummary}" 
-                               FontWeight="SemiBold" FontSize="14"
+                               Classes="semiBold" FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="15.2.1.3.2 C1G2 OpSpec Parameters" 
                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,8,0,0"/>
@@ -36,10 +36,10 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.CommonParams}" 
-                               FontWeight="SemiBold" FontSize="14"
+                               Classes="semiBold" FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="{DynamicResource AdvancedTagOps.Warning}" 
-                               Foreground="{DynamicResource IconDangerBrush}" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                               Foreground="{DynamicResource IconDangerBrush}" Classes="semiBold" Margin="0,8,0,0"/>
                     <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto" Margin="0,8,0,0">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.TargetTagType}" 
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -69,7 +69,7 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.BlockErase}" 
-                               FontWeight="SemiBold" FontSize="14"
+                               Classes="semiBold" FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="{Binding IsBlockEraseSupported, StringFormat='Device Capability: C1G2BlockErase {0}'}" 
                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,8,0,0"/>
@@ -97,7 +97,7 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.LockOp}" 
-                               FontWeight="SemiBold" FontSize="14"
+                               Classes="semiBold" FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <Grid ColumnDefinitions="130,*,150" RowDefinitions="Auto,10,Auto" Margin="0,8,0,0">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource AdvancedTagOps.LockTarget}" 
@@ -119,7 +119,7 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.KillOp}" 
-                               FontWeight="SemiBold" FontSize="14"
+                               Classes="semiBold" FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                         <Button Height="36" Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" 
@@ -135,7 +135,7 @@
             <Border Classes="card" >
                 <StackPanel Spacing="8">
                     <TextBlock Text="{DynamicResource AdvancedTagOps.Result}" 
-                               FontWeight="SemiBold" FontSize="14"
+                               Classes="semiBold" FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="{Binding OperationResult}" TextWrapping="Wrap" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>

@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.Controls.Primitives;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LLRPReaderUI_Avalonia.Data;
 using LLRPReaderUI_Avalonia.Logging;
@@ -17,82 +17,41 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using System.Runtime.InteropServices;
 
 namespace LLRPReaderUI_Avalonia;
 
 public partial class App : Application
 {
-    private void OverrideFontWeight(Type controlType)
-    {
-        if (this.FindResource(controlType) is not ControlTheme baseTheme)
-            return;
-
-        var androidTheme = new ControlTheme(controlType)
-        {
-            BasedOn = baseTheme
-        };
-
-        androidTheme.Setters.Add(new Setter(
-            TextBlock.FontWeightProperty,
-            FontWeight.Normal
-        ));
-
-        this.Resources[controlType] = androidTheme;
-    }
-
-
-
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-
-       
-
-
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
         // Android 平台移除 FontWeight，避免中文字体加粗乱码
-        if (RuntimeInformation.OSDescription.Contains("Android", StringComparison.OrdinalIgnoreCase))
-        {              // 安卓：覆盖 Button 默认样式，强制 Normal 字重
-                       // 安卓：覆盖控件默认样式，强制 Normal 字重
-
-            // Button
-            OverrideFontWeight(typeof(Button));
-
-            // CheckBox
-            OverrideFontWeight(typeof(CheckBox));
-
-            // RadioButton
-            OverrideFontWeight(typeof(RadioButton));
-
-            // ToggleButton
-            OverrideFontWeight(typeof(ToggleButton));
-
-            // RepeatButton
-            OverrideFontWeight(typeof(RepeatButton));
-
-            // DropDownButton / SplitButton（如果 Semi 有）
-            OverrideFontWeight(typeof(DropDownButton));
-            OverrideFontWeight(typeof(SplitButton));
-
-            // HyperlinkButton
-            OverrideFontWeight(typeof(HyperlinkButton));
-
-            OverrideFontWeight(typeof(TextBlock));
-
+        if (OperatingSystem.IsAndroid())
+        {
+            // 覆盖所有 TextBlock
             Styles.Add(new Style(x => x.OfType<TextBlock>())
             {
-                Setters =
+                Setters = { new Setter(TextBlock.FontWeightProperty, FontWeight.Normal) }
+            });
+            // 覆盖 .semiBold 和 .bold 样式类
+            Styles.Add(new Style(x => x.OfType<TextBlock>().Class("semiBold"))
             {
-                new Setter(TextBlock.FontWeightProperty, FontWeight.Normal)
-            }
+                Setters = { new Setter(TextBlock.FontWeightProperty, FontWeight.Normal) }
+            });
+            Styles.Add(new Style(x => x.OfType<TextBlock>().Class("bold"))
+            {
+                Setters = { new Setter(TextBlock.FontWeightProperty, FontWeight.Normal) }
+            });
+            // 覆盖 DataGridColumnHeader
+            Styles.Add(new Style(x => x.OfType<DataGridColumnHeader>())
+            {
+                Setters = { new Setter(DataGridColumnHeader.FontWeightProperty, FontWeight.Normal) }
             });
         }
-
-
 
         // Configure Serilog
         Log.Logger = LoggingConfigurationManager.BuildLogger();

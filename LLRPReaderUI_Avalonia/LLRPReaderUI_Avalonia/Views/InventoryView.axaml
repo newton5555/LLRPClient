@@ -53,15 +53,15 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16">
             <TextBlock>
                 <Run Text="{DynamicResource Inventory.TotalReports}" />: 
-                <Run Text="{Binding TotalReports}" FontWeight="Bold" />
+                <Run Text="{Binding TotalReports}" Classes="bold" />
             </TextBlock>
             <TextBlock>
                 <Run Text="{DynamicResource Inventory.TotalTags}" />: 
-                <Run Text="{Binding TotalTags}" FontWeight="Bold" />
+                <Run Text="{Binding TotalTags}" Classes="bold" />
             </TextBlock>
             <TextBlock>
                 <Run Text="{DynamicResource Inventory.UniqueTags}" />: 
-                <Run Text="{Binding UniqueTagCount}" FontWeight="Bold" />
+                <Run Text="{Binding UniqueTagCount}" Classes="bold" />
             </TextBlock>
         </StackPanel>
 

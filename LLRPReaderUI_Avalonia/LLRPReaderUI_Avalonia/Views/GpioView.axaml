@@ -18,15 +18,15 @@
                             <materialIcons:MaterialIcon Kind="ArrowDownBold" Width="16" Height="16" 
                                                        Foreground="{DynamicResource IconSuccessBrush}"/>
                             <TextBlock Text="{DynamicResource GPIO.GpiConfig}" 
-                                       FontWeight="SemiBold" FontSize="14"
+                                       Classes="semiBold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
                         <Grid ColumnDefinitions="120,120,120" Margin="8,0,0,8">
-                            <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" FontWeight="SemiBold"
+                            <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" Classes="semiBold"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.Enable}" FontWeight="SemiBold"
+                            <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.Enable}" Classes="semiBold"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontWeight="SemiBold"
+                            <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" Classes="semiBold"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </Grid>
                         <ItemsControl ItemsSource="{Binding Gpis}" Margin="8,0,0,0">
@@ -52,15 +52,15 @@
                             <materialIcons:MaterialIcon Kind="ArrowUpBold" Width="16" Height="16" 
                                                        Foreground="{DynamicResource IconInfoBrush}"/>
                             <TextBlock Text="{DynamicResource GPIO.GpoOutput}" 
-                                       FontWeight="SemiBold" FontSize="14"
+                                       Classes="semiBold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
                         <Grid ColumnDefinitions="120,140,140" Margin="8,0,0,8">
-                            <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" FontWeight="SemiBold"
+                            <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" Classes="semiBold"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.OutputHigh}" FontWeight="SemiBold"
+                            <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.OutputHigh}" Classes="semiBold"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontWeight="SemiBold"
+                            <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" Classes="semiBold"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </Grid>
                         <ItemsControl ItemsSource="{Binding Gpos}" Margin="8,0,0,0">

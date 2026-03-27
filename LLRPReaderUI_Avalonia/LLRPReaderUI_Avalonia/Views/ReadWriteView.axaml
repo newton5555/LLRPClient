@@ -15,7 +15,7 @@
                 <StackPanel Spacing="12">
                     <!-- Header -->
                     <TextBlock Text="{DynamicResource ReadWrite.ReadConfig}" 
-                               FontWeight="SemiBold" 
+                               Classes="semiBold" 
                                FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}" />
                     
@@ -41,7 +41,7 @@
                         <TextBlock Grid.Row="2" Grid.Column="0" 
                                    Text="{DynamicResource ReadWrite.TargetTagData}" 
                                    VerticalAlignment="Center" 
-                                   FontWeight="SemiBold"
+                                   Classes="semiBold"
                                    Foreground="{DynamicResource TextPrimaryBrush}" />
                         <Border Grid.Row="2" Grid.Column="1" 
                                 BorderBrush="{DynamicResource IconWarningBrush}" 
@@ -71,7 +71,7 @@
                         <TextBlock Grid.Row="6" Grid.Column="0" 
                                    Text="{DynamicResource ReadWrite.WordStartAddress}" 
                                    VerticalAlignment="Center" 
-                                   FontWeight="SemiBold"
+                                   Classes="semiBold"
                                    Foreground="{DynamicResource TextPrimaryBrush}" />
                         <Border Grid.Row="6" Grid.Column="1" 
                                 BorderBrush="{DynamicResource IconWarningBrush}" 
@@ -90,7 +90,7 @@
                         <TextBlock Grid.Row="8" Grid.Column="0" 
                                    Text="{DynamicResource ReadWrite.WordCount}" 
                                    VerticalAlignment="Center" 
-                                   FontWeight="SemiBold"
+                                   Classes="semiBold"
                                    Foreground="{DynamicResource ReadRequiredForeground}" />
                         <TextBox Grid.Row="8" Grid.Column="1" 
                                  Text="{Binding WordCount, UpdateSourceTrigger=PropertyChanged}" 
@@ -106,7 +106,7 @@
                         <TextBlock Grid.Row="10" Grid.Column="0" 
                                    Text="{DynamicResource ReadWrite.WriteData}" 
                                    VerticalAlignment="Center" 
-                                   FontWeight="SemiBold"
+                                   Classes="semiBold"
                                    Foreground="{DynamicResource WriteRequiredForeground}" />
                         <TextBox Grid.Row="10" Grid.Column="1" 
                                  Text="{Binding WriteData, UpdateSourceTrigger=PropertyChanged}" 
@@ -138,7 +138,7 @@
                 <StackPanel Spacing="12">
                     <!-- Header -->
                     <TextBlock Text="{DynamicResource ReadWrite.Operations}" 
-                               FontWeight="SemiBold" 
+                               Classes="semiBold" 
                                FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}" />
                     
@@ -176,7 +176,7 @@
                 <StackPanel Spacing="12">
                     <!-- Header -->
                     <TextBlock Text="{DynamicResource ReadWrite.ReadResult}" 
-                               FontWeight="SemiBold" 
+                               Classes="semiBold" 
                                FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}" />
                     

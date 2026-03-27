@@ -12,10 +12,10 @@
         <!-- Header -->
         <Border Classes="card">
             <Grid ColumnDefinitions="Auto,*,Auto">
-                <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
+                <TextBlock VerticalAlignment="Center" FontSize="14" Classes="semiBold"
                            Foreground="{DynamicResource TextPrimaryBrush}">
                     <Run Text="日志总数: "/>
-                    <Run Text="{Binding TotalLogCount, Mode=OneWay}" FontWeight="Bold" 
+                    <Run Text="{Binding TotalLogCount, Mode=OneWay}" Classes="bold" 
                          Foreground="{DynamicResource PrimaryBrush}"/>
                 </TextBlock>
 
@@ -30,7 +30,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <materialIcons:MaterialIcon Kind="ClipboardList" Width="14" Height="14" Margin="0,0,6,0"/>
-                        <TextBlock Text="操作日志" FontWeight="SemiBold"/>
+                        <TextBlock Text="操作日志" Classes="semiBold"/>
                     </StackPanel>
                 </TabItem.Header>
                 <Grid RowDefinitions="Auto,*">
@@ -46,7 +46,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <materialIcons:MaterialIcon Kind="SatelliteUplink" Width="14" Height="14" Margin="0,0,6,0"/>
-                        <TextBlock Text="LLRP 消息日志" FontWeight="SemiBold"/>
+                        <TextBlock Text="LLRP 消息日志" Classes="semiBold"/>
                     </StackPanel>
                 </TabItem.Header>
                 <Grid RowDefinitions="Auto,*">
@@ -62,7 +62,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <materialIcons:MaterialIcon Kind="Code" Width="14" Height="14" Margin="0,0,6,0"/>
-                        <TextBlock Text="原始报文收发" FontWeight="SemiBold"/>
+                        <TextBlock Text="原始报文收发" Classes="semiBold"/>
                     </StackPanel>
                 </TabItem.Header>
                 <Grid RowDefinitions="Auto,*">

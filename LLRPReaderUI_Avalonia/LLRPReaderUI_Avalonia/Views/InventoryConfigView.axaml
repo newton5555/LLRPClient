@@ -18,7 +18,7 @@
                             <materialIcons:MaterialIcon Kind="PlayCircle" Width="16" Height="16" 
                                                        Foreground="{DynamicResource IconSuccessBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" 
-                                       FontWeight="SemiBold" FontSize="14"
+                                       Classes="semiBold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
                         <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
@@ -56,7 +56,7 @@
                             <materialIcons:MaterialIcon Kind="StopCircle" Width="16" Height="16" 
                                                        Foreground="{DynamicResource IconDangerBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" 
-                                       FontWeight="SemiBold" FontSize="14"
+                                       Classes="semiBold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
                         <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
@@ -90,7 +90,7 @@
                             <materialIcons:MaterialIcon Kind="Filter" Width="16" Height="16" 
                                                        Foreground="{DynamicResource IconWarningBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" 
-                                       FontWeight="SemiBold" FontSize="14"
+                                       Classes="semiBold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
 
@@ -103,7 +103,7 @@
                         <!-- Filter 1 -->
                         <Border Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="4" Padding="8" Margin="8,0,0,8">
                             <StackPanel Spacing="8">
-                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter1}" FontWeight="SemiBold"
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter1}" Classes="semiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <Grid ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto">
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"
@@ -129,7 +129,7 @@
                         <!-- Filter 2 -->
                         <Border Background="{DynamicResource CardInnerBackgroundBrush}" CornerRadius="4" Padding="8" Margin="8,0,0,0">
                             <StackPanel Spacing="8">
-                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter2}" FontWeight="SemiBold"
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter2}" Classes="semiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <Grid ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto">
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"
@@ -161,7 +161,7 @@
                             <materialIcons:MaterialIcon Kind="ChartBar" Width="16" Height="16" 
                                                        Foreground="{DynamicResource IconInfoBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" 
-                                       FontWeight="SemiBold" FontSize="14"
+                                       Classes="semiBold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
                         <Grid ColumnDefinitions="200,220" Margin="8,0,0,8">
@@ -189,7 +189,7 @@
                             <materialIcons:MaterialIcon Kind="Database" Width="16" Height="16" 
                                                        Foreground="{DynamicResource IconTealBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.AttachedDataConfig}" 
-                                       FontWeight="SemiBold" FontSize="14"
+                                       Classes="semiBold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
                         <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">

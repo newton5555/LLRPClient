@@ -62,7 +62,7 @@
                 <Grid RowDefinitions="Auto,*">
                     <!-- Header -->
                     <Grid Grid.Row="0" Margin="8,8,8,16">
-                        <TextBlock Text="{DynamicResource Menu.Navigation}" FontSize="16" FontWeight="SemiBold"
+                        <TextBlock Text="{DynamicResource Menu.Navigation}" FontSize="16" Classes="semiBold"
                                    VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
@@ -81,7 +81,7 @@
                                                                Width="20" Height="20"
                                                                Foreground="{DynamicResource TextMutedBrush}" />
                                     <TextBlock Text="{Binding ThemeLanguageViewModel.LanguageSymbol}"
-                                               FontSize="8" FontWeight="Bold"
+                                               FontSize="8" Classes="bold"
                                                HorizontalAlignment="Right" VerticalAlignment="Bottom"
                                                Foreground="#60A5FA" />
                                 </Grid>
@@ -134,7 +134,7 @@
                                 </MultiBinding>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <TextBlock Text="{Binding DeviceStatusText}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding DeviceStatusText}" FontSize="12" Classes="semiBold" VerticalAlignment="Center">
                             <TextBlock.Foreground>
                                 <MultiBinding Converter="{x:Static converters:DeviceStatusTextConverter.Instance}">
                                     <Binding Path="IsDeviceConnected"/>
@@ -159,7 +159,7 @@
                                 </MultiBinding>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <TextBlock Text="{Binding InventoryStatusText}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding InventoryStatusText}" FontSize="12" Classes="semiBold" VerticalAlignment="Center">
                             <TextBlock.Foreground>
                                 <MultiBinding Converter="{x:Static converters:InventoryStatusTextConverter.Instance}">
                                     <Binding Path="IsInventoryRunning"/>
@@ -206,7 +206,7 @@
                     <TextBlock Margin="0,12,0,0"
                                HorizontalAlignment="Center"
                                FontSize="12"
-                               FontWeight="SemiBold"
+                               Classes="semiBold"
                                Foreground="{DynamicResource StatusDefaultTextBrush}"
                                Text="{Binding BusyText}" />
                 </StackPanel>

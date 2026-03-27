@@ -112,7 +112,7 @@ public class LanguageService : INotifyPropertyChanged
         }
         catch { }
 
-        return  AppLanguage.EnUS;//Ä¬ÈÏÓ¢ÎÄ
+        return AppLanguage.ZhCN; // é»˜è®¤ä¸­æ–‡
     }
 
     private static void SaveLanguageToConfig(AppLanguage language)
