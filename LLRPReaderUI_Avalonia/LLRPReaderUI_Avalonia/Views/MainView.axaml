@@ -118,7 +118,7 @@
         <!-- Status Bar -->
         <Border Grid.Row="1" Height="40" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="0,1,0,0" Padding="12,0">
-            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,5">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <!-- Device Status Chip - Dynamic based on IsDeviceConnected -->
                 <Border Padding="10,4" CornerRadius="10">
                     <Border.Background>

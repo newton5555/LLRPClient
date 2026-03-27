@@ -77,7 +77,12 @@
             <SolidColorBrush x:Key="WriteRequiredForeground" Color="#B54708" />
             <SolidColorBrush x:Key="ReadRequiredBackground" Color="#EAF3FF" />
             <SolidColorBrush x:Key="WriteRequiredBackground" Color="#FFF3E8" />
-            <SolidColorBrush x:Key="BothRequiredBackground" Color="#F0F7FF" />
+            <LinearGradientBrush x:Key="BothRequiredBackground" StartPoint="0%,0%" EndPoint="100%,0%">
+                <GradientStop Color="#EAF3FF" Offset="0" />
+                <GradientStop Color="#EAF3FF" Offset="0.33" />
+                <GradientStop Color="#FFF3E8" Offset="0.67" />
+                <GradientStop Color="#FFF3E8" Offset="1" />
+            </LinearGradientBrush>
 
             <!-- ToolTip brushes -->
             <SolidColorBrush x:Key="ToolTipBackgroundBrush" Color="#FFFFFFFF" />
@@ -165,7 +170,12 @@
             <SolidColorBrush x:Key="WriteRequiredForeground" Color="#FBBF24" />
             <SolidColorBrush x:Key="ReadRequiredBackground" Color="#1E3A5F" />
             <SolidColorBrush x:Key="WriteRequiredBackground" Color="#422006" />
-            <SolidColorBrush x:Key="BothRequiredBackground" Color="#1E293B" />
+            <LinearGradientBrush x:Key="BothRequiredBackground" StartPoint="0%,0%" EndPoint="100%,0%">
+                <GradientStop Color="#1E3A5F" Offset="0" />
+                <GradientStop Color="#1E3A5F" Offset="0.33" />
+                <GradientStop Color="#422006" Offset="0.67" />
+                <GradientStop Color="#422006" Offset="1" />
+            </LinearGradientBrush>
 
             <!-- ToolTip brushes - high contrast for dark theme -->
             <SolidColorBrush x:Key="ToolTipBackgroundBrush" Color="#1E293B" />
