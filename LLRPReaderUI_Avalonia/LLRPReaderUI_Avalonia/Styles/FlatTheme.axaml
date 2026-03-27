@@ -227,6 +227,26 @@
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
+    <!-- TreeView Styles -->
+    <Style Selector="TreeView">
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="4" />
+    </Style>
+
+    <Style Selector="TreeViewItem">
+        <Setter Property="Padding" Value="4,2" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <Style Selector="TreeViewItem:pointerover /template/ Border#BackgroundModifier">
+        <Setter Property="Background" Value="{DynamicResource HoverOverlayBrush}" />
+    </Style>
+
+    <Style Selector="TreeViewItem:selected /template/ Border#BackgroundModifier">
+        <Setter Property="Background" Value="{DynamicResource SelectedOverlayBrush}" />
+    </Style>
+
     <!-- ToolTip Style -->
     <Style Selector="ToolTip">
         <Setter Property="Background" Value="{DynamicResource ToolTipBackgroundBrush}" />

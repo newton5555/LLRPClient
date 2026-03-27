@@ -154,8 +154,29 @@
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Border>
-                        <TreeView Grid.Row="1" ItemsSource="{Binding MessageTree}" BorderThickness="0" 
-                                  Background="{DynamicResource SurfaceBrush}"/>
+                        <TreeView Grid.Row="1" ItemsSource="{Binding MessageTree}" BorderThickness="0"
+                                  Background="{DynamicResource SurfaceBrush}">
+                            <TreeView.ItemTemplate>
+                                <TreeDataTemplate ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal" Margin="2,0">
+                                        <TextBlock Text="{Binding Name}" Classes="semiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Text=": " Margin="0,0,4,0"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   IsVisible="{Binding Value, Converter={StaticResource StringToVisibilityConverter}}"/>
+                                        <TextBlock Text="{Binding Value}"
+                                                   Foreground="{DynamicResource IconTealBrush}"
+                                                   IsVisible="{Binding Value, Converter={StaticResource StringToVisibilityConverter}}"/>
+                                        <TextBlock Text=" - " Margin="2,0,4,0"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   IsVisible="{Binding Description, Converter={StaticResource StringToVisibilityConverter}}"/>
+                                        <TextBlock Text="{Binding Description}" FontStyle="Italic"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                   IsVisible="{Binding Description, Converter={StaticResource StringToVisibilityConverter}}"/>
+                                    </StackPanel>
+                                </TreeDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
                     </Grid>
                 </Border>
 
