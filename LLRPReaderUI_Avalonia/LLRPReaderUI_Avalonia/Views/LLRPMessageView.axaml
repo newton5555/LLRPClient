@@ -62,27 +62,27 @@
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.StartDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <DatePicker Width="140" Height="28" SelectedDate="{Binding FilterStartDate}"
+                        <DatePicker MinWidth="140" Height="28" SelectedDate="{Binding FilterStartDate}"
                                     assists:TextFieldAssist.Label="{x:Null}"
                                     assists:DatePickerAssist.DateTimeFormat="yy/MM/dd"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.EndDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <DatePicker Width="140" Height="28" SelectedDate="{Binding FilterEndDate}"
+                        <DatePicker MinWidth="140" Height="28" SelectedDate="{Binding FilterEndDate}"
                                     assists:TextFieldAssist.Label="{x:Null}"
                                     assists:DatePickerAssist.DateTimeFormat="yy/MM/dd"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.Direction}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox Width="80" Height="28" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding FilterDirection}"/>
+                        <ComboBox MinWidth="80" Height="28" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding FilterDirection}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.Device}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox Width="80" Height="28" ItemsSource="{Binding DeviceIdOptions}" SelectedItem="{Binding FilterDeviceId}"/>
+                        <ComboBox MinWidth="80" Height="28" ItemsSource="{Binding DeviceIdOptions}" SelectedItem="{Binding FilterDeviceId}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.MessageType}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox Width="110" Height="28" ItemsSource="{Binding MsgTypeOptions}" SelectedItem="{Binding FilterMsgType}"/>
+                        <ComboBox MinWidth="110" Height="28" ItemsSource="{Binding MsgTypeOptions}" SelectedItem="{Binding FilterMsgType}"/>
                     </StackPanel>
                 </StackPanel>
 
