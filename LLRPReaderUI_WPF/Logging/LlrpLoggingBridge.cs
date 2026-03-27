@@ -40,7 +40,7 @@ public sealed class LlrpLoggingBridge
             {
                 _ = Task.Run(() =>
                 {
-                    try { logs.LogLlrpMessage(message, LogLevel.Information); }
+                    try { logs.LogLlrpMessage(message.TrimEnd('\r').TrimEnd('\n').TrimEnd("\r\n".ToCharArray()), LogLevel.Information); }
                     catch { /* 日志失败不影响通信 */ }
                 });
             };

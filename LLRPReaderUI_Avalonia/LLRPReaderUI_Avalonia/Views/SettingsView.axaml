@@ -62,14 +62,21 @@
                             <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Settings.Session}" 
                                        VerticalAlignment="Center"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Session}" 
-                                           Minimum="0" Maximum="3" Height="30" Width="100" HorizontalAlignment="Left"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding Session}" 
+                                           Height="30" Width="100" HorizontalAlignment="Left">
+                            <ComboBox.Items>
+							    <ComboBoxItem Content="S0"/>
+                                <ComboBoxItem Content="S1"/>
+                                <ComboBoxItem Content="S2"/>
+                                <ComboBoxItem Content="S3"/>	
+                            </ComboBox.Items>
+                            </ComboBox>
 
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource Settings.TagPopulationEstimate}" 
                                        VerticalAlignment="Center"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding TagPopulationEstimate}" 
-                                     Height="30"  HorizontalAlignment="Left"/>
+                                     Height="30" Width="100" HorizontalAlignment="Left"/>
 
                             <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource Settings.HoldEventsOnReconnect}" 
                                        VerticalAlignment="Center" TextWrapping="Wrap"
