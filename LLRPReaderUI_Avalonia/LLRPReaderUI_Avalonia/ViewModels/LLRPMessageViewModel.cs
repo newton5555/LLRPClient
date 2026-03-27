@@ -44,10 +44,10 @@ namespace LLRPReaderUI_Avalonia.ViewModels
 
         // 筛选属性
         [ObservableProperty]
-        private DateTime? _filterStartDate;
+        private DateTimeOffset? _filterStartDate;
 
         [ObservableProperty]
-        private DateTime? _filterEndDate;
+        private DateTimeOffset? _filterEndDate;
 
         [ObservableProperty]
         private string _filterDirection = string.Empty;
@@ -187,7 +187,8 @@ namespace LLRPReaderUI_Avalonia.ViewModels
             // 日期筛选
             if (FilterStartDate.HasValue)
             {
-                query = query.Where(f => f.Timestamp >= FilterStartDate.Value);
+                var startDate = FilterStartDate.Value.DateTime;
+                query = query.Where(f => f.Timestamp >= startDate);
             }
             if (FilterEndDate.HasValue)
             {

@@ -5,8 +5,10 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
              xmlns:converters="clr-namespace:LLRPReaderUI_Avalonia.Converters"
+             xmlns:material="clr-namespace:Material.Avalonia;assembly=Material.Avalonia"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="LLRPReaderUI_Avalonia.Views.LLRPMessageView"
+              xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              x:DataType="vm:LLRPMessageViewModel">
 
     <UserControl.Resources>
@@ -60,19 +62,23 @@
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.StartDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <CalendarDatePicker Width="110" Height="28" SelectedDate="{Binding FilterStartDate}"/>
+                        <DatePicker Width="140" Height="28" SelectedDate="{Binding FilterStartDate}"
+                                    assists:TextFieldAssist.Label="{x:Null}"
+                                    assists:DatePickerAssist.DateTimeFormat="yy/MM/dd"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.EndDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <CalendarDatePicker Width="110" Height="28" SelectedDate="{Binding FilterEndDate}"/>
+                        <DatePicker Width="140" Height="28" SelectedDate="{Binding FilterEndDate}"
+                                    assists:TextFieldAssist.Label="{x:Null}"
+                                    assists:DatePickerAssist.DateTimeFormat="yy/MM/dd"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.Direction}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox Width="110" Height="28" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding FilterDirection}"/>
+                        <ComboBox Width="80" Height="28" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding FilterDirection}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.Device}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox Width="110" Height="28" ItemsSource="{Binding DeviceIdOptions}" SelectedItem="{Binding FilterDeviceId}"/>
+                        <ComboBox Width="80" Height="28" ItemsSource="{Binding DeviceIdOptions}" SelectedItem="{Binding FilterDeviceId}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource LLRPMessage.MessageType}" VerticalAlignment="Center" Margin="0,0,6,0"/>
@@ -155,7 +161,7 @@
                             </StackPanel>
                         </Border>
                         <TreeView Grid.Row="1" ItemsSource="{Binding MessageTree}" BorderThickness="0"
-                                  Background="{DynamicResource SurfaceBrush}">
+                                  Background="{DynamicResource SurfaceBrush}" Margin="0">
                             <TreeView.ItemTemplate>
                                 <TreeDataTemplate ItemsSource="{Binding Children}">
                                     <StackPanel Orientation="Horizontal" Margin="2,0">

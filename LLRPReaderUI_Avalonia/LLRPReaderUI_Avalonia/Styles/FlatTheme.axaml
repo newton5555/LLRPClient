@@ -123,6 +123,21 @@
         <Setter Property="CornerRadius" Value="4" />
     </Style>
 
+    <!-- DatePicker Style -->
+    <Style Selector="DatePicker">
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushCustom}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+    <!-- Hide DatePicker floating label in Material theme -->
+    <Style Selector="DatePicker /template/ TextBox#DisplayTextBox">
+        <Setter Property="UseFloatingWatermark" Value="False" />
+    </Style>
+
     <!-- DataGrid Styles -->
     <Style Selector="DataGrid">
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
