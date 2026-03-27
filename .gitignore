@@ -363,3 +363,8 @@ MigrationBackup/
 FodyWeavers.xsd
 /.vscode
 /Refs/.claude
+/Docs/LLRPReaderUI_WPF_UI操作手册.md
+/Docs/LLRPReaderUI_WPF_UI操作手册.pdf
+/Docs/LLRPSdk_API参考手册.md
+/Docs/LLRPSdk_API参考手册_EN.md
+/Docs/LLRPSdk_Documentation.md
