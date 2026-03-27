@@ -79,12 +79,12 @@
     <SolidColorBrush x:Key="ReadRequiredBackground" Color="#1E3A5F" />
     <SolidColorBrush x:Key="WriteRequiredBackground" Color="#422006" />
     <DrawingBrush x:Key="BothRequiredBackground"
-                  Viewbox="0,0,6,6"
-                  ViewboxUnits="Absolute"
-                  Viewport="0,0,6,6"
-                  ViewportUnits="Absolute"
+                  Viewbox="0,0,20,20"
+                  ViewboxUnits="RelativeToBoundingBox"
+                  Viewport="0,0,20,20"
+                  ViewportUnits="RelativeToBoundingBox"
                   TileMode="Tile"
-                  Stretch="None">
+                  Stretch="UniformToFill">
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <GeometryDrawing Brush="#1E293B" Geometry="M0,0 H6 V6 H0 Z" />
