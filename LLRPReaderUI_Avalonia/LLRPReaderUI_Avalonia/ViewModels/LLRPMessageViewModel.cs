@@ -435,6 +435,24 @@ namespace LLRPReaderUI_Avalonia.ViewModels
         [RelayCommand] private async Task RefreshData() => await LoadRawFrames();
 
         [RelayCommand]
+        private async Task ClearAllData()
+        {
+            try
+            {
+                var count = await _rawFrameRepository.ClearAllAsync();
+                RawFrames.Clear();
+                FilteredFrames.Clear();
+                MessageTree.Clear();
+                RawHexString = string.Empty;
+                StatusText = GetLocalizedString("LLRPMessage.Cleared", count);
+            }
+            catch (Exception ex)
+            {
+                StatusText = GetLocalizedString("LLRPMessage.ClearFailed", ex.Message);
+            }
+        }
+
+        [RelayCommand]
         private void ExportToText()
         {
             if (SelectedRawFrame == null || MessageTree.Count == 0)

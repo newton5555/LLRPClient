@@ -82,5 +82,13 @@ namespace LLRPReaderUI_WPF.Data
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
+
+        public async Task<int> ClearAllAsync()
+        {
+            var count = await _ctx.RawFrames.CountAsync().ConfigureAwait(false);
+            _ctx.RawFrames.RemoveRange(_ctx.RawFrames);
+            await _ctx.SaveChangesAsync().ConfigureAwait(false);
+            return count;
+        }
     }
 }

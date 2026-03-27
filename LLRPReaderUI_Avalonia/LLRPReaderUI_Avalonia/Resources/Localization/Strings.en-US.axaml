@@ -226,6 +226,7 @@
 
     <!-- LLRP Message -->
     <sys:String x:Key="LLRPMessage.Refresh">Refresh Data</sys:String>
+    <sys:String x:Key="LLRPMessage.ClearAll">Clear All</sys:String>
     <sys:String x:Key="LLRPMessage.ExportText">Export Text</sys:String>
     <sys:String x:Key="LLRPMessage.Total">Total:</sys:String>
     <sys:String x:Key="LLRPMessage.Filtered">Filtered:</sys:String>
@@ -258,6 +259,8 @@
     <sys:String x:Key="LLRPMessage.SelectFirst">Please select a message first</sys:String>
     <sys:String x:Key="LLRPMessage.Exported">Exported to file: {0}</sys:String>
     <sys:String x:Key="LLRPMessage.ExportFailed">Export failed: {0}</sys:String>
+    <sys:String x:Key="LLRPMessage.Cleared">Cleared {0} records</sys:String>
+    <sys:String x:Key="LLRPMessage.ClearFailed">Clear failed: {0}</sys:String>
     <sys:String x:Key="LLRPMessage.LoadFailedLog">Load raw frame data failed: {0}</sys:String>
 
     <!-- Actions -->

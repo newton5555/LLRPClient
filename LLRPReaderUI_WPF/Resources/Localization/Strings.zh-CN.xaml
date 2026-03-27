@@ -147,6 +147,7 @@
 
     <!-- LLRP Message -->
     <sys:String x:Key="LLRPMessage.Refresh">刷新数据</sys:String>
+    <sys:String x:Key="LLRPMessage.ClearAll">清空数据</sys:String>
     <sys:String x:Key="LLRPMessage.ExportText">导出文本</sys:String>
     <sys:String x:Key="LLRPMessage.Total">总计:</sys:String>
     <sys:String x:Key="LLRPMessage.Filtered">筛选:</sys:String>
@@ -286,6 +287,8 @@
     <sys:String x:Key="LLRPMessage.SelectFirst">请先选择一条消息</sys:String>
     <sys:String x:Key="LLRPMessage.Exported">已导出到文件: {0}</sys:String>
     <sys:String x:Key="LLRPMessage.ExportFailed">导出失败: {0}</sys:String>
+    <sys:String x:Key="LLRPMessage.Cleared">已清空 {0} 条记录</sys:String>
+    <sys:String x:Key="LLRPMessage.ClearFailed">清空失败: {0}</sys:String>
     <sys:String x:Key="LLRPMessage.LoadFailedLog">加载原始帧数据失败: {0}</sys:String>
 
     <!-- ReadWrite -->
