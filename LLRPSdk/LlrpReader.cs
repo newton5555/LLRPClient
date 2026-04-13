@@ -58,6 +58,7 @@ namespace LLRPSdk
         private SyncReadOpStatus syncReadOpStatus;
         private BackgroundWorker backgroundWorkerThread;
         private System.Timers.Timer keepaliveTimer = new System.Timers.Timer();
+        private bool _isKeepaliveMonitorEnabled = false;
         private ConcurrentDictionary<int, TagData> outstandingAuthenticateRequests = new ConcurrentDictionary<int, TagData>();
         private List<ReaderEventNotificationState> cachedReaderEventNotifications;
 
@@ -232,6 +233,7 @@ namespace LLRPSdk
         {
             if (!this.IsConnected)
                 return;
+            this._isKeepaliveMonitorEnabled = false;
             this.keepaliveTimer.Stop();
             this.cachedReaderEventNotifications = null;
             this.reader.Close();
@@ -251,6 +253,7 @@ namespace LLRPSdk
         {
             if (!this.IsConnected)
                 return;
+            this._isKeepaliveMonitorEnabled = false;
             this.keepaliveTimer.Stop();
             this.cachedReaderEventNotifications = null;
             this.reader.ForceClose();
@@ -1649,13 +1652,15 @@ namespace LLRPSdk
                     PeriodicTriggerValue = config.Keepalives.PeriodInMs
                 };
                 readerConfig.KeepaliveSpec = paramKeepaliveSpec;
-                this.keepaliveTimer.Interval = (double)config.Keepalives.PeriodInMs * 1.5;
+                this.keepaliveTimer.Interval = (double)Math.Max(config.Keepalives.PeriodInMs * 1.5,1000);
                 this.keepaliveTimer.AutoReset = false;
+                this._isKeepaliveMonitorEnabled = true;
                 this.keepaliveTimer.Start();
             }
             else
             {
                 // Keepalive disabled - stop the connection monitoring timer
+                this._isKeepaliveMonitorEnabled = false;
                 this.keepaliveTimer.Stop();
             }
             readerConfig.GPIPortCurrentState = new PARAM_GPIPortCurrentState[(int)this._readerCapabilities.GpiCount];
@@ -2898,8 +2903,11 @@ namespace LLRPSdk
         private void OnKeepAliveInternal(MSG_KEEPALIVE msg)
         {
             this.LogLlrpMessage($"RX KEEPALIVE (MsgId={msg.MSG_ID})");
-            this.keepaliveTimer.Stop();
-            this.keepaliveTimer.Start();
+            if (this._isKeepaliveMonitorEnabled)
+            {
+                this.keepaliveTimer.Stop();
+                this.keepaliveTimer.Start();
+            }
             if (this.reader != null)
             {
                 MSG_KEEPALIVE_ACK msg1 = new MSG_KEEPALIVE_ACK();
