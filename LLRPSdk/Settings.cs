@@ -48,6 +48,8 @@ namespace LLRPSdk
         private AttachedDataConfig _attachedData;
         private ushort _hopTableId;
         private ushort _channelIndex;
+        private bool _inventoryStateAware;
+        private InventoryTarget _inventoryTarget;
 
 
 
@@ -251,6 +253,25 @@ namespace LLRPSdk
             set => this.SetProperty<ushort>(ref this._channelIndex, value, nameof(ChannelIndex));
         }
 
+        /// <summary>
+        /// Indicates whether the reader should use state-aware singulation (Target A/B).
+        /// Only applicable if the reader supports this feature.
+        /// </summary>
+        public bool InventoryStateAware
+        {
+            get => this._inventoryStateAware;
+            set => this.SetProperty<bool>(ref this._inventoryStateAware, value, nameof(InventoryStateAware));
+        }
+
+        /// <summary>
+        /// Specifies the target state (A or B) for state-aware singulation.
+        /// </summary>
+        public InventoryTarget InventoryTarget
+        {
+            get => this._inventoryTarget;
+            set => this.SetProperty<InventoryTarget>(ref this._inventoryTarget, value, nameof(InventoryTarget));
+        }
+
 
 
 
@@ -383,6 +404,8 @@ namespace LLRPSdk
             this.HoldReportsOnDisconnect = false;
             this.HopTableId = (ushort)1;
             this.ChannelIndex = (ushort)0;
+            this.InventoryStateAware = false;
+            this.InventoryTarget = InventoryTarget.A;
 
         }
 

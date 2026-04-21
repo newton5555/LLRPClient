@@ -155,6 +155,11 @@ namespace LLRPSdk
         [XmlIgnore]
         public Dictionary<uint, string> RfModeDetails { get; }
 
+        /// <summary>
+        /// Indicates whether the reader supports state-aware singulation (Target A/B).
+        /// </summary>
+        public bool CanDoTagInventoryStateAwareSingulation { get; set; }
+
         /// <summary>Default Constructor</summary>
         public FeatureSet()
         {
@@ -177,6 +182,7 @@ namespace LLRPSdk
             this.MaxTagSelectFiltersAllowed = featureSet.MaxTagSelectFiltersAllowed;
             this.IsMultiwordBlockWriteAvailable = featureSet.IsMultiwordBlockWriteAvailable;
             this.IsMultiwordBlockEraseAvailable = featureSet.IsMultiwordBlockEraseAvailable;
+            this.CanDoTagInventoryStateAwareSingulation = featureSet.CanDoTagInventoryStateAwareSingulation;
             this.ReaderModel = featureSet.ReaderModel;
             List<TxPowerTableEntry> txPowers = featureSet.TxPowers;
             this.TxPowers = txPowers != null ? txPowers.ToList<TxPowerTableEntry>() : (List<TxPowerTableEntry>)null;
@@ -205,6 +211,7 @@ namespace LLRPSdk
             this.GpoCount = capabilities.GeneralDeviceCapabilities.GPIOCapabilities.NumGPOs;
             this.MaxOperationSequences = capabilities.LLRPCapabilities.MaxNumAccessSpecs;
             this.MaxOperationsPerSequence = capabilities.LLRPCapabilities.MaxNumOpSpecsPerAccessSpec;
+            this.CanDoTagInventoryStateAwareSingulation = capabilities.LLRPCapabilities.CanDoTagInventoryStateAwareSingulation;
             this.ModelNumber = capabilities.GeneralDeviceCapabilities.ModelName;
             this.DeviceManufacturerNumber = capabilities.GeneralDeviceCapabilities.DeviceManufacturerName;
             this.ReaderModel = "Unknown";

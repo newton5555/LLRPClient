@@ -1304,29 +1304,35 @@ namespace LLRPSdk
                 aiSpec.AISpecStopTrigger.AISpecStopTriggerType = ENUM_AISpecStopTriggerType.Null;
             PARAM_C1G2InventoryCommand val = new PARAM_C1G2InventoryCommand()
             {
-                TagInventoryStateAware = false//todo  impinj sdk 默认关闭，使用 search mode 后面需要开放这个参数
+                TagInventoryStateAware = this._readerCapabilities.CanDoTagInventoryStateAwareSingulation && config.InventoryStateAware
             };
 
-            
             val.C1G2Filter = this.GetC1G2Filters(config.Filters);
             PARAM_C1G2RFControl rfControl = new PARAM_C1G2RFControl();
             uint? rfMode = config.RfMode;
-            if (!rfMode.HasValue)
-            {
-               
-            }
-            else
+            if (rfMode.HasValue)
             {
                 rfControl.ModeIndex = (ushort)rfMode.Value;
             }
             rfControl.Tari = (ushort)0;
             val.C1G2RFControl = rfControl;
+
+            // Apply singulation control (Target A/B)
             PARAM_C1G2SingulationControl singulationControl = new PARAM_C1G2SingulationControl()
             {
                 Session = new TwoBits(config.Session),
                 TagPopulation = config.TagPopulationEstimate,
                 TagTransitTime = 0
             };
+
+            if (val.TagInventoryStateAware)
+            {
+                singulationControl.C1G2TagInventoryStateAwareSingulationAction = new PARAM_C1G2TagInventoryStateAwareSingulationAction()
+                {
+                    I = (config.InventoryTarget == InventoryTarget.A) ? ENUM_C1G2TagInventoryStateAwareI.State_A : ENUM_C1G2TagInventoryStateAwareI.State_B,
+                    S = ENUM_C1G2TagInventoryStateAwareS.Not_SL
+                };
+            }
             val.C1G2SingulationControl = singulationControl;
 
 

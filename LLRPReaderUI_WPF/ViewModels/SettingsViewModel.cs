@@ -113,6 +113,17 @@ public partial class SettingsViewModel : ObservableObject
     private string saveResult = string.Empty;
 
     [ObservableProperty]
+    private bool isStateAwareSupported;
+
+    [ObservableProperty]
+    private bool inventoryStateAware;
+
+    [ObservableProperty]
+    private InventoryTarget inventoryTarget = InventoryTarget.A;
+
+    public List<InventoryTarget> InventoryTargetOptions { get; } = new() { InventoryTarget.A, InventoryTarget.B };
+
+    [ObservableProperty]
     private ObservableCollection<AntennaItemViewModel> antennas = new();
 
     private void UpdateReaderEventNotifications()
@@ -140,6 +151,7 @@ public partial class SettingsViewModel : ObservableObject
         }
 
         var featureSet = reader.ReaderCapabilities;
+        IsStateAwareSupported = featureSet.CanDoTagInventoryStateAwareSingulation;
 
         var rfModes = featureSet.RfModes?
             .Where(x => x.HasValue)
@@ -304,6 +316,8 @@ public partial class SettingsViewModel : ObservableObject
             settings.RfMode = SelectedRfModeOption?.Id;
             settings.HopTableId = HopTableId;
             settings.ChannelIndex = ChannelIndex;
+            settings.InventoryStateAware = InventoryStateAware;
+            settings.InventoryTarget = InventoryTarget;
 
             var configuredAntennas = settings.Antennas.AntennaConfigs;
             if (Antennas.Count > 0)
@@ -450,6 +464,8 @@ public partial class SettingsViewModel : ObservableObject
         HoldEventsAndReportsUponReconnect = settings.HoldReportsOnDisconnect;
         HopTableId = settings.HopTableId;
         ChannelIndex = settings.ChannelIndex;
+        InventoryStateAware = settings.InventoryStateAware;
+        InventoryTarget = settings.InventoryTarget;
 
         Antennas.Clear();
         var configuredByPort = settings.Antennas.AntennaConfigs
