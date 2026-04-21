@@ -17,6 +17,7 @@
 2. 状态感知盘存支持
    - 支持解析 CanDoTagInventoryStateAwareSingulation 能力
    - 增加 InventoryStateAware 开关和 InventoryTarget (A/B) 配置项
+   - 增加 InventorySearchMode (SL / Not_SL) 搜索模式配置项
    - GetAiSpec 根据设备能力自动决定是否开启状态感知
    - UI 界面增加了相关配置项和本地化文本
 
@@ -25,9 +26,10 @@
 
 【优化改进】
 
-1. RF Mode 显示优化
-   - RF Mode 下拉列表增加 "Pn" 前缀显示（如：P0 - 113 - [详情]）
-   - 提升了模式识别的直观性
+1. 参数配置优化
+   - RF Mode 下拉列表增加 "Pn" 前缀显示（如：P0 - 113 - [详情]），提升识别直观性
+   - 跳频表和发射频率的显示精度提升到小数点后三位 (F3)
+   - HopTableId 和 ChannelIndex 的默认值修改为 1
 
 ================================================================================
 

@@ -267,7 +267,7 @@ public partial class SettingsViewModel : ObservableObject
             var table = reader.ReaderCapabilities.HopTables?.FirstOrDefault(x => x.HopTableId == HopTableId);
             if (table != null)
             {
-                SelectedHopTableFrequencies = string.Join(", ", table.Frequencies.Select(f => f.ToString("F1")));
+                SelectedHopTableFrequencies = string.Join(", ", table.Frequencies.Select(f => f.ToString("F3")));
             }
             else if (HopTableId == 0)
             {
@@ -275,7 +275,7 @@ public partial class SettingsViewModel : ObservableObject
                 // but for now let's just show TxFrequencies if IsHoppingRegion is false
                 if (!reader.ReaderCapabilities.IsHoppingRegion)
                 {
-                    SelectedHopTableFrequencies = string.Join(", ", reader.ReaderCapabilities.TxFrequencies.Select(f => f.ToString("F1")));
+                    SelectedHopTableFrequencies = string.Join(", ", reader.ReaderCapabilities.TxFrequencies.Select(f => f.ToString("F3")));
                 }
                 else
                 {

@@ -46,8 +46,8 @@ namespace LLRPSdk
         private bool _startOfAntennaEvent;
         private bool _endOfCycleEvent;
         private AttachedDataConfig _attachedData;
-        private ushort _hopTableId;
-        private ushort _channelIndex;
+        private ushort _hopTableId=1;
+        private ushort _channelIndex=1;
         private bool _inventoryStateAware;
         private InventoryTarget _inventoryTarget;
         private InventorySearchMode _inventorySearchMode;
