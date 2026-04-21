@@ -88,8 +88,8 @@
                         <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.TagPopulationEstimate}" />
                         <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding TagPopulationEstimate}" />
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.HoldEventsOnReconnect}" TextWrapping="WrapWithOverflow"/>
-                        <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding HoldEventsAndReportsUponReconnect}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.HoldEventsOnReconnect}" TextWrapping="WrapWithOverflow" Visibility="Collapsed"/>
+                        <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding HoldEventsAndReportsUponReconnect}" VerticalAlignment="Center" Visibility="Collapsed"/>
 
                         <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.HopTableId}" />
                         <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2">
