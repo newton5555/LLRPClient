@@ -58,6 +58,21 @@ public partial class SettingsViewModel : ObservableObject
     private bool holdEventsAndReportsUponReconnect;
 
     [ObservableProperty]
+    private ushort hopTableId = 1;
+
+    [ObservableProperty]
+    private ushort channelIndex = 0;
+
+    [ObservableProperty]
+    private ObservableCollection<ushort> hopTableOptions = new();
+
+    [ObservableProperty]
+    private string selectedHopTableFrequencies = string.Empty;
+
+    [ObservableProperty]
+    private string selectedChannelFrequency = string.Empty;
+
+    [ObservableProperty]
     private uint? selectedRfMode;
 
     [ObservableProperty]
@@ -145,6 +160,91 @@ public partial class SettingsViewModel : ObservableObject
         {
             RxSensitivityOptions.Add(rxSensitivity);
         }
+
+        HopTableOptions.Clear();
+        HopTableOptions.Add(0); // Always include ID=0
+        if (featureSet.HopTables != null)
+        {
+            foreach (var table in featureSet.HopTables)
+            {
+                if (table.HopTableId != 0) // Avoid duplicate 0
+                    HopTableOptions.Add(table.HopTableId);
+            }
+        }
+        UpdateSelectedHopTableFrequencies();
+        UpdateSelectedChannelFrequency();
+    }
+
+    partial void OnHopTableIdChanged(ushort value)
+    {
+        UpdateSelectedHopTableFrequencies();
+        UpdateSelectedChannelFrequency();
+    }
+
+    partial void OnChannelIndexChanged(ushort value)
+    {
+        UpdateSelectedChannelFrequency();
+    }
+
+    private void UpdateSelectedChannelFrequency()
+    {
+        if (reader.IsConnected)
+        {
+            if (ChannelIndex == 0)
+            {
+                SelectedChannelFrequency = "-";
+                return;
+            }
+
+            var table = reader.ReaderCapabilities.HopTables?.FirstOrDefault(x => x.HopTableId == HopTableId);
+            List<double> freqs = null;
+            if (table != null)
+            {
+                freqs = table.Frequencies;
+            }
+            else if (HopTableId == 0 && !reader.ReaderCapabilities.IsHoppingRegion)
+            {
+                freqs = reader.ReaderCapabilities.TxFrequencies;
+            }
+
+            if (freqs != null && ChannelIndex > 0 && ChannelIndex <= freqs.Count)
+            {
+                SelectedChannelFrequency = $"{freqs[ChannelIndex - 1]:F1} MHz";
+            }
+            else
+            {
+                SelectedChannelFrequency = "-";
+            }
+        }
+    }
+
+    private void UpdateSelectedHopTableFrequencies()
+    {
+        if (reader.IsConnected)
+        {
+            var table = reader.ReaderCapabilities.HopTables?.FirstOrDefault(x => x.HopTableId == HopTableId);
+            if (table != null)
+            {
+                SelectedHopTableFrequencies = string.Join(", ", table.Frequencies.Select(f => f.ToString("F1")));
+            }
+            else if (HopTableId == 0)
+            {
+                // If ID=0, maybe show FixedFrequencyTable if we saved it elsewhere, 
+                // but for now let's just show TxFrequencies if IsHoppingRegion is false
+                if (!reader.ReaderCapabilities.IsHoppingRegion)
+                {
+                    SelectedHopTableFrequencies = string.Join(", ", reader.ReaderCapabilities.TxFrequencies.Select(f => f.ToString("F1")));
+                }
+                else
+                {
+                    SelectedHopTableFrequencies = "-";
+                }
+            }
+            else
+            {
+                SelectedHopTableFrequencies = "-";
+            }
+        }
     }
 
     [RelayCommand]
@@ -177,6 +277,8 @@ public partial class SettingsViewModel : ObservableObject
             settings.TagPopulationEstimate = (ushort)Math.Clamp(TagPopulationEstimate, 1, ushort.MaxValue);
             settings.HoldReportsOnDisconnect = HoldEventsAndReportsUponReconnect;
             settings.RfMode = SelectedRfModeOption?.Id;
+            settings.HopTableId = HopTableId;
+            settings.ChannelIndex = ChannelIndex;
 
             var configuredAntennas = settings.Antennas.AntennaConfigs;
             if (Antennas.Count > 0)
@@ -321,6 +423,8 @@ public partial class SettingsViewModel : ObservableObject
         SelectedRfModeOption = RfModeOptions.FirstOrDefault(x => x.Id == settings.RfMode);
         TagPopulationEstimate = settings.TagPopulationEstimate;
         HoldEventsAndReportsUponReconnect = settings.HoldReportsOnDisconnect;
+        HopTableId = settings.HopTableId;
+        ChannelIndex = settings.ChannelIndex;
 
         Antennas.Clear();
         var configuredByPort = settings.Antennas.AntennaConfigs

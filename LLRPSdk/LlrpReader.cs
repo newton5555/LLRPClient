@@ -1,4 +1,4 @@
-﻿using Org.LLRP.LTK.LLRPV1;
+using Org.LLRP.LTK.LLRPV1;
 using Org.LLRP.LTK.LLRPV1.DataType;
 using System;
 using System.Collections.Concurrent;
@@ -1385,9 +1385,8 @@ namespace LLRPSdk
                         aiSpec.InventoryParameterSpec[0].AntennaConfiguration[(int)index].RFTransmitter = new PARAM_RFTransmitter()
                         {
                             TransmitPower = num2,
-                            //TransmitPower = 200,
-                            HopTableID = (ushort)1,
-                            ChannelIndex = (ushort)1
+                            HopTableID = config.HopTableId,
+                            ChannelIndex = config.ChannelIndex
                         };
                         aiSpec.InventoryParameterSpec[0].AntennaConfiguration[(int)index].RFReceiver = new PARAM_RFReceiver()
                         {

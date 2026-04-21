@@ -95,6 +95,9 @@
     <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
     <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
     <sys:String x:Key="Settings.HoldEventsOnReconnect">Hold Events on Reconnect (Requires ENABLE_EVENTS_AND_REPORTS)</sys:String>
+    <sys:String x:Key="Settings.HopTableId">Hop Table ID</sys:String>
+    <sys:String x:Key="Settings.ChannelIndex">Channel Index</sys:String>
+    <sys:String x:Key="Settings.HoppingMode">Hopping</sys:String>
     <sys:String x:Key="Settings.AntennaConfig">AntennaConfigGroup (By Antenna)</sys:String>
     <sys:String x:Key="Settings.Port">Port</sys:String>
     <sys:String x:Key="Settings.Enable">Enable</sys:String>

@@ -95,6 +95,9 @@
     <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
     <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
     <sys:String x:Key="Settings.HoldEventsOnReconnect">连接后暂缓上报（需 ENABLE_EVENTS_AND_REPORTS）</sys:String>
+    <sys:String x:Key="Settings.HopTableId">跳频表 ID</sys:String>
+    <sys:String x:Key="Settings.ChannelIndex">信道索引</sys:String>
+    <sys:String x:Key="Settings.HoppingMode">自动跳频</sys:String>
     <sys:String x:Key="Settings.AntennaConfig">AntennaConfigGroup（按天线）</sys:String>
     <sys:String x:Key="Settings.Port">端口</sys:String>
     <sys:String x:Key="Settings.Enable">启用</sys:String>

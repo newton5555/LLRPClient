@@ -1,4 +1,4 @@
-﻿
+
 using Org.LLRP.LTK.LLRPV1;
 using Org.LLRP.LTK.LLRPV1.DataType;
 
@@ -46,6 +46,8 @@ namespace LLRPSdk
         private bool _startOfAntennaEvent;
         private bool _endOfCycleEvent;
         private AttachedDataConfig _attachedData;
+        private ushort _hopTableId;
+        private ushort _channelIndex;
 
 
 
@@ -237,6 +239,18 @@ namespace LLRPSdk
             set => this.SetProperty<AttachedDataConfig>(ref this._attachedData, value, nameof(AttachedData));
         }
 
+        public ushort HopTableId
+        {
+            get => this._hopTableId;
+            set => this.SetProperty<ushort>(ref this._hopTableId, value, nameof(HopTableId));
+        }
+
+        public ushort ChannelIndex
+        {
+            get => this._channelIndex;
+            set => this.SetProperty<ushort>(ref this._channelIndex, value, nameof(ChannelIndex));
+        }
+
 
 
 
@@ -367,6 +381,8 @@ namespace LLRPSdk
             this.TxFrequenciesInMhz.Clear();
             this.ReducedPowerFrequenciesInMhz.Clear();
             this.HoldReportsOnDisconnect = false;
+            this.HopTableId = (ushort)1;
+            this.ChannelIndex = (ushort)0;
 
         }
 

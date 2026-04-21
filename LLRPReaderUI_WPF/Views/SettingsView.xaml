@@ -52,8 +52,11 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="200" />
                             <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="8" />
                             <RowDefinition Height="Auto" />
@@ -85,6 +88,30 @@
 
                         <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.HoldEventsOnReconnect}" TextWrapping="WrapWithOverflow"/>
                         <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding HoldEventsAndReportsUponReconnect}" VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.HopTableId}" />
+                        <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" Height="30" ItemsSource="{Binding HopTableOptions}" SelectedItem="{Binding HopTableId}" />
+                            <TextBlock Grid.Column="1" Text="{Binding SelectedHopTableFrequencies}" 
+                                       Foreground="Gray" FontSize="11" TextWrapping="Wrap" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+
+
+
+                        <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.ChannelIndex}" />
+                        <Grid Grid.Row="10" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Height="30" Text="{Binding ChannelIndex}" />
+                            <TextBlock Grid.Column="1" Text="{Binding SelectedChannelFrequency}" 
+                                       Foreground="Gray" FontSize="11" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
 
 
                     </Grid>

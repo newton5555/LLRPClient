@@ -1,4 +1,4 @@
-﻿using Org.LLRP.LTK.LLRPV1;
+using Org.LLRP.LTK.LLRPV1;
 using Org.LLRP.LTK.LLRPV1.DataType;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,12 @@ using System.Xml.Serialization;
 #nullable disable
 namespace LLRPSdk
 {
+    public class HopTableInfo
+    {
+        public ushort HopTableId { get; set; }
+        public List<double> Frequencies { get; set; } = new List<double>();
+    }
+
     /// <summary>
     /// Container class used to encapsulate the features supported by a given
     /// LLRP reader.  An object of this type is returned by a call to
@@ -133,6 +139,8 @@ namespace LLRPSdk
         /// <summary>Holds the transmit frequencies the reader can hop on.</summary>
         public List<double> TxFrequencies { get; private set; }
 
+        public List<HopTableInfo> HopTables { get; private set; }
+
 
 
         /// <summary>
@@ -177,6 +185,11 @@ namespace LLRPSdk
             this.ReaderMaxSensitivityActualDbm = featureSet.ReaderMaxSensitivityActualDbm;
             List<double> txFrequencies = featureSet.TxFrequencies;
             this.TxFrequencies = txFrequencies != null ? txFrequencies.ToList<double>() : (List<double>)null;
+            this.HopTables = featureSet.HopTables?.Select(h => new HopTableInfo 
+            { 
+                HopTableId = h.HopTableId, 
+                Frequencies = h.Frequencies.ToList() 
+            }).ToList();
             List<uint?> rfModes = featureSet.RfModes;
             this.RfModes = rfModes != null ? rfModes.ToList<uint?>() : (List<uint?>)null;
             this.RfModeDetails = featureSet.RfModeDetails != null
@@ -279,10 +292,40 @@ namespace LLRPSdk
         private void BuildFreqHopTable(MSG_GET_READER_CAPABILITIES_RESPONSE capabilities)
         {
             this.TxFrequencies = new List<double>();
-            UInt32Array uint32Array = !this.IsHoppingRegion ? capabilities.RegulatoryCapabilities.UHFBandCapabilities.FrequencyInformation.FixedFrequencyTable.Frequency : capabilities.RegulatoryCapabilities.UHFBandCapabilities.FrequencyInformation.FrequencyHopTable[0].Frequency;
-            this.TxFrequencies.Clear();
-            for (int index = 0; index < uint32Array.Count; ++index)
-                this.TxFrequencies.Add((double)uint32Array[index] / 1000.0);
+            this.HopTables = new List<HopTableInfo>();
+
+            if (this.IsHoppingRegion)
+            {
+                var hopTables = capabilities.RegulatoryCapabilities.UHFBandCapabilities.FrequencyInformation.FrequencyHopTable;
+                if (hopTables != null)
+                {
+                    foreach (var table in hopTables)
+                    {
+                        var info = new HopTableInfo { HopTableId = table.HopTableID };
+                        for (int i = 0; i < table.Frequency.Count; i++)
+                        {
+                            info.Frequencies.Add((double)table.Frequency[i] / 1000.0);
+                        }
+                        this.HopTables.Add(info);
+                    }
+                }
+
+                if (this.HopTables.Count > 0)
+                {
+                    this.TxFrequencies = this.HopTables[0].Frequencies.ToList();
+                }
+            }
+            else
+            {
+                var fixedTable = capabilities.RegulatoryCapabilities.UHFBandCapabilities.FrequencyInformation.FixedFrequencyTable;
+                if (fixedTable != null)
+                {
+                    for (int i = 0; i < fixedTable.Frequency.Count; i++)
+                    {
+                        this.TxFrequencies.Add((double)fixedTable.Frequency[i] / 1000.0);
+                    }
+                }
+            }
         }
 
         private void BuildRxTxTables(MSG_GET_READER_CAPABILITIES_RESPONSE capabilities)
