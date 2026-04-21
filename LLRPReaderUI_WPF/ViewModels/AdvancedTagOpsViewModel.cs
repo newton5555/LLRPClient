@@ -6,6 +6,7 @@ using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
 using LLRPReaderUI_WPF.Services;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace LLRPReaderUI_WPF.ViewModels;
@@ -17,6 +18,9 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
     private readonly LanguageService _languageService;
     private uint? currentOpSequenceId;
     private bool? attachedDataWasEnabled;
+    private CancellationTokenSource? operationTimeoutCts;
+
+    private const int OperationTimeoutMs = 5000;
 
     public AdvancedTagOpsViewModel(LlrpReader reader, IAppLogService logs, LanguageService languageService)
     {
@@ -230,12 +234,15 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
             currentOpSequenceId = sequence.Id;
 
             reader.Start();
+            StartOperationTimeout(sequence.Id);
+
             OperationResult = GetLocalizedString("AdvancedTagOps.OpStarted", opDescription, sequence.Id);
             logs.LogOperation(OperationResult);
         }
         catch (Exception ex)
         {
             IsBusy = false;
+            CancelOperationTimeout();
             OperationResult = GetLocalizedString("AdvancedTagOps.OpFailed", ex.Message);
             logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
@@ -284,8 +291,56 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
         });
     }
 
+    private void StartOperationTimeout(uint sequenceId)
+    {
+        CancelOperationTimeout();
+
+        var cts = new CancellationTokenSource();
+        operationTimeoutCts = cts;
+        _ = WatchOperationTimeoutAsync(sequenceId, cts.Token);
+    }
+
+    private async Task WatchOperationTimeoutAsync(uint sequenceId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(OperationTimeoutMs, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        RunOnUi(() =>
+        {
+            if (!IsBusy || currentOpSequenceId != sequenceId)
+                return;
+
+            OperationResult = GetLocalizedString("ReadWrite.Timeout", OperationTimeoutMs);
+            logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Warning);
+            FinishOperationCleanup();
+        });
+    }
+
+    private void CancelOperationTimeout()
+    {
+        try
+        {
+            operationTimeoutCts?.Cancel();
+            operationTimeoutCts?.Dispose();
+        }
+        catch
+        {
+        }
+        finally
+        {
+            operationTimeoutCts = null;
+        }
+    }
+
     private void FinishOperationCleanup()
     {
+        CancelOperationTimeout();
         IsBusy = false;
 
         if (!reader.IsConnected)
@@ -356,6 +411,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
         IsConnected = connected;
         if (!connected)
         {
+            CancelOperationTimeout();
             IsBusy = false;
             currentOpSequenceId = null;
             attachedDataWasEnabled = null;

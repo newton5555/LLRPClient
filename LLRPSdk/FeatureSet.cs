@@ -297,7 +297,9 @@ namespace LLRPSdk
                 || this.ReaderModel == ((ReaderModel_Impinj)2001063).ToString()
                 || this.ReaderModel == ((ReaderModel_Impinj)2001053).ToString()
                 || this.ReaderModel == (ReaderModel_Impinj.R720.ToString()) 
-                || this.ReaderModel == ((ReaderModel_Impinj)2001061).ToString() ? (num = -90.0) : (num = -80.0);
+                || this.ReaderModel == ((ReaderModel_Impinj)2001061).ToString()
+                ||this.ReaderModel == (ReaderModel_Seuic.UF40).ToString()
+                ? (num = -90.0) : (num = -80.0);
             foreach (PARAM_ReceiveSensitivityTableEntry sensitivityTableEntry2 in sensitivityTableEntry1)
             {
                 RxSensitivityTableEntry sensitivityTableEntry3;
