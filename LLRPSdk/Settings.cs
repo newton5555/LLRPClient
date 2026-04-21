@@ -50,6 +50,7 @@ namespace LLRPSdk
         private ushort _channelIndex;
         private bool _inventoryStateAware;
         private InventoryTarget _inventoryTarget;
+        private InventorySearchMode _inventorySearchMode;
 
 
 
@@ -272,6 +273,15 @@ namespace LLRPSdk
             set => this.SetProperty<InventoryTarget>(ref this._inventoryTarget, value, nameof(InventoryTarget));
         }
 
+        /// <summary>
+        /// Specifies the search mode (SL or Not_SL) for state-aware singulation.
+        /// </summary>
+        public InventorySearchMode InventorySearchMode
+        {
+            get => this._inventorySearchMode;
+            set => this.SetProperty<InventorySearchMode>(ref this._inventorySearchMode, value, nameof(InventorySearchMode));
+        }
+
 
 
 
@@ -406,6 +416,7 @@ namespace LLRPSdk
             this.ChannelIndex = (ushort)0;
             this.InventoryStateAware = false;
             this.InventoryTarget = InventoryTarget.A;
+            this.InventorySearchMode = InventorySearchMode.Not_SL;
 
         }
 

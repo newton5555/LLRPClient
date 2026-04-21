@@ -124,6 +124,11 @@ public partial class SettingsViewModel : ObservableObject
     public List<InventoryTarget> InventoryTargetOptions { get; } = new() { InventoryTarget.A, InventoryTarget.B };
 
     [ObservableProperty]
+    private InventorySearchMode inventorySearchMode = InventorySearchMode.Not_SL;
+
+    public List<InventorySearchMode> InventorySearchModeOptions { get; } = new() { InventorySearchMode.SL, InventorySearchMode.Not_SL };
+
+    [ObservableProperty]
     private ObservableCollection<AntennaItemViewModel> antennas = new();
 
     private void UpdateReaderEventNotifications()
@@ -318,6 +323,7 @@ public partial class SettingsViewModel : ObservableObject
             settings.ChannelIndex = ChannelIndex;
             settings.InventoryStateAware = InventoryStateAware;
             settings.InventoryTarget = InventoryTarget;
+            settings.InventorySearchMode = InventorySearchMode;
 
             var configuredAntennas = settings.Antennas.AntennaConfigs;
             if (Antennas.Count > 0)
@@ -466,6 +472,7 @@ public partial class SettingsViewModel : ObservableObject
         ChannelIndex = settings.ChannelIndex;
         InventoryStateAware = settings.InventoryStateAware;
         InventoryTarget = settings.InventoryTarget;
+        InventorySearchMode = settings.InventorySearchMode;
 
         Antennas.Clear();
         var configuredByPort = settings.Antennas.AntennaConfigs

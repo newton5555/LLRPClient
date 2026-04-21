@@ -127,6 +127,8 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="8" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="8" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.InventoryStateAware}" />
@@ -137,6 +139,13 @@
                                 <ComboBox Grid.Row="2" Grid.Column="1" Height="30" 
                                           ItemsSource="{Binding InventoryTargetOptions}"
                                           SelectedItem="{Binding InventoryTarget}"
+                                          IsEnabled="{Binding InventoryStateAware}"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.InventorySearchMode}" 
+                                           IsEnabled="{Binding InventoryStateAware}"/>
+                                <ComboBox Grid.Row="4" Grid.Column="1" Height="30" 
+                                          ItemsSource="{Binding InventorySearchModeOptions}"
+                                          SelectedItem="{Binding InventorySearchMode}"
                                           IsEnabled="{Binding InventoryStateAware}"/>
                             </Grid>
                         </StackPanel>

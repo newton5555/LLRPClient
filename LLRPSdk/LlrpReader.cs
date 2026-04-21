@@ -1330,7 +1330,7 @@ namespace LLRPSdk
                 singulationControl.C1G2TagInventoryStateAwareSingulationAction = new PARAM_C1G2TagInventoryStateAwareSingulationAction()
                 {
                     I = (config.InventoryTarget == InventoryTarget.A) ? ENUM_C1G2TagInventoryStateAwareI.State_A : ENUM_C1G2TagInventoryStateAwareI.State_B,
-                    S = ENUM_C1G2TagInventoryStateAwareS.Not_SL
+                    S = (config.InventorySearchMode == InventorySearchMode.SL) ? ENUM_C1G2TagInventoryStateAwareS.SL : ENUM_C1G2TagInventoryStateAwareS.Not_SL
                 };
             }
             val.C1G2SingulationControl = singulationControl;
