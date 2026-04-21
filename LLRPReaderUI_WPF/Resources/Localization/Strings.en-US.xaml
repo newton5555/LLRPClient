@@ -225,6 +225,8 @@
     <sys:String x:Key="AdvancedTagOps.OpFailed">Execution failed: {0}</sys:String>
     <sys:String x:Key="AdvancedTagOps.Ready">Device connected, ready for advanced tag operations</sys:String>
     <sys:String x:Key="AdvancedTagOps.CleanupFailed">Cleanup failed: {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.AOStateSaved">Saved attached data AO state: {0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.AORestored">Restored attached data AccessSpec, Enable={0}</sys:String>
 
     <!-- GPIO -->
     <sys:String x:Key="GPIO.ConnectReaderFirst">Please connect reader first</sys:String>

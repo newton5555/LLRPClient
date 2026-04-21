@@ -207,6 +207,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
             OperationResult = _languageService.GetLocalizedString("Common.Executing");
 
             attachedDataWasEnabled = reader.IsAttachedDataAccessSpecEnabled();
+            logs.LogOperation(GetLocalizedString("AdvancedTagOps.AOStateSaved", attachedDataWasEnabled.HasValue ? (attachedDataWasEnabled.Value ? "Enable" : "Disable") : "null"));
 
             if (reader.IsConnected)
             {
@@ -355,6 +356,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
             if (attachedDataWasEnabled.HasValue)
             {
                 reader.RestoreAttachedDataAccessSpec(attachedDataWasEnabled.Value);
+                logs.LogOperation(GetLocalizedString("AdvancedTagOps.AORestored", attachedDataWasEnabled.Value));
             }
 
             currentOpSequenceId = null;

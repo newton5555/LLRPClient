@@ -13,6 +13,25 @@ namespace LLRPReaderUI_WPF.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
+    private static readonly Dictionary<uint, string> RfModePrefixes = new()
+    {
+        { 113, "P0" },
+        { 45, "P1" },
+        { 203, "P2" },
+        { 107, "P3" },
+        { 220, "P4" },
+        { 101, "P8" },
+        { 111, "P9" },
+        { 4185, "P10" },
+        { 4146, "P11" },
+        { 4148, "P12" },
+        { 4124, "P13" },
+        { 5185, "P18" },
+        { 5146, "P19" },
+        { 5148, "P20" },
+        { 5124, "P21" }
+    };
+
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
@@ -134,6 +153,12 @@ public partial class SettingsViewModel : ObservableObject
         {
             var detail = featureSet.RfModeDetails.TryGetValue(rfMode, out var text) ? text : string.Empty;
             var display = string.IsNullOrWhiteSpace(detail) ? rfMode.ToString() : $"{rfMode} - {detail}";
+            
+            if (RfModePrefixes.TryGetValue(rfMode, out var prefix))
+            {
+                display = $"{prefix} - {display}";
+            }
+
             RfModeOptions.Add(new RfModeOptionItem(rfMode, display));
         }
 
