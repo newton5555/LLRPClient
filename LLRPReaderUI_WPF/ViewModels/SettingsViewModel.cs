@@ -31,6 +31,30 @@ public partial class SettingsViewModel : ObservableObject
         { 5148, "P20" },
         { 5124, "P21" }
     };
+    //Todo 显示 Rfmode 对应的 敏感度
+    private static readonly Dictionary<uint, string> RfModeSuffixes = new()
+    {
+        { 113, "-82" },
+        { 45, "-83" },
+        { 203, "-85" },
+        { 107, "-83" },
+        { 220, "-85.5" },
+        { 101, "-86.5" },
+        { 111, "-89.5" },
+        { 4185, "-90" },
+        { 4146, "-88" },
+        { 4148, "-86.5" },
+        { 4124, "-87" },
+        { 5185, "-90" },
+        { 5146, "-88" },
+        { 5148, "-86.5" },
+        { 5124, "-87" }
+    };
+
+
+
+
+
 
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
@@ -425,6 +449,9 @@ public partial class SettingsViewModel : ObservableObject
 
             reader.ResetToFactoryDefaultsOnly();
             settingsStore.Clear();
+            QueryDeviceSettings(); // Refresh UI with factory defaults
+            HopTableId = 1;
+            ChannelIndex = 1;
             SaveResult = _languageService.GetLocalizedString("Settings.ResetSuccess");
             logs.LogOperation(_languageService.GetLocalizedString("Settings.ResetLog"));
         }
