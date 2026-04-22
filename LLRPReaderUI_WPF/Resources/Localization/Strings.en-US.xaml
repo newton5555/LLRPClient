@@ -97,7 +97,7 @@
     <sys:String x:Key="Settings.HoldEventsOnReconnect">Hold Events on Reconnect (Requires ENABLE_EVENTS_AND_REPORTS)</sys:String>
     <sys:String x:Key="Settings.HopTableId">Hop Table ID</sys:String>
     <sys:String x:Key="Settings.ChannelIndex">Channel Index</sys:String>
-    <sys:String x:Key="Settings.InventoryStateAware">Enable State-Aware (Target A/B)</sys:String>
+    <sys:String x:Key="Settings.InventoryStateAware">Enable State-Aware</sys:String>
     <sys:String x:Key="Settings.InventoryTarget">Inventory Target</sys:String>
     <sys:String x:Key="Settings.HoppingMode">Hopping</sys:String>
     <sys:String x:Key="Settings.AntennaConfig">AntennaConfigGroup (By Antenna)</sys:String>

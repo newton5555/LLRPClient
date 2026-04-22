@@ -245,8 +245,10 @@ public partial class InventoryViewModel : ObservableObject
         bool fromManualPull = DateTime.UtcNow <= manualPullAcceptUntilUtc;
 
         // 默认只在寻卡中处理；手动拉缓存命令触发后短时间窗口内也允许处理
-        if (!IsRunning && !fromManualPull)
-            return;
+        //if (!IsRunning && !fromManualPull)
+        //    return;
+
+
 
         RunOnUi(() =>
         {

@@ -97,7 +97,7 @@
     <sys:String x:Key="Settings.HoldEventsOnReconnect">连接后暂缓上报（需 ENABLE_EVENTS_AND_REPORTS）</sys:String>
     <sys:String x:Key="Settings.HopTableId">跳频表 ID</sys:String>
     <sys:String x:Key="Settings.ChannelIndex">信道索引</sys:String>
-    <sys:String x:Key="Settings.InventoryStateAware">开启状态感知 (Target A/B)</sys:String>
+    <sys:String x:Key="Settings.InventoryStateAware">开启状态感知</sys:String>
     <sys:String x:Key="Settings.InventoryTarget">盘存目标 (Target)</sys:String>
     <sys:String x:Key="Settings.InventorySearchMode">盘存搜索模式 (S)</sys:String>
     <sys:String x:Key="Settings.HoppingMode">自动跳频</sys:String>
