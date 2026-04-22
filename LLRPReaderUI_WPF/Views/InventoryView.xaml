@@ -62,110 +62,127 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <Button
-                Width="120"
-                Height="32"
-                Command="{Binding StartInventoryCommand}"
-                Style="{StaticResource FlatButtonPrimary}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock
-                        Width="14"
-                        Height="14"
-                        Margin="0,0,6,0"
-                        Foreground="{StaticResource IconSuccessBrush}"
-                        Icon="Play"
-                        IconFont="Auto" />
-                    <TextBlock Text="{DynamicResource Inventory.Start}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Width="{DynamicResource UI.Inventory.ButtonWidth}"
+                    Height="40"
+                    Command="{Binding StartInventoryCommand}"
+                    Style="{StaticResource FlatButtonPrimary}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <fa:IconBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="White"
+                            Icon="Play"
+                            IconFont="Auto" />
+                        <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource Inventory.Start}" />
+                    </StackPanel>
+                </Button>
+                <Button
+                    Width="{DynamicResource UI.Inventory.ButtonWidth}"
+                    Height="40"
+                    Margin="12,0,0,0"
+                    Command="{Binding StopInventoryCommand}"
+                    Style="{StaticResource FlatButtonOutline}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <fa:IconBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="{StaticResource IconDangerBrush}"
+                            Icon="Stop"
+                            IconFont="Auto" />
+                        <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource Inventory.Stop}" />
+                    </StackPanel>
+                </Button>
+                <Button
+                    Width="{DynamicResource UI.Inventory.ButtonWidth}"
+                    Height="40"
+                    Margin="12,0,0,0"
+                    Command="{Binding ManualPullBufferedReportsCommand}"
+                    Style="{StaticResource FlatButtonOutline}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <fa:IconBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="{StaticResource IconInfoBrush}"
+                            Icon="Rotate"
+                            IconFont="Auto" />
+                        <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource Inventory.PullBuffer}" />
+                    </StackPanel>
+                </Button>
+                <Button
+                    Width="{DynamicResource UI.Inventory.ButtonWidth}"
+                    Height="40"
+                    Margin="12,0,0,0"
+                    Command="{Binding ClearReceivedDataCommand}"
+                    Style="{StaticResource FlatButtonOutline}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <fa:IconBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="{StaticResource IconWarningBrush}"
+                            Icon="TrashCan"
+                            IconFont="Auto" />
+                        <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource Inventory.Clear}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            
+            <Border Grid.Column="1" VerticalAlignment="Center" Padding="12,6" Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="16">
+                <TextBlock
+                    Style="{StaticResource StatusHintTextStyle}"
+                    FontWeight="SemiBold"
+                    Text="{Binding InventoryState}" />
+            </Border>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,4,0,12">
+            <Border Style="{StaticResource StatCardStyle}" Width="160">
+                <StackPanel>
+                    <TextBlock FontSize="12" Margin="0,0,0,4" Foreground="{DynamicResource TextMutedBrush}" Text="{DynamicResource Inventory.TotalReports}" />
+                    <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" Text="{Binding TotalReports}" />
                 </StackPanel>
-            </Button>
-            <Button
-                Width="120"
-                Height="32"
-                Margin="10,0,0,0"
-                Command="{Binding StopInventoryCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock
-                        Width="14"
-                        Height="14"
-                        Margin="0,0,6,0"
-                        Foreground="{StaticResource IconDangerBrush}"
-                        Icon="Stop"
-                        IconFont="Auto" />
-                    <TextBlock Text="{DynamicResource Inventory.Stop}" />
+            </Border>
+            <Border Style="{StaticResource StatCardStyle}" Width="160" Margin="12,0,0,0">
+                <StackPanel>
+                    <TextBlock FontSize="12" Margin="0,0,0,4" Foreground="{DynamicResource TextMutedBrush}" Text="{DynamicResource Inventory.TotalTags}" />
+                    <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AccentVioletBrush}" Text="{Binding TotalTags}" />
                 </StackPanel>
-            </Button>
-            <Button
-                Width="120"
-                Height="32"
-                Margin="10,0,0,0"
-                Command="{Binding ManualPullBufferedReportsCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock
-                        Width="14"
-                        Height="14"
-                        Margin="0,0,6,0"
-                        Foreground="{StaticResource IconInfoBrush}"
-                        Icon="Rotate"
-                        IconFont="Auto" />
-                    <TextBlock Text="{DynamicResource Inventory.PullBuffer}" />
+            </Border>
+            <Border Style="{StaticResource StatCardStyle}" Width="160" Margin="12,0,0,0">
+                <StackPanel>
+                    <TextBlock FontSize="12" Margin="0,0,0,4" Foreground="{DynamicResource TextMutedBrush}" Text="{DynamicResource Inventory.UniqueTags}" />
+                    <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AccentTealBrush}" Text="{Binding InventoryItems.Count}" />
                 </StackPanel>
-            </Button>
-            <Button
-                Width="100"
-                Height="32"
-                Margin="10,0,0,0"
-                Command="{Binding ClearReceivedDataCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock
-                        Width="14"
-                        Height="14"
-                        Margin="0,0,6,0"
-                        Foreground="{StaticResource IconWarningBrush}"
-                        Icon="TrashCan"
-                        IconFont="Auto" />
-                    <TextBlock Text="{DynamicResource Inventory.Clear}" />
-                </StackPanel>
-            </Button>
-            <TextBlock
-                Margin="12,0,0,0"
-                Style="{StaticResource StatusHintTextStyle}"
-                Text="{Binding InventoryState}" />
+            </Border>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <TextBlock Margin="0,0,16,0">
-                <Run Text="{DynamicResource Inventory.TotalReports}" />
-                <Run Text=": " />
-                <Run Text="{Binding TotalReports}" />
-            </TextBlock>
-            <TextBlock Margin="0,0,16,0">
-                <Run Text="{DynamicResource Inventory.TotalTags}" />
-                <Run Text=": " />
-                <Run Text="{Binding TotalTags}" />
-            </TextBlock>
-            <TextBlock>
-                <Run Text="{DynamicResource Inventory.UniqueTags}" />
-                <Run Text=": " />
-                <Run Text="{Binding UniqueTagCount}" />
-            </TextBlock>
-        </StackPanel>
-
-        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}">
+        <Border Grid.Row="4" Style="{StaticResource PageCardStyle}">
             <DataGrid
                 x:Name="InventoryDataGrid"
-                d:ItemsSource="{StaticResource ResourceKey=DesignReceivedTags}"
                 AutoGenerateColumns="False"
-                CanUserAddRows="False"
-                CanUserDeleteRows="False"
-                GridLinesVisibility="Horizontal"
+                Background="Transparent"
+                BorderThickness="0"
                 HeadersVisibility="Column"
                 IsReadOnly="True"
-                ItemsSource="{Binding ReceivedTags}"
+                ItemsSource="{Binding InventoryItems}"
                 PreviewKeyDown="InventoryDataGrid_OnPreviewKeyDown"
                 SelectionMode="Extended"
                 SelectionUnit="FullRow">
-               
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
                 <DataGrid.CellStyle>
                     <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="DataGridCell">
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -201,11 +218,39 @@
                         Binding="{Binding ChannelMhz}"
                         Header="{DynamicResource Inventory.Frequency}"
                         Visibility="{Binding Data.ShowChannelColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <DataGridTextColumn
-                        Width="auto"
-                        Binding="{Binding Rssi}"
+                    <DataGridTemplateColumn
+                        Width="100"
                         Header="{DynamicResource Inventory.RSSI}"
-                        Visibility="{Binding Data.ShowPeakRssiColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding Data.ShowPeakRssiColumn, Source={StaticResource ViewModelProxy}, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Margin="8,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock HorizontalAlignment="Center" FontSize="11" Text="{Binding Rssi, StringFormat=\{0\} dBm}" />
+                                    <ProgressBar
+                                        Grid.Row="1"
+                                        Height="4"
+                                        Margin="0,2,0,0"
+                                        Background="#E2E8F0"
+                                        BorderThickness="0"
+                                        Maximum="0"
+                                        Minimum="-90"
+                                        Value="{Binding Rssi}">
+                                        <ProgressBar.Foreground>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Offset="0" Color="#EF4444" />
+                                                <GradientStop Offset="0.6" Color="#F59E0B" />
+                                                <GradientStop Offset="1" Color="#10B981" />
+                                            </LinearGradientBrush>
+                                        </ProgressBar.Foreground>
+                                    </ProgressBar>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn
                         Width="auto"
                         Binding="{Binding SeenCount}"

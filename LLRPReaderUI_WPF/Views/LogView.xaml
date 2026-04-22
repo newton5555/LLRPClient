@@ -55,12 +55,14 @@
                 <StackPanel
                     Grid.Row="0"
                     Grid.Column="2"
-                    Margin="8"
+                    VerticalAlignment="Center"
                     Orientation="Horizontal">
                     <Button
-                        Padding="12,6"
+                        Height="36"
+                        Padding="16,0"
                         Command="{Binding ClearLogsCommand}"
-                        Content="清空全部" />
+                        Content="清空全部"
+                        Style="{StaticResource FlatButtonOutline}" />
                 </StackPanel>
 
                 <StackPanel
@@ -158,17 +160,15 @@
                 </TabControl.Resources>
                 <TabItem>
                     <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
-                                Margin="0,0,6,0"
+                                Margin="0,0,8,0"
                                 Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
                                 VerticalAlignment="Center"
+                                FontSize="16"
                                 Icon="ClipboardList"
                                 IconFont="Auto" />
-                            <TextBlock Style="{StaticResource TabHeaderTitleStyle}" Text="操作日志" />
-                           
+                            <TextBlock Style="{StaticResource TabHeaderTitleStyle}" VerticalAlignment="Center" Text="操作日志" />
                         </StackPanel>
                     </TabItem.Header>
                     <!--  操作日志  -->
@@ -191,9 +191,12 @@
                             <Button
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                Margin="2"
+                                Margin="4"
+                                Height="28"
+                                Padding="8,0"
                                 Command="{Binding ClearOperationLogsCommand}"
-                                Content="  清空  " />
+                                Content="清空"
+                                Style="{StaticResource FlatButtonOutline}" />
 
                             <ListBox
                                 x:Name="OperationListBox"
@@ -213,17 +216,15 @@
                 </TabItem>
                 <TabItem>
                     <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
-                                Margin="0,0,6,0"
+                                Margin="0,0,8,0"
                                 Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
                                 VerticalAlignment="Center"
+                                FontSize="14"
                                 Icon="SatelliteDish"
                                 IconFont="Auto" />
-                            <TextBlock Style="{StaticResource TabHeaderTitleStyle}" Text="LLRP 消息日志" />
-                           
+                            <TextBlock Style="{StaticResource TabHeaderTitleStyle}" VerticalAlignment="Center" Text="LLRP 消息日志" />
                         </StackPanel>
                     </TabItem.Header>
                     <!--  LLRP 消息日志  -->
@@ -247,9 +248,12 @@
                             <Button
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                Margin="2"
+                                Margin="4"
+                                Height="28"
+                                Padding="8,0"
                                 Command="{Binding ClearLlrpMessageLogsCommand}"
-                                Content="  清空  " />
+                                Content="清空"
+                                Style="{StaticResource FlatButtonOutline}" />
 
                             <ListBox
                                 x:Name="LlrpMessageListBox"
@@ -269,17 +273,15 @@
                 </TabItem>
                 <TabItem>
                     <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
-                                Margin="0,0,6,0"
+                                Margin="0,0,8,0"
                                 Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
                                 VerticalAlignment="Center"
+                                FontSize="14"
                                 Icon="Code"
                                 IconFont="Auto" />
-                            <TextBlock Style="{StaticResource TabHeaderTitleStyle}" Text="原始报文收发" />
-                           
+                            <TextBlock Style="{StaticResource TabHeaderTitleStyle}" VerticalAlignment="Center" Text="原始报文收发" />
                         </StackPanel>
                     </TabItem.Header>
                     <!--  原始报文  -->
@@ -304,9 +306,12 @@
                             <Button
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                Margin="2"
+                                Margin="4"
+                                Height="28"
+                                Padding="8,0"
                                 Command="{Binding ClearRawFrameLogsCommand}"
-                                Content="  清空  " />
+                                Content="清空"
+                                Style="{StaticResource FlatButtonOutline}" />
 
                             <ListBox
                                 x:Name="RawPacketListBox"

@@ -1,12 +1,18 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!--  Core colors - Dark Theme  -->
-    <Color x:Key="PrimaryColor">#3B82F6</Color>
-    <Color x:Key="PrimaryColorLight">#60A5FA</Color>
-    <Color x:Key="SecondaryColor">#F59E0B</Color>
-    <Color x:Key="BackgroundColor">#0F172A</Color>
-    <Color x:Key="SurfaceColor">#1E293B</Color>
-    <Color x:Key="BorderColor">#334155</Color>
+    <!--  Core colors - Dark Theme (Premium Palette)  -->
+    <Color x:Key="PrimaryColor">#38BDF8</Color> <!-- Sky 400 -->
+    <Color x:Key="PrimaryColorLight">#7DD3FC</Color>
+    <Color x:Key="SecondaryColor">#FBBF24</Color>
+    <Color x:Key="BackgroundColor">#0F172A</Color> <!-- Slate 900 -->
+    <Color x:Key="SurfaceColor">#1E293B</Color> <!-- Slate 800 -->
+    <Color x:Key="BorderColor">#334155</Color> <!-- Slate 700 -->
+    
+    <!-- Premium Accent Colors for Dark Theme -->
+    <Color x:Key="AccentCyan">#22D3EE</Color>
+    <Color x:Key="AccentEmerald">#34D399</Color>
+    <Color x:Key="AccentViolet">#A78BFA</Color>
+    <Color x:Key="AccentRose">#FB7185</Color>
 
     <!--  Text colors  -->
     <Color x:Key="TextPrimaryColor">#F1F5F9</Color>
@@ -23,6 +29,12 @@
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
     <SolidColorBrush x:Key="TextMutedBrush" Color="#94A3B8" />
+
+    <!-- Accent Brushes -->
+    <SolidColorBrush x:Key="AccentCyanBrush" Color="{StaticResource AccentCyan}" />
+    <SolidColorBrush x:Key="AccentEmeraldBrush" Color="{StaticResource AccentEmerald}" />
+    <SolidColorBrush x:Key="AccentVioletBrush" Color="{StaticResource AccentViolet}" />
+    <SolidColorBrush x:Key="AccentRoseBrush" Color="{StaticResource AccentRose}" />
 
     <!--  Overlay / interaction brushes  -->
     <SolidColorBrush x:Key="HoverOverlayBrush" Color="#143B82F6" />
@@ -118,11 +130,34 @@
     </Style>
 
     <Style x:Key="CardBorderStyle" TargetType="Border">
-        <Setter Property="Padding" Value="12" />
-        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="25" Direction="270" Opacity="0.4" ShadowDepth="4" Color="#000000" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PageCardStyle" TargetType="Border" BasedOn="{StaticResource CardBorderStyle}">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+
+    <Style x:Key="StatCardStyle" TargetType="Border" BasedOn="{StaticResource CardBorderStyle}">
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Margin" Value="0,0,16,0" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0" Color="#1E293B" />
+                    <GradientStop Offset="1" Color="#0F172A" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Heading / body text styles -->
@@ -142,7 +177,8 @@
         BasedOn="{StaticResource {x:Type Button}}"
         TargetType="Button">
         <Setter Property="MinHeight" Value="32" />
-        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="MinWidth" Value="120" />
+        <Setter Property="Padding" Value="16,6" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -158,7 +194,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="1"
+                        CornerRadius="8"
                         SnapsToDevicePixels="True">
                         <ContentPresenter
                             HorizontalAlignment="Center"
@@ -202,6 +238,16 @@
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
     </Style>
 
+    <!--  Danger (filled) button  -->
+    <Style
+        x:Key="FlatButtonDanger"
+        BasedOn="{StaticResource FlatButtonBase}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource IconDangerBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource IconDangerBrush}" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+
     <!-- Implicit Button style for all buttons (full definition to avoid BasedOn issues during theme switch) -->
     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="MinHeight" Value="32" />
@@ -221,7 +267,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="1"
+                        CornerRadius="8"
                         SnapsToDevicePixels="True">
                         <ContentPresenter
                             HorizontalAlignment="Center"
@@ -281,13 +327,13 @@
     </Style>
 
     <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
-        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="12,8" />
-        <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="SeparatorBrush" Value="Transparent" />
     </Style>
 

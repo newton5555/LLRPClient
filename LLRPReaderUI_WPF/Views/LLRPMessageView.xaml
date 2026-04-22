@@ -36,51 +36,51 @@
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <Button
-                        Width="120"
+                        Width="{DynamicResource UI.LLRP.ButtonWidth}"
                         Height="32"
                         Command="{Binding RefreshDataCommand}"
                         Style="{StaticResource FlatButtonPrimary}">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
-                                Margin="0,0,6,0"
-                                Foreground="{StaticResource IconInfoBrush}"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="White"
                                 Icon="Refresh"
                                 IconFont="Auto" />
-                            <TextBlock Text="{DynamicResource LLRPMessage.Refresh}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" Text="{DynamicResource LLRPMessage.Refresh}" />
                         </StackPanel>
                     </Button>
                     <Button
-                        Width="120"
+                        Width="{DynamicResource UI.LLRP.ButtonWidth}"
                         Height="32"
                         Margin="10,0,0,0"
                         Command="{Binding ClearAllDataCommand}">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
-                                Margin="0,0,6,0"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
                                 Foreground="{StaticResource IconDangerBrush}"
                                 Icon="Trash"
                                 IconFont="Auto" />
-                            <TextBlock Text="{DynamicResource LLRPMessage.ClearAll}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Text="{DynamicResource LLRPMessage.ClearAll}" />
                         </StackPanel>
                     </Button>
                     <Button
-                        Width="120"
+                        Width="{DynamicResource UI.LLRP.ButtonWidth}"
                         Height="32"
                         Margin="10,0,0,0"
                         Command="{Binding ExportToTextCommand}">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
-                                Margin="0,0,6,0"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
                                 Foreground="{StaticResource IconSuccessBrush}"
                                 Icon="FileExport"
                                 IconFont="Auto" />
-                            <TextBlock Text="{DynamicResource LLRPMessage.ExportText}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Text="{DynamicResource LLRPMessage.ExportText}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -227,14 +227,14 @@
                     Orientation="Horizontal">
 
                     <Button Height="28" Command="{Binding ApplyFilterCommand}" Background="Transparent">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="12"
-                                Height="12"
-                                Margin="0,0,4,0"
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
                                 Icon="Filter"
                                 IconFont="Auto" />
-                            <TextBlock Text="{DynamicResource LLRPMessage.Filter}" />
+                            <TextBlock VerticalAlignment="Center" Text="{DynamicResource LLRPMessage.Filter}" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -242,15 +242,15 @@
                         Height="28"
                         Margin="8,0,0,0"
                         Command="{Binding ClearFilterCommand}">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <fa:IconBlock
-                                Width="12"
-                                Height="12"
-                                Margin="0,0,4,0"
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
                                 Foreground="{StaticResource IconWarningBrush}"
                                 Icon="Times"
                                 IconFont="Auto" />
-                            <TextBlock Text="{DynamicResource LLRPMessage.ClearFilter}" />
+                            <TextBlock VerticalAlignment="Center" Text="{DynamicResource LLRPMessage.ClearFilter}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -367,9 +367,9 @@
                             Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                             <StackPanel Orientation="Horizontal">
                                 <fa:IconBlock
-                                    Width="14"
-                                    Height="14"
+                                    FontSize="16"
                                     Margin="0,0,8,0"
+                                    VerticalAlignment="Center"
                                     Foreground="{StaticResource IconInfoBrush}"
                                     Icon="Sitemap"
                                     IconFont="Auto" />
@@ -435,9 +435,9 @@
                             Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                             <StackPanel Orientation="Horizontal">
                                 <fa:IconBlock
-                                    Width="14"
-                                    Height="14"
+                                    FontSize="16"
                                     Margin="0,0,8,0"
+                                    VerticalAlignment="Center"
                                     Foreground="{StaticResource IconInfoBrush}"
                                     Icon="Code"
                                     IconFont="Auto" />

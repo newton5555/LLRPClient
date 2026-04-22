@@ -2,6 +2,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <!-- UI Dimensions -->
+    <sys:Double x:Key="UI.ButtonWidth">150</sys:Double>
+    <sys:Double x:Key="UI.Inventory.ButtonWidth">165</sys:Double>
+    <sys:Double x:Key="UI.Connection.ButtonWidth">120</sys:Double>
+    <sys:Double x:Key="UI.Config.ButtonWidth">175</sys:Double>
+    <sys:Double x:Key="UI.Settings.ButtonWidth">175</sys:Double>
+    <sys:Double x:Key="UI.GPIO.ButtonWidth">160</sys:Double>
+    <sys:Double x:Key="UI.ReadWrite.ButtonWidth">155</sys:Double>
+    <sys:Double x:Key="UI.Advanced.ButtonWidth">180</sys:Double>
+    <sys:Double x:Key="UI.LLRP.ButtonWidth">150</sys:Double>
+
     <!-- App Title -->
     <sys:String x:Key="App.Title">LLRP Reader UI</sys:String>
 

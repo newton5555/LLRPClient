@@ -15,111 +15,105 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <GroupBox Margin="0,0,0,12">
-                    <GroupBox.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PlugCircleCheck" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
-                            <TextBlock Text="{DynamicResource GPIO.GpiConfig}" Foreground="White"/>
+        <Border Grid.Row="0" Style="{StaticResource PageCardStyle}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                <StackPanel>
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="PlugCircleCheck" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource GPIO.GpiConfig}" FontSize="14" FontWeight="SemiBold"/>
+                            </StackPanel>
+                            <StackPanel Margin="8,0">
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="120" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" />
+                                    <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.Enable}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" />
+                                    <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" />
+                                </Grid>
+
+                                <ItemsControl ItemsSource="{Binding Gpis}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="120" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=GPI {0}}" FontWeight="Medium" />
+                                                <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsEnabled}" />
+                                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding CurrentStateText}" Foreground="{Binding CurrentStateText, Converter={StaticResource GpioStateColorConverter}}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
                         </StackPanel>
-                    </GroupBox.Header>
-                    <StackPanel Margin="10">
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="120" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.Enable}" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontWeight="SemiBold" />
-                        </Grid>
+                    </Border>
 
-                        <ItemsControl ItemsSource="{Binding Gpis}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,0,0,8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120" />
-                                            <ColumnDefinition Width="120" />
-                                            <ColumnDefinition Width="120" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=GPI {0}}" />
-                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsEnabled}" />
-                                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding CurrentStateText}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </GroupBox>
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="ToggleOn" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource GPIO.GpoOutput}" FontSize="14" FontWeight="SemiBold"/>
+                            </StackPanel>
+                            <StackPanel Margin="8,0">
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="140" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" />
+                                    <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.OutputHigh}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" />
+                                    <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" />
+                                </Grid>
 
-                <GroupBox Margin="0,0,0,12">
-                    <GroupBox.Header>
-                        <StackPanel Orientation="Horizontal" >
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ToggleOn" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
-                            <TextBlock Text="{DynamicResource GPIO.GpoOutput}" Foreground="White"/>
+                                <ItemsControl ItemsSource="{Binding Gpos}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="140" />
+                                                    <ColumnDefinition Width="140" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=GPO {0}}" FontWeight="Medium" />
+                                                <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding DesiredState}" />
+                                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding CurrentStateText}" Foreground="{Binding CurrentStateText, Converter={StaticResource GpioStateColorConverter}}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
                         </StackPanel>
-                    </GroupBox.Header>
-                    <StackPanel Margin="10">
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="140" />
-                                <ColumnDefinition Width="140" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.OutputHigh}" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontWeight="SemiBold" />
-                        </Grid>
-
-                        <ItemsControl ItemsSource="{Binding Gpos}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,0,0,8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120" />
-                                            <ColumnDefinition Width="140" />
-                                            <ColumnDefinition Width="140" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding PortNumber, StringFormat=GPO {0}}" />
-                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding DesiredState}" />
-                                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding CurrentStateText}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </GroupBox>
-            </StackPanel>
-        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Height="32"
-                    Width="120"
-                    Margin="0,0,8,0"
-                    Command="{Binding QueryGpioSettingsCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
-                    <TextBlock Text="{DynamicResource GPIO.Query}" />
+            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding QueryGpioSettingsCommand}" Style="{StaticResource FlatButtonOutline}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
+                    <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource GPIO.Query}" />
                 </StackPanel>
             </Button>
-            <Button Height="32"
-                    Width="120"
-                    Margin="0,0,8,0"
-                    Command="{Binding SaveGpiSettingsCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
-                    <TextBlock Text="{DynamicResource GPIO.SaveGpi}" />
+            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding SaveGpiSettingsCommand}" Style="{StaticResource FlatButtonPrimary}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White" Icon="FloppyDisk" IconFont="Auto" />
+                    <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource GPIO.SaveGpi}" />
                 </StackPanel>
             </Button>
-            <Button Height="32"
-                    Width="120"
-                    Command="{Binding ApplyGpoStatesCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconVioletBrush}" Icon="PaperPlane" IconFont="Auto" />
-                    <TextBlock Text="{DynamicResource GPIO.ApplyGpo}" />
+            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Command="{Binding ApplyGpoStatesCommand}" Style="{StaticResource FlatButtonPrimary}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White" Icon="PaperPlane" IconFont="Auto" />
+                    <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource GPIO.ApplyGpo}" />
                 </StackPanel>
             </Button>
         </StackPanel>

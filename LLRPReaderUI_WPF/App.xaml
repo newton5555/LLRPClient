@@ -1,4 +1,4 @@
-﻿<Application x:Class="LLRPReaderUI_WPF.App"
+<Application x:Class="LLRPReaderUI_WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LLRPReaderUI_WPF"
@@ -21,6 +21,7 @@
             <converters:InverseBooleanConverter x:Key="InverseBool" />
             <converters:DirectionToBrushConverter x:Key="DirectionToBrush"/>
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:GpioStateColorConverter x:Key="GpioStateColorConverter"/>
             
 
             <!-- Button, TextBox, ComboBox, DataGrid styles moved to Themes/FlatTheme.xaml and DarkTheme.xaml -->
