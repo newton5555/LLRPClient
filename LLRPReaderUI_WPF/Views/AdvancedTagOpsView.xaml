@@ -9,7 +9,7 @@
     <Border Style="{DynamicResource PageCardStyle}" Margin="16">
         <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
             <StackPanel MaxWidth="900">
-                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Book" IconFont="Auto" Foreground="{StaticResource IconInfoBrush}" VerticalAlignment="Center"/>
@@ -27,7 +27,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Gear" IconFont="Auto" Foreground="{StaticResource IconVioletBrush}" VerticalAlignment="Center"/>
@@ -66,7 +66,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Eraser" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}" VerticalAlignment="Center"/>
@@ -101,12 +101,12 @@
                                     Content="{DynamicResource AdvancedTagOps.ExecuteBlockErase}"
                                     IsEnabled="{Binding IsBlockEraseSupported}"
                                     Command="{Binding BlockEraseCommand}" 
-                                    Style="{StaticResource FlatButtonPrimary}"/>
+                                    Style="{DynamicResource FlatButtonPrimary}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Lock" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}" VerticalAlignment="Center"/>
@@ -132,12 +132,12 @@
                             <Button Grid.Row="2" Grid.Column="2" Height="32" Margin="10,0,0,0" 
                                     Content="{DynamicResource AdvancedTagOps.ExecuteLock}" 
                                     Command="{Binding LockCommand}"
-                                    Style="{StaticResource FlatButtonPrimary}"/>
+                                    Style="{DynamicResource FlatButtonPrimary}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Skull" IconFont="Auto" Foreground="{DynamicResource IconDangerBrush}" VerticalAlignment="Center"/>
@@ -150,7 +150,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="CircleInfo" IconFont="Auto" Foreground="{DynamicResource IconInfoBrush}" VerticalAlignment="Center"/>

@@ -72,7 +72,7 @@
                     Width="{DynamicResource UI.Inventory.ButtonWidth}"
                     Height="40"
                     Command="{Binding StartInventoryCommand}"
-                    Style="{StaticResource FlatButtonPrimary}">
+                    Style="{DynamicResource FlatButtonPrimary}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <fa:IconBlock
                             Margin="0,0,8,0"
@@ -89,7 +89,7 @@
                     Height="40"
                     Margin="12,0,0,0"
                     Command="{Binding StopInventoryCommand}"
-                    Style="{StaticResource FlatButtonOutline}">
+                    Style="{DynamicResource FlatButtonOutline}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <fa:IconBlock
                             Margin="0,0,8,0"
@@ -106,7 +106,7 @@
                     Height="40"
                     Margin="12,0,0,0"
                     Command="{Binding ManualPullBufferedReportsCommand}"
-                    Style="{StaticResource FlatButtonOutline}">
+                    Style="{DynamicResource FlatButtonOutline}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <fa:IconBlock
                             Margin="0,0,8,0"
@@ -123,7 +123,7 @@
                     Height="40"
                     Margin="12,0,0,0"
                     Command="{Binding ClearReceivedDataCommand}"
-                    Style="{StaticResource FlatButtonOutline}">
+                    Style="{DynamicResource FlatButtonOutline}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <fa:IconBlock
                             Margin="0,0,8,0"
@@ -139,26 +139,26 @@
             
             <Border Grid.Column="1" VerticalAlignment="Center" Padding="12,6" Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="16">
                 <TextBlock
-                    Style="{StaticResource StatusHintTextStyle}"
+                    Style="{DynamicResource StatusHintTextStyle}"
                     FontWeight="SemiBold"
                     Text="{Binding InventoryState}" />
             </Border>
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,4,0,12">
-            <Border Style="{StaticResource StatCardStyle}" Width="160">
+            <Border Style="{DynamicResource StatCardStyle}" Width="160">
                 <StackPanel>
                     <TextBlock FontSize="12" Margin="0,0,0,4" Foreground="{DynamicResource TextMutedBrush}" Text="{DynamicResource Inventory.TotalReports}" />
                     <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" Text="{Binding TotalReports}" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource StatCardStyle}" Width="160" Margin="12,0,0,0">
+            <Border Style="{DynamicResource StatCardStyle}" Width="160" Margin="12,0,0,0">
                 <StackPanel>
                     <TextBlock FontSize="12" Margin="0,0,0,4" Foreground="{DynamicResource TextMutedBrush}" Text="{DynamicResource Inventory.TotalTags}" />
                     <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AccentVioletBrush}" Text="{Binding TotalTags}" />
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource StatCardStyle}" Width="160" Margin="12,0,0,0">
+            <Border Style="{DynamicResource StatCardStyle}" Width="160" Margin="12,0,0,0">
                 <StackPanel>
                     <TextBlock FontSize="12" Margin="0,0,0,4" Foreground="{DynamicResource TextMutedBrush}" Text="{DynamicResource Inventory.UniqueTags}" />
                     <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AccentTealBrush}" Text="{Binding InventoryItems.Count}" />
@@ -166,7 +166,7 @@
             </Border>
         </StackPanel>
 
-        <Border Grid.Row="4" Style="{StaticResource PageCardStyle}">
+        <Border Grid.Row="4" Style="{DynamicResource PageCardStyle}">
             <DataGrid
                 x:Name="InventoryDataGrid"
                 AutoGenerateColumns="False"
