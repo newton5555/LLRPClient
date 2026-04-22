@@ -113,6 +113,11 @@ public partial class SettingsViewModel : ObservableObject
     private string saveResult = string.Empty;
 
     [ObservableProperty]
+    private string readerModel = string.Empty;
+
+    public bool IsRxSensitivityVisible => ReaderModel != "UF40";
+
+    [ObservableProperty]
     private bool isStateAwareSupported;
 
     [ObservableProperty]
@@ -156,6 +161,8 @@ public partial class SettingsViewModel : ObservableObject
         }
 
         var featureSet = reader.ReaderCapabilities;
+        ReaderModel = featureSet.ReaderModel;
+        OnPropertyChanged(nameof(IsRxSensitivityVisible));
         IsStateAwareSupported = featureSet.CanDoTagInventoryStateAwareSingulation;
 
         var rfModes = featureSet.RfModes?

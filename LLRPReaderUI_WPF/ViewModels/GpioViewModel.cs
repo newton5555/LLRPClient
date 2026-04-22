@@ -55,14 +55,27 @@ public partial class GpioViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void QueryGpioSettings()
+    private void QueryGpioSettings(object? parameter)
     {
         try
         {
+            bool forceUpdate = false;
+            if (parameter is bool b) forceUpdate = b;
+            else if (parameter is string s && bool.TryParse(s, out var b2)) forceUpdate = b2;
+
             if (!reader.IsConnected)
             {
                 OperationResult = _languageService.GetLocalizedString("GPIO.ConnectReaderFirst");
                 return;
+            }
+
+            if (forceUpdate)
+            {
+                var deviceSettings = reader.QuerySettings();
+                settingsStore.Set(deviceSettings);
+
+                var deviceStatus = reader.QueryStatus();
+                statusStore.Set(deviceStatus);
             }
 
             if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)

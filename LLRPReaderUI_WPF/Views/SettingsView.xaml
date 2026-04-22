@@ -5,6 +5,9 @@
              xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="clr-namespace:LLRPReaderUI_WPF.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -172,7 +175,8 @@
                             <TextBlock Grid.Column="0" Text="{DynamicResource Settings.Port}" FontWeight="SemiBold" />
                             <TextBlock Grid.Column="1" Text="{DynamicResource Settings.Enable}" FontWeight="SemiBold" />
                             <TextBlock Grid.Column="2" Text="{DynamicResource Settings.TxPower}" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="3" Text="{DynamicResource Settings.RxSensitivity}" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="3" Text="{DynamicResource Settings.RxSensitivity}" FontWeight="SemiBold" 
+                                       Visibility="{Binding IsRxSensitivityVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         </Grid>
 
                         <ItemsControl ItemsSource="{Binding Antennas}">
@@ -198,7 +202,8 @@
                                         <ComboBox Grid.Column="3"
                                                   Height="28"
                                                   ItemsSource="{Binding DataContext.RxSensitivityOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                  SelectedItem="{Binding RxSensitivityInDbm}" />
+                                                  SelectedItem="{Binding RxSensitivityInDbm}"
+                                                  Visibility="{Binding DataContext.IsRxSensitivityVisible, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
