@@ -48,7 +48,7 @@ public partial class InventoryConfigViewModel : ObservableObject
     public IReadOnlyList<MemoryBank> MemoryBanks { get; } = Enum.GetValues<MemoryBank>();
     public IReadOnlyList<TagFilterOp> TagFilterOps { get; } = Enum.GetValues<TagFilterOp>();
     public IReadOnlyList<StateUnawareAction> StateUnawareActions { get; } = Enum.GetValues<StateUnawareAction>();
-    public IReadOnlyList<ReportMode> ReportModes { get; } = Enum.GetValues<ReportMode>();
+    public IReadOnlyList<ReportMode> ReportModes { get; } = Enum.GetValues<ReportMode>().Where(m => m != ReportMode.IndividualUnbuffered).ToList();
 
     [ObservableProperty]
     private string operationResult = string.Empty;
