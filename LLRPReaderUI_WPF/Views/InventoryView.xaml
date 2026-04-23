@@ -166,7 +166,7 @@
             </Border>
         </StackPanel>
 
-        <Border Grid.Row="4" Style="{StaticResource PageCardStyle}">
+        <Border Grid.Row="4" Style="{StaticResource AppCardStyle}">
             <DataGrid
                 x:Name="InventoryDataGrid"
                 AutoGenerateColumns="False"

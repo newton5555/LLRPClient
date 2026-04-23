@@ -277,7 +277,7 @@
                     <Grid Grid.Row="0" Margin="6,6,6,12">
                         <TextBlock
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="14"
                             FontWeight="SemiBold"
                             Text="{DynamicResource Menu.Navigation}" />
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

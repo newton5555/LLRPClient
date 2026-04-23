@@ -13,7 +13,7 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{StaticResource PageCardStyle}">
+        <Border Grid.Row="0" Style="{StaticResource AppCardStyle}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
                 <StackPanel>
                     <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
