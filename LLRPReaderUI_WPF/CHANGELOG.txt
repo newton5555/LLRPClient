@@ -12,6 +12,34 @@
    - TagPopulationEstimate 的 Q 值关系说明移动到输入框右侧，显示“约对应标签数 = 2^Q - 1”
    - 上报模式下拉列表补充显示对应的 LLRP 参数值（Trigger / N）
    - TagFilterMode 按模式动态控制过滤器显示：OnlyFilter1/OnlyFilter2/AND/OR 仅显示标签筛选1/2，UseTagSelectFilters 显示可增删的过滤条件列表
+   - 主题样式统一优化（浅色/深色），修复导航区、标题区、状态区在不同主题下的显示一致性
+   - 日志页与 LLRP 消息页布局和按钮样式优化，筛选区与 Tab Header 视觉统一
+
+2. 状态感知过滤增强
+   - 在 TagSelectFilters 中新增 `UseStateAwareFilterAction` 开关
+   - 新增 `StateAwareTarget`、`StateAwareAction` 配置项（仅在开启 InventoryStateAware 时显示）
+   - 设置读取/保存与下发链路已打通：支持生成并解析 `C1G2TagInventoryStateAwareFilterAction`
+   - 修复相关显示刷新问题，确保设置变更后配置区可见性及时更新
+   - 使用说明（面向用户）：
+     1) 在【参数配置】页面开启 InventoryStateAware，并保存参数到设备
+     2) 在【盘点配置】页面将 Filter Mode 切换为 UseTagSelectFilters
+     3) 点击“新增过滤条件”，勾选 UseStateAwareFilterAction
+     4) 选择 StateAwareTarget 与 StateAwareAction，保存后开始盘点
+     5) 如未显示该配置项，请先确认设备支持 CanDoTagInventoryStateAwareSingulation
+   - 推荐起步配置：
+     - StateAwareTarget = SL
+     - StateAwareAction = AssertSLOrA_DeassertSLOrB
+   - 参数含义说明：
+     - StateAwareTarget：指定要操作的状态位，`SL` 为标签 SL 标志；`S0/S1/S2/S3` 为对应 Session 的 A/B 状态位
+     - StateAwareAction：定义“匹配/不匹配”两种情况下的状态动作，格式为 `X_Y`（X=匹配时动作，Y=不匹配时动作）
+     - `AssertSLOrA`：置位（SL=1 或 Session 状态置 A）
+     - `DeassertSLOrB`：清位（SL=0 或 Session 状态置 B）
+     - `Noop`：不改变当前状态
+     - `NegateSLOrABBA`：翻转状态（SL 取反或 A/B 互换）
+   - 常见动作示例：
+     - `AssertSLOrA_DeassertSLOrB`：匹配置位，不匹配清位（推荐起步）
+     - `AssertSLOrA_Noop`：匹配置位，不匹配保持不变
+     - `Noop_DeassertSLOrB`：匹配不变，不匹配清位
 
 ================================================================================
 
