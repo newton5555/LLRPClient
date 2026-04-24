@@ -49,7 +49,7 @@
                     </StackPanel>
                     <Border Grid.Row="4"
                             Grid.Column="1"
-                            Height="32"
+                            
                             BorderBrush="{DynamicResource WriteRequiredForeground}"
                             BorderThickness="1">
                         <TextBox Margin="0"
@@ -74,7 +74,7 @@
                     </StackPanel>
                     <Border Grid.Row="8"
                             Grid.Column="1"
-                            Height="32"
+                            
                             BorderBrush="{DynamicResource WriteRequiredForeground}"
                             BorderThickness="1">
                         <TextBox Margin="0"
