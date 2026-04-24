@@ -171,6 +171,14 @@
     <sys:String x:Key="LLRPMessage.MessageTree">LLRP 消息树</sys:String>
     <sys:String x:Key="LLRPMessage.RawHexData">原始十六进制数据</sys:String>
 
+    <!-- Log -->
+    <sys:String x:Key="Log.Center">日志中心</sys:String>
+    <sys:String x:Key="Log.Total">日志总数: </sys:String>
+    <sys:String x:Key="Log.ClearAll">清空全部</sys:String>
+    <sys:String x:Key="Log.Operation">操作日志</sys:String>
+    <sys:String x:Key="Log.LlrpMessage">LLRP 消息日志</sys:String>
+    <sys:String x:Key="Log.RawFrame">原始报文收发</sys:String>
+
     <!-- Actions -->
     <sys:String x:Key="Action.Save">保存</sys:String>
     <sys:String x:Key="Action.Cancel">取消</sys:String>

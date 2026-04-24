@@ -14,7 +14,7 @@
                     <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="15.2.1.3.2.1 C1G2Read" />
                     <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="15.2.1.3.2.2 C1G2Write" />
                     <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="15.2.1.3.2.3 C1G2Kill" />
-                    <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="15.2.1.3.2.4 C1G2Lock (含 C1G2LockPayload)" />
+                    <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="15.2.1.3.2.4 C1G2Lock (C1G2LockPayload)" />
                     <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="15.2.1.3.2.5 C1G2BlockErase" />
                     <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="15.2.1.3.2.6 C1G2BlockWrite" />
                 </StackPanel>
@@ -91,7 +91,6 @@
 
                     <Button Grid.Row="6"
                             Grid.Column="2"
-                            Height="36"
                             Margin="10,0,0,0"
                             Content="{DynamicResource AdvancedTagOps.ExecuteBlockErase}"
                             IsEnabled="{Binding IsBlockEraseSupported}"
@@ -119,13 +118,13 @@
                     <TextBlock Grid.Row="2" Text="{DynamicResource AdvancedTagOps.LockAction}" VerticalAlignment="Center" />
                     <ComboBox Grid.Row="2" Grid.Column="1" Height="32" ItemsSource="{Binding LockActions}" SelectedItem="{Binding SelectedLockAction}" />
 
-                    <Button Grid.Row="2" Grid.Column="2" Height="36" Margin="10,0,0,0" Content="{DynamicResource AdvancedTagOps.ExecuteLock}" Command="{Binding LockCommand}" Style="{StaticResource FlatButtonPrimary}" />
+                    <Button Grid.Row="2" Grid.Column="2" Margin="10,0,0,0" Content="{DynamicResource AdvancedTagOps.ExecuteLock}" Command="{Binding LockCommand}" Style="{StaticResource FlatButtonPrimary}" />
                 </Grid>
             </GroupBox>
 
             <GroupBox Header="{DynamicResource AdvancedTagOps.KillOp}" Margin="0,10,0,0">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <Button Height="36" Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" Command="{Binding KillCommand}" Style="{StaticResource FlatButtonPrimary}" />
+                    <Button Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" Command="{Binding KillCommand}" Style="{StaticResource FlatButtonPrimary}" />
                     <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource WarningTextBrush}" Text="{DynamicResource AdvancedTagOps.KillWarning}" />
                 </StackPanel>
             </GroupBox>

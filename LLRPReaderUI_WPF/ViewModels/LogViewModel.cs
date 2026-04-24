@@ -74,22 +74,25 @@ public partial class LogViewModel : ObservableObject
     [RelayCommand]
     private void ClearOperationLogs()
     {
+        var removedCount = OperationEntries.Count;
         OperationEntries.Clear();
-        TotalLogCount -= OperationEntries.Count;
+        TotalLogCount = Math.Max(0, TotalLogCount - removedCount);
     }
 
     [RelayCommand]
     private void ClearLlrpMessageLogs()
     {
+        var removedCount = LlrpMessageEntries.Count;
         LlrpMessageEntries.Clear();
-        TotalLogCount -= LlrpMessageEntries.Count;
+        TotalLogCount = Math.Max(0, TotalLogCount - removedCount);
     }
 
     [RelayCommand]
     private void ClearRawFrameLogs()
     {
+        var removedCount = RawPacketEntries.Count;
         RawPacketEntries.Clear();
-        TotalLogCount -= RawPacketEntries.Count;
+        TotalLogCount = Math.Max(0, TotalLogCount - removedCount);
     }
 
     private void OnConnectionStateChanged(bool isConnected)

@@ -20,7 +20,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PlugCircleCheck" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
+                            <fa:IconBlock FontSize="14" Margin="0,0,6,0" Icon="PlugCircleCheck" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
                             <TextBlock Text="{DynamicResource GPIO.GpiConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -58,7 +58,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal" >
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ToggleOn" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
+                            <fa:IconBlock FontSize="14" Margin="0,0,6,0" Icon="ToggleOn" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
                             <TextBlock Text="{DynamicResource GPIO.GpoOutput}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -96,8 +96,7 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Height="32"
-                    Width="120"
+            <Button Width="120"
                     Margin="0,0,8,0"
                     Command="{Binding QueryGpioSettingsCommand}"
                     CommandParameter="True"
@@ -107,8 +106,7 @@
                     <TextBlock Text="{DynamicResource GPIO.Query}" />
                 </StackPanel>
             </Button>
-            <Button Height="32"
-                    Width="120"
+            <Button Width="120"
                     Margin="0,0,8,0"
                     Command="{Binding SaveGpiSettingsCommand}"
                     Style="{StaticResource FlatButtonPrimary}">
@@ -117,8 +115,7 @@
                     <TextBlock Text="{DynamicResource GPIO.SaveGpi}" />
                 </StackPanel>
             </Button>
-            <Button Height="32"
-                    Width="120"
+            <Button Width="120"
                     Command="{Binding ApplyGpoStatesCommand}"
                     Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">

@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
-    xmlns:converters="clr-namespace:LLRPReaderUI_WPF.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:LLRPReaderUI_WPF.ViewModels"
@@ -13,7 +12,6 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <converters:BooleanToStarGridLengthConverter x:Key="BoolToStarGridLengthConverter" />
         <Style x:Key="LogCompactButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonOutline}">
             <Setter Property="MinHeight" Value="30" />
             <Setter Property="Padding" Value="12,6" />
@@ -64,7 +62,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource HeadingText}" Text="日志中心" />
+                    <TextBlock Style="{StaticResource HeadingText}" Text="{DynamicResource Log.Center}" />
                     <Border Margin="12,0,0,0"
                             Padding="12,6"
                             Background="{DynamicResource SurfaceMutedBrush}"
@@ -72,7 +70,7 @@
                             BorderThickness="1"
                             CornerRadius="12">
                         <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}">
-                            <Run Text="日志总数: " />
+                            <Run Text="{DynamicResource Log.Total}" />
                             <Run
                                 FontWeight="Bold"
                                 Foreground="{DynamicResource PrimaryBrush}"
@@ -94,7 +92,7 @@
                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                           Icon="TrashCan"
                                           IconFont="Auto" />
-                            <TextBlock Text="清空全部" />
+                            <TextBlock Text="{DynamicResource Log.ClearAll}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -104,31 +102,31 @@
                     Grid.ColumnSpan="2"
                     Orientation="Horizontal">
                     <CheckBox Margin="0,0,16,0" IsChecked="{Binding ShowOperationLogs}">
-                        <TextBlock Foreground="{DynamicResource TextSecondaryBrush}">
-                            <Run Text="操作日志" />
-                            <Run
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="{DynamicResource Log.Operation}" />
+                            <TextBlock
                                 FontSize="12"
                                 Foreground="{DynamicResource PrimaryBrush}"
-                                Text="{Binding OperationEntries.Count, Mode=OneWay, StringFormat=(0)}" />
-                        </TextBlock>
+                                Text="{Binding OperationEntries.Count, Mode=OneWay, StringFormat=({0})}" />
+                        </StackPanel>
                     </CheckBox>
                     <CheckBox Margin="0,0,16,0" IsChecked="{Binding ShowLlrpMessageLogs}">
-                        <TextBlock Foreground="{DynamicResource TextSecondaryBrush}">
-                            <Run Text="LLRP 消息日志" />
-                            <Run
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="{DynamicResource Log.LlrpMessage}" />
+                            <TextBlock
                                 FontSize="12"
                                 Foreground="{DynamicResource PrimaryBrush}"
-                                Text="{Binding LlrpMessageEntries.Count, Mode=OneWay, StringFormat=(0)}" />
-                        </TextBlock>
+                                Text="{Binding LlrpMessageEntries.Count, Mode=OneWay, StringFormat=({0})}" />
+                        </StackPanel>
                     </CheckBox>
                     <CheckBox IsChecked="{Binding ShowRawFrameLogs}">
-                        <TextBlock Foreground="{DynamicResource TextSecondaryBrush}">
-                            <Run Text="原始报文收发" />
-                            <Run
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="{DynamicResource Log.RawFrame}" />
+                            <TextBlock
                                 FontSize="12"
                                 Foreground="{DynamicResource PrimaryBrush}"
-                                Text="{Binding RawPacketEntries.Count, Mode=OneWay, StringFormat=(0)}" />
-                        </TextBlock>
+                                Text="{Binding RawPacketEntries.Count, Mode=OneWay, StringFormat=({0})}" />
+                        </StackPanel>
                     </CheckBox>
                 </StackPanel>
             </Grid>
@@ -204,7 +202,7 @@
                             <TextBlock Grid.Column="1"
                                        Style="{StaticResource LogTabTitleStyle}"
                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
-                                       Text="操作日志" />
+                                       Text="{DynamicResource Log.Operation}" />
                             <Border Grid.Column="2"
                                     Style="{StaticResource LogTabBadgeStyle}">
                                 <TextBlock Style="{StaticResource LogTabCountStyle}"
@@ -240,7 +238,7 @@
                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                                   Icon="Trash"
                                                   IconFont="Auto" />
-                                    <TextBlock Text="清空" />
+                                    <TextBlock Text="{DynamicResource Action.Clear}" />
                                 </StackPanel>
                             </Button>
 
@@ -281,7 +279,7 @@
                             <TextBlock Grid.Column="1"
                                        Style="{StaticResource LogTabTitleStyle}"
                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
-                                       Text="LLRP 消息日志" />
+                                       Text="{DynamicResource Log.LlrpMessage}" />
                             <Border Grid.Column="2"
                                     Style="{StaticResource LogTabBadgeStyle}">
                                 <TextBlock Style="{StaticResource LogTabCountStyle}"
@@ -318,7 +316,7 @@
                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                                   Icon="Trash"
                                                   IconFont="Auto" />
-                                    <TextBlock Text="清空" />
+                                    <TextBlock Text="{DynamicResource Action.Clear}" />
                                 </StackPanel>
                             </Button>
 
@@ -359,7 +357,7 @@
                             <TextBlock Grid.Column="1"
                                        Style="{StaticResource LogTabTitleStyle}"
                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
-                                       Text="原始报文收发" />
+                                       Text="{DynamicResource Log.RawFrame}" />
                             <Border Grid.Column="2"
                                     Style="{StaticResource LogTabBadgeStyle}">
                                 <TextBlock Style="{StaticResource LogTabCountStyle}"
@@ -397,7 +395,7 @@
                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                                   Icon="Trash"
                                                   IconFont="Auto" />
-                                    <TextBlock Text="清空" />
+                                    <TextBlock Text="{DynamicResource Action.Clear}" />
                                 </StackPanel>
                             </Button>
 

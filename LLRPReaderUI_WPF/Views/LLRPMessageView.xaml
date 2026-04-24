@@ -158,41 +158,41 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource HeadingText}" Text="{DynamicResource LLRPMessage.Filter}" />
-                <UniformGrid Grid.Row="2" Columns="5">
-                    <StackPanel Margin="0,0,12,0">
+                <WrapPanel Grid.Row="2">
+                    <StackPanel Width="150" Margin="0,0,12,12">
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.StartDate}" />
                         <DatePicker SelectedDate="{Binding FilterStartDate}" />
                     </StackPanel>
-                    <StackPanel Margin="0,0,12,0">
+                    <StackPanel Width="150" Margin="0,0,12,12">
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.EndDate}" />
                         <DatePicker SelectedDate="{Binding FilterEndDate}" />
                     </StackPanel>
-                    <StackPanel Margin="0,0,12,0">
+                    <StackPanel Width="150" Margin="0,0,12,12">
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.Direction}" />
                         <ComboBox ItemsSource="{Binding DirectionOptions}"
                                   SelectedItem="{Binding FilterDirection}" />
                     </StackPanel>
-                    <StackPanel Margin="0,0,12,0">
+                    <StackPanel Width="150" Margin="0,0,12,12">
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.Device}" />
                         <ComboBox ItemsSource="{Binding DeviceIdOptions}"
                                   SelectedItem="{Binding FilterDeviceId}" />
                     </StackPanel>
-                    <StackPanel>
+                    <StackPanel Width="170" Margin="0,0,0,12">
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.MessageType}" />
                         <ComboBox ItemsSource="{Binding MsgTypeOptions}"
                                   SelectedItem="{Binding FilterMsgType}" />
                     </StackPanel>
-                </UniformGrid>
+                </WrapPanel>
 
                 <StackPanel Grid.Row="4"
                             Orientation="Horizontal"

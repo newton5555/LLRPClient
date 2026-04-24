@@ -20,7 +20,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Play" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
+                            <fa:IconBlock FontSize="14" Margin="0,0,6,0" Icon="Play" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -66,7 +66,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Stop" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
+                            <fa:IconBlock FontSize="14" Margin="0,0,6,0" Icon="Stop" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -107,7 +107,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Filter" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}"/>
+                            <fa:IconBlock FontSize="14" Margin="0,0,6,0" Icon="Filter" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -253,7 +253,7 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="SquarePollVertical" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
+                            <fa:IconBlock FontSize="14" Margin="0,0,6,0" Icon="SquarePollVertical" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
@@ -287,8 +287,8 @@
                 <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconTealBrush}" Icon="Database" IconFont="Auto" />
-                            <TextBlock Text="{DynamicResource InventoryConfig.AttachedDataConfig}" />
+                            <fa:IconBlock FontSize="14" Margin="0,0,6,0" Foreground="{StaticResource IconTealBrush}" Icon="Database" IconFont="Auto" />
+                            <TextBlock Text="{DynamicResource InventoryConfig.AttachedDataConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}" />
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -328,13 +328,13 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Height="32" Width="120" Margin="0,0,8,0" Command="{Binding QueryInventoryConfigCommand}" Style="{StaticResource FlatButtonOutline}">
+            <Button Width="120" Margin="0,0,8,0" Command="{Binding QueryInventoryConfigCommand}" Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock FontSize="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="Download" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource InventoryConfig.ReadConfig}" />
                 </StackPanel>
             </Button>
-            <Button Height="32" Width="120" Command="{Binding SaveInventoryConfigCommand}" Style="{StaticResource FlatButtonPrimary}">
+            <Button Width="120" Command="{Binding SaveInventoryConfigCommand}" Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock FontSize="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource InventoryConfig.SaveConfig}" />

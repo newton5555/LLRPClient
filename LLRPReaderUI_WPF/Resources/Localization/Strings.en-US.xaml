@@ -170,6 +170,14 @@
     <sys:String x:Key="LLRPMessage.MessageTree">LLRP Message Tree</sys:String>
     <sys:String x:Key="LLRPMessage.RawHexData">Raw Hex Data</sys:String>
 
+    <!-- Log -->
+    <sys:String x:Key="Log.Center">Log Center</sys:String>
+    <sys:String x:Key="Log.Total">Total Logs: </sys:String>
+    <sys:String x:Key="Log.ClearAll">Clear All</sys:String>
+    <sys:String x:Key="Log.Operation">Operation Logs</sys:String>
+    <sys:String x:Key="Log.LlrpMessage">LLRP Message Logs</sys:String>
+    <sys:String x:Key="Log.RawFrame">Raw Frame IO</sys:String>
+
     <!-- Actions -->
     <sys:String x:Key="Action.Save">Save</sys:String>
     <sys:String x:Key="Action.Cancel">Cancel</sys:String>
