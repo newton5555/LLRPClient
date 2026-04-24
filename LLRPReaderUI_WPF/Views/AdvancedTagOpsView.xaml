@@ -95,7 +95,8 @@
                             Margin="10,0,0,0"
                             Content="{DynamicResource AdvancedTagOps.ExecuteBlockErase}"
                             IsEnabled="{Binding IsBlockEraseSupported}"
-                            Command="{Binding BlockEraseCommand}" />
+                            Command="{Binding BlockEraseCommand}"
+                            Style="{StaticResource FlatButtonPrimary}" />
                 </Grid>
             </GroupBox>
 
@@ -118,13 +119,13 @@
                     <TextBlock Grid.Row="2" Text="{DynamicResource AdvancedTagOps.LockAction}" VerticalAlignment="Center" />
                     <ComboBox Grid.Row="2" Grid.Column="1" Height="32" ItemsSource="{Binding LockActions}" SelectedItem="{Binding SelectedLockAction}" />
 
-                    <Button Grid.Row="2" Grid.Column="2" Height="36" Margin="10,0,0,0" Content="{DynamicResource AdvancedTagOps.ExecuteLock}" Command="{Binding LockCommand}" />
+                    <Button Grid.Row="2" Grid.Column="2" Height="36" Margin="10,0,0,0" Content="{DynamicResource AdvancedTagOps.ExecuteLock}" Command="{Binding LockCommand}" Style="{StaticResource FlatButtonPrimary}" />
                 </Grid>
             </GroupBox>
 
             <GroupBox Header="{DynamicResource AdvancedTagOps.KillOp}" Margin="0,10,0,0">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <Button Height="36" Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" Command="{Binding KillCommand}" />
+                    <Button Height="36" Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" Command="{Binding KillCommand}" Style="{StaticResource FlatButtonPrimary}" />
                     <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource WarningTextBrush}" Text="{DynamicResource AdvancedTagOps.KillWarning}" />
                 </StackPanel>
             </GroupBox>

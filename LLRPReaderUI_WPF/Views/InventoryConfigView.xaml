@@ -21,7 +21,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Play" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -67,7 +67,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Stop" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <Grid Margin="10">
@@ -108,7 +108,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="Filter" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <StackPanel Margin="10">
@@ -194,7 +194,7 @@
                         <GroupBox Header="{DynamicResource InventoryConfig.TagSelectFilters}" Margin="0,6,0,0"
                                   Visibility="{Binding ShowTagSelectFilters, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Margin="8">
-                                <Button Width="120" Height="30" Content="{DynamicResource InventoryConfig.AddFilter}" Command="{Binding AddTagSelectFilterCommand}" />
+                                <Button Width="120" Height="30" Content="{DynamicResource InventoryConfig.AddFilter}" Command="{Binding AddTagSelectFilterCommand}" Style="{StaticResource FlatButtonOutline}" />
                                 <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding TagSelectFilters}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -224,6 +224,7 @@
                                                     <Button Grid.Row="0" Grid.Column="4" Width="72" Height="26" Margin="8,0,0,0"
                                                             Content="{DynamicResource InventoryConfig.Delete}"
                                                             Command="{Binding DataContext.RemoveTagSelectFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            Style="{StaticResource FlatButtonOutline}"
                                                             CommandParameter="{Binding}" />
 
                                                     <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitCount}" />
@@ -253,7 +254,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="SquarePollVertical" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <StackPanel Margin="10">
@@ -327,15 +328,15 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Height="32" Width="120" Margin="0,0,8,0" Command="{Binding QueryInventoryConfigCommand}">
+            <Button Height="32" Width="120" Margin="0,0,8,0" Command="{Binding QueryInventoryConfigCommand}" Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="Download" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource InventoryConfig.ReadConfig}" />
                 </StackPanel>
             </Button>
-            <Button Height="32" Width="120" Command="{Binding SaveInventoryConfigCommand}">
+            <Button Height="32" Width="120" Command="{Binding SaveInventoryConfigCommand}" Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource InventoryConfig.SaveConfig}" />
                 </StackPanel>
             </Button>

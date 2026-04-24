@@ -20,95 +20,128 @@
 
         <Border Style="{StaticResource CardBorderStyle}">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="220" />
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <ComboBox
-                    Grid.Column="0"
-                    Height="32"
-                    VerticalContentAlignment="Center"
-                    IsEditable="True"
-                    IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBool}}"
-                    IsTextSearchEnabled="False"
-                    ItemsSource="{Binding RecentReaderEndpoints}"
-                    Text="{Binding ReaderEndpoint, UpdateSourceTrigger=PropertyChanged}" />
+                <StackPanel>
+                    <TextBlock Style="{StaticResource HeadingText}" Text="{DynamicResource DeviceConnection.Title}" />
+                    <TextBlock Margin="0,4,0,0"
+                               Style="{StaticResource BodyText}"
+                               Text="{DynamicResource DeviceConnection.EnterAddress}" />
+                </StackPanel>
 
-                <Button
-                    Grid.Column="2"
-                    Height="32"
-                    Command="{Binding ConnectCommand}"
-                    Style="{StaticResource FlatButtonPrimary}">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconBlock
-                            Width="14"
-                            Height="14"
-                            Margin="0,0,6,0"
-                            Foreground="{StaticResource IconSuccessBrush}"
-                            Icon="PlugCircleCheck"
-                            IconFont="Auto" />
-                        <TextBlock Text="{DynamicResource DeviceConnection.Connect}" />
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <Button
-                    Grid.Column="4"
-                    Height="32"
-                    Command="{Binding DisconnectCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconBlock
-                            Width="14"
-                            Height="14"
-                            Margin="0,0,6,0"
-                            Foreground="{StaticResource IconDangerBrush}"
-                            Icon="PowerOff"
-                            IconFont="Auto" />
-                        <TextBlock Text="{DynamicResource DeviceConnection.Disconnect}" />
-                    </StackPanel>
-                </Button>
+                    <ComboBox
+                        Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        IsEditable="True"
+                        IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBool}}"
+                        IsTextSearchEnabled="False"
+                        ItemsSource="{Binding RecentReaderEndpoints}"
+                        Text="{Binding ReaderEndpoint, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock
-                    Grid.Column="5"
-                    Margin="12,0,0,0"
-                    Style="{StaticResource StatusHintTextStyle}"
-                    Text="{Binding ConnectionState}" />
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding ConnectCommand}"
+                        Style="{StaticResource FlatButtonPrimary}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconBlock
+                                Width="14"
+                                Height="14"
+                                Margin="0,0,6,0"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                Icon="PlugCircleCheck"
+                                IconFont="Auto" />
+                            <TextBlock Text="{DynamicResource DeviceConnection.Connect}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Grid.Column="4"
+                        Command="{Binding DisconnectCommand}"
+                        Style="{StaticResource FlatButtonOutline}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconBlock
+                                Width="14"
+                                Height="14"
+                                Margin="0,0,6,0"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                Icon="PowerOff"
+                                IconFont="Auto" />
+                            <TextBlock Text="{DynamicResource DeviceConnection.Disconnect}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Border Grid.Column="5"
+                            Margin="12,0,0,0"
+                            Padding="12,8"
+                            Background="{DynamicResource SurfaceMutedBrush}"
+                            BorderBrush="{DynamicResource BorderBrushCustom}"
+                            BorderThickness="0"
+                            CornerRadius="12">
+                        <TextBlock Style="{StaticResource StatusHintTextStyle}"
+                                   Text="{Binding ConnectionState}" />
+                    </Border>
+                </Grid>
             </Grid>
         </Border>
 
-        <DataGrid
-            Grid.Row="2"
-            AutoGenerateColumns="False"
-            CanUserAddRows="False"
-            IsReadOnly="True"
-            ItemsSource="{Binding FeatureSetItems}">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Width="2*">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{DynamicResource DeviceConnection.FeatureSetProperty}"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="3*">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{DynamicResource DeviceConnection.Value}"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Value}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource HeadingText}" Text="{DynamicResource DeviceConnection.FeatureSetProperty}" />
+                    <TextBlock Margin="0,4,0,0"
+                               Style="{StaticResource BodyText}"
+                               Text="{DynamicResource DeviceConnection.Connected}" />
+                </StackPanel>
+                <DataGrid
+                    Grid.Row="2"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding FeatureSetItems}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="2*">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{DynamicResource DeviceConnection.FeatureSetProperty}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="3*">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{DynamicResource DeviceConnection.Value}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Value}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
 
        
     </Grid>

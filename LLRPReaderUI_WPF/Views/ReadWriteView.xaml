@@ -7,7 +7,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="16" MaxWidth="900">
             <GroupBox Header="{DynamicResource ReadWrite.ReadConfig}">
-                <Grid >
+                <Grid Margin="14">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="10" />
@@ -122,18 +122,19 @@
             </GroupBox>
 
             <GroupBox Header="{DynamicResource ReadWrite.Operations}" Margin="0,10,0,0">
-                <StackPanel >
+                <StackPanel Margin="14">
                     <StackPanel Orientation="Horizontal">
                         <Button Height="36"
                                 Width="120"
                                 Content="{DynamicResource ReadWrite.ReadMemory}"
                                 Command="{Binding ReadMemoryCommand}"
-                                 />
+                                Style="{StaticResource FlatButtonPrimary}" />
                         <Button Height="36"
                                 Width="120"
                                 Margin="10,0,0,0"
                                 Content="{DynamicResource ReadWrite.WriteMemory}"
-                            Command="{Binding WriteMemoryCommand}" />
+                                Command="{Binding WriteMemoryCommand}"
+                                Style="{StaticResource FlatButtonOutline}" />
                         <CheckBox Margin="10,0,0,0"
                                   VerticalAlignment="Center"
                                   Content="{DynamicResource ReadWrite.BlockWrite}"
@@ -144,7 +145,8 @@
                                 Width="120"
                                 Margin="10,0,0,0"
                                 Content="{DynamicResource ReadWrite.ClearData}"
-                                Command="{Binding ClearDataCommand}" />
+                                Command="{Binding ClearDataCommand}"
+                                Style="{StaticResource FlatButtonOutline}" />
                     </StackPanel>
                     <TextBlock Margin="0,10,0,0"
                                Text="{Binding OperationResult}"
@@ -154,7 +156,7 @@
             </GroupBox>
 
             <GroupBox Header="{DynamicResource ReadWrite.ReadResult}" Margin="0,10,0,0">
-                <Grid >
+                <Grid Margin="14">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="10" />

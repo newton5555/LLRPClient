@@ -21,7 +21,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="PlugCircleCheck" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
-                            <TextBlock Text="{DynamicResource GPIO.GpiConfig}" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource GPIO.GpiConfig}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <StackPanel Margin="10">
@@ -59,7 +59,7 @@
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal" >
                             <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Icon="ToggleOn" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
-                            <TextBlock Text="{DynamicResource GPIO.GpoOutput}" Foreground="White"/>
+                            <TextBlock Text="{DynamicResource GPIO.GpoOutput}" Foreground="{DynamicResource GroupHeaderForegroundBrush}"/>
                         </StackPanel>
                     </GroupBox.Header>
                     <StackPanel Margin="10">
@@ -100,26 +100,29 @@
                     Width="120"
                     Margin="0,0,8,0"
                     Command="{Binding QueryGpioSettingsCommand}"
-                    CommandParameter="True">
+                    CommandParameter="True"
+                    Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="Download" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource GPIO.Query}" />
                 </StackPanel>
             </Button>
             <Button Height="32"
                     Width="120"
                     Margin="0,0,8,0"
-                    Command="{Binding SaveGpiSettingsCommand}">
+                    Command="{Binding SaveGpiSettingsCommand}"
+                    Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconSuccessBrush}" Icon="FloppyDisk" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource GPIO.SaveGpi}" />
                 </StackPanel>
             </Button>
             <Button Height="32"
                     Width="120"
-                    Command="{Binding ApplyGpoStatesCommand}">
+                    Command="{Binding ApplyGpoStatesCommand}"
+                    Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{StaticResource IconVioletBrush}" Icon="PaperPlane" IconFont="Auto" />
+                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="PaperPlane" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource GPIO.ApplyGpo}" />
                 </StackPanel>
             </Button>

@@ -57,10 +57,10 @@ public partial class ThemeLanguageViewModel : ObservableObject
     public AppLanguage CurrentLanguage => _languageService.CurrentLanguage;
 
     /// <summary>
-    /// 当前主题对应的图标：亮色主题显示太阳，暗色主题显示月亮
+    /// 显示当前主题图标，避免与切换方向产生歧义。
     /// </summary>
     public IconChar ThemeIcon => _themeService.CurrentTheme == AppTheme.Light
-        ? IconChar.Sun
+        ? IconChar.Lightbulb
         : IconChar.Moon;
 
     /// <summary>

@@ -29,12 +29,12 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource HoverOverlayBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource NavigationButtonHoverBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -51,7 +51,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="10">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
@@ -65,8 +65,8 @@
         </Style>
 
         <Style x:Key="NavItemContainerStyle" TargetType="ListBoxItem">
-            <Setter Property="Margin" Value="0,2" />
-            <Setter Property="Padding" Value="4,10" />
+            <Setter Property="Margin" Value="0,4" />
+            <Setter Property="Padding" Value="10,12" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -75,15 +75,19 @@
                             x:Name="ItemBorder"
                             Padding="{TemplateBinding Padding}"
                             Background="Transparent"
-                            CornerRadius="6">
+                            CornerRadius="14"
+                            BorderBrush="Transparent"
+                            BorderThickness="1">
                             <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource HoverOverlayBrush}" />
+                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{DynamicResource NavigationItemHoverBorderBrush}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource SelectedOverlayBrush}" />
+                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{DynamicResource NavigationItemSelectedBorderBrush}" />
                                 <Setter Property="FontWeight" Value="SemiBold" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -94,9 +98,11 @@
 
         <Style x:Key="StatusChipStyle" TargetType="Border">
             <Setter Property="Margin" Value="0,0,8,0" />
-            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="Padding" Value="12,6" />
             <Setter Property="Background" Value="{DynamicResource SubtleOverlayBrush}" />
-            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SubtleBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style
@@ -240,72 +246,93 @@
         </DataTemplate>
     </mah:MetroWindow.Resources>
 
-    <Grid>
+    <Grid Background="{DynamicResource WindowBackgroundGradientBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Border Margin="18"
+                Panel.ZIndex="0"
+                Background="{DynamicResource WindowGlassOverlayBrush}"
+                CornerRadius="28"
+                IsHitTestVisible="False" />
 
-        <Grid Grid.Row="0" Margin="16">
+        <Grid Grid.Row="0" Margin="18">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240" />
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="278" />
+                <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+            <Border Grid.Column="0"
+                    Background="{DynamicResource NavigationBackgroundBrush}"
+                    BorderBrush="{DynamicResource NavigationOuterBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="24"
+                    Effect="{DynamicResource NavShadowEffect}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="6,6,6,12">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Text="{DynamicResource Menu.Navigation}" />
-                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                            <Button
-                                Command="{Binding ThemeLanguageViewModel.ToggleThemeCommand}"
-                                Style="{StaticResource SettingsButtonStyle}"
-                                ToolTip="{Binding ThemeLanguageViewModel.ThemeToolTip}">
+                    <Border Grid.Row="0"
+                            Margin="14,14,14,12"
+                            Padding="16"
+                            Background="{DynamicResource NavigationHeaderBrush}"
+                            CornerRadius="18">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource NavigationForegroundBrush}"
+                                       VerticalAlignment="Center"
+                                       Text="{DynamicResource Menu.Navigation}" />
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button
+                                    Command="{Binding ThemeLanguageViewModel.ToggleThemeCommand}"
+                                    Style="{StaticResource SettingsButtonStyle}"
+                                    ToolTip="{Binding ThemeLanguageViewModel.ThemeToolTip}">
                                 <fa:IconBlock
-                                    FontSize="18"
-                                    Foreground="{DynamicResource TextMutedBrush}"
-                                    Icon="{Binding ThemeLanguageViewModel.ThemeIcon}"
-                                    IconFont="Auto" />
-                            </Button>
-                            <Button
-                                Margin="4,0,0,0"
-                                Command="{Binding ThemeLanguageViewModel.ToggleLanguageCommand}"
-                                Style="{StaticResource SettingsButtonStyle}"
-                                ToolTip="{DynamicResource Language.Toggle}">
-                                <Grid>
-                                    <fa:IconBlock
                                         FontSize="18"
-                                        Foreground="{DynamicResource TextMutedBrush}"
-                                        Icon="Globe"
+                                        Foreground="{DynamicResource NavigationHeaderIconBrush}"
+                                        Icon="{Binding ThemeLanguageViewModel.ThemeIcon}"
                                         IconFont="Auto" />
-                                    <TextBlock
-                                        TextAlignment="Right"
-                                        Margin="0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Bottom"
-                                        FontSize="10"
-                                        FontWeight="SemiBold"
-                                        Foreground="LightBlue"
-                                        Text="{Binding ThemeLanguageViewModel.LanguageSymbol}" />
-                                </Grid>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
+                                </Button>
+                                <Button
+                                    Margin="6,0,0,0"
+                                    Command="{Binding ThemeLanguageViewModel.ToggleLanguageCommand}"
+                                    Style="{StaticResource SettingsButtonStyle}"
+                                    ToolTip="{DynamicResource Language.Toggle}">
+                                    <Grid>
+                                        <fa:IconBlock
+                                            FontSize="18"
+                                            Foreground="{DynamicResource NavigationHeaderIconBrush}"
+                                            Icon="Globe"
+                                            IconFont="Auto" />
+                                        <TextBlock
+                                            TextAlignment="Right"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            FontSize="10"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource NavigationHeaderAccentBrush}"
+                                            Text="{Binding ThemeLanguageViewModel.LanguageSymbol}" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
 
                     <ListBox
                         Grid.Row="1"
+                        Margin="14,0,14,14"
                         Background="Transparent"
                         BorderThickness="0"
+                        Foreground="{DynamicResource NavigationForegroundBrush}"
                         ItemContainerStyle="{StaticResource NavItemContainerStyle}"
                         ItemsSource="{Binding NavigationItems}"
                         SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}">
@@ -327,7 +354,8 @@
                                         Margin="12,0,0,0"
                                         VerticalAlignment="Center"
                                         Content="{Binding Title}"
-                                        FontSize="14" />
+                                        FontSize="14"
+                                        Foreground="{DynamicResource NavigationForegroundBrush}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -342,12 +370,12 @@
 
         <Border
             Grid.Row="1"
-            Height="42"
-            Margin="0"
-            Padding="8,4"
-            Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            Margin="18,0,18,18"
+            Padding="10,8"
+            Background="{DynamicResource StatusBarBackgroundBrush}"
             BorderBrush="{DynamicResource SubtleBorderBrush}"
-            BorderThickness="0,1,0,0">
+            BorderThickness="1"
+            CornerRadius="20">
             <StatusBar Background="Transparent" BorderThickness="0">
                 <Border Style="{StaticResource DeviceStatusChipStyle}">
                     <StackPanel Orientation="Horizontal">
@@ -389,7 +417,9 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Background="{DynamicResource SurfaceBrush}"
-                CornerRadius="8">
+                BorderBrush="{DynamicResource BorderStrongBrush}"
+                BorderThickness="1"
+                CornerRadius="18">
                 <StackPanel
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

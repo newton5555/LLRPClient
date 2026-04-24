@@ -72,6 +72,7 @@
     <sys:String x:Key="Inventory.TotalReports">报告包</sys:String>
     <sys:String x:Key="Inventory.TotalTags">标签总数</sys:String>
     <sys:String x:Key="Inventory.UniqueTags">唯一 EPC</sys:String>
+    <sys:String x:Key="Inventory.Duration">寻卡耗时</sys:String>
     <sys:String x:Key="Inventory.EPC">EPC</sys:String>
     <sys:String x:Key="Inventory.Antenna">天线</sys:String>
     <sys:String x:Key="Inventory.RSSI">RSSI(dBm)</sys:String>

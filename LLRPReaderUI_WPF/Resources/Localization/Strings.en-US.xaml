@@ -72,6 +72,7 @@
     <sys:String x:Key="Inventory.TotalReports">Total Reports</sys:String>
     <sys:String x:Key="Inventory.TotalTags">Total Tags</sys:String>
     <sys:String x:Key="Inventory.UniqueTags">Unique EPC</sys:String>
+    <sys:String x:Key="Inventory.Duration">Inventory Duration</sys:String>
     <sys:String x:Key="Inventory.EPC">EPC</sys:String>
     <sys:String x:Key="Inventory.Antenna">Antenna</sys:String>
     <sys:String x:Key="Inventory.RSSI">RSSI(dBm)</sys:String>
