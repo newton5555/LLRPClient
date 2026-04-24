@@ -89,7 +89,7 @@
                         </ComboBox>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.TagPopulationEstimate}" />
-                        <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding TagPopulationEstimate}" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Height="30" Text="{Binding TagPopulationEstimate}" TextChanged="TextBox_TextChanged" />
 
                         <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.HoldEventsOnReconnect}" TextWrapping="WrapWithOverflow" Visibility="Collapsed"/>
                         <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding HoldEventsAndReportsUponReconnect}" VerticalAlignment="Center" Visibility="Collapsed"/>

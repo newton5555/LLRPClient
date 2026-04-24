@@ -14,4 +14,9 @@ gpio   寻卡 自动启停的配置未测试
 卡操作 未测试
 
 
+UI问题 
+TagPopulationEstimate 与Q值对应的关系 未指明
+TagFilterModes  模式 对应控件的可见性更改，只有最后一个模式才显示add的按钮 已经增加的控件
+
+
 
