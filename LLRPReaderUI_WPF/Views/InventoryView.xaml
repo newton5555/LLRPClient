@@ -80,8 +80,7 @@
                         Style="{StaticResource FlatButtonPrimary}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
+                                FontSize="14"
                                 Margin="0,0,6,0"
                                 Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                 Icon="Play"
@@ -96,8 +95,7 @@
                         Style="{StaticResource FlatButtonOutline}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
+                                FontSize="14"
                                 Margin="0,0,6,0"
                                 Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                 Icon="Stop"
@@ -112,8 +110,7 @@
                         Style="{StaticResource FlatButtonOutline}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
+                                FontSize="14"
                                 Margin="0,0,6,0"
                                 Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                 Icon="Rotate"
@@ -128,8 +125,7 @@
                         Style="{StaticResource FlatButtonOutline}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock
-                                Width="14"
-                                Height="14"
+                                FontSize="14"
                                 Margin="0,0,6,0"
                                 Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                 Icon="TrashCan"

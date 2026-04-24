@@ -190,7 +190,7 @@
         <Setter Property="Margin" Value="0,0,0,16" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SurfaceMutedBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="GroupBox">
@@ -204,21 +204,20 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Border Margin="14,14,14,0"
-                                    Padding="12,8"
+                            <Border Padding="16,12"
                                     Background="{DynamicResource NavigationHeaderBrush}"
-                                    CornerRadius="12">
+                                    BorderBrush="{DynamicResource BorderBrushCustom}"
+                                    BorderThickness="0,0,0,1"
+                                    CornerRadius="18,18,0,0">
                                 <ContentPresenter ContentSource="Header"
                                                   RecognizesAccessKey="True"
                                                   TextElement.Foreground="{DynamicResource GroupHeaderForegroundBrush}"
                                                   TextElement.FontWeight="SemiBold" />
                             </Border>
                             <Border Grid.Row="1"
-                                    Margin="14"
+                                    Padding="14"
                                     Background="{DynamicResource SurfaceBrush}"
-                                    BorderBrush="{DynamicResource BorderBrushCustom}"
-                                    BorderThickness="1"
-                                    CornerRadius="14">
+                                    CornerRadius="0,0,18,18">
                                 <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Border>
                         </Grid>

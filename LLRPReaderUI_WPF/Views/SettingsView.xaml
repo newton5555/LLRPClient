@@ -244,7 +244,7 @@
                     Command="{Binding QueryDeviceSettingsCommand}"
                     Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="Download" IconFont="Auto" />
+                    <fa:IconBlock FontSize="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="Download" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource Settings.Query}" />
                 </StackPanel>
             </Button>
@@ -255,7 +255,7 @@
                     Command="{Binding SaveSettingsCommand}"
                     Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="FloppyDisk" IconFont="Auto" />
+                    <fa:IconBlock FontSize="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource Settings.Save}" />
                 </StackPanel>
             </Button>
@@ -267,7 +267,7 @@
       Command="{Binding DataContext.QueryStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}"
       Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="CircleInfo" IconFont="Auto" />
+                    <fa:IconBlock FontSize="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="CircleInfo" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource Settings.QueryStatus}" />
                 </StackPanel>
             </Button>
@@ -278,7 +278,7 @@
                     Command="{Binding ResetFactoryDefaultsCommand}"
                     Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock Width="14" Height="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="RotateLeft" IconFont="Auto" />
+                    <fa:IconBlock FontSize="14" Margin="0,0,6,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Icon="RotateLeft" IconFont="Auto" />
                     <TextBlock Text="{DynamicResource Settings.ResetFactory}" />
                 </StackPanel>
             </Button>
