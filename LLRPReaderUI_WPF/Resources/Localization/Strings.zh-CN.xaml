@@ -5,7 +5,7 @@
     <!-- UI Dimensions -->
     <sys:Double x:Key="UI.ButtonWidth">120</sys:Double>
     <sys:Double x:Key="UI.Inventory.ButtonWidth">130</sys:Double>
-    <sys:Double x:Key="UI.Connection.ButtonWidth">120</sys:Double>
+    <sys:Double x:Key="UI.Connection.ButtonWidth">100</sys:Double>
     <sys:Double x:Key="UI.Config.ButtonWidth">130</sys:Double>
     <sys:Double x:Key="UI.Settings.ButtonWidth">130</sys:Double>
     <sys:Double x:Key="UI.GPIO.ButtonWidth">130</sys:Double>

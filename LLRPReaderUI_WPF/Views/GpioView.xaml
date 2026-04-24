@@ -15,10 +15,10 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{DynamicResource PageCardStyle}">
+        <Border Grid.Row="0" Style="{StaticResource AppCardStyle}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
                 <StackPanel>
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="PlugCircleCheck" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}" VerticalAlignment="Center"/>
@@ -56,7 +56,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="ToggleOn" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}" VerticalAlignment="Center"/>
@@ -98,19 +98,19 @@
         </Border>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding QueryGpioSettingsCommand}" Style="{DynamicResource FlatButtonOutline}">
+            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding QueryGpioSettingsCommand}" Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource GPIO.Query}" />
                 </StackPanel>
             </Button>
-            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding SaveGpiSettingsCommand}" Style="{DynamicResource FlatButtonPrimary}">
+            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding SaveGpiSettingsCommand}" Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource GPIO.SaveGpi}" />
                 </StackPanel>
             </Button>
-            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Command="{Binding ApplyGpoStatesCommand}" Style="{DynamicResource FlatButtonPrimary}">
+            <Button Width="{DynamicResource UI.GPIO.ButtonWidth}" Height="40" Command="{Binding ApplyGpoStatesCommand}" Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White" Icon="PaperPlane" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource GPIO.ApplyGpo}" />
@@ -118,6 +118,6 @@
             </Button>
         </StackPanel>
 
-        <TextBlock Grid.Row="3" Style="{DynamicResource StatusHintTextStyle}" Text="{Binding OperationResult}" />
+        <TextBlock Grid.Row="3" Style="{StaticResource StatusHintTextStyle}" Text="{Binding OperationResult}" />
     </Grid>
 </UserControl>

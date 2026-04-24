@@ -15,11 +15,11 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{DynamicResource PageCardStyle}">
+        <Border Grid.Row="0" Style="{StaticResource AppCardStyle}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
                 <StackPanel>
                     <!-- Auto Start Config -->
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Width="16" Height="16" Margin="0,0,8,0" Icon="Play" IconFont="Auto" Foreground="{StaticResource IconSuccessBrush}"/>
@@ -55,7 +55,7 @@
                     </Border>
 
                     <!-- Auto Stop Config -->
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Width="16" Height="16" Margin="0,0,8,0" Icon="Stop" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}"/>
@@ -88,7 +88,7 @@
                     </Border>
 
                     <!-- Filter Config -->
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Width="16" Height="16" Margin="0,0,8,0" Icon="Filter" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}"/>
@@ -209,7 +209,7 @@
                     </Border>
 
                     <!-- Report Config -->
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Width="16" Height="16" Margin="0,0,8,0" Icon="SquarePollVertical" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}"/>
@@ -239,7 +239,7 @@
                     </Border>
 
                     <!-- Attached Data Config -->
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Width="16" Height="16" Margin="0,0,8,0" Foreground="{StaticResource IconTealBrush}" Icon="Database" IconFont="Auto" />
@@ -275,13 +275,13 @@
         </Border>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Width="{DynamicResource UI.Config.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding QueryInventoryConfigCommand}" Style="{DynamicResource FlatButtonOutline}">
+            <Button Width="{DynamicResource UI.Config.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding QueryInventoryConfigCommand}" Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock VerticalAlignment="Center" Margin="0,0,8,0" FontSize="16" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource InventoryConfig.ReadConfig}" />
                 </StackPanel>
             </Button>
-            <Button Width="{DynamicResource UI.Config.ButtonWidth}" Height="40" Command="{Binding SaveInventoryConfigCommand}" Style="{DynamicResource FlatButtonPrimary}">
+            <Button Width="{DynamicResource UI.Config.ButtonWidth}" Height="40" Command="{Binding SaveInventoryConfigCommand}" Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock VerticalAlignment="Center" Margin="0,0,8,0" FontSize="16" Foreground="White" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource InventoryConfig.SaveConfig}" />
@@ -289,6 +289,6 @@
             </Button>
         </StackPanel>
 
-        <TextBlock Grid.Row="3" Style="{DynamicResource StatusHintTextStyle}" Text="{Binding OperationResult}" />
+        <TextBlock Grid.Row="3" Style="{StaticResource StatusHintTextStyle}" Text="{Binding OperationResult}" />
     </Grid>
 </UserControl>

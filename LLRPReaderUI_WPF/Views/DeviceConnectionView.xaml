@@ -23,9 +23,9 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="280" />
                     <ColumnDefinition Width="12" />
-                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="12" />
-                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -54,7 +54,7 @@
                             Foreground="White"
                             Icon="PlugCircleCheck"
                             IconFont="Auto" />
-                        <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource DeviceConnection.Connect}" />
+                        <TextBlock VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" Text="{DynamicResource DeviceConnection.Connect}" />
                     </StackPanel>
                 </Button>
 
@@ -72,7 +72,7 @@
                             Foreground="{StaticResource IconDangerBrush}"
                             Icon="PowerOff"
                             IconFont="Auto" />
-                        <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource DeviceConnection.Disconnect}" />
+                        <TextBlock VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" Text="{DynamicResource DeviceConnection.Disconnect}" />
                     </StackPanel>
                 </Button>
 
@@ -101,7 +101,7 @@
                         </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Name}" Margin="10,0"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

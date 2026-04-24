@@ -142,10 +142,13 @@
         </Setter>
     </Style>
 
-    <Style x:Key="PageCardStyle" TargetType="Border" BasedOn="{StaticResource CardBorderStyle}">
+    <Style x:Key="AppCardStyle" TargetType="Border" BasedOn="{StaticResource CardBorderStyle}">
         <Setter Property="Padding" Value="0" />
         <Setter Property="Margin" Value="0,0,0,8" />
     </Style>
+
+    <!-- Alias for backward compatibility / designer cache -->
+    <Style x:Key="PageCardStyle" TargetType="Border" BasedOn="{StaticResource AppCardStyle}" />
 
     <Style x:Key="StatCardStyle" TargetType="Border" BasedOn="{StaticResource CardBorderStyle}">
         <Setter Property="Width" Value="200" />
@@ -162,7 +165,7 @@
 
     <!-- Heading / body text styles -->
     <Style x:Key="HeadingText" TargetType="TextBlock" BasedOn="{StaticResource FlatTextBlock}">
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
@@ -250,6 +253,7 @@
 
     <!-- Implicit Button style for all buttons (full definition to avoid BasedOn issues during theme switch) -->
     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="MinHeight" Value="32" />
         <Setter Property="Padding" Value="12,6" />
         <Setter Property="Margin" Value="0" />

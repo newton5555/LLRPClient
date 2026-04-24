@@ -6,10 +6,10 @@
              xmlns:viewmodels="clr-namespace:LLRPReaderUI_WPF.ViewModels" xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              d:DataContext="{d:DesignInstance Type=viewmodels:AdvancedTagOpsViewModel}"
              mc:Ignorable="d">
-    <Border Style="{DynamicResource PageCardStyle}" Margin="16">
+    <Border Style="{DynamicResource AppCardStyle}" Margin="16">
         <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
             <StackPanel MaxWidth="900">
-                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16" Visibility="Collapsed">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Book" IconFont="Auto" Foreground="{StaticResource IconInfoBrush}" VerticalAlignment="Center"/>
@@ -20,14 +20,14 @@
                             <TextBlock Foreground="{DynamicResource TextMutedBrush}" Text="15.2.1.3.2.1 C1G2Read" />
                             <TextBlock Foreground="{DynamicResource TextMutedBrush}" Text="15.2.1.3.2.2 C1G2Write" />
                             <TextBlock Foreground="{DynamicResource TextMutedBrush}" Text="15.2.1.3.2.3 C1G2Kill" />
-                            <TextBlock Foreground="{DynamicResource TextMutedBrush}" Text="15.2.1.3.2.4 C1G2Lock (含 C1G2LockPayload)" />
+                            <TextBlock Foreground="{DynamicResource TextMutedBrush}" Text="15.2.1.3.2.4 C1G2Lock" />
                             <TextBlock Foreground="{DynamicResource TextMutedBrush}" Text="15.2.1.3.2.5 C1G2BlockErase" />
                             <TextBlock Foreground="{DynamicResource TextMutedBrush}" Text="15.2.1.3.2.6 C1G2BlockWrite" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Gear" IconFont="Auto" Foreground="{StaticResource IconVioletBrush}" VerticalAlignment="Center"/>
@@ -66,7 +66,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Eraser" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}" VerticalAlignment="Center"/>
@@ -101,12 +101,12 @@
                                     Content="{DynamicResource AdvancedTagOps.ExecuteBlockErase}"
                                     IsEnabled="{Binding IsBlockEraseSupported}"
                                     Command="{Binding BlockEraseCommand}" 
-                                    Style="{DynamicResource FlatButtonPrimary}"/>
+                                    Style="{StaticResource FlatButtonPrimary}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Lock" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}" VerticalAlignment="Center"/>
@@ -132,12 +132,12 @@
                             <Button Grid.Row="2" Grid.Column="2" Height="32" Margin="10,0,0,0" 
                                     Content="{DynamicResource AdvancedTagOps.ExecuteLock}" 
                                     Command="{Binding LockCommand}"
-                                    Style="{DynamicResource FlatButtonPrimary}"/>
+                                    Style="{StaticResource FlatButtonPrimary}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Skull" IconFont="Auto" Foreground="{DynamicResource IconDangerBrush}" VerticalAlignment="Center"/>
@@ -150,7 +150,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="CircleInfo" IconFont="Auto" Foreground="{DynamicResource IconInfoBrush}" VerticalAlignment="Center"/>

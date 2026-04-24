@@ -13,10 +13,10 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{DynamicResource PageCardStyle}">
+        <Border Grid.Row="0" Style="{StaticResource AppCardStyle}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
                 <StackPanel>
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="HeartPulse" IconFont="Auto" Foreground="{StaticResource IconDangerBrush}" VerticalAlignment="Center"/>
@@ -42,7 +42,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="Sliders" IconFont="Auto" Foreground="{StaticResource IconVioletBrush}" VerticalAlignment="Center"/>
@@ -148,7 +148,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="TowerBroadcast" IconFont="Auto" Foreground="{StaticResource IconTealBrush}" VerticalAlignment="Center"/>
@@ -200,7 +200,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{DynamicResource CardBorderStyle}" Margin="0,0,0,16">
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <fa:IconBlock Margin="0,0,8,0" FontSize="16" Icon="ListCheck" IconFont="Auto" Foreground="{StaticResource IconAccentBrush}" VerticalAlignment="Center"/>
@@ -220,28 +220,28 @@
         </Border>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding QueryDeviceSettingsCommand}" Style="{DynamicResource FlatButtonOutline}">
+            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding QueryDeviceSettingsCommand}" Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{StaticResource IconInfoBrush}" Icon="Download" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource Settings.Query}" />
                 </StackPanel>
             </Button>
 
-            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding SaveSettingsCommand}" Style="{DynamicResource FlatButtonPrimary}">
+            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding SaveSettingsCommand}" Style="{StaticResource FlatButtonPrimary}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White" Icon="FloppyDisk" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Text="{DynamicResource Settings.Save}" />
                 </StackPanel>
             </Button>
 
-            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding DataContext.QueryStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}" Style="{DynamicResource FlatButtonOutline}">
+            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Margin="0,0,12,0" Command="{Binding DataContext.QueryStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{StaticResource IconInfoBrush}" Icon="CircleInfo" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource Settings.QueryStatus}" />
                 </StackPanel>
             </Button>
 
-            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Command="{Binding ResetFactoryDefaultsCommand}" Style="{DynamicResource FlatButtonOutline}">
+            <Button Width="{DynamicResource UI.Settings.ButtonWidth}" Height="40" Command="{Binding ResetFactoryDefaultsCommand}" Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <fa:IconBlock FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{StaticResource IconWarningBrush}" Icon="RotateLeft" IconFont="Auto" />
                     <TextBlock VerticalAlignment="Center" FontSize="14" Text="{DynamicResource Settings.ResetFactory}" />
@@ -249,6 +249,6 @@
             </Button>
         </StackPanel>
 
-        <TextBlock Grid.Row="3" Style="{DynamicResource StatusHintTextStyle}" Text="{Binding SaveResult}" />
+        <TextBlock Grid.Row="3" Style="{StaticResource StatusHintTextStyle}" Text="{Binding SaveResult}" />
     </Grid>
 </UserControl>
