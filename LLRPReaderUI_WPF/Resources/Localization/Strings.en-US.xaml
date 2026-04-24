@@ -94,6 +94,7 @@
     <sys:String x:Key="Settings.RfMode">RF Mode</sys:String>
     <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
     <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
+    <sys:String x:Key="Settings.TagPopulationEstimateHint">(approx. tag count = 2^Q - 1)</sys:String>
     <sys:String x:Key="Settings.HoldEventsOnReconnect">Hold Events on Reconnect (Requires ENABLE_EVENTS_AND_REPORTS)</sys:String>
     <sys:String x:Key="Settings.HopTableId">Hop Table ID</sys:String>
     <sys:String x:Key="Settings.ChannelIndex">Channel Index</sys:String>

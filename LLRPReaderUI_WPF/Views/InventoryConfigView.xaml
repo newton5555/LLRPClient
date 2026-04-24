@@ -121,7 +121,8 @@
                             <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding TagFilterModes}" SelectedItem="{Binding FilterMode}" />
                         </Grid>
 
-                        <GroupBox Header="{DynamicResource InventoryConfig.TagFilter1}" Margin="0,0,0,8">
+                        <GroupBox Header="{DynamicResource InventoryConfig.TagFilter1}" Margin="0,0,0,8"
+                                  Visibility="{Binding ShowTagFilter1, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Grid Margin="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140" />
@@ -155,7 +156,8 @@
 
 
 
-                        <GroupBox Header="{DynamicResource InventoryConfig.TagFilter2}" Margin="0,0,0,8">
+                        <GroupBox Header="{DynamicResource InventoryConfig.TagFilter2}" Margin="0,0,0,8"
+                                  Visibility="{Binding ShowTagFilter2, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Grid Margin="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140" />
@@ -189,7 +191,8 @@
 
 
 
-                        <GroupBox Header="{DynamicResource InventoryConfig.TagSelectFilters}" Margin="0,6,0,0">
+                        <GroupBox Header="{DynamicResource InventoryConfig.TagSelectFilters}" Margin="0,6,0,0"
+                                  Visibility="{Binding ShowTagSelectFilters, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Margin="8">
                                 <Button Width="120" Height="30" Content="{DynamicResource InventoryConfig.AddFilter}" Command="{Binding AddTagSelectFilterCommand}" />
                                 <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding TagSelectFilters}">
@@ -260,7 +263,11 @@
                                 <ColumnDefinition Width="220" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.ReportMode}" />
-                            <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding ReportModes}" SelectedItem="{Binding ReportMode}" />
+                            <ComboBox Grid.Column="1" Height="30"
+                                      ItemsSource="{Binding ReportModes}"
+                                      DisplayMemberPath="DisplayText"
+                                      SelectedValuePath="Value"
+                                      SelectedValue="{Binding ReportMode}" />
                         </Grid>
 
                         <UniformGrid Columns="2" Rows="4">

@@ -48,7 +48,12 @@ public partial class InventoryConfigViewModel : ObservableObject
     public IReadOnlyList<MemoryBank> MemoryBanks { get; } = Enum.GetValues<MemoryBank>();
     public IReadOnlyList<TagFilterOp> TagFilterOps { get; } = Enum.GetValues<TagFilterOp>();
     public IReadOnlyList<StateUnawareAction> StateUnawareActions { get; } = Enum.GetValues<StateUnawareAction>();
-    public IReadOnlyList<ReportMode> ReportModes { get; } = Enum.GetValues<ReportMode>().Where(m => m != ReportMode.IndividualUnbuffered).ToList();
+    public IReadOnlyList<ReportModeOptionItem> ReportModes { get; } =
+    [
+        new(ReportMode.WaitForQuery, "WaitForQuery (Trigger=0, N=0)"),
+        new(ReportMode.Individual, "Individual (Trigger=2, N=1)"),
+        new(ReportMode.BatchAfterStop, "BatchAfterStop (Trigger=2, N=0)")
+    ];
 
     [ObservableProperty]
     private string operationResult = string.Empty;
@@ -88,6 +93,15 @@ public partial class InventoryConfigViewModel : ObservableObject
 
     [ObservableProperty]
     private TagFilterMode filterMode;
+
+    [ObservableProperty]
+    private bool showTagFilter1;
+
+    [ObservableProperty]
+    private bool showTagFilter2;
+
+    [ObservableProperty]
+    private bool showTagSelectFilters;
 
     [ObservableProperty]
     private MemoryBank filter1MemoryBank = MemoryBank.Epc;
@@ -171,6 +185,13 @@ public partial class InventoryConfigViewModel : ObservableObject
     {
         var format = _languageService.GetLocalizedString(key);
         return args.Length > 0 ? string.Format(format, args) : format;
+    }
+
+    partial void OnFilterModeChanged(TagFilterMode value)
+    {
+        ShowTagFilter1 = value is TagFilterMode.OnlyFilter1 or TagFilterMode.Filter1AndFilter2 or TagFilterMode.Filter1OrFilter2;
+        ShowTagFilter2 = value is TagFilterMode.OnlyFilter2 or TagFilterMode.Filter1AndFilter2 or TagFilterMode.Filter1OrFilter2;
+        ShowTagSelectFilters = value == TagFilterMode.UseTagSelectFilters;
     }
 
     [RelayCommand]
@@ -382,6 +403,12 @@ public partial class InventoryConfigViewModel : ObservableObject
             QueryInventoryConfigCommand.Execute(null);
         }
     }
+}
+
+public sealed class ReportModeOptionItem(ReportMode value, string displayText)
+{
+    public ReportMode Value { get; } = value;
+    public string DisplayText { get; } = displayText;
 }
 
 public partial class TagSelectFilterItemViewModel : ObservableObject
