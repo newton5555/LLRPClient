@@ -92,6 +92,9 @@
     <sys:String x:Key="Settings.EnableKeepalive">启用 Keepalive</sys:String>
     <sys:String x:Key="Settings.KeepaliveInterval">Keepalive 间隔(ms)</sys:String>
     <sys:String x:Key="Settings.RfInventoryConfig">RF 与盘点配置</sys:String>
+    <sys:String x:Key="Settings.RadioPhy">射频物理层参数</sys:String>
+    <sys:String x:Key="Settings.InventoryProtocol">空口协议参数</sys:String>
+    <sys:String x:Key="Settings.AdvancedFeatures">高级特性配置</sys:String>
     <sys:String x:Key="Settings.RfMode">RF Mode</sys:String>
     <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
     <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
@@ -373,6 +376,7 @@
 
     <!-- InventoryConfig UI -->
     <sys:String x:Key="InventoryConfig.AutoStartConfig">自动开始配置</sys:String>
+    <sys:String x:Key="InventoryConfig.OperationTriggers">寻卡触发策略</sys:String>
     <sys:String x:Key="InventoryConfig.Mode">模式</sys:String>
     <sys:String x:Key="InventoryConfig.GpiPortNum">GPI端口号</sys:String>
     <sys:String x:Key="InventoryConfig.GpiLevel">GPI电平</sys:String>
@@ -400,6 +404,7 @@
     <sys:String x:Key="InventoryConfig.StateAwareTarget">状态感知目标</sys:String>
     <sys:String x:Key="InventoryConfig.StateAwareAction">状态感知动作</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">上报配置</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportingStrategy">数据上报策略</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">上报模式</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">包含天线号</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeChannel">包含信道</sys:String>

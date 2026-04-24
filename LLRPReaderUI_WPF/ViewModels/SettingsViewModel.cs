@@ -59,13 +59,15 @@ public partial class SettingsViewModel : ObservableObject
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
+    private readonly ReaderStatusStore statusStore;
     private readonly LanguageService _languageService;
 
-    public SettingsViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore, LanguageService languageService)
+    public SettingsViewModel(LlrpReader reader, IAppLogService logs, ReaderSettingsStore settingsStore, ReaderStatusStore statusStore, LanguageService languageService)
     {
         this.reader = reader;
         this.logs = logs;
         this.settingsStore = settingsStore;
+        this.statusStore = statusStore;
         _languageService = languageService;
         WeakReferenceMessenger.Default.Register<SettingsViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
@@ -159,6 +161,12 @@ public partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<AntennaItemViewModel> antennas = new();
+
+    [ObservableProperty]
+    private ObservableCollection<GpiPortItemViewModel> gpis = new();
+
+    [ObservableProperty]
+    private ObservableCollection<GpoPortItemViewModel> gpos = new();
 
     private void UpdateReaderEventNotifications()
     {
@@ -381,6 +389,21 @@ public partial class SettingsViewModel : ObservableObject
                 }
             }
 
+            var gpiConfigs = settings.Gpis.GpiConfigs;
+            if (Gpis.Count > 0)
+            {
+                foreach (var gpiItem in Gpis)
+                {
+                    var targetGpi = gpiConfigs.FirstOrDefault(x => x.PortNumber == gpiItem.PortNumber);
+                    if (targetGpi is null)
+                    {
+                        targetGpi = new GpiConfig { PortNumber = gpiItem.PortNumber };
+                        settings.Gpis.Add(targetGpi);
+                    }
+                    targetGpi.IsEnabled = gpiItem.IsEnabled;
+                }
+            }
+
             reader.ApplySettings(settings);
             settingsStore.Set(settings);
             SaveResult = _languageService.GetLocalizedString("Settings.SavedToDevice");
@@ -532,8 +555,132 @@ public partial class SettingsViewModel : ObservableObject
         }
 
         Session = settings.Session;
+
+        UpdateGpioFromState(settings, statusStore.TryGetSnapshot(out var status) ? status : null);
     }
 
+    [RelayCommand]
+    private void QueryGpioStatus()
+    {
+        try
+        {
+            if (!reader.IsConnected) return;
+            var status = reader.QueryStatus();
+            statusStore.Set(status);
+            if (settingsStore.TryGetSnapshot(out var settings))
+            {
+                UpdateGpioFromState(settings, status);
+            }
+        }
+        catch (Exception ex)
+        {
+            logs.LogOperation(GetLocalizedString("GPIO.GetFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
+        }
+    }
+
+    [RelayCommand]
+    private void ApplyGpoStates()
+    {
+        try
+        {
+            if (!reader.IsConnected) return;
+
+            foreach (var gpo in Gpos)
+            {
+                reader.SetGpo(gpo.PortNumber, gpo.DesiredState);
+            }
+
+            var status = reader.QueryStatus();
+            statusStore.Set(status);
+            
+            if (settingsStore.TryGetSnapshot(out var settings))
+            {
+                UpdateGpioFromState(settings, status);
+            }
+            
+            logs.LogOperation(_languageService.GetLocalizedString("GPIO.GpoApplied"));
+        }
+        catch (Exception ex)
+        {
+            logs.LogOperation(GetLocalizedString("GPIO.GpoApplyFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
+        }
+    }
+
+    private void UpdateGpioFromState(Settings settings, Status? status)
+    {
+        var gpiConfigByPort = settings.Gpis.GpiConfigs
+            .GroupBy(x => x.PortNumber)
+            .ToDictionary(x => x.Key, x => x.First());
+        
+        var gpiStateByPort = status?.Gpis
+            .Cast<GpiStatus>()
+            .ToDictionary(x => x.PortNumber, x => x.State) ?? new Dictionary<ushort, bool>();
+
+        var highText = _languageService.GetLocalizedString("Common.High");
+        var lowText = _languageService.GetLocalizedString("Common.Low");
+        var unknownText = _languageService.GetLocalizedString("Common.Unknown");
+
+        Gpis.Clear();
+        for (var port = 1; port <= reader.ReaderCapabilities.GpiCount; port++)
+        {
+            var portNumber = (ushort)port;
+            gpiConfigByPort.TryGetValue(portNumber, out var gpiConfig);
+            gpiStateByPort.TryGetValue(portNumber, out var gpiState);
+
+            Gpis.Add(new GpiPortItemViewModel
+            {
+                PortNumber = portNumber,
+                IsEnabled = gpiConfig?.IsEnabled ?? false,
+                CurrentStateText = gpiStateByPort.ContainsKey(portNumber)
+                    ? (gpiState ? highText : lowText)
+                    : unknownText
+            });
+        }
+
+        var gpoStateByPort = status?.GpoStates
+            .Cast<GpoStatus>()
+            .ToDictionary(x => x.PortNumber, x => x.State) ?? new Dictionary<ushort, bool>();
+
+        var noResponseText = _languageService.GetLocalizedString("Common.NoResponse");
+
+        Gpos.Clear();
+        for (var port = 1; port <= reader.ReaderCapabilities.GpoCount; port++)
+        {
+            var portNumber = (ushort)port;
+            var hasState = gpoStateByPort.TryGetValue(portNumber, out var gpoState);
+            Gpos.Add(new GpoPortItemViewModel
+            {
+                PortNumber = portNumber,
+                DesiredState = hasState && gpoState,
+                CurrentStateText = hasState ? (gpoState ? highText : lowText) : noResponseText
+            });
+        }
+    }
+
+}
+
+public partial class GpiPortItemViewModel : ObservableObject
+{
+    [ObservableProperty]
+    private ushort portNumber;
+
+    [ObservableProperty]
+    private bool isEnabled;
+
+    [ObservableProperty]
+    private string currentStateText = string.Empty;
+}
+
+public partial class GpoPortItemViewModel : ObservableObject
+{
+    [ObservableProperty]
+    private ushort portNumber;
+
+    [ObservableProperty]
+    private bool desiredState;
+
+    [ObservableProperty]
+    private string currentStateText = string.Empty;
 }
 
 public sealed class RfModeOptionItem

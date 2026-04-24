@@ -1,4 +1,4 @@
-﻿<mah:MetroWindow
+<mah:MetroWindow
     x:Class="LLRPReaderUI_WPF.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -225,9 +225,6 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <views:SettingsView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:GpioViewModel}">
-            <views:GpioView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:InventoryConfigViewModel}">
             <views:InventoryConfigView />

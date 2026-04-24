@@ -75,7 +75,6 @@ public partial class MainWindowViewModel : ObservableObject
         ReaderStatusStore statusStore,
         DeviceConnectionViewModel deviceConnectionViewModel,
         SettingsViewModel settingsViewModel,
-        GpioViewModel gpioViewModel,
         InventoryConfigViewModel inventoryConfigViewModel,
         InventoryViewModel inventoryViewModel,
         ReadWriteViewModel readWriteViewModel,
@@ -96,7 +95,6 @@ public partial class MainWindowViewModel : ObservableObject
         [
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.DeviceConnection"), TitleResourceKey = "Menu.DeviceConnection", Icon = IconChar.PlugCircleBolt, IconBrush = CreateBrush("#0EA5E9"), ViewModel = deviceConnectionViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.Settings"), TitleResourceKey = "Menu.Settings", Icon = IconChar.Sliders, IconBrush = CreateBrush("#8B5CF6"), ViewModel = settingsViewModel },
-            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.GPIO"), TitleResourceKey = "Menu.GPIO", Icon = IconChar.Microchip, IconBrush = CreateBrush("#F59E0B"), ViewModel = gpioViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.InventoryConfig"), TitleResourceKey = "Menu.InventoryConfig", Icon = IconChar.ScrewdriverWrench, IconBrush = CreateBrush("#14B8A6"), ViewModel = inventoryConfigViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.Inventory"), TitleResourceKey = "Menu.Inventory", Icon = IconChar.Tags, IconBrush = CreateBrush("#10B981"), ViewModel = inventoryViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.ReadWrite"), TitleResourceKey = "Menu.ReadWrite", Icon = IconChar.PenToSquare, IconBrush = CreateBrush("#F97316"), ViewModel = readWriteViewModel },

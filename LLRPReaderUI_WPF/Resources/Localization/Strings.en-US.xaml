@@ -92,6 +92,9 @@
     <sys:String x:Key="Settings.EnableKeepalive">Enable Keepalive</sys:String>
     <sys:String x:Key="Settings.KeepaliveInterval">Keepalive Interval(ms)</sys:String>
     <sys:String x:Key="Settings.RfInventoryConfig">RF &amp; Inventory Config</sys:String>
+    <sys:String x:Key="Settings.RadioPhy">Radio Physical Layer</sys:String>
+    <sys:String x:Key="Settings.InventoryProtocol">Air Protocol Parameters</sys:String>
+    <sys:String x:Key="Settings.AdvancedFeatures">Advanced Features</sys:String>
     <sys:String x:Key="Settings.RfMode">RF Mode</sys:String>
     <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
     <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
@@ -372,6 +375,7 @@
 
     <!-- InventoryConfig UI -->
     <sys:String x:Key="InventoryConfig.AutoStartConfig">Auto Start Config</sys:String>
+    <sys:String x:Key="InventoryConfig.OperationTriggers">Inventory Triggers</sys:String>
     <sys:String x:Key="InventoryConfig.Mode">Mode</sys:String>
     <sys:String x:Key="InventoryConfig.GpiPortNum">GPI Port Number</sys:String>
     <sys:String x:Key="InventoryConfig.GpiLevel">GPI Level</sys:String>
@@ -399,6 +403,7 @@
     <sys:String x:Key="InventoryConfig.StateAwareTarget">State-Aware Target</sys:String>
     <sys:String x:Key="InventoryConfig.StateAwareAction">State-Aware Action</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">Report Config</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportingStrategy">Reporting Strategy</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">Report Mode</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">Include Antenna</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeChannel">Include Channel</sys:String>

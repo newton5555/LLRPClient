@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LLRPSdk;
 using LLRPReaderUI_WPF.Logging;
@@ -89,7 +89,6 @@ namespace LLRPReaderUI_WPF
 
             services.AddTransient<DeviceConnectionViewModel>();
             services.AddTransient<SettingsViewModel>();
-            services.AddTransient<GpioViewModel>();
             services.AddTransient<InventoryConfigViewModel>();
             services.AddTransient<InventoryViewModel>();
             services.AddTransient<ReadWriteViewModel>();

@@ -147,6 +147,7 @@
     <SolidColorBrush x:Key="TreeDescriptionBrush" Color="#8DA9B8" />
     <SolidColorBrush x:Key="TreeMessageTypeBrush" Color="#65D39B" />
 
+    <SolidColorBrush x:Key="IconPrimaryBrush" Color="{StaticResource PrimaryColor}" />
     <SolidColorBrush x:Key="IconInfoBrush" Color="#69C8F2" />
     <SolidColorBrush x:Key="IconSuccessBrush" Color="#61D89A" />
     <SolidColorBrush x:Key="IconDangerBrush" Color="#F28B80" />
