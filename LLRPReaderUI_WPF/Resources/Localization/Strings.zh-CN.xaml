@@ -95,7 +95,7 @@
     <sys:String x:Key="Settings.RfMode">RF Mode</sys:String>
     <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
     <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
-    <sys:String x:Key="Settings.TagPopulationEstimateHint">（约对应标签数 = 2^Q - 1）</sys:String>
+    <sys:String x:Key="Settings.TagPopulationEstimateHint">（约对应标签数 = 2^Q ）</sys:String>
     <sys:String x:Key="Settings.HoldEventsOnReconnect">连接后暂缓上报（需 ENABLE_EVENTS_AND_REPORTS）</sys:String>
     <sys:String x:Key="Settings.HopTableId">跳频表 ID</sys:String>
     <sys:String x:Key="Settings.ChannelIndex">信道索引</sys:String>
@@ -396,6 +396,9 @@
     <sys:String x:Key="InventoryConfig.MatchAction">匹配动作</sys:String>
     <sys:String x:Key="InventoryConfig.TagMask">标签掩码</sys:String>
     <sys:String x:Key="InventoryConfig.NonMatchAction">非匹配动作</sys:String>
+    <sys:String x:Key="InventoryConfig.UseStateAwareFilterAction">使用状态感知筛选动作</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareTarget">状态感知目标</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareAction">状态感知动作</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">上报配置</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">上报模式</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">包含天线号</sys:String>

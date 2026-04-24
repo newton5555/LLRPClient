@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Org.LLRP.LTK.LLRPV1;
 
 #nullable disable
 namespace LLRPSdk
@@ -16,6 +17,9 @@ namespace LLRPSdk
     private MemoryBank _memoryBank;
     private StateUnawareAction _matchAction;
     private StateUnawareAction _nonMatchAction;
+    private bool _useStateAwareAction;
+    private ENUM_C1G2StateAwareTarget _stateAwareTarget = ENUM_C1G2StateAwareTarget.SL;
+    private ENUM_C1G2StateAwareAction _stateAwareAction = ENUM_C1G2StateAwareAction.AssertSLOrA_DeassertSLOrB;
 
     /// <summary>
     /// The tag mask defines the bit pattern that the filter must match on.
@@ -79,6 +83,33 @@ namespace LLRPSdk
       {
         this.SetProperty<StateUnawareAction>(ref this._nonMatchAction, value, nameof (NonMatchAction));
       }
+    }
+
+    /// <summary>
+    /// Enables using C1G2TagInventoryStateAwareFilterAction for this filter.
+    /// </summary>
+    public bool UseStateAwareAction
+    {
+      get => this._useStateAwareAction;
+      set => this.SetProperty<bool>(ref this._useStateAwareAction, value, nameof(UseStateAwareAction));
+    }
+
+    /// <summary>
+    /// State-aware target (SL/S0/S1/S2/S3) used when UseStateAwareAction is true.
+    /// </summary>
+    public ENUM_C1G2StateAwareTarget StateAwareTarget
+    {
+      get => this._stateAwareTarget;
+      set => this.SetProperty<ENUM_C1G2StateAwareTarget>(ref this._stateAwareTarget, value, nameof(StateAwareTarget));
+    }
+
+    /// <summary>
+    /// State-aware action used when UseStateAwareAction is true.
+    /// </summary>
+    public ENUM_C1G2StateAwareAction StateAwareAction
+    {
+      get => this._stateAwareAction;
+      set => this.SetProperty<ENUM_C1G2StateAwareAction>(ref this._stateAwareAction, value, nameof(StateAwareAction));
     }
 
     /// <summary>Occurs when a property value changes.</summary>

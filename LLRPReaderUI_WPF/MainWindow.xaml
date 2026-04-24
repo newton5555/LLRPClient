@@ -16,6 +16,9 @@
     d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel,
                                      IsDesignTimeCreatable=False}"
     GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+    WindowTitleBrush="{DynamicResource TitleBarBackgroundBrush}"
+    NonActiveWindowTitleBrush="{DynamicResource TitleBarInactiveBackgroundBrush}"
+    TitleForeground="{DynamicResource TitleBarForegroundBrush}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>

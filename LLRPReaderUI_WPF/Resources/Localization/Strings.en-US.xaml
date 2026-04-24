@@ -95,7 +95,7 @@
     <sys:String x:Key="Settings.RfMode">RF Mode</sys:String>
     <sys:String x:Key="Settings.Session">Session (0-3)</sys:String>
     <sys:String x:Key="Settings.TagPopulationEstimate">TagPopulationEstimate</sys:String>
-    <sys:String x:Key="Settings.TagPopulationEstimateHint">(approx. tag count = 2^Q - 1)</sys:String>
+    <sys:String x:Key="Settings.TagPopulationEstimateHint">(approx. tag count = 2^Q )</sys:String>
     <sys:String x:Key="Settings.HoldEventsOnReconnect">Hold Events on Reconnect (Requires ENABLE_EVENTS_AND_REPORTS)</sys:String>
     <sys:String x:Key="Settings.HopTableId">Hop Table ID</sys:String>
     <sys:String x:Key="Settings.ChannelIndex">Channel Index</sys:String>
@@ -395,6 +395,9 @@
     <sys:String x:Key="InventoryConfig.MatchAction">Match Action</sys:String>
     <sys:String x:Key="InventoryConfig.TagMask">Tag Mask</sys:String>
     <sys:String x:Key="InventoryConfig.NonMatchAction">Non-Match Action</sys:String>
+    <sys:String x:Key="InventoryConfig.UseStateAwareFilterAction">Use State-Aware Filter Action</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareTarget">State-Aware Target</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareAction">State-Aware Action</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">Report Config</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">Report Mode</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">Include Antenna</sys:String>

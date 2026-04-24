@@ -313,7 +313,10 @@ namespace LLRPSdk
                     this.Filters.TagFilter2.MemoryBank = (MemoryBank)filters[1].C1G2TagInventoryMask.MB.ToInt();
                     this.Filters.TagFilter2.BitPointer = filters[1].C1G2TagInventoryMask.Pointer;
                     this.Filters.TagFilter2.TagMask = filters[1].C1G2TagInventoryMask.TagMask.ToHexString();
-                    this.Filters.Mode = filters[1].C1G2TagInventoryStateUnawareFilterAction.Action != ENUM_C1G2StateUnawareAction.DoNothing_Unselect ? TagFilterMode.Filter1OrFilter2 : TagFilterMode.Filter1AndFilter2;
+                    if (filters[1].C1G2TagInventoryStateUnawareFilterAction != null)
+                        this.Filters.Mode = filters[1].C1G2TagInventoryStateUnawareFilterAction.Action != ENUM_C1G2StateUnawareAction.DoNothing_Unselect ? TagFilterMode.Filter1OrFilter2 : TagFilterMode.Filter1AndFilter2;
+                    else
+                        this.Filters.Mode = TagFilterMode.UseTagSelectFilters;
                 }
                 else if (filters.Length > 2)
                     this.Filters.Mode = TagFilterMode.UseTagSelectFilters;
@@ -327,9 +330,18 @@ namespace LLRPSdk
                         BitPointer = filter.C1G2TagInventoryMask.Pointer,
                         MemoryBank = (MemoryBank)filter.C1G2TagInventoryMask.MB.ToInt()
                     };
-                    StateUnawareActionPair unawareActionPair = StateUnawareActionExtensions.ConvertFromC1G2StateUnawareAction(filter.C1G2TagInventoryStateUnawareFilterAction.Action);
-                    tagSelectFilter.MatchAction = unawareActionPair.MatchingAction;
-                    tagSelectFilter.NonMatchAction = unawareActionPair.NonMatchingAction;
+                    if (filter.C1G2TagInventoryStateAwareFilterAction != null)
+                    {
+                        tagSelectFilter.UseStateAwareAction = true;
+                        tagSelectFilter.StateAwareTarget = filter.C1G2TagInventoryStateAwareFilterAction.Target;
+                        tagSelectFilter.StateAwareAction = filter.C1G2TagInventoryStateAwareFilterAction.Action;
+                    }
+                    else if (filter.C1G2TagInventoryStateUnawareFilterAction != null)
+                    {
+                        StateUnawareActionPair unawareActionPair = StateUnawareActionExtensions.ConvertFromC1G2StateUnawareAction(filter.C1G2TagInventoryStateUnawareFilterAction.Action);
+                        tagSelectFilter.MatchAction = unawareActionPair.MatchingAction;
+                        tagSelectFilter.NonMatchAction = unawareActionPair.NonMatchingAction;
+                    }
                     tagSelectFilters.Add(tagSelectFilter);
                 }
             }

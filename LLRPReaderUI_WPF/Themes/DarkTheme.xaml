@@ -57,6 +57,9 @@
     <SolidColorBrush x:Key="NavigationItemSelectedBorderBrush" Color="#32FFFFFF" />
     <SolidColorBrush x:Key="WindowGlassOverlayBrush" Color="#14FFFFFF" />
     <SolidColorBrush x:Key="StatusBarBackgroundBrush" Color="#172832" />
+    <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="#123244" />
+    <SolidColorBrush x:Key="TitleBarInactiveBackgroundBrush" Color="#1A4358" />
+    <SolidColorBrush x:Key="TitleBarForegroundBrush" Color="#EAF6FB" />
     <LinearGradientBrush x:Key="PrimaryButtonBrush" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0" Color="#5BB6E5" />
         <GradientStop Offset="1" Color="#257AAA" />

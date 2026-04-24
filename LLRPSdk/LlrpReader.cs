@@ -1182,7 +1182,7 @@ namespace LLRPSdk
 
 
 
-        private PARAM_C1G2Filter[] GetC1G2Filters(FilterSettings filterSettings)
+        private PARAM_C1G2Filter[] GetC1G2Filters(FilterSettings filterSettings, bool inventoryStateAware)
         {
             PARAM_C1G2Filter[] c1G2Filters = (PARAM_C1G2Filter[])null;
             if (filterSettings.Mode == TagFilterMode.UseTagSelectFilters)
@@ -1204,11 +1204,21 @@ namespace LLRPSdk
                     };
                     if (tagSelectFilter.BitCount > 0)
                         c1G2Filters[index].C1G2TagInventoryMask.TagMask = LlrpReader.TruncateTagMask(c1G2Filters[index].C1G2TagInventoryMask.TagMask, tagSelectFilter.BitCount);
-                    PARAM_C1G2TagInventoryStateUnawareFilterAction unawareFilterAction = new PARAM_C1G2TagInventoryStateUnawareFilterAction()
+                    if (inventoryStateAware && tagSelectFilter.UseStateAwareAction)
                     {
-                        Action = StateUnawareActionExtensions.ConvertToC1G2StateUnawareAction(tagSelectFilter.MatchAction, tagSelectFilter.NonMatchAction)
-                    };
-                    c1G2Filters[index].C1G2TagInventoryStateUnawareFilterAction = unawareFilterAction;
+                        c1G2Filters[index].C1G2TagInventoryStateAwareFilterAction = new PARAM_C1G2TagInventoryStateAwareFilterAction()
+                        {
+                            Target = tagSelectFilter.StateAwareTarget,
+                            Action = tagSelectFilter.StateAwareAction
+                        };
+                    }
+                    else
+                    {
+                        c1G2Filters[index].C1G2TagInventoryStateUnawareFilterAction = new PARAM_C1G2TagInventoryStateUnawareFilterAction()
+                        {
+                            Action = StateUnawareActionExtensions.ConvertToC1G2StateUnawareAction(tagSelectFilter.MatchAction, tagSelectFilter.NonMatchAction)
+                        };
+                    }
                 }
             }
             else if (filterSettings.Mode == TagFilterMode.Filter1AndFilter2 || filterSettings.Mode == TagFilterMode.Filter1OrFilter2)
@@ -1307,7 +1317,7 @@ namespace LLRPSdk
                 TagInventoryStateAware = this._readerCapabilities.CanDoTagInventoryStateAwareSingulation && config.InventoryStateAware
             };
 
-            val.C1G2Filter = this.GetC1G2Filters(config.Filters);
+            val.C1G2Filter = this.GetC1G2Filters(config.Filters, val.TagInventoryStateAware);
             PARAM_C1G2RFControl rfControl = new PARAM_C1G2RFControl();
             uint? rfMode = config.RfMode;
             if (rfMode.HasValue)

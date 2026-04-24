@@ -6,6 +6,7 @@ using LLRPReaderUI_WPF.Logging;
 using LLRPReaderUI_WPF.Messages;
 using LLRPReaderUI_WPF.Models;
 using LLRPReaderUI_WPF.Services;
+using Org.LLRP.LTK.LLRPV1;
 using System.Collections.ObjectModel;
 
 namespace LLRPReaderUI_WPF.ViewModels;
@@ -37,9 +38,23 @@ public partial class InventoryConfigViewModel : ObservableObject
         {
             r.OnConnectionStateChanged(m.Value);
         });
+        WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, StatusUpdateRequestedMessage>(this, static (r, _) =>
+        {
+            r.RefreshStateAwareFlagFromSnapshot();
+        });
+
+        RefreshStateAwareFlagFromSnapshot();
 
         // Set initial state
         OperationResult = _languageService.GetLocalizedString("InventoryConfig.Waiting");
+    }
+
+    private void RefreshStateAwareFlagFromSnapshot()
+    {
+        if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
+        {
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+        }
     }
 
     public IReadOnlyList<AutoStartMode> AutoStartModes { get; } = Enum.GetValues<AutoStartMode>();
@@ -48,6 +63,8 @@ public partial class InventoryConfigViewModel : ObservableObject
     public IReadOnlyList<MemoryBank> MemoryBanks { get; } = Enum.GetValues<MemoryBank>();
     public IReadOnlyList<TagFilterOp> TagFilterOps { get; } = Enum.GetValues<TagFilterOp>();
     public IReadOnlyList<StateUnawareAction> StateUnawareActions { get; } = Enum.GetValues<StateUnawareAction>();
+    public IReadOnlyList<ENUM_C1G2StateAwareTarget> StateAwareTargets { get; } = Enum.GetValues<ENUM_C1G2StateAwareTarget>();
+    public IReadOnlyList<ENUM_C1G2StateAwareAction> StateAwareActions { get; } = Enum.GetValues<ENUM_C1G2StateAwareAction>();
     public IReadOnlyList<ReportModeOptionItem> ReportModes { get; } =
     [
         new(ReportMode.WaitForQuery, "WaitForQuery (Trigger=0, N=0)"),
@@ -102,6 +119,9 @@ public partial class InventoryConfigViewModel : ObservableObject
 
     [ObservableProperty]
     private bool showTagSelectFilters;
+
+    [ObservableProperty]
+    private bool isInventoryStateAwareEnabled;
 
     [ObservableProperty]
     private MemoryBank filter1MemoryBank = MemoryBank.Epc;
@@ -201,7 +221,10 @@ public partial class InventoryConfigViewModel : ObservableObject
         {
             MemoryBank = MemoryBank.Epc,
             MatchAction = StateUnawareAction.Select,
-            NonMatchAction = StateUnawareAction.Unselect
+            NonMatchAction = StateUnawareAction.Unselect,
+            UseStateAwareAction = false,
+            StateAwareTarget = ENUM_C1G2StateAwareTarget.SL,
+            StateAwareAction = ENUM_C1G2StateAwareAction.AssertSLOrA_DeassertSLOrB
         });
     }
 
@@ -233,6 +256,7 @@ public partial class InventoryConfigViewModel : ObservableObject
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
 
             AutoStartMode = settings.AutoStart.Mode;
             AutoStartGpiPortNumber = settings.AutoStart.GpiPortNumber;
@@ -270,7 +294,10 @@ public partial class InventoryConfigViewModel : ObservableObject
                     BitCount = filter.BitCount,
                     TagMask = filter.TagMask ?? string.Empty,
                     MatchAction = filter.MatchAction,
-                    NonMatchAction = filter.NonMatchAction
+                    NonMatchAction = filter.NonMatchAction,
+                    UseStateAwareAction = filter.UseStateAwareAction,
+                    StateAwareTarget = filter.StateAwareTarget,
+                    StateAwareAction = filter.StateAwareAction
                 });
             }
 
@@ -317,6 +344,7 @@ public partial class InventoryConfigViewModel : ObservableObject
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
 
             settings.AutoStart.Mode = AutoStartMode;
             settings.AutoStart.GpiPortNumber = AutoStartGpiPortNumber;
@@ -351,7 +379,10 @@ public partial class InventoryConfigViewModel : ObservableObject
                 BitCount = x.BitCount,
                 TagMask = x.TagMask?.Trim() ?? string.Empty,
                 MatchAction = x.MatchAction,
-                NonMatchAction = x.NonMatchAction
+                NonMatchAction = x.NonMatchAction,
+                UseStateAwareAction = x.UseStateAwareAction,
+                StateAwareTarget = x.StateAwareTarget,
+                StateAwareAction = x.StateAwareAction
             }).ToList();
 
             settings.Report.Mode = ReportMode;
@@ -397,6 +428,11 @@ public partial class InventoryConfigViewModel : ObservableObject
             ? _languageService.GetLocalizedString("InventoryConfig.CanReadCache")
             : _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
 
+        if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
+        {
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+        }
+
         if (settingsStore.TryGetSnapshot(out _)
             && QueryInventoryConfigCommand.CanExecute(null))
         {
@@ -430,4 +466,13 @@ public partial class TagSelectFilterItemViewModel : ObservableObject
 
     [ObservableProperty]
     private StateUnawareAction nonMatchAction = StateUnawareAction.Unselect;
+
+    [ObservableProperty]
+    private bool useStateAwareAction;
+
+    [ObservableProperty]
+    private ENUM_C1G2StateAwareTarget stateAwareTarget = ENUM_C1G2StateAwareTarget.SL;
+
+    [ObservableProperty]
+    private ENUM_C1G2StateAwareAction stateAwareAction = ENUM_C1G2StateAwareAction.AssertSLOrA_DeassertSLOrB;
 }

@@ -203,12 +203,7 @@
                                        Style="{StaticResource LogTabTitleStyle}"
                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
                                        Text="{DynamicResource Log.Operation}" />
-                            <Border Grid.Column="2"
-                                    Style="{StaticResource LogTabBadgeStyle}">
-                                <TextBlock Style="{StaticResource LogTabCountStyle}"
-                                           Margin="0"
-                                           Text="{Binding OperationEntries.Count, StringFormat={}{0}}" />
-                            </Border>
+                           
                         </Grid>
                     </TabItem.Header>
                     <!--  操作日志  -->
@@ -280,12 +275,7 @@
                                        Style="{StaticResource LogTabTitleStyle}"
                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
                                        Text="{DynamicResource Log.LlrpMessage}" />
-                            <Border Grid.Column="2"
-                                    Style="{StaticResource LogTabBadgeStyle}">
-                                <TextBlock Style="{StaticResource LogTabCountStyle}"
-                                           Margin="0"
-                                           Text="{Binding LlrpMessageEntries.Count, StringFormat={}{0}}" />
-                            </Border>
+                            
                         </Grid>
                     </TabItem.Header>
                     <!--  LLRP 消息日志  -->
@@ -358,18 +348,14 @@
                                        Style="{StaticResource LogTabTitleStyle}"
                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=Foreground}"
                                        Text="{DynamicResource Log.RawFrame}" />
-                            <Border Grid.Column="2"
-                                    Style="{StaticResource LogTabBadgeStyle}">
-                                <TextBlock Style="{StaticResource LogTabCountStyle}"
-                                           Margin="0"
-                                           Text="{Binding RawPacketEntries.Count, StringFormat={}{0}}" />
-                            </Border>
+                            
                         </Grid>
                     </TabItem.Header>
                     <!--  原始报文  -->
                     <Border
                         Padding="12"
                         Style="{StaticResource CardBorderStyle}"
+                        CornerRadius="0,0,32,32"
                         Visibility="{Binding ShowRawFrameLogs, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid>
                             <Grid.RowDefinitions>
