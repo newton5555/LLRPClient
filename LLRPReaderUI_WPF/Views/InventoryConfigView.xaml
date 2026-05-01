@@ -198,7 +198,7 @@
                         <GroupBox Header="{DynamicResource InventoryConfig.TagSelectFilters}" Margin="0,6,0,0"
                                   Visibility="{Binding ShowTagSelectFilters, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Margin="8">
-                                <Button Width="120" Height="30" Content="{DynamicResource InventoryConfig.AddFilter}" Command="{Binding AddTagSelectFilterCommand}" Style="{StaticResource FlatButtonOutline}" />
+                                <Button MinWidth="120" Height="30" Content="{DynamicResource InventoryConfig.AddFilter}" Command="{Binding AddTagSelectFilterCommand}" Style="{StaticResource FlatButtonOutline}" />
                                 <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding TagSelectFilters}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>

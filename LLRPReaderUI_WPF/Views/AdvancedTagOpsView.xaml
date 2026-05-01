@@ -124,7 +124,7 @@
 
             <GroupBox Header="{DynamicResource AdvancedTagOps.KillOp}" Margin="0,10,0,0">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <Button Width="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" Command="{Binding KillCommand}" Style="{StaticResource FlatButtonPrimary}" />
+                    <Button MinWidth="150" Content="{DynamicResource AdvancedTagOps.ExecuteKill}" Command="{Binding KillCommand}" Style="{StaticResource FlatButtonPrimary}" />
                     <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource WarningTextBrush}" Text="{DynamicResource AdvancedTagOps.KillWarning}" />
                 </StackPanel>
             </GroupBox>

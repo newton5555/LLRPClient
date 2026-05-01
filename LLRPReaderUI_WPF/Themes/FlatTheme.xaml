@@ -61,18 +61,21 @@
     <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="#1E4F69" />
     <SolidColorBrush x:Key="TitleBarInactiveBackgroundBrush" Color="#2E617A" />
     <SolidColorBrush x:Key="TitleBarForegroundBrush" Color="#F3FBFF" />
-    <LinearGradientBrush x:Key="PrimaryButtonBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="#177FB7" />
-        <GradientStop Offset="1" Color="#0D5E8C" />
-    </LinearGradientBrush>
-    <SolidColorBrush x:Key="NeutralButtonBrush" Color="#F8FBFD" />
-    <SolidColorBrush x:Key="NeutralButtonHoverBrush" Color="#EEF5FA" />
-    <SolidColorBrush x:Key="NeutralButtonPressedBrush" Color="#E4EEF5" />
-    <SolidColorBrush x:Key="NeutralButtonBorderBrush" Color="#B7CBD8" />
-    <SolidColorBrush x:Key="NeutralButtonHoverBorderBrush" Color="#7EABC5" />
+    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#0D6E9E" />
+    <SolidColorBrush x:Key="PrimaryButtonHoverBrush" Color="#0B5E8C" />
+    <SolidColorBrush x:Key="PrimaryButtonPressedBrush" Color="#094D73" />
+    <SolidColorBrush x:Key="NeutralButtonBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="NeutralButtonHoverBrush" Color="#F2F7FA" />
+    <SolidColorBrush x:Key="NeutralButtonPressedBrush" Color="#E8F0F5" />
+    <SolidColorBrush x:Key="NeutralButtonBorderBrush" Color="#CBD7DF" />
+    <SolidColorBrush x:Key="NeutralButtonHoverBorderBrush" Color="#94B3C4" />
     <SolidColorBrush x:Key="NeutralButtonForegroundBrush" Color="#16415A" />
-    <SolidColorBrush x:Key="OutlineButtonHoverBrush" Color="#EAF4FA" />
-    <SolidColorBrush x:Key="OutlineButtonPressedBrush" Color="#DCEBF5" />
+    <SolidColorBrush x:Key="OutlineButtonBrush" Color="#EAF4FA" />
+    <SolidColorBrush x:Key="OutlineButtonHoverBrush" Color="#DCECF5" />
+    <SolidColorBrush x:Key="OutlineButtonPressedBrush" Color="#CFE3EE" />
+    <SolidColorBrush x:Key="OutlineButtonBorderBrush" Color="#D5E5EE" />
+    <SolidColorBrush x:Key="OutlineButtonHoverBorderBrush" Color="#B8D2E1" />
+    <SolidColorBrush x:Key="ButtonFocusBrush" Color="#660D5E8C" />
     <LinearGradientBrush x:Key="SecondaryButtonBrush" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0" Color="#E3954B" />
         <GradientStop Offset="1" Color="#C56F2D" />
@@ -236,8 +239,9 @@
     </Style>
 
     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="MinHeight" Value="40" />
-        <Setter Property="Padding" Value="18,10" />
+        <Setter Property="MinWidth" Value="96" />
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Padding" Value="14,7" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Background" Value="{DynamicResource NeutralButtonBrush}" />
@@ -245,6 +249,9 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{DynamicResource NeutralButtonForegroundBrush}" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -252,17 +259,12 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="12"
+                            CornerRadius="6"
                             SnapsToDevicePixels="True">
-                        <Grid>
-                            <Border Background="{DynamicResource PanelSheenBrush}"
-                                    CornerRadius="11"
-                                    Opacity="0.18" />
-                            <ContentPresenter Margin="{TemplateBinding Padding}"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              RecognizesAccessKey="True" />
-                        </Grid>
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          RecognizesAccessKey="True" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -276,8 +278,12 @@
                         <Trigger Property="IsDefaulted" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                         </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ButtonFocusBrush}" />
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="Opacity" Value="0.45" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -286,9 +292,11 @@
     </Style>
 
     <Style x:Key="FlatButtonBase" BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
-        <Setter Property="MinHeight" Value="40" />
-        <Setter Property="Padding" Value="18,10" />
+        <Setter Property="MinWidth" Value="96" />
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Padding" Value="14,7" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
     </Style>
 
     <Style x:Key="FlatButtonPrimary" BasedOn="{StaticResource FlatButtonBase}" TargetType="Button">
@@ -302,29 +310,29 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="12"
+                            CornerRadius="6"
                             SnapsToDevicePixels="True">
-                        <Grid>
-                            <Border Background="{DynamicResource PanelSheenBrush}"
-                                    CornerRadius="11"
-                                    Opacity="0.28" />
-                            <ContentPresenter Margin="{TemplateBinding Padding}"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              RecognizesAccessKey="True" />
-                        </Grid>
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryDeepBrush}" />
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryButtonHoverBrush}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryButtonHoverBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryButtonPressedBrush}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryButtonPressedBrush}" />
                             <Setter TargetName="Bd" Property="Opacity" Value="0.96" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ButtonFocusBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="Opacity" Value="0.45" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -333,8 +341,8 @@
     </Style>
 
     <Style x:Key="FlatButtonOutline" BasedOn="{StaticResource FlatButtonBase}" TargetType="Button">
-        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource OutlineButtonBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource OutlineButtonBorderBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -343,7 +351,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="12"
+                            CornerRadius="6"
                             SnapsToDevicePixels="True">
                         <ContentPresenter Margin="{TemplateBinding Padding}"
                                           HorizontalAlignment="Center"
@@ -353,14 +361,19 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource OutlineButtonHoverBrush}" />
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource OutlineButtonHoverBorderBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource OutlineButtonPressedBrush}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource OutlineButtonHoverBorderBrush}" />
                             <Setter TargetName="Bd" Property="Opacity" Value="0.96" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ButtonFocusBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="Opacity" Value="0.45" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
