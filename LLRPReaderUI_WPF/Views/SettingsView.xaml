@@ -8,7 +8,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
-    <Grid Margin="16">
+    <Grid Margin="16" IsSharedSizeScope="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="16" />
@@ -29,8 +29,8 @@
                     <StackPanel Margin="10">
                         <Grid Margin="0,0,0,10">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200" />
-                                <ColumnDefinition Width="220" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFormLabel" />
+                                <ColumnDefinition Width="*" MinWidth="220" MaxWidth="420" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -67,9 +67,9 @@
                     </GroupBox.Header>
                     <Grid Margin="10">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="220" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFormLabel" />
+                            <ColumnDefinition Width="*" MinWidth="220" MaxWidth="420" />
+                            <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -120,9 +120,9 @@
                     </GroupBox.Header>
                     <Grid Margin="10">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="220" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFormLabel" />
+                            <ColumnDefinition Width="*" MinWidth="220" MaxWidth="420" />
+                            <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -159,8 +159,8 @@
                     </GroupBox.Header>
                     <Grid Margin="10">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFormLabel" />
+                            <ColumnDefinition Width="*" MinWidth="220" MaxWidth="420" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -205,7 +205,7 @@
                         </Grid.ColumnDefinitions>
                         
                         <!-- GPI Section -->
-                        <StackPanel Grid.Column="0">
+                        <StackPanel Grid.Column="0" MinWidth="220">
                             <TextBlock Text="{DynamicResource GPIO.GpiConfig}" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource PrimaryBrush}"/>
                             <Grid Margin="0,0,0,4">
                                 <Grid.ColumnDefinitions>
@@ -239,7 +239,7 @@
                         <Separator Grid.Column="1" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="8,0"/>
 
                         <!-- GPO Section -->
-                        <StackPanel Grid.Column="2">
+                        <StackPanel Grid.Column="2" MinWidth="240">
                             <TextBlock Text="{DynamicResource GPIO.GpoOutput}" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource PrimaryBrush}"/>
                             <Grid Margin="0,0,0,4">
                                 <Grid.ColumnDefinitions>
@@ -292,10 +292,10 @@
                     <StackPanel Margin="10">
                         <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="200" />
-                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="*" MinWidth="120" />
+                                <ColumnDefinition Width="Auto" MinWidth="84" />
+                                <ColumnDefinition Width="*" MinWidth="180" />
+                                <ColumnDefinition Width="*" MinWidth="180" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{DynamicResource Settings.Port}" FontWeight="SemiBold" />
                             <TextBlock Grid.Column="1" Text="{DynamicResource Settings.Enable}" FontWeight="SemiBold" />
@@ -309,10 +309,10 @@
                                 <DataTemplate>
                                     <Grid Margin="0,0,0,8">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="140" />
-                                            <ColumnDefinition Width="90" />
-                                            <ColumnDefinition Width="200" />
-                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="*" MinWidth="120" />
+                                            <ColumnDefinition Width="Auto" MinWidth="84" />
+                                            <ColumnDefinition Width="*" MinWidth="180" />
+                                            <ColumnDefinition Width="*" MinWidth="180" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center">
                                             <Run Text="{DynamicResource Inventory.Antenna}" />
@@ -339,7 +339,7 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Width="120"
+            <Button MinWidth="132"
                     Margin="0,0,8,0"
                     Command="{Binding QueryDeviceSettingsCommand}"
                     Style="{StaticResource FlatButtonOutline}">
@@ -349,7 +349,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Width="120"
+            <Button MinWidth="132"
                     Margin="0,0,8,0"
                     Command="{Binding SaveSettingsCommand}"
                     Style="{StaticResource FlatButtonPrimary}">
@@ -360,7 +360,7 @@
             </Button>
 
 
-            <Button Width="120"
+            <Button MinWidth="132"
                     Margin="0,0,8,0"
                     Command="{Binding DataContext.QueryStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                     Style="{StaticResource FlatButtonOutline}">
@@ -371,7 +371,7 @@
             </Button>
 
 
-            <Button Width="120"
+            <Button MinWidth="132"
                     Command="{Binding ResetFactoryDefaultsCommand}"
                     Style="{StaticResource FlatButtonOutline}">
                 <StackPanel Orientation="Horizontal">
