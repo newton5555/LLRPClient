@@ -149,6 +149,18 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private bool inventoryStateAware;
 
+    public bool IsInventoryStateAwareOptionsEnabled => IsStateAwareSupported && InventoryStateAware;
+
+    partial void OnIsStateAwareSupportedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsInventoryStateAwareOptionsEnabled));
+    }
+
+    partial void OnInventoryStateAwareChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsInventoryStateAwareOptionsEnabled));
+    }
+
     [ObservableProperty]
     private InventoryTarget inventoryTarget = InventoryTarget.A;
 

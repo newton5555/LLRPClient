@@ -105,6 +105,7 @@
     <sys:String x:Key="Settings.InventoryStateAware">开启状态感知</sys:String>
     <sys:String x:Key="Settings.InventoryTarget">盘存目标 (Target)</sys:String>
     <sys:String x:Key="Settings.InventorySearchMode">盘存搜索模式 (S)</sys:String>
+    <sys:String x:Key="Settings.StateAwareUnsupportedHint">当前设备能力未声明支持状态感知盘点，此配置不可用。</sys:String>
     <sys:String x:Key="Settings.HoppingMode">自动跳频</sys:String>
     <sys:String x:Key="Settings.AntennaConfig">AntennaConfigGroup（按天线）</sys:String>
     <sys:String x:Key="Settings.Port">端口</sys:String>

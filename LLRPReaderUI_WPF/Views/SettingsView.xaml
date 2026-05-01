@@ -150,7 +150,7 @@
                 </GroupBox>
 
                 <!-- Advanced Inventory Features Group -->
-                <GroupBox Margin="0,0,0,12" Visibility="{Binding IsStateAwareSupported, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <GroupBox Margin="0,0,0,12">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock FontSize="14" Margin="0,0,6,0" Icon="Microchip" IconFont="Auto" Foreground="{StaticResource IconWarningBrush}"/>
@@ -168,24 +168,48 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="8" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.InventoryStateAware}" />
-                        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding InventoryStateAware}" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding InventoryStateAware}"
+                                  IsEnabled="{Binding IsStateAwareSupported}"
+                                  VerticalAlignment="Center" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.InventoryTarget}" 
-                                   IsEnabled="{Binding InventoryStateAware}"/>
+                                   IsEnabled="{Binding IsInventoryStateAwareOptionsEnabled}"/>
                         <ComboBox Grid.Row="2" Grid.Column="1" Height="30" 
                                   ItemsSource="{Binding InventoryTargetOptions}"
                                   SelectedItem="{Binding InventoryTarget}"
-                                  IsEnabled="{Binding InventoryStateAware}"/>
+                                  IsEnabled="{Binding IsInventoryStateAwareOptionsEnabled}"/>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Settings.InventorySearchMode}" 
-                                   IsEnabled="{Binding InventoryStateAware}"/>
+                                   IsEnabled="{Binding IsInventoryStateAwareOptionsEnabled}"/>
                         <ComboBox Grid.Row="4" Grid.Column="1" Height="30" 
                                   ItemsSource="{Binding InventorySearchModeOptions}"
                                   SelectedItem="{Binding InventorySearchMode}"
-                                  IsEnabled="{Binding InventoryStateAware}"/>
+                                  IsEnabled="{Binding IsInventoryStateAwareOptionsEnabled}"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="1"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   Text="{DynamicResource Settings.StateAwareUnsupportedHint}"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource FlatTextBlock}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="FontSize" Value="11" />
+                                    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStateAwareSupported}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </Grid>
                 </GroupBox>
 

@@ -104,6 +104,8 @@
     <sys:String x:Key="Settings.ChannelIndex">Channel Index</sys:String>
     <sys:String x:Key="Settings.InventoryStateAware">Enable State-Aware</sys:String>
     <sys:String x:Key="Settings.InventoryTarget">Inventory Target</sys:String>
+    <sys:String x:Key="Settings.InventorySearchMode">Inventory Search Mode</sys:String>
+    <sys:String x:Key="Settings.StateAwareUnsupportedHint">The connected reader does not report state-aware inventory support, so this configuration is unavailable.</sys:String>
     <sys:String x:Key="Settings.HoppingMode">Hopping</sys:String>
     <sys:String x:Key="Settings.AntennaConfig">AntennaConfigGroup (By Antenna)</sys:String>
     <sys:String x:Key="Settings.Port">Port</sys:String>
