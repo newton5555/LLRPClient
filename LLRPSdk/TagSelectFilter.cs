@@ -86,7 +86,8 @@ namespace LLRPSdk
     }
 
     /// <summary>
-    /// Enables using C1G2TagInventoryStateAwareFilterAction for this filter.
+    /// Indicates that this filter was loaded with C1G2TagInventoryStateAwareFilterAction.
+    /// New writes are controlled by FilterSettings.Mode.
     /// </summary>
     public bool UseStateAwareAction
     {

@@ -121,6 +121,15 @@ public partial class InventoryConfigViewModel : ObservableObject
     private bool showTagSelectFilters;
 
     [ObservableProperty]
+    private bool showStateUnawareTagSelectFilterActions;
+
+    [ObservableProperty]
+    private bool showStateAwareTagSelectFilterActions;
+
+    [ObservableProperty]
+    private bool isStateAwareTagSelectFiltersEnabled;
+
+    [ObservableProperty]
     private bool isInventoryStateAwareEnabled;
 
     [ObservableProperty]
@@ -211,7 +220,20 @@ public partial class InventoryConfigViewModel : ObservableObject
     {
         ShowTagFilter1 = value is TagFilterMode.OnlyFilter1 or TagFilterMode.Filter1AndFilter2 or TagFilterMode.Filter1OrFilter2;
         ShowTagFilter2 = value is TagFilterMode.OnlyFilter2 or TagFilterMode.Filter1AndFilter2 or TagFilterMode.Filter1OrFilter2;
-        ShowTagSelectFilters = value == TagFilterMode.UseTagSelectFilters;
+        ShowTagSelectFilters = value is TagFilterMode.UseTagSelectFilters or TagFilterMode.UseStateAwareTagSelectFilters;
+        ShowStateUnawareTagSelectFilterActions = value == TagFilterMode.UseTagSelectFilters;
+        ShowStateAwareTagSelectFilterActions = value == TagFilterMode.UseStateAwareTagSelectFilters;
+        UpdateStateAwareTagSelectFilterAvailability();
+    }
+
+    partial void OnIsInventoryStateAwareEnabledChanged(bool value)
+    {
+        UpdateStateAwareTagSelectFilterAvailability();
+    }
+
+    private void UpdateStateAwareTagSelectFilterAvailability()
+    {
+        IsStateAwareTagSelectFiltersEnabled = FilterMode != TagFilterMode.UseStateAwareTagSelectFilters || IsInventoryStateAwareEnabled;
     }
 
     [RelayCommand]
@@ -222,7 +244,7 @@ public partial class InventoryConfigViewModel : ObservableObject
             MemoryBank = MemoryBank.Epc,
             MatchAction = StateUnawareAction.Select,
             NonMatchAction = StateUnawareAction.Unselect,
-            UseStateAwareAction = false,
+            UseStateAwareAction = FilterMode == TagFilterMode.UseStateAwareTagSelectFilters,
             StateAwareTarget = ENUM_C1G2StateAwareTarget.SL,
             StateAwareAction = ENUM_C1G2StateAwareAction.AssertSLOrA_DeassertSLOrB
         });
@@ -380,7 +402,7 @@ public partial class InventoryConfigViewModel : ObservableObject
                 TagMask = x.TagMask?.Trim() ?? string.Empty,
                 MatchAction = x.MatchAction,
                 NonMatchAction = x.NonMatchAction,
-                UseStateAwareAction = x.UseStateAwareAction,
+                UseStateAwareAction = FilterMode == TagFilterMode.UseStateAwareTagSelectFilters,
                 StateAwareTarget = x.StateAwareTarget,
                 StateAwareAction = x.StateAwareAction
             }).ToList();

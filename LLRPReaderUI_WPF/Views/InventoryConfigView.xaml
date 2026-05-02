@@ -196,6 +196,7 @@
                         </GroupBox>
 
                         <GroupBox Header="{DynamicResource InventoryConfig.TagSelectFilters}" Margin="0,6,0,0"
+                                  IsEnabled="{Binding IsStateAwareTagSelectFiltersEnabled}"
                                   Visibility="{Binding ShowTagSelectFilters, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Margin="8">
                                 <Button MinWidth="120" Height="30" Content="{DynamicResource InventoryConfig.AddFilter}" Command="{Binding AddTagSelectFilterCommand}" Style="{StaticResource FlatButtonOutline}" />
@@ -240,41 +241,38 @@
                                                     <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.BitPointer}" />
                                                     <TextBox Grid.Row="4" Grid.Column="1" Height="26" Text="{Binding BitPointer}" />
 
-                                                    <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.MatchAction}" />
+                                                    <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.MatchAction}"
+                                                               Visibility="{Binding DataContext.ShowStateUnawareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
                                                     <ComboBox Grid.Row="6" Grid.Column="1" Height="26"
                                                               ItemsSource="{Binding DataContext.StateUnawareActions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                              SelectedItem="{Binding MatchAction}" />
+                                                              SelectedItem="{Binding MatchAction}"
+                                                              Visibility="{Binding DataContext.ShowStateUnawareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                                                    <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.NonMatchAction}" />
+                                                    <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.NonMatchAction}"
+                                                               Visibility="{Binding DataContext.ShowStateUnawareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
                                                     <ComboBox Grid.Row="8" Grid.Column="1" Height="26"
                                                               ItemsSource="{Binding DataContext.StateUnawareActions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                              SelectedItem="{Binding NonMatchAction}" />
+                                                              SelectedItem="{Binding NonMatchAction}"
+                                                              Visibility="{Binding DataContext.ShowStateUnawareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                                    <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.StateAwareTarget}"
+                                                               Visibility="{Binding DataContext.ShowStateAwareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                    <ComboBox Grid.Row="6" Grid.Column="1" Height="26"
+                                                              ItemsSource="{Binding DataContext.StateAwareTargets, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                              SelectedItem="{Binding StateAwareTarget}"
+                                                              Visibility="{Binding DataContext.ShowStateAwareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                                    <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.StateAwareAction}"
+                                                               Visibility="{Binding DataContext.ShowStateAwareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                    <ComboBox Grid.Row="8" Grid.Column="1" Height="26"
+                                                              ItemsSource="{Binding DataContext.StateAwareActions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                              SelectedItem="{Binding StateAwareAction}"
+                                                              Visibility="{Binding DataContext.ShowStateAwareTagSelectFilterActions, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                                                     <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.TagMask}" />
                                                     <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding TagMask}" />
 
-                                                    <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2"
-                                                              Content="{DynamicResource InventoryConfig.UseStateAwareFilterAction}"
-                                                              IsChecked="{Binding UseStateAwareAction}"
-                                                              Visibility="{Binding DataContext.IsInventoryStateAwareEnabled, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                                                    <TextBlock Grid.Row="14" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.StateAwareTarget}"
-                                                               Visibility="{Binding DataContext.IsInventoryStateAwareEnabled, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                                    <ComboBox Grid.Row="14" Grid.Column="1" Height="26"
-                                                              ItemsSource="{Binding DataContext.StateAwareTargets, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                              SelectedItem="{Binding StateAwareTarget}"
-                                                              IsEnabled="{Binding UseStateAwareAction}"
-                                                              Visibility="{Binding DataContext.IsInventoryStateAwareEnabled, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                                                    <TextBlock Grid.Row="16" Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource InventoryConfig.StateAwareAction}"
-                                                               Visibility="{Binding DataContext.IsInventoryStateAwareEnabled, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                                    <ComboBox Grid.Row="16" Grid.Column="1" Height="26"
-                                                              ItemsSource="{Binding DataContext.StateAwareActions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                              SelectedItem="{Binding StateAwareAction}"
-                                                              IsEnabled="{Binding UseStateAwareAction}"
-                                                              Visibility="{Binding DataContext.IsInventoryStateAwareEnabled, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                                                    <Button Grid.Row="18" Grid.Column="1"
+                                                    <Button Grid.Row="12" Grid.Column="1"
                                                             MinWidth="88"
                                                             HorizontalAlignment="Left"
                                                             Content="{DynamicResource InventoryConfig.Delete}"

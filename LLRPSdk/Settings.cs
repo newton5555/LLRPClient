@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml.Serialization;
@@ -306,7 +307,10 @@ namespace LLRPSdk
                 this.Filters.TagFilter1.MemoryBank = (MemoryBank)filters[0].C1G2TagInventoryMask.MB.ToInt();
                 this.Filters.TagFilter1.BitPointer = filters[0].C1G2TagInventoryMask.Pointer;
                 this.Filters.TagFilter1.TagMask = filters[0].C1G2TagInventoryMask.TagMask.ToHexString();
-                if (filters.Length == 1)
+                bool hasStateAwareFilter = filters.Any(filter => filter?.C1G2TagInventoryStateAwareFilterAction != null);
+                if (hasStateAwareFilter)
+                    this.Filters.Mode = TagFilterMode.UseStateAwareTagSelectFilters;
+                else if (filters.Length == 1)
                     this.Filters.Mode = TagFilterMode.OnlyFilter1;
                 else if (filters.Length == 2)
                 {
@@ -316,7 +320,7 @@ namespace LLRPSdk
                     if (filters[1].C1G2TagInventoryStateUnawareFilterAction != null)
                         this.Filters.Mode = filters[1].C1G2TagInventoryStateUnawareFilterAction.Action != ENUM_C1G2StateUnawareAction.DoNothing_Unselect ? TagFilterMode.Filter1OrFilter2 : TagFilterMode.Filter1AndFilter2;
                     else
-                        this.Filters.Mode = TagFilterMode.UseTagSelectFilters;
+                        this.Filters.Mode = TagFilterMode.UseStateAwareTagSelectFilters;
                 }
                 else if (filters.Length > 2)
                     this.Filters.Mode = TagFilterMode.UseTagSelectFilters;

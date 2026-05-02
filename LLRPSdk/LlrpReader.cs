@@ -1185,8 +1185,12 @@ namespace LLRPSdk
         private PARAM_C1G2Filter[] GetC1G2Filters(FilterSettings filterSettings, bool inventoryStateAware)
         {
             PARAM_C1G2Filter[] c1G2Filters = (PARAM_C1G2Filter[])null;
-            if (filterSettings.Mode == TagFilterMode.UseTagSelectFilters)
+            if (filterSettings.Mode == TagFilterMode.UseTagSelectFilters || filterSettings.Mode == TagFilterMode.UseStateAwareTagSelectFilters)
             {
+                bool useStateAwareFilters = filterSettings.Mode == TagFilterMode.UseStateAwareTagSelectFilters;
+                if (useStateAwareFilters && !inventoryStateAware)
+                    throw new LLRPSdkException("Error parsing tag select filter list. State-aware tag select filters require InventoryStateAware to be enabled and supported by the reader.");
+
                 int selectFiltersAllowed = this._readerCapabilities.MaxTagSelectFiltersAllowed;
                 int count = filterSettings.TagSelectFilters.Count;
                 c1G2Filters = count <= selectFiltersAllowed ? new PARAM_C1G2Filter[count] : throw new LLRPSdkException("Error parsing tag select filter list. " + string.Format("The tag select filter list has {0} filter(s), ", (object)count) + string.Format("which is more than the maximum supported by the reader which is {0}.", (object)selectFiltersAllowed));
@@ -1204,7 +1208,7 @@ namespace LLRPSdk
                     };
                     if (tagSelectFilter.BitCount > 0)
                         c1G2Filters[index].C1G2TagInventoryMask.TagMask = LlrpReader.TruncateTagMask(c1G2Filters[index].C1G2TagInventoryMask.TagMask, tagSelectFilter.BitCount);
-                    if (inventoryStateAware && tagSelectFilter.UseStateAwareAction)
+                    if (useStateAwareFilters)
                     {
                         c1G2Filters[index].C1G2TagInventoryStateAwareFilterAction = new PARAM_C1G2TagInventoryStateAwareFilterAction()
                         {

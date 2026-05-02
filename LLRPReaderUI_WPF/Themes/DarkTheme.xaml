@@ -297,7 +297,7 @@
 
     <Style x:Key="FlatButtonPrimary" BasedOn="{StaticResource FlatButtonBase}" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource PrimaryButtonBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryDeepBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonBrush}" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="Template">
             <Setter.Value>

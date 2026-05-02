@@ -16,11 +16,15 @@ namespace LLRPSdk
     OnlyFilter2,
     /// <summary>Filter on conditions defined in Filters 1 AND 2.</summary>
     Filter1AndFilter2,
-    /// <summary>Filter on conditions defined in Filters 2 OR 2.</summary>
+    /// <summary>Filter on conditions defined in Filters 1 OR 2.</summary>
     Filter1OrFilter2,
     /// <summary>
-    /// Filter on conditions defined in the tag select filter list.
+    /// Filter on conditions defined in the tag select filter list using state-unaware actions.
     /// </summary>
     UseTagSelectFilters,
+    /// <summary>
+    /// Filter on conditions defined in the tag select filter list using state-aware actions.
+    /// </summary>
+    UseStateAwareTagSelectFilters,
   }
 }
