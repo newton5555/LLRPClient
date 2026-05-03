@@ -115,9 +115,9 @@
                             <StackPanel>
                                 <TextBlock Text="{DynamicResource GPIO.GpiConfig}" Classes="semiBold" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,8"/>
                                 <Grid ColumnDefinitions="70,70,*" Margin="0,0,0,4">
-                                    <TextBlock Text="{DynamicResource GPIO.Port}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
-                                    <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.Enable}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
-                                    <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    <TextBlock Text="{DynamicResource GPIO.Port}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.Enable}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
                                 </Grid>
                                 <ItemsControl ItemsSource="{Binding Gpis}">
                                     <ItemsControl.ItemTemplate>
@@ -137,9 +137,9 @@
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="{DynamicResource GPIO.GpoOutput}" Classes="semiBold" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,8"/>
                                 <Grid ColumnDefinitions="70,90,*" Margin="0,0,0,4">
-                                    <TextBlock Text="{DynamicResource GPIO.Port}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
-                                    <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.OutputHigh}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
-                                    <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    <TextBlock Text="{DynamicResource GPIO.Port}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.OutputHigh}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
                                 </Grid>
                                 <ItemsControl ItemsSource="{Binding Gpos}">
                                     <ItemsControl.ItemTemplate>
@@ -170,10 +170,10 @@
                             <TextBlock Text="{DynamicResource Settings.AntennaConfig}" Classes="semiBold"/>
                         </StackPanel>
                         <Grid ColumnDefinitions="*,84,*,*" Margin="0,0,0,8">
-                            <TextBlock Text="{DynamicResource Settings.Port}" Classes="semiBold"/>
-                            <TextBlock Grid.Column="1" Text="{DynamicResource Settings.Enable}" Classes="semiBold"/>
-                            <TextBlock Grid.Column="2" Text="{DynamicResource Settings.TxPower}" Classes="semiBold"/>
-                            <TextBlock Grid.Column="3" Text="{DynamicResource Settings.RxSensitivity}" Classes="semiBold" IsVisible="{Binding IsRxSensitivityVisible}"/>
+                            <TextBlock Text="{DynamicResource Settings.Port}" Classes="semiBold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{DynamicResource Settings.Enable}" Classes="semiBold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Settings.TxPower}" Classes="semiBold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{DynamicResource Settings.RxSensitivity}" Classes="semiBold" VerticalAlignment="Center" IsVisible="{Binding IsRxSensitivityVisible}"/>
                         </Grid>
                         <ItemsControl ItemsSource="{Binding Antennas}">
                             <ItemsControl.ItemTemplate>

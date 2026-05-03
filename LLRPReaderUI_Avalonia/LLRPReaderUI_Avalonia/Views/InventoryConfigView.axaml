@@ -4,161 +4,119 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LLRPReaderUI_Avalonia.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1500"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1500"
              x:Class="LLRPReaderUI_Avalonia.Views.InventoryConfigView"
              x:DataType="vm:InventoryConfigViewModel">
 
     <Grid Margin="{DynamicResource PagePadding}" RowDefinitions="*,12,Auto,32">
-        <ScrollViewer Grid.Row="0">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="12">
-                <!-- Auto Start Configuration -->
                 <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
-                    <StackPanel Spacing="8">
+                    <StackPanel Spacing="10">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <materialIcons:MaterialIcon Kind="PlayCircle" Width="16" Height="16" 
-                                                       Foreground="{DynamicResource IconSuccessBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" 
-                                       Classes="semiBold" FontSize="14"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <materialIcons:MaterialIcon Kind="CursorPointer" Width="16" Height="16" Foreground="{DynamicResource IconPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.OperationTriggers}" Classes="semiBold"/>
                         </StackPanel>
-                        <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AutoStartModes}" SelectedItem="{Binding AutoStartMode}" Height="30"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiPortNum}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource InventoryConfig.AutoStartConfig}" Classes="bold" Foreground="{DynamicResource IconSuccessBrush}" Margin="0,0,0,2"/>
+                        <Grid ColumnDefinitions="200,420" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,6">
+                            <TextBlock Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding AutoStartModes}" SelectedItem="{Binding AutoStartMode}" Height="30"/>
+
+                            <TextBlock Grid.Row="2" Text="{DynamicResource InventoryConfig.GpiPortNum}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AutoStartGpiPortNumber}" Height="30"/>
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiLevel}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="4" Text="{DynamicResource InventoryConfig.GpiLevel}" VerticalAlignment="Center"/>
                             <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding AutoStartGpiLevel}" VerticalAlignment="Center"/>
 
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource InventoryConfig.FirstDelayMs}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="6" Text="{DynamicResource InventoryConfig.FirstDelayMs}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding AutoStartFirstDelayInMs}" Height="30"/>
 
-                            <TextBlock Grid.Row="8" Grid.Column="0" Text="{DynamicResource InventoryConfig.PeriodMs}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="8" Text="{DynamicResource InventoryConfig.PeriodMs}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AutoStartPeriodInMs}" Height="30"/>
 
-                            <TextBlock Grid.Row="10" Grid.Column="0" Text="{DynamicResource InventoryConfig.UtcTimestamp}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="10" Text="{DynamicResource InventoryConfig.UtcTimestamp}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding AutoStartUtcTimestamp}" Height="30"/>
                         </Grid>
-                    </StackPanel>
-                </Border>
 
-                <!-- Auto Stop Configuration -->
-                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
-                    <StackPanel Spacing="8">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <materialIcons:MaterialIcon Kind="StopCircle" Width="16" Height="16" 
-                                                       Foreground="{DynamicResource IconDangerBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" 
-                                       Classes="semiBold" FontSize="14"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        </StackPanel>
-                        <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AutoStopModes}" SelectedItem="{Binding AutoStopMode}" Height="30"/>
+                        <Separator/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.DurationMs}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource InventoryConfig.AutoStopConfig}" Classes="bold" Foreground="{DynamicResource IconDangerBrush}" Margin="0,4,0,2"/>
+                        <Grid ColumnDefinitions="200,420" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
+                            <TextBlock Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding AutoStopModes}" SelectedItem="{Binding AutoStopMode}" Height="30"/>
+
+                            <TextBlock Grid.Row="2" Text="{DynamicResource InventoryConfig.DurationMs}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AutoStopDurationInMs}" Height="30"/>
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiPortNum}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="4" Text="{DynamicResource InventoryConfig.GpiPortNum}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding AutoStopGpiPortNumber}" Height="30"/>
 
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource InventoryConfig.GpiLevel}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="6" Text="{DynamicResource InventoryConfig.GpiLevel}" VerticalAlignment="Center"/>
                             <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding AutoStopGpiLevel}" VerticalAlignment="Center"/>
 
-                            <TextBlock Grid.Row="8" Grid.Column="0" Text="{DynamicResource InventoryConfig.Timeout}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="8" Text="{DynamicResource InventoryConfig.Timeout}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AutoStopTimeout}" Height="30"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <!-- Filter Configuration -->
                 <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
-                    <StackPanel Spacing="8">
+                    <StackPanel Spacing="10">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <materialIcons:MaterialIcon Kind="Filter" Width="16" Height="16" 
-                                                       Foreground="{DynamicResource IconWarningBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" 
-                                       Classes="semiBold" FontSize="14"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <materialIcons:MaterialIcon Kind="Filter" Width="16" Height="16" Foreground="{DynamicResource IconWarningBrush}"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" Classes="semiBold"/>
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="200,220" Margin="8,0,0,8">
-                            <TextBlock Grid.Column="0" Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <Grid ColumnDefinitions="200,420" Margin="8,0,0,0">
+                            <TextBlock Text="{DynamicResource InventoryConfig.Mode}" VerticalAlignment="Center"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding TagFilterModes}" SelectedItem="{Binding FilterMode}" Height="30"/>
                         </Grid>
 
-                        <!-- Filter 1 -->
-                        <Border Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="4" Padding="8" Margin="8,0,0,8"
+                        <Border Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="8" Padding="8" Margin="8,0,0,0"
                                 IsVisible="{Binding ShowTagFilter1}">
                             <StackPanel Spacing="8">
-                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter1}" Classes="semiBold"
-                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <Grid ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto">
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter1MemoryBank}" Height="28"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource InventoryConfig.FilterOp}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter1FilterOp}" Height="28"/>
-
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter1}" Classes="semiBold"/>
+                                <Grid ColumnDefinitions="150,180" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                                    <TextBlock Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter1MemoryBank}" Height="28"/>
+                                    <TextBlock Grid.Row="2" Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"/>
                                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Filter1BitPointer}" Height="28"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Filter1BitCount}" Height="28"/>
+                                    <TextBlock Grid.Row="4" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Filter1BitCount}" Height="28"/>
+                                    <TextBlock Grid.Row="6" Text="{DynamicResource InventoryConfig.FilterOp}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter1FilterOp}" Height="28"/>
+                                    <TextBlock Grid.Row="8" Text="{DynamicResource InventoryConfig.TagMaskHex}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Filter1TagMask}" Height="30"/>
                                 </Grid>
-                                <TextBlock Text="{DynamicResource InventoryConfig.TagMaskHex}" Margin="0,0,0,4"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBox Text="{Binding Filter1TagMask}" Height="30"/>
                             </StackPanel>
                         </Border>
 
-                        <!-- Filter 2 -->
-                        <Border Background="{DynamicResource CardInnerBackgroundBrush}" CornerRadius="4" Padding="8" Margin="8,0,0,8"
+                        <Border Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="8" Padding="8" Margin="8,0,0,0"
                                 IsVisible="{Binding ShowTagFilter2}">
                             <StackPanel Spacing="8">
-                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter2}" Classes="semiBold"
-                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <Grid ColumnDefinitions="140,200,140,200" RowDefinitions="Auto,8,Auto">
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter2MemoryBank}" Height="28"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource InventoryConfig.FilterOp}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter2FilterOp}" Height="28"/>
-
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagFilter2}" Classes="semiBold"/>
+                                <Grid ColumnDefinitions="150,180" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                                    <TextBlock Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding Filter2MemoryBank}" Height="28"/>
+                                    <TextBlock Grid.Row="2" Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"/>
                                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Filter2BitPointer}" Height="28"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Filter2BitCount}" Height="28"/>
+                                    <TextBlock Grid.Row="4" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Filter2BitCount}" Height="28"/>
+                                    <TextBlock Grid.Row="6" Text="{DynamicResource InventoryConfig.FilterOp}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding TagFilterOps}" SelectedItem="{Binding Filter2FilterOp}" Height="28"/>
+                                    <TextBlock Grid.Row="8" Text="{DynamicResource InventoryConfig.TagMaskHex}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Filter2TagMask}" Height="30"/>
                                 </Grid>
-                                <TextBlock Text="{DynamicResource InventoryConfig.TagMaskHex}" Margin="0,0,0,4"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBox Text="{Binding Filter2TagMask}" Height="30"/>
                             </StackPanel>
                         </Border>
 
-                        <Border Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="4" Padding="8" Margin="8,0,0,0"
+                        <Border Background="{DynamicResource SubtleOverlayBrush}" CornerRadius="8" Padding="8" Margin="8,0,0,0"
                                 IsVisible="{Binding ShowTagSelectFilters}"
                                 IsEnabled="{Binding IsStateAwareTagSelectFiltersEnabled}">
                             <StackPanel Spacing="8">
-                                <Button MinWidth="120" HorizontalAlignment="Left" Command="{Binding AddTagSelectFilterCommand}" Classes="flat">
+                                <TextBlock Text="{DynamicResource InventoryConfig.TagSelectFilters}" Classes="semiBold"/>
+                                <Button MinWidth="120" Height="30" HorizontalAlignment="Left" Command="{Binding AddTagSelectFilterCommand}" Classes="flat">
                                     <StackPanel Orientation="Horizontal">
                                         <materialIcons:MaterialIcon Kind="Plus" Width="14" Height="14" Margin="0,0,6,0"/>
                                         <TextBlock Text="{DynamicResource InventoryConfig.AddFilter}"/>
@@ -167,44 +125,45 @@
                                 <ItemsControl ItemsSource="{Binding TagSelectFilters}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="vm:TagSelectFilterItemViewModel">
-                                            <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrushCustom}" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,6,0,0">
-                                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,8,Auto,8,Auto">
-                                                    <Grid ColumnDefinitions="150,180,150,180">
-                                                        <TextBlock Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
-                                                        <ComboBox Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.MemoryBanks}" SelectedItem="{Binding MemoryBank}" Height="26"/>
-                                                        <TextBlock Grid.Column="2" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                                                        <TextBox Grid.Column="3" Text="{Binding BitCount}" Height="26"/>
-                                                    </Grid>
-                                                    <Button Grid.Column="1" Command="{Binding $parent[UserControl].DataContext.RemoveTagSelectFilterCommand}" CommandParameter="{Binding}" Classes="flat" MinWidth="80">
+                                            <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrushCustom}" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,8">
+                                                <Grid ColumnDefinitions="150,180" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                                                    <TextBlock Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
+                                                    <ComboBox Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.MemoryBanks}" SelectedItem="{Binding MemoryBank}" Height="26"/>
+
+                                                    <TextBlock Grid.Row="2" Text="{DynamicResource InventoryConfig.BitCount}" VerticalAlignment="Center"/>
+                                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding BitCount}" Height="26"/>
+
+                                                    <TextBlock Grid.Row="4" Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"/>
+                                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding BitPointer}" Height="26"/>
+
+                                                    <TextBlock Grid.Row="6" Text="{DynamicResource InventoryConfig.MatchAction}" VerticalAlignment="Center"
+                                                               IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
+                                                    <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.StateUnawareActions}" SelectedItem="{Binding MatchAction}" Height="26"
+                                                              IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
+
+                                                    <TextBlock Grid.Row="8" Text="{DynamicResource InventoryConfig.NonMatchAction}" VerticalAlignment="Center"
+                                                               IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
+                                                    <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.StateUnawareActions}" SelectedItem="{Binding NonMatchAction}" Height="26"
+                                                              IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
+
+                                                    <TextBlock Grid.Row="6" Text="{DynamicResource InventoryConfig.StateAwareTarget}" VerticalAlignment="Center"
+                                                               IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
+                                                    <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.StateAwareTargets}" SelectedItem="{Binding StateAwareTarget}" Height="26"
+                                                              IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
+
+                                                    <TextBlock Grid.Row="8" Text="{DynamicResource InventoryConfig.StateAwareAction}" VerticalAlignment="Center"
+                                                               IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
+                                                    <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.StateAwareActions}" SelectedItem="{Binding StateAwareAction}" Height="26"
+                                                              IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
+
+                                                    <TextBlock Grid.Row="10" Text="{DynamicResource InventoryConfig.TagMask}" VerticalAlignment="Center"/>
+                                                    <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding TagMask}" Height="26"/>
+
+                                                    <Button Grid.Row="12" Grid.Column="1" MinWidth="88" HorizontalAlignment="Left"
+                                                            Command="{Binding $parent[UserControl].DataContext.RemoveTagSelectFilterCommand}"
+                                                            CommandParameter="{Binding}" Classes="flat">
                                                         <TextBlock Text="{DynamicResource InventoryConfig.Delete}"/>
                                                     </Button>
-
-                                                    <Grid Grid.Row="2" ColumnDefinitions="150,180,150,180">
-                                                        <TextBlock Text="{DynamicResource InventoryConfig.BitPointer}" VerticalAlignment="Center"/>
-                                                        <TextBox Grid.Column="1" Text="{Binding BitPointer}" Height="26"/>
-                                                        <TextBlock Grid.Column="2" Text="{DynamicResource InventoryConfig.TagMaskHex}" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                                                        <TextBox Grid.Column="3" Text="{Binding TagMask}" Height="26"/>
-                                                    </Grid>
-
-                                                    <Grid Grid.Row="4" ColumnDefinitions="150,180,150,180">
-                                                        <TextBlock Text="{DynamicResource InventoryConfig.MatchAction}" VerticalAlignment="Center"
-                                                                   IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
-                                                        <ComboBox Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.StateUnawareActions}" SelectedItem="{Binding MatchAction}" Height="26"
-                                                                  IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
-                                                        <TextBlock Grid.Column="2" Text="{DynamicResource InventoryConfig.NonMatchAction}" VerticalAlignment="Center" Margin="10,0,0,0"
-                                                                   IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
-                                                        <ComboBox Grid.Column="3" ItemsSource="{Binding $parent[UserControl].DataContext.StateUnawareActions}" SelectedItem="{Binding NonMatchAction}" Height="26"
-                                                                  IsVisible="{Binding $parent[UserControl].DataContext.ShowStateUnawareTagSelectFilterActions}"/>
-
-                                                        <TextBlock Text="{DynamicResource InventoryConfig.StateAwareTarget}" VerticalAlignment="Center"
-                                                                   IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
-                                                        <ComboBox Grid.Column="1" ItemsSource="{Binding $parent[UserControl].DataContext.StateAwareTargets}" SelectedItem="{Binding StateAwareTarget}" Height="26"
-                                                                  IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
-                                                        <TextBlock Grid.Column="2" Text="{DynamicResource InventoryConfig.StateAwareAction}" VerticalAlignment="Center" Margin="10,0,0,0"
-                                                                   IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
-                                                        <ComboBox Grid.Column="3" ItemsSource="{Binding $parent[UserControl].DataContext.StateAwareActions}" SelectedItem="{Binding StateAwareAction}" Height="26"
-                                                                  IsVisible="{Binding $parent[UserControl].DataContext.ShowStateAwareTagSelectFilterActions}"/>
-                                                    </Grid>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
@@ -215,19 +174,16 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Report Configuration -->
                 <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
-                    <StackPanel Spacing="8">
+                    <StackPanel Spacing="10">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <materialIcons:MaterialIcon Kind="ChartBar" Width="16" Height="16" 
-                                                       Foreground="{DynamicResource IconInfoBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" 
-                                       Classes="semiBold" FontSize="14"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <materialIcons:MaterialIcon Kind="Poll" Width="16" Height="16" Foreground="{DynamicResource IconAccentBrush}"/>
+                            <TextBlock Text="{DynamicResource InventoryConfig.ReportingStrategy}" Classes="semiBold"/>
                         </StackPanel>
-                        <Grid ColumnDefinitions="200,220" Margin="8,0,0,8">
-                            <TextBlock Grid.Column="0" Text="{DynamicResource InventoryConfig.ReportMode}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                        <TextBlock Text="{DynamicResource InventoryConfig.ReportConfig}" Classes="bold" Foreground="{DynamicResource IconVioletBrush}" Margin="0,0,0,2"/>
+                        <Grid ColumnDefinitions="200,420" Margin="8,0,0,0">
+                            <TextBlock Text="{DynamicResource InventoryConfig.ReportMode}" VerticalAlignment="Center"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding ReportModes}" SelectedItem="{Binding ReportMode}" Height="30">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate DataType="vm:ReportModeOptionItem">
@@ -236,7 +192,8 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                         </Grid>
-                        <Grid ColumnDefinitions="180,180" Margin="8,0,0,0" RowDefinitions="1*,1*,1*,1*" >
+
+                        <Grid ColumnDefinitions="260,260" RowDefinitions="Auto,Auto,Auto,Auto" Margin="8,0,0,0">
                             <CheckBox Content="{DynamicResource InventoryConfig.IncludeAntenna}" IsChecked="{Binding IncludeAntennaPortNumber}" Margin="0,4"/>
                             <CheckBox Grid.Column="1" Content="{DynamicResource InventoryConfig.IncludeChannel}" IsChecked="{Binding IncludeChannel}" Margin="0,4"/>
                             <CheckBox Grid.Row="1" Content="{DynamicResource InventoryConfig.IncludeFirstSeen}" IsChecked="{Binding IncludeFirstSeenTime}" Margin="0,4"/>
@@ -246,38 +203,24 @@
                             <CheckBox Grid.Row="3" Content="{DynamicResource InventoryConfig.IncludePcBits}" IsChecked="{Binding IncludePcBits}" Margin="0,4"/>
                             <CheckBox Grid.Row="3" Grid.Column="1" Content="{DynamicResource InventoryConfig.IncludeCrc}" IsChecked="{Binding IncludeCrc}" Margin="0,4"/>
                         </Grid>
-                    </StackPanel>
-                </Border>
 
-                <!-- Attached Data Configuration -->
-                <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
-                    <StackPanel Spacing="8">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <materialIcons:MaterialIcon Kind="Database" Width="16" Height="16" 
-                                                       Foreground="{DynamicResource IconTealBrush}"/>
-                            <TextBlock Text="{DynamicResource InventoryConfig.AttachedDataConfig}" 
-                                       Classes="semiBold" FontSize="14"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        </StackPanel>
-                        <Grid ColumnDefinitions="200,220" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource InventoryConfig.EnableAttachedData}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding AttachedDataEnabled}" VerticalAlignment="Center"/>
+                        <Separator/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource InventoryConfig.AttachedDataConfig}" Classes="bold" Foreground="{DynamicResource IconTealBrush}" Margin="0,4,0,2"/>
+                        <Grid ColumnDefinitions="200,420" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto" Margin="8,0,0,0">
+                            <TextBlock Text="{DynamicResource InventoryConfig.EnableAttachedData}" VerticalAlignment="Center"/>
+                            <CheckBox Grid.Column="1" IsChecked="{Binding AttachedDataEnabled}" VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="2" Text="{DynamicResource InventoryConfig.MemoryBank}" VerticalAlignment="Center"/>
                             <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding MemoryBanks}" SelectedItem="{Binding AttachedDataMemoryBank}" Height="30"/>
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource InventoryConfig.WordStartAddr}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="4" Text="{DynamicResource InventoryConfig.WordStartAddr}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding AttachedDataWordPointer}" Height="30"/>
 
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource InventoryConfig.WordCount}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="6" Text="{DynamicResource InventoryConfig.WordCount}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding AttachedDataWordCount}" Height="30"/>
 
-                            <TextBlock Grid.Row="8" Grid.Column="0" Text="{DynamicResource InventoryConfig.AccessPasswordHex}" VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Grid.Row="8" Text="{DynamicResource InventoryConfig.AccessPasswordHex}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AttachedDataAccessPassword}" Height="30"/>
                         </Grid>
                     </StackPanel>
@@ -285,25 +228,21 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Toolbar -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
-            <Button Height="32" Width="120" Command="{Binding QueryInventoryConfigCommand}">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+            <Button MinWidth="132" Command="{Binding QueryInventoryConfigCommand}" Classes="flat">
                 <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Download" Width="14" Height="14" Margin="0,0,6,0" 
-                                               Foreground="{DynamicResource IconInfoBrush}"/>
+                    <materialIcons:MaterialIcon Kind="Download" Width="14" Height="14" Margin="0,0,6,0"/>
                     <TextBlock Text="{DynamicResource InventoryConfig.ReadConfig}"/>
                 </StackPanel>
             </Button>
-            <Button Height="32" Width="120" Command="{Binding SaveInventoryConfigCommand}" Classes="primary">
+            <Button MinWidth="132" Command="{Binding SaveInventoryConfigCommand}" Classes="primary">
                 <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="ContentSave" Width="14" Height="14" Margin="0,0,6,0" 
-                                               Foreground="{DynamicResource IconSuccessBrush}"/>
+                    <materialIcons:MaterialIcon Kind="ContentSave" Width="14" Height="14" Margin="0,0,6,0"/>
                     <TextBlock Text="{DynamicResource InventoryConfig.SaveConfig}"/>
                 </StackPanel>
             </Button>
         </StackPanel>
 
-        <TextBlock Grid.Row="3" Text="{Binding OperationResult}" 
-                   Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Text="{Binding OperationResult}" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>

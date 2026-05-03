@@ -70,7 +70,6 @@ public partial class MainWindowViewModel : ViewModelBase
         ReaderStatusStore statusStore,
         DeviceConnectionViewModel deviceConnectionViewModel,
         SettingsViewModel settingsViewModel,
-        GpioViewModel gpioViewModel,
         InventoryConfigViewModel inventoryConfigViewModel,
         InventoryViewModel inventoryViewModel,
         ReadWriteViewModel readWriteViewModel,
@@ -91,7 +90,6 @@ public partial class MainWindowViewModel : ViewModelBase
         [
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.DeviceConnection"), TitleResourceKey = "Menu.DeviceConnection", IconKind = MaterialIconKind.PowerPlug, IconBrush = CreateBrush("#0EA5E9"), ViewModel = deviceConnectionViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.Settings"), TitleResourceKey = "Menu.Settings", IconKind = MaterialIconKind.Cog, IconBrush = CreateBrush("#8B5CF6"), ViewModel = settingsViewModel },
-            new NavigationItem { Title = _languageService.GetLocalizedString("Menu.GPIO"), TitleResourceKey = "Menu.GPIO", IconKind = MaterialIconKind.Memory, IconBrush = CreateBrush("#F59E0B"), ViewModel = gpioViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.InventoryConfig"), TitleResourceKey = "Menu.InventoryConfig", IconKind = MaterialIconKind.Tools, IconBrush = CreateBrush("#14B8A6"), ViewModel = inventoryConfigViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.Inventory"), TitleResourceKey = "Menu.Inventory", IconKind = MaterialIconKind.TagMultiple, IconBrush = CreateBrush("#10B981"), ViewModel = inventoryViewModel },
             new NavigationItem { Title = _languageService.GetLocalizedString("Menu.ReadWrite"), TitleResourceKey = "Menu.ReadWrite", IconKind = MaterialIconKind.Pencil, IconBrush = CreateBrush("#F97316"), ViewModel = readWriteViewModel },

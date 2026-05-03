@@ -9,7 +9,7 @@
              x:DataType="vm:ReadWriteViewModel">
 
     <ScrollViewer>
-        <StackPanel Margin="{DynamicResource PagePadding}" MaxWidth="900" Spacing="12">
+        <StackPanel Margin="{DynamicResource PagePadding}" Spacing="12">
             <!-- Read/Write Configuration -->
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="12">

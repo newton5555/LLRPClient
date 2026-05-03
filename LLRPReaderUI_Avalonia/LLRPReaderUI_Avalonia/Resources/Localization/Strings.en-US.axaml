@@ -346,6 +346,7 @@
     <sys:String x:Key="InventoryConfig.SaveSuccess">Inventory configuration sent</sys:String>
     <sys:String x:Key="InventoryConfig.SaveError">Save failed: {0}</sys:String>
     <sys:String x:Key="InventoryConfig.CanReadCache">Can read cached settings</sys:String>
+    <sys:String x:Key="InventoryConfig.OperationTriggers">Inventory Triggers</sys:String>
     <sys:String x:Key="InventoryConfig.AutoStartConfig">Auto Start Config</sys:String>
     <sys:String x:Key="InventoryConfig.Mode">Mode</sys:String>
     <sys:String x:Key="InventoryConfig.GpiPortNum">GPI Port Number</sys:String>
@@ -372,6 +373,7 @@
     <sys:String x:Key="InventoryConfig.NonMatchAction">Non-Match Action</sys:String>
     <sys:String x:Key="InventoryConfig.StateAwareTarget">State-Aware Target</sys:String>
     <sys:String x:Key="InventoryConfig.StateAwareAction">State-Aware Action</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportingStrategy">Reporting Strategy</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">Report Config</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">Report Mode</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">Include Antenna</sys:String>

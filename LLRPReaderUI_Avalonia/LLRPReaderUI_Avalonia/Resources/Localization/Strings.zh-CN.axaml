@@ -346,6 +346,7 @@
     <sys:String x:Key="InventoryConfig.SaveSuccess">寻卡配置已下发</sys:String>
     <sys:String x:Key="InventoryConfig.SaveError">保存失败：{0}</sys:String>
     <sys:String x:Key="InventoryConfig.CanReadCache">可读取缓存参数</sys:String>
+    <sys:String x:Key="InventoryConfig.OperationTriggers">寻卡触发策略</sys:String>
     <sys:String x:Key="InventoryConfig.AutoStartConfig">自动开始配置</sys:String>
     <sys:String x:Key="InventoryConfig.Mode">模式</sys:String>
     <sys:String x:Key="InventoryConfig.GpiPortNum">GPI端口号</sys:String>
@@ -372,6 +373,7 @@
     <sys:String x:Key="InventoryConfig.NonMatchAction">非匹配动作</sys:String>
     <sys:String x:Key="InventoryConfig.StateAwareTarget">状态感知目标</sys:String>
     <sys:String x:Key="InventoryConfig.StateAwareAction">状态感知动作</sys:String>
+    <sys:String x:Key="InventoryConfig.ReportingStrategy">数据上报策略</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">上报配置</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">上报模式</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">包含天线号</sys:String>

@@ -6,8 +6,8 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>..\LLRPReaderUI_Avalonia\Assets\rFid-icon.ico</ApplicationIcon>
-    <VersionPrefix>1.0.9</VersionPrefix>
-    <VersionSuffix>Alpha-260327</VersionSuffix>
+    <VersionPrefix>1.0.13</VersionPrefix>
+    <VersionSuffix>Alpha-260503</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

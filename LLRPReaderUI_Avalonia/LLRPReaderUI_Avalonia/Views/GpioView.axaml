@@ -23,11 +23,11 @@
                         </StackPanel>
                         <Grid ColumnDefinitions="120,120,120" Margin="8,0,0,8">
                             <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" Classes="semiBold"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.Enable}" Classes="semiBold"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" Classes="semiBold"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </Grid>
                         <ItemsControl ItemsSource="{Binding Gpis}" Margin="8,0,0,0">
                             <ItemsControl.ItemTemplate>
@@ -57,11 +57,11 @@
                         </StackPanel>
                         <Grid ColumnDefinitions="120,140,140" Margin="8,0,0,8">
                             <TextBlock Grid.Column="0" Text="{DynamicResource GPIO.Port}" Classes="semiBold"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBlock Grid.Column="1" Text="{DynamicResource GPIO.OutputHigh}" Classes="semiBold"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBlock Grid.Column="2" Text="{DynamicResource GPIO.CurrentLevel}" Classes="semiBold"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </Grid>
                         <ItemsControl ItemsSource="{Binding Gpos}" Margin="8,0,0,0">
                             <ItemsControl.ItemTemplate>
