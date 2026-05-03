@@ -19,7 +19,7 @@ namespace LLRPReaderUI_Avalonia.ViewModels
             if (msg == null)
                 return new LLRPMessageNode("null");
 
-            string xmlString = msg.ToString();
+            string xmlString = msg.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(xmlString))
                 return new LLRPMessageNode(msg.GetType().Name);
 
@@ -66,7 +66,7 @@ namespace LLRPReaderUI_Avalonia.ViewModels
                 if (child.NodeType == XmlNodeType.Text)
                 {
                     // 文本内容作为值
-                    string text = child.Value?.Trim();
+                    string? text = child.Value?.Trim();
                     if (!string.IsNullOrEmpty(text))
                     {
                         treeNode.AddChild("#text", text);
@@ -88,7 +88,7 @@ namespace LLRPReaderUI_Avalonia.ViewModels
                     if (isLeafNode)
                     {
                         // 叶子节点：直接添加值
-                        string textContent = child.InnerText?.Trim();
+                        string? textContent = child.InnerText?.Trim();
                         var childNode = treeNode.AddChild(child.Name, textContent);
 
                         // 处理属性

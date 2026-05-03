@@ -114,7 +114,7 @@ namespace LLRPReaderUI_Avalonia.ViewModels
             StatusText = _languageService.GetLocalizedString("LLRPMessage.Loading");
             try
             {
-                var frames = await _rawFrameRepository.GetRecentAsync(1000);
+                var frames = await _rawFrameRepository.GetRecentAsync(5000);
                 RawFrames.Clear();
                 foreach (var frame in frames.OrderBy(f => f.Timestamp))
                 {
@@ -187,12 +187,12 @@ namespace LLRPReaderUI_Avalonia.ViewModels
             // 日期筛选
             if (FilterStartDate.HasValue)
             {
-                var startDate = FilterStartDate.Value.DateTime;
+                var startDate = FilterStartDate.Value.LocalDateTime.Date;
                 query = query.Where(f => f.Timestamp >= startDate);
             }
             if (FilterEndDate.HasValue)
             {
-                var endOfDay = FilterEndDate.Value.Date.AddDays(1).AddTicks(-1);
+                var endOfDay = FilterEndDate.Value.LocalDateTime.Date.AddDays(1).AddTicks(-1);
                 query = query.Where(f => f.Timestamp <= endOfDay);
             }
 

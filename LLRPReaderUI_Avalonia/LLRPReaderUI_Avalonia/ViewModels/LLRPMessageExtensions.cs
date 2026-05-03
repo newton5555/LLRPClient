@@ -1708,8 +1708,7 @@ namespace LLRPReaderUI_Avalonia.ViewModels
             var root = new LLRPMessageNode("C1G2TargetTag");
             root.AddChild("MB", p.MB.ToString());
             root.AddChild("Pointer", p.Pointer.ToString());
-            if (p.Match != null)
-                root.AddChild("Match", p.Match.ToString());
+            root.AddChild("Match", p.Match.ToString());
             if (p.TagMask != null)
                 root.AddChild("TagMask", p.TagMask.ToHexString());
             if (p.TagData != null)

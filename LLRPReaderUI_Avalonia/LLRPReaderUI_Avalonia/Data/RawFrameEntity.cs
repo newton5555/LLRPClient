@@ -11,8 +11,8 @@ namespace LLRPReaderUI_Avalonia.Data
         public int Id { get; set; }
         public DateTime Timestamp { get; set; }
         // "RX" or "TX"
-        public string Direction { get; set; }
-        public byte[] Payload { get; set; }
+        public string Direction { get; set; } = string.Empty;
+        public byte[] Payload { get; set; } = Array.Empty<byte>();
         public int? Length => Payload?.Length;
 
         /// <summary>

@@ -16,54 +16,68 @@
     <Grid Margin="{DynamicResource PagePadding}" RowDefinitions="Auto,8,Auto,8,*">
 
         <!-- Toolbar -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
-            <Button Command="{Binding StartInventoryCommand}" Classes="primary" Height="32" MinWidth="120">
-                <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Play" Width="16" Height="16" Margin="0,0,6,0"
-                                               Foreground="{DynamicResource IconSuccessBrush}" />
-                    <TextBlock Text="{DynamicResource Inventory.Start}" />
+        <Border Grid.Row="0" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
+            <Grid RowDefinitions="Auto,12,Auto">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Inventory.Start}" Classes="heading" />
+                    <TextBlock Text="{Binding InventoryState}" Margin="0,4,0,0" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
                 </StackPanel>
-            </Button>
-            <Button Command="{Binding StopInventoryCommand}" Height="32" MinWidth="120">
-                <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Stop" Width="16" Height="16" Margin="0,0,6,0"
-                                               Foreground="{DynamicResource IconDangerBrush}" />
-                    <TextBlock Text="{DynamicResource Inventory.Stop}" />
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10">
+                    <Button Command="{Binding StartInventoryCommand}" Classes="primary" Width="128">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Play" Width="16" Height="16" Margin="0,0,6,0" />
+                            <TextBlock Text="{DynamicResource Inventory.Start}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding StopInventoryCommand}" Classes="flat" Width="128">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Stop" Width="16" Height="16" Margin="0,0,6,0" />
+                            <TextBlock Text="{DynamicResource Inventory.Stop}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ManualPullBufferedReportsCommand}" Classes="flat" Width="136">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0" />
+                            <TextBlock Text="{DynamicResource Inventory.PullBuffer}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ClearReceivedDataCommand}" Classes="flat" Width="112">
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Margin="0,0,6,0" />
+                            <TextBlock Text="{DynamicResource Inventory.Clear}" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
-            </Button>
-            <Button Command="{Binding ManualPullBufferedReportsCommand}" Height="32" MinWidth="120">
-                <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0"
-                                               Foreground="{DynamicResource IconInfoBrush}" />
-                    <TextBlock Text="{DynamicResource Inventory.PullBuffer}" />
-                </StackPanel>
-            </Button>
-            <Button Command="{Binding ClearReceivedDataCommand}" Height="32" MinWidth="100">
-                <StackPanel Orientation="Horizontal">
-                    <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Margin="0,0,6,0"
-                                               Foreground="{DynamicResource IconWarningBrush}" />
-                    <TextBlock Text="{DynamicResource Inventory.Clear}" />
-                </StackPanel>
-            </Button>
-            <TextBlock Text="{Binding InventoryState}" Margin="12,0,0,0"
-                       VerticalAlignment="Center" Classes="statusHint" />
-        </StackPanel>
+            </Grid>
+        </Border>
 
         <!-- Stats -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16">
-            <TextBlock>
-                <Run Text="{DynamicResource Inventory.TotalReports}" />: 
-                <Run Text="{Binding TotalReports}" Classes="bold" />
-            </TextBlock>
-            <TextBlock>
-                <Run Text="{DynamicResource Inventory.TotalTags}" />: 
-                <Run Text="{Binding TotalTags}" Classes="bold" />
-            </TextBlock>
-            <TextBlock>
-                <Run Text="{DynamicResource Inventory.UniqueTags}" />: 
-                <Run Text="{Binding UniqueTagCount}" Classes="bold" />
-            </TextBlock>
-        </StackPanel>
+        <Grid Grid.Row="2" ColumnDefinitions="*,10,*,10,*,10,*">
+            <Border Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Inventory.TotalReports}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding TotalReports}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Inventory.TotalTags}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding TotalTags}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="4" Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Inventory.UniqueTags}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding UniqueTagCount}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="6" Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Inventory.Duration}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding InventoryDuration}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
+                </StackPanel>
+            </Border>
+        </Grid>
 
         <!-- Data Grid -->
         <Border Grid.Row="4" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
@@ -93,30 +107,39 @@
                                         Width="*" />
                     <DataGridTextColumn Header="{DynamicResource Inventory.Antenna}" 
                                         Binding="{Binding Antenna}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowAntennaPortNumberColumn}"
                                         Width="Auto" />
                     <DataGridTextColumn Header="{DynamicResource Inventory.Frequency}" 
                                         Binding="{Binding ChannelMhz}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowChannelColumn}"
                                         Width="Auto" />
                     <DataGridTextColumn Header="{DynamicResource Inventory.RSSI}" 
                                         Binding="{Binding Rssi}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowPeakRssiColumn}"
                                         Width="Auto" />
                     <DataGridTextColumn Header="{DynamicResource Inventory.Count}" 
                                         Binding="{Binding SeenCount}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowSeenCountColumn}"
                                         Width="Auto" />
                     <DataGridTextColumn Header="PC" 
                                         Binding="{Binding Pc}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowPcColumn}"
                                         Width="Auto" />
                     <DataGridTextColumn Header="CRC" 
                                         Binding="{Binding Crc}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowCrcColumn}"
                                         Width="Auto" />
                     <DataGridTextColumn Header="FirstTimestamp" 
                                         Binding="{Binding FirstSeenTimestampUtc}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowFirstSeenTimestampUtcColumn}"
                                         Width="180" />
                     <DataGridTextColumn Header="LastTimestamp" 
                                         Binding="{Binding LastSeenTimestampUtc}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.ShowLastSeenTimestampUtcColumn}"
                                         Width="180" />
                     <DataGridTextColumn Header="{DynamicResource Inventory.AttachedData}" 
                                         Binding="{Binding AttachedData}" 
+                                        IsVisible="{Binding #InventoryDataGrid.DataContext.AttachedDataEnabled}"
                                         Width="220" />
                 </DataGrid.Columns>
             </DataGrid>

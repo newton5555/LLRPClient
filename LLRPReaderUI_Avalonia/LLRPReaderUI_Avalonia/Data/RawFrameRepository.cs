@@ -31,7 +31,29 @@ namespace LLRPReaderUI_Avalonia.Data
                 _ctx.RawFrames.Add(entity);
                 await _ctx.SaveChangesAsync().ConfigureAwait(false);
             }
-            catch(Exception ee)
+            catch
+            {
+                // swallow errors to avoid affecting UI
+            }
+        }
+
+        public async Task LogRawBatchAsync(IEnumerable<(string? deviceId, string direction, byte[] payload)> frames)
+        {
+            try
+            {
+                var timestamp = DateTime.UtcNow;
+                var entities = frames.Select(f => new RawFrameEntity
+                {
+                    Timestamp = timestamp,
+                    Direction = f.direction,
+                    Payload = f.payload,
+                    DeviceId = f.deviceId
+                });
+
+                await _ctx.RawFrames.AddRangeAsync(entities).ConfigureAwait(false);
+                await _ctx.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch
             {
                 // swallow errors to avoid affecting UI
             }

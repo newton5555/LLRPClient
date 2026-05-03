@@ -303,7 +303,7 @@ public partial class DeviceConnectionViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanDisconnect))]
-    private async void Disconnect()
+    private async Task Disconnect()
     {
         ConnectionState = _languageService.GetLocalizedString("DeviceConnection.Disconnecting");
         IsBusy = true;

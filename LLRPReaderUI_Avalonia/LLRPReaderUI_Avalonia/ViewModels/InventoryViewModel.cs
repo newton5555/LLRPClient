@@ -21,7 +21,9 @@ public partial class InventoryViewModel : ViewModelBase
     private readonly ReaderSettingsStore settingsStore;
     private readonly LanguageService _languageService;
     private readonly HashSet<string> uniqueEpcs = new(StringComparer.OrdinalIgnoreCase);
+    private readonly DispatcherTimer inventoryElapsedTimer;
     private DateTime manualPullAcceptUntilUtc = DateTime.MinValue;
+    private DateTime? inventoryStartedAt;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StartInventoryCommand))]
@@ -39,6 +41,9 @@ public partial class InventoryViewModel : ViewModelBase
 
     [ObservableProperty]
     private int uniqueTagCount;
+
+    [ObservableProperty]
+    private string inventoryDuration = "00:00:00.000";
 
     [ObservableProperty]
     private ObservableCollection<InventoryTagItemViewModel> receivedTags = [];
@@ -96,6 +101,11 @@ public partial class InventoryViewModel : ViewModelBase
 
         // Set initial state
         InventoryState = _languageService.GetLocalizedString("Inventory.NotStarted");
+        inventoryElapsedTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(100)
+        };
+        inventoryElapsedTimer.Tick += (_, _) => UpdateInventoryDuration();
 
         RefreshReportColumnVisibility();
     }
@@ -144,6 +154,9 @@ public partial class InventoryViewModel : ViewModelBase
             RefreshAttachedDataEnabled();
             reader.Start();
             ClearReceivedData();
+            inventoryStartedAt = DateTime.Now;
+            UpdateInventoryDuration();
+            inventoryElapsedTimer.Start();
             IsRunning = true;
             InventoryState = _languageService.GetLocalizedString("Inventory.Running");
             logs.LogOperation(_languageService.GetLocalizedString("Inventory.StartLog"));
@@ -151,6 +164,8 @@ public partial class InventoryViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            inventoryElapsedTimer.Stop();
+            inventoryStartedAt = null;
             IsRunning = false;
             InventoryState = GetLocalizedString("Inventory.StartFailed", ex.Message);
             logs.LogOperation(GetLocalizedString("Inventory.StartFailedLog", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
@@ -158,7 +173,7 @@ public partial class InventoryViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanStopInventory))]
-    private async void StopInventory()
+    private async Task StopInventory()
     {
         try
         {
@@ -167,6 +182,8 @@ public partial class InventoryViewModel : ViewModelBase
             // 等待一段时间让阅读器发送缓存的标签数据
             // 阅读器在停止时会发送最后一批 RO_ACCESS_REPORT
             await Task.Delay(100);
+            inventoryElapsedTimer.Stop();
+            UpdateInventoryDuration();
             IsRunning = false;
             InventoryState = _languageService.GetLocalizedString("Inventory.Stopped");
             logs.LogOperation(_languageService.GetLocalizedString("Inventory.StopLog"));
@@ -174,6 +191,8 @@ public partial class InventoryViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            inventoryElapsedTimer.Stop();
+            UpdateInventoryDuration();
             IsRunning = false;
             InventoryState = GetLocalizedString("Inventory.StopFailed", ex.Message);
             logs.LogOperation(GetLocalizedString("Inventory.StopFailedLog", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
@@ -233,6 +252,8 @@ public partial class InventoryViewModel : ViewModelBase
 
         RunOnUi(() =>
         {
+            inventoryElapsedTimer.Stop();
+            UpdateInventoryDuration();
             IsRunning = false;
             InventoryState = _languageService.GetLocalizedString("Inventory.Stopped");
             logs.LogOperation(_languageService.GetLocalizedString("Inventory.ReaderStopped"));
@@ -311,6 +332,9 @@ public partial class InventoryViewModel : ViewModelBase
         {
             if (!isConnected)
             {
+                inventoryElapsedTimer.Stop();
+                inventoryStartedAt = null;
+                InventoryDuration = "00:00:00.000";
                 IsRunning = false;
                 InventoryState = _languageService.GetLocalizedString("Common.ConnectFirst");
                 AttachedDataEnabled = false;
@@ -418,6 +442,23 @@ public partial class InventoryViewModel : ViewModelBase
         {
             return timestamp.Utc.ToString();
         }
+    }
+
+    private void UpdateInventoryDuration()
+    {
+        if (inventoryStartedAt is null)
+        {
+            InventoryDuration = "00:00:00.000";
+            return;
+        }
+
+        var elapsed = DateTime.Now - inventoryStartedAt.Value;
+        if (elapsed < TimeSpan.Zero)
+        {
+            elapsed = TimeSpan.Zero;
+        }
+
+        InventoryDuration = $"{(int)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}.{elapsed.Milliseconds:000}";
     }
 }
 

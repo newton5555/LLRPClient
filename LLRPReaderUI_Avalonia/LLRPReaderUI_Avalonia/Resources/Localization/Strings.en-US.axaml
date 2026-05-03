@@ -42,6 +42,7 @@
     <sys:String x:Key="DeviceConnection.DisconnectedKeepalive">Disconnected (Keepalive timeout)</sys:String>
     <sys:String x:Key="DeviceConnection.ConnectionFailedMsg">Connection failed: {0}</sys:String>
     <sys:String x:Key="DeviceConnection.EnterAddress">Please enter reader address. Example: 192.168.1.10 or 192.168.1.10:5084</sys:String>
+    <sys:String x:Key="DeviceConnection.AddressTooltip">Reader address. Example: 192.168.1.10 or 192.168.1.10:5084</sys:String>
     <sys:String x:Key="DeviceConnection.AddressEmpty">Address cannot be empty. Example: 192.168.1.10:5084</sys:String>
     <sys:String x:Key="DeviceConnection.InitFailed">Initialization failed after connection: {0}</sys:String>
     <sys:String x:Key="DeviceConnection.DeviceDisconnected">Device disconnected</sys:String>
@@ -75,6 +76,7 @@
     <sys:String x:Key="Inventory.TotalReports">Total Reports</sys:String>
     <sys:String x:Key="Inventory.TotalTags">Total Tags</sys:String>
     <sys:String x:Key="Inventory.UniqueTags">Unique EPC</sys:String>
+    <sys:String x:Key="Inventory.Duration">Inventory Duration</sys:String>
     <sys:String x:Key="Inventory.EPC">EPC</sys:String>
     <sys:String x:Key="Inventory.Antenna">Antenna</sys:String>
     <sys:String x:Key="Inventory.RSSI">RSSI(dBm)</sys:String>
@@ -127,6 +129,17 @@
     <sys:String x:Key="Settings.Query">Get Settings</sys:String>
     <sys:String x:Key="Settings.Save">Save Settings</sys:String>
     <sys:String x:Key="Settings.QueryStatus">Get Device Status</sys:String>
+    <sys:String x:Key="Settings.SystemManagement">System Management</sys:String>
+    <sys:String x:Key="Settings.RadioPhy">Radio Physical Layer</sys:String>
+    <sys:String x:Key="Settings.InventoryProtocol">Air Protocol Parameters</sys:String>
+    <sys:String x:Key="Settings.AdvancedFeatures">Advanced Features</sys:String>
+    <sys:String x:Key="Settings.TagPopulationEstimateHint">(approx. tag count = 2^Q )</sys:String>
+    <sys:String x:Key="Settings.HopTableId">Hop Table ID</sys:String>
+    <sys:String x:Key="Settings.ChannelIndex">Channel Index</sys:String>
+    <sys:String x:Key="Settings.InventoryStateAware">Enable State-Aware</sys:String>
+    <sys:String x:Key="Settings.InventoryTarget">Inventory Target</sys:String>
+    <sys:String x:Key="Settings.InventorySearchMode">Inventory Search Mode</sys:String>
+    <sys:String x:Key="Settings.StateAwareUnsupportedHint">The connected reader does not report state-aware inventory support, so this configuration is unavailable.</sys:String>
     <sys:String x:Key="Settings.ResetFactory">Reset Factory</sys:String>
     <sys:String x:Key="Settings.Saved">Settings saved</sys:String>
     <sys:String x:Key="Settings.SaveFailed">Save failed</sys:String>
@@ -268,6 +281,13 @@
     <sys:String x:Key="Action.Cancel">Cancel</sys:String>
     <sys:String x:Key="Action.Refresh">Refresh</sys:String>
     <sys:String x:Key="Action.Clear">Clear</sys:String>
+
+    <sys:String x:Key="Log.Center">Log Center</sys:String>
+    <sys:String x:Key="Log.Total">Total Logs: </sys:String>
+    <sys:String x:Key="Log.ClearAll">Clear All</sys:String>
+    <sys:String x:Key="Log.Operation">Operation Logs</sys:String>
+    <sys:String x:Key="Log.LlrpMessage">LLRP Message Logs</sys:String>
+    <sys:String x:Key="Log.RawFrame">Raw Frame IO</sys:String>
     <sys:String x:Key="Action.Start">Start</sys:String>
     <sys:String x:Key="Action.Stop">Stop</sys:String>
     <sys:String x:Key="Action.Connect">Connect</sys:String>
@@ -350,6 +370,8 @@
     <sys:String x:Key="InventoryConfig.MatchAction">Match Action</sys:String>
     <sys:String x:Key="InventoryConfig.TagMask">Tag Mask</sys:String>
     <sys:String x:Key="InventoryConfig.NonMatchAction">Non-Match Action</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareTarget">State-Aware Target</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareAction">State-Aware Action</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">Report Config</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">Report Mode</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">Include Antenna</sys:String>

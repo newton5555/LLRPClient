@@ -6,6 +6,7 @@ using LLRPReaderUI_Avalonia.Logging;
 using LLRPReaderUI_Avalonia.Messages;
 using LLRPReaderUI_Avalonia.Models;
 using LLRPReaderUI_Avalonia.Services;
+using Org.LLRP.LTK.LLRPV1;
 using System.Collections.ObjectModel;
 
 namespace LLRPReaderUI_Avalonia.ViewModels;
@@ -18,6 +19,7 @@ public partial class InventoryConfigViewModel : ViewModelBase
         this.logs = null!;
         this.settingsStore = null!;
         _languageService = null!;
+        reportMode = ReportModes[1];
     }
 
 
@@ -33,13 +35,28 @@ public partial class InventoryConfigViewModel : ViewModelBase
         this.logs = logs;
         this.settingsStore = settingsStore;
         _languageService = languageService;
+        reportMode = ReportModes[1];
         WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
             r.OnConnectionStateChanged(m.Value);
         });
+        WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, StatusUpdateRequestedMessage>(this, static (r, _) =>
+        {
+            r.RefreshStateAwareFlagFromSnapshot();
+        });
+
+        RefreshStateAwareFlagFromSnapshot();
 
         // Set initial state
         OperationResult = _languageService.GetLocalizedString("InventoryConfig.Waiting");
+    }
+
+    private void RefreshStateAwareFlagFromSnapshot()
+    {
+        if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
+        {
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+        }
     }
 
     public IReadOnlyList<AutoStartMode> AutoStartModes { get; } = Enum.GetValues<AutoStartMode>();
@@ -48,7 +65,14 @@ public partial class InventoryConfigViewModel : ViewModelBase
     public IReadOnlyList<MemoryBank> MemoryBanks { get; } = Enum.GetValues<MemoryBank>();
     public IReadOnlyList<TagFilterOp> TagFilterOps { get; } = Enum.GetValues<TagFilterOp>();
     public IReadOnlyList<StateUnawareAction> StateUnawareActions { get; } = Enum.GetValues<StateUnawareAction>();
-    public IReadOnlyList<ReportMode> ReportModes { get; } = Enum.GetValues<ReportMode>();
+    public IReadOnlyList<ENUM_C1G2StateAwareTarget> StateAwareTargets { get; } = Enum.GetValues<ENUM_C1G2StateAwareTarget>();
+    public IReadOnlyList<ENUM_C1G2StateAwareAction> StateAwareActions { get; } = Enum.GetValues<ENUM_C1G2StateAwareAction>();
+    public IReadOnlyList<ReportModeOptionItem> ReportModes { get; } =
+    [
+        new(LLRPSdk.ReportMode.WaitForQuery, "WaitForQuery (Trigger=0, N=0)"),
+        new(LLRPSdk.ReportMode.Individual, "Individual (Trigger=2, N=1)"),
+        new(LLRPSdk.ReportMode.BatchAfterStop, "BatchAfterStop (Trigger=2, N=0)")
+    ];
 
     [ObservableProperty]
     private string operationResult = string.Empty;
@@ -90,6 +114,27 @@ public partial class InventoryConfigViewModel : ViewModelBase
     private TagFilterMode filterMode;
 
     [ObservableProperty]
+    private bool showTagFilter1;
+
+    [ObservableProperty]
+    private bool showTagFilter2;
+
+    [ObservableProperty]
+    private bool showTagSelectFilters;
+
+    [ObservableProperty]
+    private bool showStateUnawareTagSelectFilterActions;
+
+    [ObservableProperty]
+    private bool showStateAwareTagSelectFilterActions;
+
+    [ObservableProperty]
+    private bool isStateAwareTagSelectFiltersEnabled;
+
+    [ObservableProperty]
+    private bool isInventoryStateAwareEnabled;
+
+    [ObservableProperty]
     private MemoryBank filter1MemoryBank = MemoryBank.Epc;
 
     [ObservableProperty]
@@ -123,7 +168,7 @@ public partial class InventoryConfigViewModel : ViewModelBase
     private ObservableCollection<TagSelectFilterItemViewModel> tagSelectFilters = [];
 
     [ObservableProperty]
-    private ReportMode reportMode = ReportMode.Individual;
+    private ReportModeOptionItem reportMode;
 
     [ObservableProperty]
     private bool includeAntennaPortNumber;
@@ -173,6 +218,26 @@ public partial class InventoryConfigViewModel : ViewModelBase
         return args.Length > 0 ? string.Format(format, args) : format;
     }
 
+    partial void OnFilterModeChanged(TagFilterMode value)
+    {
+        ShowTagFilter1 = value is TagFilterMode.OnlyFilter1 or TagFilterMode.Filter1AndFilter2 or TagFilterMode.Filter1OrFilter2;
+        ShowTagFilter2 = value is TagFilterMode.OnlyFilter2 or TagFilterMode.Filter1AndFilter2 or TagFilterMode.Filter1OrFilter2;
+        ShowTagSelectFilters = value is TagFilterMode.UseTagSelectFilters or TagFilterMode.UseStateAwareTagSelectFilters;
+        ShowStateUnawareTagSelectFilterActions = value == TagFilterMode.UseTagSelectFilters;
+        ShowStateAwareTagSelectFilterActions = value == TagFilterMode.UseStateAwareTagSelectFilters;
+        UpdateStateAwareTagSelectFilterAvailability();
+    }
+
+    partial void OnIsInventoryStateAwareEnabledChanged(bool value)
+    {
+        UpdateStateAwareTagSelectFilterAvailability();
+    }
+
+    private void UpdateStateAwareTagSelectFilterAvailability()
+    {
+        IsStateAwareTagSelectFiltersEnabled = FilterMode != TagFilterMode.UseStateAwareTagSelectFilters || IsInventoryStateAwareEnabled;
+    }
+
     [RelayCommand]
     private void AddTagSelectFilter()
     {
@@ -180,7 +245,10 @@ public partial class InventoryConfigViewModel : ViewModelBase
         {
             MemoryBank = MemoryBank.Epc,
             MatchAction = StateUnawareAction.Select,
-            NonMatchAction = StateUnawareAction.Unselect
+            NonMatchAction = StateUnawareAction.Unselect,
+            UseStateAwareAction = FilterMode == TagFilterMode.UseStateAwareTagSelectFilters,
+            StateAwareTarget = ENUM_C1G2StateAwareTarget.SL,
+            StateAwareAction = ENUM_C1G2StateAwareAction.AssertSLOrA_DeassertSLOrB
         });
     }
 
@@ -212,6 +280,7 @@ public partial class InventoryConfigViewModel : ViewModelBase
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
 
             AutoStartMode = settings.AutoStart.Mode;
             AutoStartGpiPortNumber = settings.AutoStart.GpiPortNumber;
@@ -249,11 +318,14 @@ public partial class InventoryConfigViewModel : ViewModelBase
                     BitCount = filter.BitCount,
                     TagMask = filter.TagMask ?? string.Empty,
                     MatchAction = filter.MatchAction,
-                    NonMatchAction = filter.NonMatchAction
+                    NonMatchAction = filter.NonMatchAction,
+                    UseStateAwareAction = filter.UseStateAwareAction,
+                    StateAwareTarget = filter.StateAwareTarget,
+                    StateAwareAction = filter.StateAwareAction
                 });
             }
 
-            ReportMode = settings.Report.Mode;
+            ReportMode = ReportModes.FirstOrDefault(x => x.Value == settings.Report.Mode) ?? ReportModes[1];
             IncludeAntennaPortNumber = settings.Report.IncludeAntennaPortNumber;
             IncludeChannel = settings.Report.IncludeChannel;
             IncludeFirstSeenTime = settings.Report.IncludeFirstSeenTime;
@@ -296,6 +368,7 @@ public partial class InventoryConfigViewModel : ViewModelBase
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
 
             settings.AutoStart.Mode = AutoStartMode;
             settings.AutoStart.GpiPortNumber = AutoStartGpiPortNumber;
@@ -330,10 +403,13 @@ public partial class InventoryConfigViewModel : ViewModelBase
                 BitCount = x.BitCount,
                 TagMask = x.TagMask?.Trim() ?? string.Empty,
                 MatchAction = x.MatchAction,
-                NonMatchAction = x.NonMatchAction
+                NonMatchAction = x.NonMatchAction,
+                UseStateAwareAction = FilterMode == TagFilterMode.UseStateAwareTagSelectFilters,
+                StateAwareTarget = x.StateAwareTarget,
+                StateAwareAction = x.StateAwareAction
             }).ToList();
 
-            settings.Report.Mode = ReportMode;
+            settings.Report.Mode = ReportMode.Value;
             settings.Report.IncludeAntennaPortNumber = IncludeAntennaPortNumber;
             settings.Report.IncludeChannel = IncludeChannel;
             settings.Report.IncludeFirstSeenTime = IncludeFirstSeenTime;
@@ -376,6 +452,11 @@ public partial class InventoryConfigViewModel : ViewModelBase
             ? _languageService.GetLocalizedString("InventoryConfig.CanReadCache")
             : _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
 
+        if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
+        {
+            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+        }
+
         if (settingsStore.TryGetSnapshot(out _)
             && QueryInventoryConfigCommand.CanExecute(null))
         {
@@ -403,4 +484,20 @@ public partial class TagSelectFilterItemViewModel : ViewModelBase
 
     [ObservableProperty]
     private StateUnawareAction nonMatchAction = StateUnawareAction.Unselect;
+
+    [ObservableProperty]
+    private bool useStateAwareAction;
+
+    [ObservableProperty]
+    private ENUM_C1G2StateAwareTarget stateAwareTarget = ENUM_C1G2StateAwareTarget.SL;
+
+    [ObservableProperty]
+    private ENUM_C1G2StateAwareAction stateAwareAction = ENUM_C1G2StateAwareAction.AssertSLOrA_DeassertSLOrB;
+}
+
+public sealed class ReportModeOptionItem(ReportMode value, string displayText)
+{
+    public ReportMode Value { get; } = value;
+
+    public string DisplayText { get; } = displayText;
 }

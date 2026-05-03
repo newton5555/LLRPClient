@@ -42,6 +42,7 @@
     <sys:String x:Key="DeviceConnection.DisconnectedKeepalive">已断开（心跳超时）</sys:String>
     <sys:String x:Key="DeviceConnection.ConnectionFailedMsg">连接失败：{0}</sys:String>
     <sys:String x:Key="DeviceConnection.EnterAddress">请先输入读写器地址。示例：192.168.1.10 或 192.168.1.10:5084</sys:String>
+    <sys:String x:Key="DeviceConnection.AddressTooltip">读写器地址。示例：192.168.1.10 或 192.168.1.10:5084</sys:String>
     <sys:String x:Key="DeviceConnection.AddressEmpty">地址不能为空。示例：192.168.1.10:5084</sys:String>
     <sys:String x:Key="DeviceConnection.InitFailed">连接后初始化失败：{0}</sys:String>
     <sys:String x:Key="DeviceConnection.DeviceDisconnected">设备断开连接</sys:String>
@@ -75,6 +76,7 @@
     <sys:String x:Key="Inventory.TotalReports">报告包</sys:String>
     <sys:String x:Key="Inventory.TotalTags">标签总数</sys:String>
     <sys:String x:Key="Inventory.UniqueTags">唯一 EPC</sys:String>
+    <sys:String x:Key="Inventory.Duration">寻卡耗时</sys:String>
     <sys:String x:Key="Inventory.EPC">EPC</sys:String>
     <sys:String x:Key="Inventory.Antenna">天线</sys:String>
     <sys:String x:Key="Inventory.RSSI">RSSI(dBm)</sys:String>
@@ -127,6 +129,17 @@
     <sys:String x:Key="Settings.Query">获取参数</sys:String>
     <sys:String x:Key="Settings.Save">保存参数</sys:String>
     <sys:String x:Key="Settings.QueryStatus">获取设备状态</sys:String>
+    <sys:String x:Key="Settings.SystemManagement">系统管理</sys:String>
+    <sys:String x:Key="Settings.RadioPhy">射频物理层参数</sys:String>
+    <sys:String x:Key="Settings.InventoryProtocol">空口协议参数</sys:String>
+    <sys:String x:Key="Settings.AdvancedFeatures">高级特性配置</sys:String>
+    <sys:String x:Key="Settings.TagPopulationEstimateHint">（约对应标签数 = 2^Q ）</sys:String>
+    <sys:String x:Key="Settings.HopTableId">跳频表 ID</sys:String>
+    <sys:String x:Key="Settings.ChannelIndex">信道索引</sys:String>
+    <sys:String x:Key="Settings.InventoryStateAware">开启状态感知</sys:String>
+    <sys:String x:Key="Settings.InventoryTarget">盘存目标 (Target)</sys:String>
+    <sys:String x:Key="Settings.InventorySearchMode">盘存搜索模式 (S)</sys:String>
+    <sys:String x:Key="Settings.StateAwareUnsupportedHint">当前设备能力未声明支持状态感知盘点，此配置不可用。</sys:String>
     <sys:String x:Key="Settings.ResetFactory">恢复出厂</sys:String>
     <sys:String x:Key="Settings.Saved">参数已保存</sys:String>
     <sys:String x:Key="Settings.SaveFailed">保存失败</sys:String>
@@ -268,6 +281,13 @@
     <sys:String x:Key="Action.Cancel">取消</sys:String>
     <sys:String x:Key="Action.Refresh">刷新</sys:String>
     <sys:String x:Key="Action.Clear">清空</sys:String>
+
+    <sys:String x:Key="Log.Center">日志中心</sys:String>
+    <sys:String x:Key="Log.Total">日志总数: </sys:String>
+    <sys:String x:Key="Log.ClearAll">清空全部</sys:String>
+    <sys:String x:Key="Log.Operation">操作日志</sys:String>
+    <sys:String x:Key="Log.LlrpMessage">LLRP 消息日志</sys:String>
+    <sys:String x:Key="Log.RawFrame">原始报文收发</sys:String>
     <sys:String x:Key="Action.Start">开始</sys:String>
     <sys:String x:Key="Action.Stop">停止</sys:String>
     <sys:String x:Key="Action.Connect">连接</sys:String>
@@ -350,6 +370,8 @@
     <sys:String x:Key="InventoryConfig.MatchAction">匹配动作</sys:String>
     <sys:String x:Key="InventoryConfig.TagMask">标签掩码</sys:String>
     <sys:String x:Key="InventoryConfig.NonMatchAction">非匹配动作</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareTarget">状态感知目标</sys:String>
+    <sys:String x:Key="InventoryConfig.StateAwareAction">状态感知动作</sys:String>
     <sys:String x:Key="InventoryConfig.ReportConfig">上报配置</sys:String>
     <sys:String x:Key="InventoryConfig.ReportMode">上报模式</sys:String>
     <sys:String x:Key="InventoryConfig.IncludeAntenna">包含天线号</sys:String>
