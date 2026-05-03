@@ -209,6 +209,7 @@
                     <!--  操作日志  -->
                     <Border
                         Padding="12"
+                       CornerRadius="0,0,32,32"
                         Style="{StaticResource CardBorderStyle}"
                         Visibility="{Binding ShowOperationLogs, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid>
@@ -280,6 +281,7 @@
                     </TabItem.Header>
                     <!--  LLRP 消息日志  -->
                     <Border
+                        CornerRadius="0,0,32,32"
                         Grid.Row="1"
                         Padding="12"
                         Style="{StaticResource CardBorderStyle}"
