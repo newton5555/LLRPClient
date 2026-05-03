@@ -59,7 +59,7 @@
                         <TextBlock Text="{DynamicResource Log.Operation}" Classes="semiBold"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Border Classes="card" Padding="12">
+                <Border Classes="card" Padding="12" CornerRadius="0,0,16,16" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <Grid RowDefinitions="Auto,*">
                         <Button HorizontalAlignment="Right" Command="{Binding ClearOperationLogsCommand}" Classes="flat">
                             <StackPanel Orientation="Horizontal">
@@ -80,7 +80,7 @@
                         <TextBlock Text="{DynamicResource Log.LlrpMessage}" Classes="semiBold"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Border Classes="card" Padding="12">
+                <Border Classes="card" Padding="12" CornerRadius="0,0,16,16" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <Grid RowDefinitions="Auto,*">
                         <Button HorizontalAlignment="Right" Command="{Binding ClearLlrpMessageLogsCommand}" Classes="flat">
                             <StackPanel Orientation="Horizontal">
@@ -101,7 +101,7 @@
                         <TextBlock Text="{DynamicResource Log.RawFrame}" Classes="semiBold"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Border Classes="card" Padding="12">
+                <Border Classes="card" Padding="12" CornerRadius="0,0,16,16" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <Grid RowDefinitions="Auto,*">
                         <Button HorizontalAlignment="Right" Command="{Binding ClearRawFrameLogsCommand}" Classes="flat">
                             <StackPanel Orientation="Horizontal">
