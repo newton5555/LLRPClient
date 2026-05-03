@@ -39,11 +39,26 @@ public sealed class AppLogService : IAppLogService
                 {
                     try
                     {
-                        if (rawFrameQueue.TryDequeue(out var item))
+                        var batch = new List<RawFrameEntity>();
+                        while (rawFrameQueue.TryDequeue(out var item))
+                        {
+                            batch.Add(new RawFrameEntity
+                            {
+                                Timestamp = DateTime.UtcNow,
+                                Direction = item.Direction,
+                                Payload = item.Payload,
+                                DeviceId = item.DeviceId
+                            });
+
+                            if (batch.Count >= 500)
+                                break;
+                        }
+
+                        if (batch.Count > 0)
                         {
                             try
                             {
-                                await this.repository.LogRawAsync(item.DeviceId, item.Direction, item.Payload).ConfigureAwait(false);
+                                await this.repository.LogRawBatchAsync(batch).ConfigureAwait(false);
                             }
                             catch
                             {

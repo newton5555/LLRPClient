@@ -37,6 +37,19 @@ namespace LLRPReaderUI_WPF.Data
             }
         }
 
+        public async Task LogRawBatchAsync(IEnumerable<RawFrameEntity> frames)
+        {
+            try
+            {
+                _ctx.RawFrames.AddRange(frames);
+                await _ctx.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (Exception ee)
+            {
+                // swallow errors
+            }
+        }
+
         public async Task<List<RawFrameEntity>> GetRecentAsync(int take = 1000)
         {
             var size = take <= 0 ? 1000 : take;

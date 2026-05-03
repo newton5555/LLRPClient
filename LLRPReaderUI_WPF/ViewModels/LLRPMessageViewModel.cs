@@ -126,7 +126,7 @@ namespace LLRPReaderUI_WPF.ViewModels
             StatusText = _languageService.GetLocalizedString("LLRPMessage.Loading");
             try
             {
-                var frames = await _rawFrameRepository.GetRecentAsync(1000);
+                var frames = await _rawFrameRepository.GetRecentAsync(5000);
                 RawFrames.Clear();
                 foreach (var frame in frames.OrderBy(f => f.Timestamp))
                 {
