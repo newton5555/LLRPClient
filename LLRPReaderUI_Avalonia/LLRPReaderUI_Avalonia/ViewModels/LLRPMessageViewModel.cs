@@ -15,7 +15,7 @@ namespace LLRPReaderUI_Avalonia.ViewModels
     {
         private readonly LlrpReader _reader;
         private readonly IAppLogService _logs;
-        private readonly IRawFrameRepository _rawFrameRepository;
+        private readonly IRawFrameRepository? _rawFrameRepository;
         private readonly LanguageService _languageService;
 
         [ObservableProperty]
@@ -73,7 +73,7 @@ namespace LLRPReaderUI_Avalonia.ViewModels
         public LLRPMessageViewModel(
             LlrpReader reader,
             IAppLogService logs,
-            IRawFrameRepository rawFrameRepository,
+            IRawFrameRepository? rawFrameRepository,
             LanguageService languageService)
         {
             _reader = reader;
@@ -114,6 +114,24 @@ namespace LLRPReaderUI_Avalonia.ViewModels
             StatusText = _languageService.GetLocalizedString("LLRPMessage.Loading");
             try
             {
+                if (_rawFrameRepository == null)
+                {
+                    RawFrames.Clear();
+                    FilteredFrames.Clear();
+                    MessageTree.Clear();
+                    RawHexString = string.Empty;
+                    UpdateMsgTypeOptions();
+                    UpdateDeviceIdOptions();
+                    FilterStartDate = null;
+                    FilterEndDate = null;
+                    FilterDirection = "All";
+                    FilterMsgType = "All";
+                    FilterDeviceId = "All";
+                    SearchText = string.Empty;
+                    StatusText = GetLocalizedString("LLRPMessage.Loaded", 0);
+                    return;
+                }
+
                 var frames = await _rawFrameRepository.GetRecentAsync(5000);
                 RawFrames.Clear();
                 foreach (var frame in frames.OrderBy(f => f.Timestamp))
@@ -439,6 +457,16 @@ namespace LLRPReaderUI_Avalonia.ViewModels
         {
             try
             {
+                if (_rawFrameRepository == null)
+                {
+                    RawFrames.Clear();
+                    FilteredFrames.Clear();
+                    MessageTree.Clear();
+                    RawHexString = string.Empty;
+                    StatusText = GetLocalizedString("LLRPMessage.Cleared", 0);
+                    return;
+                }
+
                 var count = await _rawFrameRepository.ClearAllAsync();
                 RawFrames.Clear();
                 FilteredFrames.Clear();

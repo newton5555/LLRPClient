@@ -139,7 +139,11 @@ public partial class App : Application
         services.AddTransient<ReadWriteViewModel>();
         services.AddTransient<AdvancedTagOpsViewModel>();
         services.AddTransient<LogViewModel>();
-        services.AddTransient<LLRPMessageViewModel>();
+        services.AddTransient(static provider => new LLRPMessageViewModel(
+            provider.GetRequiredService<LlrpReader>(),
+            provider.GetRequiredService<IAppLogService>(),
+            provider.GetService<IRawFrameRepository>(),
+            provider.GetRequiredService<LanguageService>()));
 
         services.AddSingleton<MainWindow>();
         services.AddSingleton<MainView>();
