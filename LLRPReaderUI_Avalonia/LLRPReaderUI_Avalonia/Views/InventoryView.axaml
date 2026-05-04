@@ -23,25 +23,25 @@
                     <TextBlock Text="{Binding InventoryState}" Margin="0,4,0,0" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10">
-                    <Button Command="{Binding StartInventoryCommand}" Classes="primary" Width="128">
+                    <Button Command="{Binding StartInventoryCommand}" Classes="primary" MinWidth="128">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Play" Width="16" Height="16" Margin="0,0,6,0" />
                             <TextBlock Text="{DynamicResource Inventory.Start}" />
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding StopInventoryCommand}" Classes="flat" Width="128">
+                    <Button Command="{Binding StopInventoryCommand}" Classes="flat" MinWidth="128">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Stop" Width="16" Height="16" Margin="0,0,6,0" />
                             <TextBlock Text="{DynamicResource Inventory.Stop}" />
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding ManualPullBufferedReportsCommand}" Classes="flat" Width="136">
+                    <Button Command="{Binding ManualPullBufferedReportsCommand}" Classes="flat" MinWidth="136">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0" />
                             <TextBlock Text="{DynamicResource Inventory.PullBuffer}" />
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding ClearReceivedDataCommand}" Classes="flat" Width="112">
+                    <Button Command="{Binding ClearReceivedDataCommand}" Classes="flat" MinWidth="112">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Margin="0,0,6,0" />
                             <TextBlock Text="{DynamicResource Inventory.Clear}" />

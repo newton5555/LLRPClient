@@ -14,9 +14,8 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="12">
                     <!-- Header -->
-                    <TextBlock Text="{DynamicResource ReadWrite.ReadConfig}" 
-                               Classes="semiBold" 
-                               FontSize="14"
+                    <TextBlock Text="{DynamicResource ReadWrite.ReadConfig}"
+                               Classes="subHeading"
                                Foreground="{DynamicResource TextPrimaryBrush}" />
                     
                     <!-- Legend -->
@@ -134,28 +133,27 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="12">
                     <!-- Header -->
-                    <TextBlock Text="{DynamicResource ReadWrite.Operations}" 
-                               Classes="semiBold" 
-                               FontSize="14"
+                    <TextBlock Text="{DynamicResource ReadWrite.Operations}"
+                               Classes="subHeading"
                                Foreground="{DynamicResource TextPrimaryBrush}" />
                     
                     <!-- Buttons -->
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button Height="36" Width="120" 
+                        <Button MinWidth="120"
                                 Command="{Binding ReadMemoryCommand}"
                                 Classes="primary">
                             <TextBlock Text="{DynamicResource ReadWrite.ReadMemory}" />
                         </Button>
-                        <Button Height="36" Width="120" 
+                        <Button MinWidth="120"
                                 Command="{Binding WriteMemoryCommand}">
                             <TextBlock Text="{DynamicResource ReadWrite.WriteMemory}" />
                         </Button>
-                        <CheckBox VerticalAlignment="Center" 
-                                  Content="{DynamicResource ReadWrite.BlockWrite}" 
-                                  IsChecked="{Binding IsBlockWriteChecked}" 
+                        <CheckBox VerticalAlignment="Center"
+                                  Content="{DynamicResource ReadWrite.BlockWrite}"
+                                  IsChecked="{Binding IsBlockWriteChecked}"
                                   IsEnabled="{Binding IsBlockWriteSupported}"
                                   ToolTip.Tip="{DynamicResource ReadWrite.BlockWriteTooltip}" />
-                        <Button Height="36" Width="120" 
+                        <Button MinWidth="120"
                                 Command="{Binding ClearDataCommand}">
                             <TextBlock Text="{DynamicResource ReadWrite.ClearData}" />
                         </Button>
@@ -172,9 +170,8 @@
             <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                 <StackPanel Spacing="12">
                     <!-- Header -->
-                    <TextBlock Text="{DynamicResource ReadWrite.ReadResult}" 
-                               Classes="semiBold" 
-                               FontSize="14"
+                    <TextBlock Text="{DynamicResource ReadWrite.ReadResult}"
+                               Classes="subHeading"
                                Foreground="{DynamicResource TextPrimaryBrush}" />
                     
                     <TextBlock Text="{DynamicResource ReadWrite.HexData}" 

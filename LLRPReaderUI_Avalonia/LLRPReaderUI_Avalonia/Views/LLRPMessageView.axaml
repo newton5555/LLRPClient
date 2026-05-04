@@ -21,20 +21,20 @@
         <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
             <Grid ColumnDefinitions="Auto,Auto,*,Auto">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Button Width="120" Height="32" Command="{Binding RefreshDataCommand}" Classes="primary">
+                    <Button MinWidth="120" Command="{Binding RefreshDataCommand}" Classes="primary">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Refresh" Width="14" Height="14" Margin="0,0,6,0"/>
                             <TextBlock Text="{DynamicResource LLRPMessage.Refresh}"/>
                         </StackPanel>
                     </Button>
-                    <Button Width="120" Height="32" Command="{Binding ClearAllDataCommand}">
+                    <Button MinWidth="120" Command="{Binding ClearAllDataCommand}">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Delete" Width="14" Height="14" Margin="0,0,6,0"
                                                        Foreground="{DynamicResource IconDangerBrush}"/>
                             <TextBlock Text="{DynamicResource LLRPMessage.ClearAll}"/>
                         </StackPanel>
                     </Button>
-                    <Button Width="120" Height="32" Command="{Binding ExportToTextCommand}">
+                    <Button MinWidth="120" Command="{Binding ExportToTextCommand}">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Export" Width="14" Height="14" Margin="0,0,6,0" 
                                                        Foreground="{DynamicResource IconSuccessBrush}"/>
@@ -69,38 +69,38 @@
                 <WrapPanel Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Margin="0,0,8,4">
                         <TextBlock Text="{DynamicResource LLRPMessage.StartDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <DatePicker MinWidth="140" Height="28" SelectedDate="{Binding FilterStartDate}"
+                        <DatePicker MinWidth="140" Height="36" SelectedDate="{Binding FilterStartDate}"
                                     assists:TextFieldAssist.Label="{x:Null}"
                                     assists:DatePickerAssist.DateTimeFormat="yy/MM/dd"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,8,4">
                         <TextBlock Text="{DynamicResource LLRPMessage.EndDate}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <DatePicker MinWidth="140" Height="28" SelectedDate="{Binding FilterEndDate}"
+                        <DatePicker MinWidth="140" Height="36" SelectedDate="{Binding FilterEndDate}"
                                     assists:TextFieldAssist.Label="{x:Null}"
                                     assists:DatePickerAssist.DateTimeFormat="yy/MM/dd"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,8,4">
                         <TextBlock Text="{DynamicResource LLRPMessage.Direction}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox MinWidth="80" Height="28" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding FilterDirection}"/>
+                        <ComboBox MinWidth="80" Height="36" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding FilterDirection}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,8,4">
                         <TextBlock Text="{DynamicResource LLRPMessage.Device}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox MinWidth="80" Height="28" ItemsSource="{Binding DeviceIdOptions}" SelectedItem="{Binding FilterDeviceId}"/>
+                        <ComboBox MinWidth="80" Height="36" ItemsSource="{Binding DeviceIdOptions}" SelectedItem="{Binding FilterDeviceId}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,8,4">
                         <TextBlock Text="{DynamicResource LLRPMessage.MessageType}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox MinWidth="110" MaxWidth="220" Height="28" ItemsSource="{Binding MsgTypeOptions}" SelectedItem="{Binding FilterMsgType}"/>
+                        <ComboBox MinWidth="110" MaxWidth="220" Height="36" ItemsSource="{Binding MsgTypeOptions}" SelectedItem="{Binding FilterMsgType}"/>
                     </StackPanel>
                 </WrapPanel>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,0">
-                    <Button Height="28" Command="{Binding ApplyFilterCommand}">
+                    <Button Command="{Binding ApplyFilterCommand}">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Filter" Width="12" Height="12" Margin="0,0,4,0"/>
                             <TextBlock Text="{DynamicResource LLRPMessage.Filter}"/>
                         </StackPanel>
                     </Button>
-                    <Button Height="28" Margin="8,0,0,0" Command="{Binding ClearFilterCommand}">
+                    <Button Margin="8,0,0,0" Command="{Binding ClearFilterCommand}">
                         <StackPanel Orientation="Horizontal">
                             <materialIcons:MaterialIcon Kind="Close" Width="12" Height="12" Margin="0,0,4,0" 
                                                        Foreground="{DynamicResource IconDangerBrush}"/>
@@ -118,7 +118,7 @@
                 <Grid RowDefinitions="Auto,*">
                     <Border Grid.Row="0" Padding="12,8" Background="{DynamicResource SubtleOverlayBrush}">
                         <TextBlock Text="{DynamicResource LLRPMessage.RawFrameList}" 
-                                   Classes="semiBold" FontSize="14"
+                                   Classes="subHeading"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </Border>
                     <ListBox Grid.Row="1" ItemsSource="{Binding FilteredFrames}" SelectedItem="{Binding SelectedRawFrame}"
@@ -163,7 +163,7 @@
                                 <materialIcons:MaterialIcon Kind="Sitemap" Width="14" Height="14" Margin="0,0,8,0" 
                                                            Foreground="{DynamicResource IconInfoBrush}"/>
                                 <TextBlock Text="{DynamicResource LLRPMessage.MessageTree}" 
-                                           Classes="semiBold" FontSize="14"
+                                           Classes="subHeading"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Border>
@@ -201,7 +201,7 @@
                                 <materialIcons:MaterialIcon Kind="Code" Width="14" Height="14" Margin="0,0,8,0" 
                                                            Foreground="{DynamicResource IconInfoBrush}"/>
                                 <TextBlock Text="{DynamicResource LLRPMessage.RawHexData}" 
-                                           Classes="semiBold" FontSize="14"
+                                           Classes="subHeading"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Border>

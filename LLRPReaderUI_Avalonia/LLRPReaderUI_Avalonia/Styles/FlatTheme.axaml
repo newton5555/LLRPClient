@@ -263,6 +263,11 @@
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
+    <Style Selector="TextBlock.subHeading">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
     <Style Selector="TextBlock.body">
         <Setter Property="FontSize" Value="13" />
     </Style>
