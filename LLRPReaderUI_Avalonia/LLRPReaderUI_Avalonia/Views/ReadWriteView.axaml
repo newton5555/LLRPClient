@@ -49,7 +49,7 @@
                                 CornerRadius="8">
                             <TextBox Text="{Binding TargetTagData, UpdateSourceTrigger=PropertyChanged}"
                                      Background="{DynamicResource BothRequiredBackground}"
-                                     BorderThickness="0,1,0,1"
+                                     BorderThickness="0"
                                      ClipToBounds="True"
                                      VerticalContentAlignment="Center"
                                      ToolTip.Tip="{DynamicResource ReadWrite.TargetTagTooltip}" />
@@ -79,7 +79,7 @@
                                 CornerRadius="8">
                             <TextBox Text="{Binding WordPointer, UpdateSourceTrigger=PropertyChanged}"
                                      Background="{DynamicResource BothRequiredBackground}"
-                                    BorderThickness="0,1,0,1"
+                                     BorderThickness="0"
                                      VerticalContentAlignment="Center"
                                      
                                      ToolTip.Tip="{DynamicResource ReadWrite.WordPointerTooltip}" />
