@@ -130,7 +130,7 @@
                 BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ShellRadius}">
             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <!-- Device Status Chip -->
-                <Border Classes="statusChip">
+                <Border Classes="statusChip primaryStatus">
                     <Border.Background>
                         <MultiBinding Converter="{x:Static converters:DeviceStatusConverter.Instance}">
                             <Binding Path="IsDeviceConnected"/>
@@ -155,7 +155,7 @@
                 </Border>
 
                 <!-- Inventory Status Chip -->
-                <Border Classes="statusChip">
+                <Border Classes="statusChip primaryStatus">
                     <Border.Background>
                         <MultiBinding Converter="{x:Static converters:InventoryStatusConverter.Instance}">
                             <Binding Path="IsInventoryRunning"/>
@@ -192,7 +192,7 @@
                     <TextBlock Text="{Binding GpoStatusText}" FontSize="12"
                                Foreground="{DynamicResource StatusDefaultTextBrush}" VerticalAlignment="Center"/>
                 </Border>
-                <Border Classes="statusChip" Margin="0">
+                <Border Classes="statusChip wideStatus" Margin="0">
                     <TextBlock Text="{Binding IdentificationStatusText}" FontSize="12"
                                Foreground="{DynamicResource StatusDefaultTextBrush}" VerticalAlignment="Center"/>
                 </Border>
