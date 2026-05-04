@@ -8,12 +8,12 @@
              x:Class="LLRPReaderUI_Avalonia.Views.InventoryConfigView"
              x:DataType="vm:InventoryConfigViewModel">
 
-    <Grid Margin="{DynamicResource PagePadding}" RowDefinitions="*,12,Auto,32">
+    <Grid RowDefinitions="*,12,Auto,32">
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="12">
+            <StackPanel Margin="{DynamicResource PagePadding}" Spacing="12">
                 <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="10">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
+                        <StackPanel Classes="sectionHeader">
                             <materialIcons:MaterialIcon Kind="CursorPointer" Width="16" Height="16" Foreground="{DynamicResource IconPrimaryBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.OperationTriggers}" Classes="semiBold"/>
                         </StackPanel>
@@ -63,7 +63,7 @@
 
                 <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="10">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
+                        <StackPanel Classes="sectionHeader">
                             <materialIcons:MaterialIcon Kind="Filter" Width="16" Height="16" Foreground="{DynamicResource IconWarningBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.FilterConfig}" Classes="semiBold"/>
                         </StackPanel>
@@ -161,7 +161,7 @@
 
                                                     <Button Grid.Row="12" Grid.Column="1" MinWidth="88" HorizontalAlignment="Left"
                                                             Command="{Binding $parent[UserControl].DataContext.RemoveTagSelectFilterCommand}"
-                                                            CommandParameter="{Binding}" Classes="flat">
+                                                            CommandParameter="{Binding}" Classes="danger">
                                                         <TextBlock Text="{DynamicResource InventoryConfig.Delete}"/>
                                                     </Button>
                                                 </Grid>
@@ -176,7 +176,7 @@
 
                 <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
                     <StackPanel Spacing="10">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
+                        <StackPanel Classes="sectionHeader">
                             <materialIcons:MaterialIcon Kind="Poll" Width="16" Height="16" Foreground="{DynamicResource IconAccentBrush}"/>
                             <TextBlock Text="{DynamicResource InventoryConfig.ReportingStrategy}" Classes="semiBold"/>
                         </StackPanel>
@@ -228,7 +228,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left" Margin="16,0">
             <Button MinWidth="132" Command="{Binding QueryInventoryConfigCommand}" Classes="flat">
                 <StackPanel Orientation="Horizontal">
                     <materialIcons:MaterialIcon Kind="Download" Width="14" Height="14" Margin="0,0,6,0"/>
@@ -243,6 +243,6 @@
             </Button>
         </StackPanel>
 
-        <TextBlock Grid.Row="3" Text="{Binding OperationResult}" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Text="{Binding OperationResult}" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" Margin="16,0"/>
     </Grid>
 </UserControl>

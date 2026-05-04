@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
     <!-- Light Theme Colors -->
     <ResourceDictionary.ThemeDictionaries>
@@ -123,6 +124,11 @@
             <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#F8FAFC" />
             <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="#EFF6FF" />
 
+            <!-- Scroll brushes -->
+            <SolidColorBrush x:Key="ScrollBarTrackBrush" Color="#EEF4F8" />
+            <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#B8CBD7" />
+            <SolidColorBrush x:Key="ScrollBarThumbHoverBrush" Color="#8EACBD" />
+
             <!-- Icon brushes -->
             <SolidColorBrush x:Key="IconPrimaryBrush" Color="#0EA5E9" />
             <SolidColorBrush x:Key="IconInfoBrush" Color="#0EA5E9" />
@@ -152,8 +158,15 @@
             <SolidColorBrush x:Key="ToolTipForegroundBrush" Color="#0F172A" />
 
             <!-- Page and Section Padding -->
+            <sys:Double x:Key="ControlGap">8</sys:Double>
+            <sys:Double x:Key="SectionGap">12</sys:Double>
             <Thickness x:Key="PagePadding">16</Thickness>
             <Thickness x:Key="SectionPadding">12</Thickness>
+            <Thickness x:Key="CardPadding">16</Thickness>
+            <CornerRadius x:Key="InputRadius">8</CornerRadius>
+            <CornerRadius x:Key="CardRadius">16</CornerRadius>
+            <CornerRadius x:Key="PanelRadius">20</CornerRadius>
+            <CornerRadius x:Key="ShellRadius">24</CornerRadius>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
@@ -276,6 +289,11 @@
             <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#173848" />
             <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="#1E4B60" />
 
+            <!-- Scroll brushes -->
+            <SolidColorBrush x:Key="ScrollBarTrackBrush" Color="#0D1E27" />
+            <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#36596B" />
+            <SolidColorBrush x:Key="ScrollBarThumbHoverBrush" Color="#5B8296" />
+
             <!-- Icon brushes -->
             <SolidColorBrush x:Key="IconPrimaryBrush" Color="#69C8F2" />
             <SolidColorBrush x:Key="IconInfoBrush" Color="#69C8F2" />
@@ -305,8 +323,15 @@
             <SolidColorBrush x:Key="ToolTipForegroundBrush" Color="#EAF6FB" />
 
             <!-- Page and Section Padding -->
+            <sys:Double x:Key="ControlGap">8</sys:Double>
+            <sys:Double x:Key="SectionGap">12</sys:Double>
             <Thickness x:Key="PagePadding">16</Thickness>
             <Thickness x:Key="SectionPadding">12</Thickness>
+            <Thickness x:Key="CardPadding">16</Thickness>
+            <CornerRadius x:Key="InputRadius">8</CornerRadius>
+            <CornerRadius x:Key="CardRadius">16</CornerRadius>
+            <CornerRadius x:Key="PanelRadius">20</CornerRadius>
+            <CornerRadius x:Key="ShellRadius">24</CornerRadius>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

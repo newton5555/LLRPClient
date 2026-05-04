@@ -145,7 +145,8 @@
                             <TextBlock Text="{DynamicResource ReadWrite.ReadMemory}" />
                         </Button>
                         <Button MinWidth="120"
-                                Command="{Binding WriteMemoryCommand}">
+                                Command="{Binding WriteMemoryCommand}"
+                                Classes="flat">
                             <TextBlock Text="{DynamicResource ReadWrite.WriteMemory}" />
                         </Button>
                         <CheckBox VerticalAlignment="Center"
@@ -154,7 +155,8 @@
                                   IsEnabled="{Binding IsBlockWriteSupported}"
                                   ToolTip.Tip="{DynamicResource ReadWrite.BlockWriteTooltip}" />
                         <Button MinWidth="120"
-                                Command="{Binding ClearDataCommand}">
+                                Command="{Binding ClearDataCommand}"
+                                Classes="flat">
                             <TextBlock Text="{DynamicResource ReadWrite.ClearData}" />
                         </Button>
                     </StackPanel>
