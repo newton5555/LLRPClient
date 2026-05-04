@@ -126,7 +126,7 @@
     <!-- TextBox Style -->
     <Style Selector="TextBox">
         <Setter Property="MinHeight" Value="36" />
-        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushCustom}" />
@@ -135,15 +135,20 @@
         <Setter Property="CornerRadius" Value="8" />
     </Style>
 
-    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Style Selector="TextBox:focus">
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-        <Setter Property="BorderThickness" Value="2" />
+         <Setter Property="BorderThickness" Value="2" />
+    </Style>
+
+    <!-- 给 TextBox 内部 TextPresenter 加左边距 -->
+    <Style Selector="TextBox /template/ TextPresenter">
+        <Setter Property="Margin" Value="6,0,0,0" />
     </Style>
 
     <!-- AutoCompleteBox Style — 与 TextBox 完全一致 -->
     <Style Selector="AutoCompleteBox">
         <Setter Property="MinHeight" Value="36" />
-        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushCustom}" />
         <Setter Property="BorderThickness" Value="1" />

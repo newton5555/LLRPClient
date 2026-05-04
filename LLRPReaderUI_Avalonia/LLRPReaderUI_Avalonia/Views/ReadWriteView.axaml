@@ -47,14 +47,12 @@
                                 BorderBrush="{DynamicResource IconWarningBrush}" 
                                 BorderThickness="1" 
                                 Height="36"
-                                CornerRadius="4">
+                                CornerRadius="8">
                             <TextBox Text="{Binding TargetTagData, UpdateSourceTrigger=PropertyChanged}"
                                      Background="{DynamicResource BothRequiredBackground}"
-                                     BorderThickness="1"
+                                     BorderThickness="0,1,0,1"
                                      ClipToBounds="True"
                                      VerticalContentAlignment="Center"
-                                     Padding="8"
-                                     
                                      ToolTip.Tip="{DynamicResource ReadWrite.TargetTagTooltip}" />
                         </Border>
 
@@ -79,13 +77,11 @@
                                 BorderBrush="{DynamicResource IconWarningBrush}" 
                                 BorderThickness="1" 
                                 Height="36"
-                                CornerRadius="4">
+                                CornerRadius="8">
                             <TextBox Text="{Binding WordPointer, UpdateSourceTrigger=PropertyChanged}"
                                      Background="{DynamicResource BothRequiredBackground}"
-                                     
-                                      BorderThickness="1" 
+                                    BorderThickness="0,1,0,1"
                                      VerticalContentAlignment="Center"
-                                     Padding="8"
                                      
                                      ToolTip.Tip="{DynamicResource ReadWrite.WordPointerTooltip}" />
                         </Border>
@@ -103,7 +99,6 @@
                                  BorderThickness="1"
                                  Height="36"
                                  VerticalContentAlignment="Center"
-                                 Padding="8"
                                  ToolTip.Tip="{DynamicResource ReadWrite.WordCountTooltip}" />
 
                         <!-- Write Data (Write Required) -->
@@ -113,13 +108,12 @@
                                    Classes="semiBold"
                                    Foreground="{DynamicResource WriteRequiredForeground}" />
                         <TextBox Grid.Row="10" Grid.Column="1" 
-                                 Text="{Binding WriteData, UpdateSourceTrigger=PropertyChanged}" 
+                                 Text="{Binding WriteData, UpdateSourceTrigger=PropertyChanged}"
                                  Background="{DynamicResource WriteRequiredBackground}"
                                  BorderBrush="{DynamicResource WriteRequiredForeground}"
                                  BorderThickness="1"
                                  Height="36"
                                  VerticalContentAlignment="Center"
-                                 Padding="8"
                                  ToolTip.Tip="{DynamicResource ReadWrite.WriteDataTooltip}" />
 
                         <!-- Access Password -->
@@ -128,10 +122,9 @@
                                    VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}" />
                         <TextBox Grid.Row="12" Grid.Column="1" 
-                                 Text="{Binding AccessPassword, UpdateSourceTrigger=PropertyChanged}" 
+                                 Text="{Binding AccessPassword, UpdateSourceTrigger=PropertyChanged}"
                                  Height="36"
                                  VerticalContentAlignment="Center"
-                                 Padding="8"
                                  ToolTip.Tip="{DynamicResource ReadWrite.AccessPasswordTooltip}" />
                     </Grid>
                 </StackPanel>
@@ -189,7 +182,7 @@
                     
                     <Border BorderBrush="{DynamicResource BorderBrushCustom}"
                             BorderThickness="1"
-                            CornerRadius="4"
+                            CornerRadius="8"
                             Padding="8"
                             Background="{DynamicResource SurfaceBrush}">
                         <ScrollViewer MinHeight="100">
