@@ -140,6 +140,47 @@
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
+    <Style Selector="Border.inventoryMetrics">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="{DynamicResource CardInnerBackgroundBrush}" />
+    </Style>
+
+    <Style Selector="Border.inventoryMetricCell">
+        <Setter Property="Padding" Value="16,14" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Border.inventoryMetricIcon">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Background" Value="{DynamicResource SubtleOverlayBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Border.inventoryMetricDivider">
+        <Setter Property="Width" Value="1" />
+        <Setter Property="Margin" Value="0,14" />
+        <Setter Property="Background" Value="{DynamicResource SubtleBorderBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.metricLabel">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+
+    <Style Selector="TextBlock.metricValue">
+        <Setter Property="Margin" Value="0,5,0,0" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+
     <Style Selector="Border.statusChip">
         <Setter Property="Padding" Value="12,6" />
         <Setter Property="CornerRadius" Value="14" />

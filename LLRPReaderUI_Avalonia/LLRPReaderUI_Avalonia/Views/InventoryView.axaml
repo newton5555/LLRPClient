@@ -52,32 +52,68 @@
         </Border>
 
         <!-- Stats -->
-        <Grid Grid.Row="2" ColumnDefinitions="*,10,*,10,*,10,*">
-            <Border Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource Inventory.TotalReports}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
-                    <TextBlock Text="{Binding TotalReports}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
-                </StackPanel>
-            </Border>
-            <Border Grid.Column="2" Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource Inventory.TotalTags}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
-                    <TextBlock Text="{Binding TotalTags}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
-                </StackPanel>
-            </Border>
-            <Border Grid.Column="4" Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource Inventory.UniqueTags}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
-                    <TextBlock Text="{Binding UniqueTagCount}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
-                </StackPanel>
-            </Border>
-            <Border Grid.Column="6" Padding="16,14" Classes="card" Background="{DynamicResource SubtleOverlayBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource Inventory.Duration}" Classes="body" Foreground="{DynamicResource TextSecondaryBrush}" />
-                    <TextBlock Text="{Binding InventoryDuration}" Margin="0,6,0,0" FontSize="24" Classes="semiBold" />
-                </StackPanel>
-            </Border>
-        </Grid>
+        <Border Grid.Row="2" Classes="card inventoryMetrics">
+            <Grid ColumnDefinitions="*,1,*,1,*,1,*">
+                <Border Classes="inventoryMetricCell">
+                    <Grid ColumnDefinitions="Auto,12,*">
+                        <Border Classes="inventoryMetricIcon">
+                            <materialIcons:MaterialIcon Kind="ClipboardList" Width="18" Height="18"
+                                                        Foreground="{DynamicResource IconInfoBrush}"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" MinWidth="0">
+                            <TextBlock Text="{DynamicResource Inventory.TotalReports}" Classes="metricLabel" />
+                            <TextBlock Text="{Binding TotalReports}" Classes="metricValue" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="1" Classes="inventoryMetricDivider" />
+
+                <Border Grid.Column="2" Classes="inventoryMetricCell">
+                    <Grid ColumnDefinitions="Auto,12,*">
+                        <Border Classes="inventoryMetricIcon">
+                            <materialIcons:MaterialIcon Kind="Poll" Width="18" Height="18"
+                                                        Foreground="{DynamicResource IconAccentBrush}"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" MinWidth="0">
+                            <TextBlock Text="{DynamicResource Inventory.TotalTags}" Classes="metricLabel" />
+                            <TextBlock Text="{Binding TotalTags}" Classes="metricValue" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="3" Classes="inventoryMetricDivider" />
+
+                <Border Grid.Column="4" Classes="inventoryMetricCell">
+                    <Grid ColumnDefinitions="Auto,12,*">
+                        <Border Classes="inventoryMetricIcon">
+                            <materialIcons:MaterialIcon Kind="Filter" Width="18" Height="18"
+                                                        Foreground="{DynamicResource IconSuccessBrush}"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" MinWidth="0">
+                            <TextBlock Text="{DynamicResource Inventory.UniqueTags}" Classes="metricLabel" />
+                            <TextBlock Text="{Binding UniqueTagCount}" Classes="metricValue" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="5" Classes="inventoryMetricDivider" />
+
+                <Border Grid.Column="6" Classes="inventoryMetricCell">
+                    <Grid ColumnDefinitions="Auto,12,*">
+                        <Border Classes="inventoryMetricIcon">
+                            <materialIcons:MaterialIcon Kind="Timer" Width="18" Height="18"
+                                                        Foreground="{DynamicResource IconWarningBrush}"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" MinWidth="0">
+                            <TextBlock Text="{DynamicResource Inventory.Duration}" Classes="metricLabel" />
+                            <TextBlock Text="{Binding InventoryDuration}" Classes="metricValue" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
 
         <!-- Data Grid -->
         <Border Grid.Row="4" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
