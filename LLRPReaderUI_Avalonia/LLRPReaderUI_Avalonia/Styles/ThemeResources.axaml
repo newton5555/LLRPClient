@@ -75,6 +75,8 @@
             <SolidColorBrush x:Key="SubtleOverlayBrush" Color="#F0F4F8" />
             <SolidColorBrush x:Key="ModalOverlayBrush" Color="#80000000" />
             <SolidColorBrush x:Key="SubtleBorderBrush" Color="#20000000" />
+            <SolidColorBrush x:Key="BusyDialogAccentBrush" Color="#EEF8FE" />
+            <BoxShadows x:Key="BusyDialogShadow">0 18 48 0 #33000000</BoxShadows>
 
             <!-- Button variants -->
             <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#0D6E9E" />
@@ -164,9 +166,9 @@
             <Thickness x:Key="SectionPadding">12</Thickness>
             <Thickness x:Key="CardPadding">16</Thickness>
             <CornerRadius x:Key="InputRadius">8</CornerRadius>
-            <CornerRadius x:Key="CardRadius">16</CornerRadius>
-            <CornerRadius x:Key="PanelRadius">20</CornerRadius>
-            <CornerRadius x:Key="ShellRadius">24</CornerRadius>
+            <CornerRadius x:Key="CardRadius">10</CornerRadius>
+            <CornerRadius x:Key="PanelRadius">12</CornerRadius>
+            <CornerRadius x:Key="ShellRadius">16</CornerRadius>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
@@ -240,6 +242,8 @@
             <SolidColorBrush x:Key="SubtleOverlayBrush" Color="#14FFFFFF" />
             <SolidColorBrush x:Key="ModalOverlayBrush" Color="#9A040A0E" />
             <SolidColorBrush x:Key="SubtleBorderBrush" Color="#1FFFFFFF" />
+            <SolidColorBrush x:Key="BusyDialogAccentBrush" Color="#16313F" />
+            <BoxShadows x:Key="BusyDialogShadow">0 18 48 0 #66000000</BoxShadows>
 
             <!-- Button variants -->
             <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#2F97C8" />
@@ -329,9 +333,9 @@
             <Thickness x:Key="SectionPadding">12</Thickness>
             <Thickness x:Key="CardPadding">16</Thickness>
             <CornerRadius x:Key="InputRadius">8</CornerRadius>
-            <CornerRadius x:Key="CardRadius">16</CornerRadius>
-            <CornerRadius x:Key="PanelRadius">20</CornerRadius>
-            <CornerRadius x:Key="ShellRadius">24</CornerRadius>
+            <CornerRadius x:Key="CardRadius">10</CornerRadius>
+            <CornerRadius x:Key="PanelRadius">12</CornerRadius>
+            <CornerRadius x:Key="ShellRadius">16</CornerRadius>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

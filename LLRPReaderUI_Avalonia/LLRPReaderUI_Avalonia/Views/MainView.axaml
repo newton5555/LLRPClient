@@ -49,6 +49,27 @@
             <Setter Property="Background" Value="{DynamicResource NavigationButtonHoverBrush}" />
         </Style>
 
+        <Style Selector="Border.busyDialog">
+            <Setter Property="MinWidth" Value="340" />
+            <Setter Property="MaxWidth" Value="480" />
+            <Setter Property="Margin" Value="24" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{DynamicResource PanelRadius}" />
+            <Setter Property="BoxShadow" Value="{DynamicResource BusyDialogShadow}" />
+            <Setter Property="ClipToBounds" Value="True" />
+        </Style>
+
+        <Style Selector="Border.busyIconShell">
+            <Setter Property="Width" Value="42" />
+            <Setter Property="Height" Value="42" />
+            <Setter Property="CornerRadius" Value="{DynamicResource InputRadius}" />
+            <Setter Property="Background" Value="{DynamicResource BusyDialogAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SubtleBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
     </UserControl.Styles>
 
     <Grid RowDefinitions="*,Auto" Background="Transparent">
@@ -205,23 +226,40 @@
                Background="{DynamicResource ModalOverlayBrush}"
                IsHitTestVisible="{Binding IsGlobalBusy}"
                IsVisible="{Binding IsGlobalBusy}">
-            <Border Width="420"
-                    Padding="20"
+            <Border Classes="busyDialog"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Background="{DynamicResource SurfaceBrush}"
-                    BorderBrush="{DynamicResource BorderStrongBrush}"
-                    BorderThickness="1"
-                    CornerRadius="{DynamicResource PanelRadius}">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
-                    <ProgressBar Width="360" Height="14" IsIndeterminate="True" />
-                    <TextBlock Margin="0,12,0,0"
-                               HorizontalAlignment="Center"
-                               FontSize="12"
-                               Classes="semiBold"
-                               Foreground="{DynamicResource StatusDefaultTextBrush}"
-                               Text="{Binding BusyText}" />
-                </StackPanel>
+                    VerticalAlignment="Center">
+                <Grid Margin="20,18"
+                      RowDefinitions="Auto,16,Auto"
+                      ColumnDefinitions="Auto,16,*">
+                    <Border Classes="busyIconShell">
+                        <materialIcons:MaterialIcon Kind="Sync"
+                                                    Width="22"
+                                                    Height="22"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{DynamicResource PrimaryBrush}" />
+                    </Border>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="4">
+                        <TextBlock Text="{DynamicResource Common.Executing}"
+                                   FontSize="15"
+                                   Classes="semiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                        <TextBlock Text="{Binding BusyText}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource StatusDefaultTextBrush}"
+                                   TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxLines="2" />
+                    </StackPanel>
+
+                    <ProgressBar Grid.Row="2"
+                                 Grid.ColumnSpan="3"
+                                 Height="5"
+                                 HorizontalAlignment="Stretch"
+                                 IsIndeterminate="True" />
+                </Grid>
             </Border>
         </Panel>
     </Grid>

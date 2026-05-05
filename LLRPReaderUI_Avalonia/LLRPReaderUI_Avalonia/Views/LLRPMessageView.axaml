@@ -110,9 +110,9 @@
         </Border>
 
         <!-- Main Content -->
-        <Grid Grid.Row="2" Margin="0,8,0,0" ColumnDefinitions="300,2,*">
+        <Grid Grid.Row="2" Margin="0,8,0,0" ColumnDefinitions="300,6,*">
             <!-- Left: Raw Frame List -->
-            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
+            <Border Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}" MinWidth="220">
                 <Grid RowDefinitions="Auto,*">
                     <Border Grid.Row="0" Padding="12,8" Background="{DynamicResource SubtleOverlayBrush}">
                         <TextBlock Text="{DynamicResource LLRPMessage.RawFrameList}" 
@@ -151,10 +151,15 @@
                 </Grid>
             </Border>
 
+            <GridSplitter Grid.Column="1"
+                          ResizeDirection="Columns"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch" />
+
             <!-- Right: Message Tree and Raw Data -->
-            <Grid Grid.Column="2" RowDefinitions="*,12,*">
+            <Grid Grid.Column="2" RowDefinitions="*,6,*" MinWidth="320">
                 <!-- Message Tree -->
-                <Border Grid.Row="0" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
+                <Border Grid.Row="0" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}" MinHeight="140">
                     <Grid RowDefinitions="Auto,*">
                         <Border Grid.Row="0" Padding="12,8" Background="{DynamicResource SubtleOverlayBrush}">
                             <StackPanel Classes="sectionHeader">
@@ -191,8 +196,13 @@
                     </Grid>
                 </Border>
 
+                <GridSplitter Grid.Row="1"
+                              ResizeDirection="Rows"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch" />
+
                 <!-- Raw Hex Data -->
-                <Border Grid.Row="2" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}">
+                <Border Grid.Row="2" Classes="card" Background="{DynamicResource CardInnerBackgroundBrush}" MinHeight="120">
                     <Grid RowDefinitions="Auto,*">
                         <Border Grid.Row="0" Padding="12,8" Background="{DynamicResource SubtleOverlayBrush}">
                             <StackPanel Classes="sectionHeader">

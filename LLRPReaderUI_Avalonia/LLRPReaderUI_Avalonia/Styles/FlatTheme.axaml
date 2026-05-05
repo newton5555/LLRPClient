@@ -153,10 +153,19 @@
     <Style Selector="Border.inventoryMetricIcon">
         <Setter Property="Width" Value="36" />
         <Setter Property="Height" Value="36" />
-        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="CornerRadius" Value="{DynamicResource InputRadius}" />
         <Setter Property="Background" Value="{DynamicResource SubtleOverlayBrush}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="GridSplitter">
+        <Setter Property="Background" Value="{DynamicResource SubtleBorderBrush}" />
+        <Setter Property="Margin" Value="2" />
+    </Style>
+
+    <Style Selector="GridSplitter:pointerover">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
     </Style>
 
     <Style Selector="Border.inventoryMetricDivider">
@@ -183,7 +192,7 @@
 
     <Style Selector="Border.statusChip">
         <Setter Property="Padding" Value="12,6" />
-        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="CornerRadius" Value="{DynamicResource InputRadius}" />
         <Setter Property="Background" Value="{DynamicResource SubtleOverlayBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource SubtleBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -470,7 +479,7 @@
         <Setter Property="Foreground" Value="{DynamicResource ToolTipForegroundBrush}" />
         <Setter Property="Padding" Value="10,6" />
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="CornerRadius" Value="6" />
     </Style>
 
 </Styles>
