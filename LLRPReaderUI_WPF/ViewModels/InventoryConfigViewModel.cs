@@ -7,6 +7,7 @@ using LLRPReaderUI_WPF.Messages;
 using LLRPReaderUI_WPF.Models;
 using LLRPReaderUI_WPF.Services;
 using Org.LLRP.LTK.LLRPV1;
+using System;
 using System.Collections.ObjectModel;
 
 namespace LLRPReaderUI_WPF.ViewModels;
@@ -38,9 +39,10 @@ public partial class InventoryConfigViewModel : ObservableObject
         {
             r.OnConnectionStateChanged(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, StatusUpdateRequestedMessage>(this, static (r, _) =>
+        WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
         {
             r.RefreshStateAwareFlagFromSnapshot();
+            r.OnStatusUpdateRequested(m.Value);
         });
 
         RefreshStateAwareFlagFromSnapshot();
@@ -54,6 +56,20 @@ public partial class InventoryConfigViewModel : ObservableObject
         if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
         {
             IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+        }
+    }
+
+    private void OnStatusUpdateRequested(string reason)
+    {
+        if (!reason.Contains("AttachedData", StringComparison.OrdinalIgnoreCase)
+            && !reason.Contains("Settings", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
+        {
+            ApplySettingsSnapshot(settings);
         }
     }
 
@@ -278,66 +294,7 @@ public partial class InventoryConfigViewModel : ObservableObject
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
-            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
-
-            AutoStartMode = settings.AutoStart.Mode;
-            AutoStartGpiPortNumber = settings.AutoStart.GpiPortNumber;
-            AutoStartGpiLevel = settings.AutoStart.GpiLevel;
-            AutoStartFirstDelayInMs = settings.AutoStart.FirstDelayInMs;
-            AutoStartPeriodInMs = settings.AutoStart.PeriodInMs;
-            AutoStartUtcTimestamp = settings.AutoStart.UtcTimestamp;
-
-            AutoStopMode = settings.AutoStop.Mode;
-            AutoStopDurationInMs = settings.AutoStop.DurationInMs;
-            AutoStopGpiPortNumber = settings.AutoStop.GpiPortNumber;
-            AutoStopGpiLevel = settings.AutoStop.GpiLevel;
-            AutoStopTimeout = settings.AutoStop.Timeout;
-
-            FilterMode = settings.Filters.Mode;
-            Filter1MemoryBank = settings.Filters.TagFilter1.MemoryBank;
-            Filter1BitPointer = settings.Filters.TagFilter1.BitPointer;
-            Filter1BitCount = settings.Filters.TagFilter1.BitCount;
-            Filter1TagMask = settings.Filters.TagFilter1.TagMask ?? string.Empty;
-            Filter1FilterOp = settings.Filters.TagFilter1.FilterOp;
-
-            Filter2MemoryBank = settings.Filters.TagFilter2.MemoryBank;
-            Filter2BitPointer = settings.Filters.TagFilter2.BitPointer;
-            Filter2BitCount = settings.Filters.TagFilter2.BitCount;
-            Filter2TagMask = settings.Filters.TagFilter2.TagMask ?? string.Empty;
-            Filter2FilterOp = settings.Filters.TagFilter2.FilterOp;
-
-            TagSelectFilters.Clear();
-            foreach (var filter in settings.Filters.TagSelectFilters)
-            {
-                TagSelectFilters.Add(new TagSelectFilterItemViewModel
-                {
-                    MemoryBank = filter.MemoryBank,
-                    BitPointer = filter.BitPointer,
-                    BitCount = filter.BitCount,
-                    TagMask = filter.TagMask ?? string.Empty,
-                    MatchAction = filter.MatchAction,
-                    NonMatchAction = filter.NonMatchAction,
-                    UseStateAwareAction = filter.UseStateAwareAction,
-                    StateAwareTarget = filter.StateAwareTarget,
-                    StateAwareAction = filter.StateAwareAction
-                });
-            }
-
-            ReportMode = settings.Report.Mode;
-            IncludeAntennaPortNumber = settings.Report.IncludeAntennaPortNumber;
-            IncludeChannel = settings.Report.IncludeChannel;
-            IncludeFirstSeenTime = settings.Report.IncludeFirstSeenTime;
-            IncludeLastSeenTime = settings.Report.IncludeLastSeenTime;
-            IncludeSeenCount = settings.Report.IncludeSeenCount;
-            IncludePeakRssi = settings.Report.IncludePeakRssi;
-            IncludePcBits = settings.Report.IncludePcBits;
-            IncludeCrc = settings.Report.IncludeCrc;
-
-            AttachedDataEnabled = settings.AttachedData?.Enabled ?? false;
-            AttachedDataMemoryBank = settings.AttachedData?.MemoryBank ?? MemoryBank.Tid;
-            AttachedDataWordPointer = settings.AttachedData?.WordPointer ?? (ushort)0;
-            AttachedDataWordCount = settings.AttachedData?.WordCount ?? (ushort)6;
-            AttachedDataAccessPassword = settings.AttachedData?.AccessPassword ?? "00000000";
+            ApplySettingsSnapshot(settings);
 
             OperationResult = _languageService.GetLocalizedString("InventoryConfig.ReadSuccess");
             logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.ReadSuccess"));
@@ -347,6 +304,70 @@ public partial class InventoryConfigViewModel : ObservableObject
             OperationResult = GetLocalizedString("InventoryConfig.ReadError", ex.Message);
             logs.LogOperation(GetLocalizedString("InventoryConfig.ReadError", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
+    }
+
+    private void ApplySettingsSnapshot(Settings settings)
+    {
+        IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+
+        AutoStartMode = settings.AutoStart.Mode;
+        AutoStartGpiPortNumber = settings.AutoStart.GpiPortNumber;
+        AutoStartGpiLevel = settings.AutoStart.GpiLevel;
+        AutoStartFirstDelayInMs = settings.AutoStart.FirstDelayInMs;
+        AutoStartPeriodInMs = settings.AutoStart.PeriodInMs;
+        AutoStartUtcTimestamp = settings.AutoStart.UtcTimestamp;
+
+        AutoStopMode = settings.AutoStop.Mode;
+        AutoStopDurationInMs = settings.AutoStop.DurationInMs;
+        AutoStopGpiPortNumber = settings.AutoStop.GpiPortNumber;
+        AutoStopGpiLevel = settings.AutoStop.GpiLevel;
+        AutoStopTimeout = settings.AutoStop.Timeout;
+
+        FilterMode = settings.Filters.Mode;
+        Filter1MemoryBank = settings.Filters.TagFilter1.MemoryBank;
+        Filter1BitPointer = settings.Filters.TagFilter1.BitPointer;
+        Filter1BitCount = settings.Filters.TagFilter1.BitCount;
+        Filter1TagMask = settings.Filters.TagFilter1.TagMask ?? string.Empty;
+        Filter1FilterOp = settings.Filters.TagFilter1.FilterOp;
+
+        Filter2MemoryBank = settings.Filters.TagFilter2.MemoryBank;
+        Filter2BitPointer = settings.Filters.TagFilter2.BitPointer;
+        Filter2BitCount = settings.Filters.TagFilter2.BitCount;
+        Filter2TagMask = settings.Filters.TagFilter2.TagMask ?? string.Empty;
+        Filter2FilterOp = settings.Filters.TagFilter2.FilterOp;
+
+        TagSelectFilters.Clear();
+        foreach (var filter in settings.Filters.TagSelectFilters)
+        {
+            TagSelectFilters.Add(new TagSelectFilterItemViewModel
+            {
+                MemoryBank = filter.MemoryBank,
+                BitPointer = filter.BitPointer,
+                BitCount = filter.BitCount,
+                TagMask = filter.TagMask ?? string.Empty,
+                MatchAction = filter.MatchAction,
+                NonMatchAction = filter.NonMatchAction,
+                UseStateAwareAction = filter.UseStateAwareAction,
+                StateAwareTarget = filter.StateAwareTarget,
+                StateAwareAction = filter.StateAwareAction
+            });
+        }
+
+        ReportMode = settings.Report.Mode;
+        IncludeAntennaPortNumber = settings.Report.IncludeAntennaPortNumber;
+        IncludeChannel = settings.Report.IncludeChannel;
+        IncludeFirstSeenTime = settings.Report.IncludeFirstSeenTime;
+        IncludeLastSeenTime = settings.Report.IncludeLastSeenTime;
+        IncludeSeenCount = settings.Report.IncludeSeenCount;
+        IncludePeakRssi = settings.Report.IncludePeakRssi;
+        IncludePcBits = settings.Report.IncludePcBits;
+        IncludeCrc = settings.Report.IncludeCrc;
+
+        AttachedDataEnabled = settings.AttachedData?.Enabled ?? false;
+        AttachedDataMemoryBank = settings.AttachedData?.MemoryBank ?? MemoryBank.Tid;
+        AttachedDataWordPointer = settings.AttachedData?.WordPointer ?? (ushort)0;
+        AttachedDataWordCount = settings.AttachedData?.WordCount ?? (ushort)6;
+        AttachedDataAccessPassword = settings.AttachedData?.AccessPassword ?? "00000000";
     }
 
     [RelayCommand]
