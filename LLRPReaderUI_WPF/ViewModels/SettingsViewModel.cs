@@ -432,6 +432,11 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void QueryDeviceSettings()
     {
+        QueryDeviceSettings(refreshFeatureOptions: true);
+    }
+
+    private void QueryDeviceSettings(bool refreshFeatureOptions)
+    {
         try
         {
             if (!reader.IsConnected)
@@ -456,7 +461,7 @@ public partial class SettingsViewModel : ObservableObject
                 SaveResult = _languageService.GetLocalizedString("Settings.DefaultApplied");
             }
 
-            ApplySettingsToUi(settings);
+            ApplySettingsToUi(settings, refreshFeatureOptions);
             UpdateReaderEventNotifications();
             settingsStore.Set(settings);
             SaveResult = _languageService.GetLocalizedString("Settings.GotFromDevice");
@@ -484,9 +489,7 @@ public partial class SettingsViewModel : ObservableObject
 
             reader.ResetToFactoryDefaultsOnly();
             settingsStore.Clear();
-            QueryDeviceSettings(); // Refresh UI with factory defaults
-            HopTableId = 1;
-            ChannelIndex = 1;
+            QueryDeviceSettings(refreshFeatureOptions: false); // Refresh values without rebuilding combo options
             SaveResult = _languageService.GetLocalizedString("Settings.ResetSuccess");
             logs.LogOperation(_languageService.GetLocalizedString("Settings.ResetLog"));
         }
@@ -527,9 +530,12 @@ public partial class SettingsViewModel : ObservableObject
         }
     }
 
-    private void ApplySettingsToUi(Settings settings)
+    private void ApplySettingsToUi(Settings settings, bool refreshFeatureOptions = true)
     {
-        RefreshFeatureOptions();
+        if (refreshFeatureOptions)
+        {
+            RefreshFeatureOptions();
+        }
 
         EnableKeepalive = settings.Keepalives.Enabled;
         KeepaliveIntervalMs = (int)settings.Keepalives.PeriodInMs;

@@ -163,20 +163,20 @@
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.StartDate}" />
-                        <DatePicker SelectedDate="{Binding FilterStartDate}" />
+                        <DatePicker SelectedDate="{Binding FilterStartDate}"  VerticalContentAlignment="Center"   Height="{Binding ElementName=DirectionComboBox,Path=ActualHeight}"/>
                     </StackPanel>
                     <StackPanel Width="150" Margin="0,0,12,12">
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.EndDate}" />
-                        <DatePicker SelectedDate="{Binding FilterEndDate}" />
+                        <DatePicker SelectedDate="{Binding FilterEndDate}" VerticalContentAlignment="Center"   Height="{Binding ElementName=DirectionComboBox,Path=ActualHeight}"/>
                     </StackPanel>
                     <StackPanel Width="150" Margin="0,0,12,12">
                         <TextBlock Margin="0,0,0,6"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Text="{DynamicResource LLRPMessage.Direction}" />
                         <ComboBox ItemsSource="{Binding DirectionOptions}"
-                                  SelectedItem="{Binding FilterDirection}" />
+                                  SelectedItem="{Binding FilterDirection}" Name="DirectionComboBox"/>
                     </StackPanel>
                     <StackPanel Width="150" Margin="0,0,12,12">
                         <TextBlock Margin="0,0,0,6"

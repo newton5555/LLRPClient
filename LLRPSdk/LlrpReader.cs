@@ -1877,10 +1877,21 @@ namespace LLRPSdk
                 foreach (ushort NewPortNumber in paramAiSpec.AntennaIDs.data)//保存启用天线的ids
                     roSpecAndConfig.Antennas.AntennaConfigs.Add(new AntennaConfig(NewPortNumber));
                 PARAM_C1G2InventoryCommand inventoryCommandSetting = (PARAM_C1G2InventoryCommand)paramAiSpec.InventoryParameterSpec[0].AntennaConfiguration[0].AirProtocolInventoryCommandSettings[0];
+                roSpecAndConfig.InventoryStateAware = inventoryCommandSetting.TagInventoryStateAware;
                 roSpecAndConfig.LoadFilterData(inventoryCommandSetting.C1G2Filter);
                 roSpecAndConfig.RfMode = new uint?((uint)inventoryCommandSetting.C1G2RFControl.ModeIndex);
                 roSpecAndConfig.TagPopulationEstimate = inventoryCommandSetting.C1G2SingulationControl.TagPopulation;
                 roSpecAndConfig.Session = inventoryCommandSetting.C1G2SingulationControl.Session.ToInt();
+                if (inventoryCommandSetting.C1G2SingulationControl?.C1G2TagInventoryStateAwareSingulationAction != null)
+                {
+                    var stateAwareSingulationAction = inventoryCommandSetting.C1G2SingulationControl.C1G2TagInventoryStateAwareSingulationAction;
+                    roSpecAndConfig.InventoryTarget = stateAwareSingulationAction.I == ENUM_C1G2TagInventoryStateAwareI.State_B
+                        ? InventoryTarget.B
+                        : InventoryTarget.A;
+                    roSpecAndConfig.InventorySearchMode = stateAwareSingulationAction.S == ENUM_C1G2TagInventoryStateAwareS.SL
+                        ? InventorySearchMode.SL
+                        : InventorySearchMode.Not_SL;
+                }
                 for (int index = 0; index < inventoryCommandSetting.Custom.Length; ++index)
                 {
                     //去掉Impinj Custom 扩展的功能
@@ -1901,6 +1912,11 @@ namespace LLRPSdk
                     AntennaConfig antenna = roSpecAndConfig.Antennas.GetAntenna(antennaConfiguration[index1].AntennaID);
                     antenna.IsEnabled = true;
                     antenna.ReaderMaxSensitivityCapability = this._readerCapabilities.ReaderMaxSensitivityActualDbm;
+                    if (index1 == 0 && antennaConfiguration[index1].RFTransmitter != null)
+                    {
+                        roSpecAndConfig.HopTableId = antennaConfiguration[index1].RFTransmitter.HopTableID;
+                        roSpecAndConfig.ChannelIndex = antennaConfiguration[index1].RFTransmitter.ChannelIndex;
+                    }
                     ushort receiverSensitivity = antennaConfiguration[index1].RFReceiver.ReceiverSensitivity;
                     bool foundRxSensitivity = false;
                     for (int rxIndex = 0; rxIndex < this._readerCapabilities.RxSensitivities.Count; ++rxIndex)
