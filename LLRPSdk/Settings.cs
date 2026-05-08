@@ -307,6 +307,7 @@ namespace LLRPSdk
                 this.Filters.TagFilter1.MemoryBank = (MemoryBank)filters[0].C1G2TagInventoryMask.MB.ToInt();
                 this.Filters.TagFilter1.BitPointer = filters[0].C1G2TagInventoryMask.Pointer;
                 this.Filters.TagFilter1.TagMask = filters[0].C1G2TagInventoryMask.TagMask.ToHexString();
+                this.Filters.TagFilter1.BitCount = filters[0].C1G2TagInventoryMask.TagMask?.Count ?? 0;
                 bool hasStateAwareFilter = filters.Any(filter => filter?.C1G2TagInventoryStateAwareFilterAction != null);
                 if (hasStateAwareFilter)
                     this.Filters.Mode = TagFilterMode.UseStateAwareTagSelectFilters;
@@ -317,6 +318,7 @@ namespace LLRPSdk
                     this.Filters.TagFilter2.MemoryBank = (MemoryBank)filters[1].C1G2TagInventoryMask.MB.ToInt();
                     this.Filters.TagFilter2.BitPointer = filters[1].C1G2TagInventoryMask.Pointer;
                     this.Filters.TagFilter2.TagMask = filters[1].C1G2TagInventoryMask.TagMask.ToHexString();
+                    this.Filters.TagFilter2.BitCount = filters[1].C1G2TagInventoryMask.TagMask?.Count ?? 0;
                     if (filters[1].C1G2TagInventoryStateUnawareFilterAction != null)
                         this.Filters.Mode = filters[1].C1G2TagInventoryStateUnawareFilterAction.Action != ENUM_C1G2StateUnawareAction.DoNothing_Unselect ? TagFilterMode.Filter1OrFilter2 : TagFilterMode.Filter1AndFilter2;
                     else
@@ -332,7 +334,8 @@ namespace LLRPSdk
                     {
                         TagMask = filter.C1G2TagInventoryMask.TagMask.ToHexString(),
                         BitPointer = filter.C1G2TagInventoryMask.Pointer,
-                        MemoryBank = (MemoryBank)filter.C1G2TagInventoryMask.MB.ToInt()
+                        MemoryBank = (MemoryBank)filter.C1G2TagInventoryMask.MB.ToInt(),
+                        BitCount = filter.C1G2TagInventoryMask.TagMask?.Count ?? 0
                     };
                     if (filter.C1G2TagInventoryStateAwareFilterAction != null)
                     {
