@@ -539,11 +539,15 @@ public partial class SettingsViewModel : ObservableObject
 
         EnableKeepalive = settings.Keepalives.Enabled;
         KeepaliveIntervalMs = (int)settings.Keepalives.PeriodInMs;
+        SelectedRfMode = null;
         SelectedRfMode = settings.RfMode;
         SelectedRfModeOption = RfModeOptions.FirstOrDefault(x => x.Id == settings.RfMode);
         TagPopulationEstimate = settings.TagPopulationEstimate;
         HoldEventsAndReportsUponReconnect = settings.HoldReportsOnDisconnect;
+        // Force ComboBox/TextBox bindings to refresh even when device value equals current value.
+        HopTableId = ushort.MaxValue;
         HopTableId = settings.HopTableId;
+        ChannelIndex = ushort.MaxValue;
         ChannelIndex = settings.ChannelIndex;
         InventoryStateAware = settings.InventoryStateAware;
         InventoryTarget = settings.InventoryTarget;
