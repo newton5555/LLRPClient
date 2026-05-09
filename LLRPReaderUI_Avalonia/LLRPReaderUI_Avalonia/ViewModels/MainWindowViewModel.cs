@@ -266,6 +266,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private static string BuildWindowTitle()
     {
+        //return "LLRP ¿Í»§¶Ë";
         const string appName = "LLRP Reader UI";
         var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
 
