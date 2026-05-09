@@ -29,7 +29,11 @@
 
 - 标签读写操作
 - 高级标签操作
-- 任何带 `AccessCommandOpSpecResult` 的标签操作回报
+- 任何带 `AccessCommandOpSpecResult` 且明确属于用户发起标签操作链路的标签操作回报
+
+但需要排除一个现有特例：
+
+- 盘点流程中的“附加数据（Attached Data）AO”虽然同样通过 `AccessCommandOpSpecResult` 回报，但其用途属于盘点结果增强，不应从盘点页过滤掉。
 
 这些结果应继续只在对应的功能页面内消费和展示。
 
@@ -38,13 +42,17 @@
 1. 在共享 SDK 解析层增加“标签上报来源”的显式标记能力。
 2. 来源判定逻辑放在 `LlrpReader.OnTagReportAvailableInternal(...)` 中逐条 `TagReportData` 执行，不能按整包 `RO_ACCESS_REPORT` 一刀切。
 3. 默认判定规则如下：
-   - 若该条 `TagReportData` 带有 `AccessCommandOpSpecResult`，判定为标签操作来源。
+   - 若该条 `TagReportData` 带有 `AccessCommandOpSpecResult`：
+     - 且 `AccessSpecID` 命中盘点附加数据专用 AccessSpec（当前实现中为 `ATTACHED_DATA_ACCESS_SPEC_ID`）时，仍判定为普通寻卡来源。
+     - 否则再继续结合 `AccessSpecID` / 操作上下文判定是否属于标签操作来源，不能直接一刀切视为标签操作。
    - 若该条 `TagReportData` 带有可识别的 `AccessSpecID` 且属于 Access 操作链路，判定为标签操作来源。
    - 否则判定为普通寻卡来源。
 4. 建议新增明确的来源类型，例如 `TagReportSource`，至少包含：
    - `Inventory`
    - `TagOperation`
-5. `InventoryViewModel.OnTagsReported(...)` 后续只处理 `Inventory` 来源的标签。
+5. `InventoryViewModel.OnTagsReported(...)` 后续只处理允许进入盘点页的标签来源：
+   - 普通寻卡来源；
+   - 盘点附加数据专用 AccessSpec 对应的来源（如果实现中将其单独建模，也应视为允许进入盘点页）。
 6. `ReadWriteViewModel.OnTagOpComplete(...)` 与 `AdvancedTagOpsViewModel.OnTagOpComplete(...)` 继续处理标签操作结果，不改变现有职责。
 
 ### 测试与验收
@@ -52,6 +60,7 @@
 - 普通寻卡启动后，盘点页正常显示标签数据。
 - 读写操作成功时，结果只在读写页显示，盘点页不新增行。
 - 高级标签操作成功时，结果只在高级标签操作页显示，盘点页不新增行。
+- 启用附加数据后，盘点页仍能正常显示 `AttachedData` 列内容。
 - 混合回报场景下，来源识别按单条 `TagReportData` 生效，不得误过滤普通寻卡标签。
 
 ## 优化项 2：盘点数据按 EPC 汇总
@@ -177,6 +186,7 @@
 - 本文档只覆盖 WPF 与其依赖的共享 SDK 解析层，不扩展到 Avalonia。
 - 文档为实施计划，不是用户手册，也不是版本更新日志。
 - 标签来源判定第一版默认优先依赖 `AccessCommandOpSpecResult` 与 `AccessSpecID`，不要求一开始就依赖 `ROSpecID` 或 `SpecIndex`。
+- 第一版实现中，盘点附加数据专用 AccessSpec 默认视为盘点链路的一部分，不归类为用户标签操作结果。
 - 盘点页采用“只显示聚合结果”的方向，不保留原始逐条标签列表的并行视图。
 - 参数页面中的两类动作默认命名固定为：
   - `从缓存加载`
