@@ -15,12 +15,13 @@ namespace LLRPReaderUI_Avalonia.ViewModels;
 public partial class InventoryViewModel : ViewModelBase
 {
     private const int MaxRows = 500;
+    private const string EmptyValue = "-";
     private static readonly TimeSpan ManualPullAcceptWindow = TimeSpan.FromSeconds(2);
     private readonly LlrpReader reader;
     private readonly IAppLogService logs;
     private readonly ReaderSettingsStore settingsStore;
     private readonly LanguageService _languageService;
-    private readonly HashSet<string> uniqueEpcs = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, InventoryTagItemViewModel> aggregatedTags = new(StringComparer.OrdinalIgnoreCase);
     private readonly DispatcherTimer inventoryElapsedTimer;
     private DateTime manualPullAcceptUntilUtc = DateTime.MinValue;
     private DateTime? inventoryStartedAt;
@@ -86,6 +87,7 @@ public partial class InventoryViewModel : ViewModelBase
         this.settingsStore = settingsStore;
         _languageService = languageService;
         this.reader.TagsReported += OnTagsReported;
+        this.reader.ReaderStarted += OnReaderStarted;
         this.reader.ReaderStopped += OnReaderStopped;
         WeakReferenceMessenger.Default.Register<InventoryViewModel, ConnectionStateChangedMessage>(this, static (r, m) =>
         {
@@ -203,7 +205,7 @@ public partial class InventoryViewModel : ViewModelBase
     private void ClearReceivedData()
     {
         ReceivedTags.Clear();
-        uniqueEpcs.Clear();
+        aggregatedTags.Clear();
         TotalReports = 0;
         TotalTags = 0;
         UniqueTagCount = 0;
@@ -261,60 +263,174 @@ public partial class InventoryViewModel : ViewModelBase
         });
     }
 
+    private void OnReaderStarted(LlrpReader _reader, ReaderStartedEvent _eventArgs)
+    {
+        RunOnUi(EnsureInventoryRunning);
+    }
+
     private void OnTagsReported(LlrpReader _reader, TagReport report)
     {
         bool fromManualPull = DateTime.UtcNow <= manualPullAcceptUntilUtc;
 
         // 默认只在寻卡中处理；手动拉缓存命令触发后短时间窗口内也允许处理
+        if (report.Tags is null || report.Tags.Count == 0)
+            return;
+
+        var visibleTags = report.Tags
+            .Where(ShouldDisplayInInventory)
+            .ToList();
+
+        if (visibleTags.Count == 0)
+            return;
+
+        if (!IsRunning && !fromManualPull)
+        {
+            RunOnUi(EnsureInventoryRunning);
+        }
+
         if (!IsRunning && !fromManualPull)
             return;
-        if(report.Tags is null || report.Tags.Count == 0)
-            return;
+
         RunOnUi(() =>
         {
             TotalReports++;
-            TotalTags += report.Tags.Count;
-            logs.LogOperation(GetLocalizedString("Inventory.TagReport", report.Tags.Count));
+            TotalTags += visibleTags.Count;
+            logs.LogOperation(GetLocalizedString("Inventory.TagReport", visibleTags.Count));
 
-            foreach (var tag in report.Tags)
+            foreach (var tag in visibleTags)
             {
-                if(tag.ReportSource==TagReportSource.Unknown|| tag.ReportSource == TagReportSource.TagOperation) 
-                    continue;
-                var epc = tag.Epc?.ToHexString() ?? string.Empty;
-                var attachedData = "-";
-                if (AttachedDataEnabled && tag.ReadOperationResults is { Count: > 0 })
-                {
-                    var successRead = tag.ReadOperationResults.FirstOrDefault(x => x.Result == ReadResultStatus.Success && x.Data != null);
-                    attachedData = successRead?.Data?.ToHexString() ?? "-";
-                }
-                if (!string.IsNullOrWhiteSpace(epc))
-                {
-                    uniqueEpcs.Add(epc);
-                }
-
-                ReceivedTags.Insert(0, new InventoryTagItemViewModel
-                {
-                    ReceiveTime = DateTime.Now,//From PC 
-                    Epc = epc,
-                    Antenna = tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber.ToString() : "-",
-                    ChannelMhz = tag.IsChannelInMhzPresent ? tag.ChannelInMhz.ToString("F3") : "-",
-                    Rssi = tag.IsPeakRssiPresent ? tag.PeakRssi.ToString("F1") : "-",
-                    SeenCount = tag.IsSeenCountPresent ? tag.TagSeenCount.ToString() : "-",
-                    Pc = tag.IsPcBitsPresent ? $"0x{tag.PcBits:X4}" : "-",
-                    Crc = tag.IsCrcPresent ? $"0x{tag.Crc:X4}" : "-",
-                    FirstSeenTimestampUtc = FormatUtcTimestamp(tag.IsFirstSeenTimePresent, tag.FirstSeenTime),
-                    LastSeenTimestampUtc = FormatUtcTimestamp(tag.IsLastSeenTimePresent, tag.LastSeenTime),
-                    AttachedData = attachedData
-                });
+                UpsertAggregatedTag(tag);
             }
 
-            while (ReceivedTags.Count > MaxRows)
-            {
-                ReceivedTags.RemoveAt(ReceivedTags.Count - 1);
-            }
-
-            UniqueTagCount = uniqueEpcs.Count;
+            TrimReceivedTags();
+            UniqueTagCount = ReceivedTags.Count;
         });
+    }
+
+    private void EnsureInventoryRunning()
+    {
+        if (IsRunning)
+        {
+            return;
+        }
+
+        inventoryStartedAt ??= DateTime.Now;
+        UpdateInventoryDuration();
+        inventoryElapsedTimer.Start();
+        IsRunning = true;
+        InventoryState = _languageService.GetLocalizedString("Inventory.Running");
+    }
+
+    private bool ShouldDisplayInInventory(Tag tag)
+    {
+        return !(tag.ReportSource == TagReportSource.Unknown || tag.ReportSource == TagReportSource.TagOperation);
+    }
+
+    private void UpsertAggregatedTag(Tag tag)
+    {
+        var aggregationKey = string.IsNullOrWhiteSpace(tag.Epc?.ToHexString())
+            ? EmptyValue
+            : tag.Epc!.ToHexString();
+
+        if (!aggregatedTags.TryGetValue(aggregationKey, out var row))
+        {
+            row = new InventoryTagItemViewModel
+            {
+                Epc = aggregationKey
+            };
+            aggregatedTags[aggregationKey] = row;
+            ReceivedTags.Add(row);
+        }
+
+        var reportSeenCount = tag.IsSeenCountPresent ? tag.TagSeenCount : (ushort)1;
+        row.ReceiveTime = DateTime.Now;
+        row.Epc = aggregationKey;
+        row.Antenna = tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber.ToString() : EmptyValue;
+        row.ChannelMhz = tag.IsChannelInMhzPresent ? tag.ChannelInMhz.ToString("F3") : EmptyValue;
+        row.Rssi = tag.IsPeakRssiPresent ? tag.PeakRssi.ToString("F1") : EmptyValue;
+        row.SeenCountValue += reportSeenCount;
+        row.SeenCount = row.SeenCountValue.ToString();
+        row.Pc = tag.IsPcBitsPresent ? $"0x{tag.PcBits:X4}" : EmptyValue;
+        row.Crc = tag.IsCrcPresent ? $"0x{tag.Crc:X4}" : EmptyValue;
+        row.AttachedData = ResolveAttachedData(tag);
+        row.FirstSeenTimestampUtc = ResolveFirstSeenTimestamp(row, tag);
+        row.LastSeenTimestampUtc = ResolveLastSeenTimestamp(row, tag);
+    }
+
+    private void TrimReceivedTags()
+    {
+        while (ReceivedTags.Count > MaxRows)
+        {
+            var removed = ReceivedTags[^1];
+            aggregatedTags.Remove(removed.Epc);
+            ReceivedTags.RemoveAt(ReceivedTags.Count - 1);
+        }
+    }
+
+    private string ResolveAttachedData(Tag tag)
+    {
+        if (!AttachedDataEnabled || tag.ReadOperationResults is not { Count: > 0 })
+        {
+            return EmptyValue;
+        }
+
+        var successRead = tag.ReadOperationResults.FirstOrDefault(x => x.Result == ReadResultStatus.Success && x.Data != null);
+        return successRead?.Data?.ToHexString() ?? EmptyValue;
+    }
+
+    private static string ResolveFirstSeenTimestamp(InventoryTagItemViewModel row, Tag tag)
+    {
+        var candidate = FormatUtcTimestamp(tag.IsFirstSeenTimePresent, tag.FirstSeenTime);
+        if (row.FirstSeenTimestampValueUtc is null)
+        {
+            row.FirstSeenTimestampValueUtc = GetUtcDateTime(tag.IsFirstSeenTimePresent, tag.FirstSeenTime);
+            return candidate;
+        }
+
+        var reportValue = GetUtcDateTime(tag.IsFirstSeenTimePresent, tag.FirstSeenTime);
+        if (reportValue is not null && reportValue < row.FirstSeenTimestampValueUtc)
+        {
+            row.FirstSeenTimestampValueUtc = reportValue;
+            return candidate;
+        }
+
+        return row.FirstSeenTimestampUtc;
+    }
+
+    private static string ResolveLastSeenTimestamp(InventoryTagItemViewModel row, Tag tag)
+    {
+        var candidate = FormatUtcTimestamp(tag.IsLastSeenTimePresent, tag.LastSeenTime);
+        var reportValue = GetUtcDateTime(tag.IsLastSeenTimePresent, tag.LastSeenTime);
+        if (row.LastSeenTimestampValueUtc is null)
+        {
+            row.LastSeenTimestampValueUtc = reportValue;
+            return candidate;
+        }
+
+        if (reportValue is not null && reportValue > row.LastSeenTimestampValueUtc)
+        {
+            row.LastSeenTimestampValueUtc = reportValue;
+            return candidate;
+        }
+
+        return row.LastSeenTimestampUtc;
+    }
+
+    private static DateTime? GetUtcDateTime(bool isPresent, Timestamp? timestamp)
+    {
+        if (!isPresent || timestamp is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return timestamp.UTCDateTime;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private static void RunOnUi(Action action)
@@ -465,17 +581,47 @@ public partial class InventoryViewModel : ViewModelBase
     }
 }
 
-public class InventoryTagItemViewModel
+public partial class InventoryTagItemViewModel : ObservableObject
 {
-    public DateTime ReceiveTime { get; set; }
-    public string Epc { get; set; } = string.Empty;
-    public string Antenna { get; set; } = "-";
-    public string ChannelMhz { get; set; } = "-";
-    public string Rssi { get; set; } = "-";
-    public string SeenCount { get; set; } = "-";
-    public string Pc { get; set; } = "-";
-    public string Crc { get; set; } = "-";
-    public string FirstSeenTimestampUtc { get; set; } = "-";
-    public string LastSeenTimestampUtc { get; set; } = "-";
-    public string AttachedData { get; set; } = "-";
+    [ObservableProperty]
+    private DateTime receiveTime;
+
+    [ObservableProperty]
+    private string epc = string.Empty;
+
+    [ObservableProperty]
+    private string antenna = "-";
+
+    [ObservableProperty]
+    private string channelMhz = "-";
+
+    [ObservableProperty]
+    private string rssi = "-";
+
+    [ObservableProperty]
+    private string seenCount = "-";
+
+    [ObservableProperty]
+    private string pc = "-";
+
+    [ObservableProperty]
+    private string crc = "-";
+
+    [ObservableProperty]
+    private string firstSeenTimestampUtc = "-";
+
+    [ObservableProperty]
+    private string lastSeenTimestampUtc = "-";
+
+    [ObservableProperty]
+    private string attachedData = "-";
+
+    [ObservableProperty]
+    private int seenCountValue;
+
+    [ObservableProperty]
+    private DateTime? firstSeenTimestampValueUtc;
+
+    [ObservableProperty]
+    private DateTime? lastSeenTimestampValueUtc;
 }

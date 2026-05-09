@@ -40,9 +40,10 @@ public partial class InventoryConfigViewModel : ViewModelBase
         {
             r.OnConnectionStateChanged(m.Value);
         });
-        WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, StatusUpdateRequestedMessage>(this, static (r, _) =>
+        WeakReferenceMessenger.Default.Register<InventoryConfigViewModel, StatusUpdateRequestedMessage>(this, static (r, m) =>
         {
             r.RefreshStateAwareFlagFromSnapshot();
+            r.OnStatusUpdateRequested(m.Value);
         });
 
         RefreshStateAwareFlagFromSnapshot();
@@ -56,6 +57,20 @@ public partial class InventoryConfigViewModel : ViewModelBase
         if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
         {
             IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+        }
+    }
+
+    private void OnStatusUpdateRequested(string reason)
+    {
+        if (!reason.Contains("AttachedData", StringComparison.OrdinalIgnoreCase)
+            && !reason.Contains("Settings", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        if (settingsStore.TryGetSnapshot(out var settings) && settings is not null)
+        {
+            ApplySettingsSnapshot(settings);
         }
     }
 
@@ -264,91 +279,128 @@ public partial class InventoryConfigViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void QueryInventoryConfig()
+    private void LoadInventoryConfigFromCache()
+    {
+        try
+        {
+            if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
+            {
+                OperationResult = _languageService.GetLocalizedString("InventoryConfig.CacheEmpty");
+                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.CacheEmpty"), Microsoft.Extensions.Logging.LogLevel.Warning);
+                return;
+            }
+
+            ApplySettingsSnapshot(settings);
+            OperationResult = _languageService.GetLocalizedString("InventoryConfig.LoadCacheSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.LoadCacheSuccess"));
+        }
+        catch (Exception ex)
+        {
+            OperationResult = GetLocalizedString("InventoryConfig.LoadCacheFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("InventoryConfig.LoadCacheFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
+        }
+    }
+
+    [RelayCommand]
+    private void QueryInventoryConfigFromDevice()
     {
         try
         {
             if (!reader.IsConnected)
             {
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.ConnectReaderFirst");
-                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.ReadFailed"), Microsoft.Extensions.Logging.LogLevel.Warning);
+                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.GetDeviceFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
-            if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
+            Settings settings;
+            try
             {
-                OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
-                return;
+                settings = reader.QuerySettings();
             }
-            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
-
-            AutoStartMode = settings.AutoStart.Mode;
-            AutoStartGpiPortNumber = settings.AutoStart.GpiPortNumber;
-            AutoStartGpiLevel = settings.AutoStart.GpiLevel;
-            AutoStartFirstDelayInMs = settings.AutoStart.FirstDelayInMs;
-            AutoStartPeriodInMs = settings.AutoStart.PeriodInMs;
-            AutoStartUtcTimestamp = settings.AutoStart.UtcTimestamp;
-
-            AutoStopMode = settings.AutoStop.Mode;
-            AutoStopDurationInMs = settings.AutoStop.DurationInMs;
-            AutoStopGpiPortNumber = settings.AutoStop.GpiPortNumber;
-            AutoStopGpiLevel = settings.AutoStop.GpiLevel;
-            AutoStopTimeout = settings.AutoStop.Timeout;
-
-            FilterMode = settings.Filters.Mode;
-            Filter1MemoryBank = settings.Filters.TagFilter1.MemoryBank;
-            Filter1BitPointer = settings.Filters.TagFilter1.BitPointer;
-            Filter1BitCount = settings.Filters.TagFilter1.BitCount;
-            Filter1TagMask = settings.Filters.TagFilter1.TagMask ?? string.Empty;
-            Filter1FilterOp = settings.Filters.TagFilter1.FilterOp;
-
-            Filter2MemoryBank = settings.Filters.TagFilter2.MemoryBank;
-            Filter2BitPointer = settings.Filters.TagFilter2.BitPointer;
-            Filter2BitCount = settings.Filters.TagFilter2.BitCount;
-            Filter2TagMask = settings.Filters.TagFilter2.TagMask ?? string.Empty;
-            Filter2FilterOp = settings.Filters.TagFilter2.FilterOp;
-
-            TagSelectFilters.Clear();
-            foreach (var filter in settings.Filters.TagSelectFilters)
+            catch (LLRPSdkException ex) when (
+                ex.Message.Contains("has not been configured", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("configuration is invalid", StringComparison.OrdinalIgnoreCase))
             {
-                TagSelectFilters.Add(new TagSelectFilterItemViewModel
-                {
-                    MemoryBank = filter.MemoryBank,
-                    BitPointer = filter.BitPointer,
-                    BitCount = filter.BitCount,
-                    TagMask = filter.TagMask ?? string.Empty,
-                    MatchAction = filter.MatchAction,
-                    NonMatchAction = filter.NonMatchAction,
-                    UseStateAwareAction = filter.UseStateAwareAction,
-                    StateAwareTarget = filter.StateAwareTarget,
-                    StateAwareAction = filter.StateAwareAction
-                });
+                reader.ApplyDefaultSettings();
+                settings = reader.QuerySettings();
             }
 
-            ReportMode = ReportModes.FirstOrDefault(x => x.Value == settings.Report.Mode) ?? ReportModes[1];
-            IncludeAntennaPortNumber = settings.Report.IncludeAntennaPortNumber;
-            IncludeChannel = settings.Report.IncludeChannel;
-            IncludeFirstSeenTime = settings.Report.IncludeFirstSeenTime;
-            IncludeLastSeenTime = settings.Report.IncludeLastSeenTime;
-            IncludeSeenCount = settings.Report.IncludeSeenCount;
-            IncludePeakRssi = settings.Report.IncludePeakRssi;
-            IncludePcBits = settings.Report.IncludePcBits;
-            IncludeCrc = settings.Report.IncludeCrc;
-
-            AttachedDataEnabled = settings.AttachedData?.Enabled ?? false;
-            AttachedDataMemoryBank = settings.AttachedData?.MemoryBank ?? MemoryBank.Tid;
-            AttachedDataWordPointer = settings.AttachedData?.WordPointer ?? (ushort)0;
-            AttachedDataWordCount = settings.AttachedData?.WordCount ?? (ushort)6;
-            AttachedDataAccessPassword = settings.AttachedData?.AccessPassword ?? "00000000";
-
-            OperationResult = _languageService.GetLocalizedString("InventoryConfig.ReadSuccess");
-            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.ReadSuccess"));
+            settingsStore.Set(settings);
+            ApplySettingsSnapshot(settings);
+            OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetDeviceSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.GetDeviceSuccess"));
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("InventorySettingsLoadedFromDevice"));
         }
         catch (Exception ex)
         {
-            OperationResult = GetLocalizedString("InventoryConfig.ReadError", ex.Message);
-            logs.LogOperation(GetLocalizedString("InventoryConfig.ReadError", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            OperationResult = GetLocalizedString("InventoryConfig.GetDeviceFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("InventoryConfig.GetDeviceFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
+    }
+
+    private void ApplySettingsSnapshot(Settings settings)
+    {
+        IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+
+        AutoStartMode = settings.AutoStart.Mode;
+        AutoStartGpiPortNumber = settings.AutoStart.GpiPortNumber;
+        AutoStartGpiLevel = settings.AutoStart.GpiLevel;
+        AutoStartFirstDelayInMs = settings.AutoStart.FirstDelayInMs;
+        AutoStartPeriodInMs = settings.AutoStart.PeriodInMs;
+        AutoStartUtcTimestamp = settings.AutoStart.UtcTimestamp;
+
+        AutoStopMode = settings.AutoStop.Mode;
+        AutoStopDurationInMs = settings.AutoStop.DurationInMs;
+        AutoStopGpiPortNumber = settings.AutoStop.GpiPortNumber;
+        AutoStopGpiLevel = settings.AutoStop.GpiLevel;
+        AutoStopTimeout = settings.AutoStop.Timeout;
+
+        FilterMode = settings.Filters.Mode;
+        Filter1MemoryBank = settings.Filters.TagFilter1.MemoryBank;
+        Filter1BitPointer = settings.Filters.TagFilter1.BitPointer;
+        Filter1BitCount = settings.Filters.TagFilter1.BitCount;
+        Filter1TagMask = settings.Filters.TagFilter1.TagMask ?? string.Empty;
+        Filter1FilterOp = settings.Filters.TagFilter1.FilterOp;
+
+        Filter2MemoryBank = settings.Filters.TagFilter2.MemoryBank;
+        Filter2BitPointer = settings.Filters.TagFilter2.BitPointer;
+        Filter2BitCount = settings.Filters.TagFilter2.BitCount;
+        Filter2TagMask = settings.Filters.TagFilter2.TagMask ?? string.Empty;
+        Filter2FilterOp = settings.Filters.TagFilter2.FilterOp;
+
+        TagSelectFilters.Clear();
+        foreach (var filter in settings.Filters.TagSelectFilters)
+        {
+            TagSelectFilters.Add(new TagSelectFilterItemViewModel
+            {
+                MemoryBank = filter.MemoryBank,
+                BitPointer = filter.BitPointer,
+                BitCount = filter.BitCount,
+                TagMask = filter.TagMask ?? string.Empty,
+                MatchAction = filter.MatchAction,
+                NonMatchAction = filter.NonMatchAction,
+                UseStateAwareAction = filter.UseStateAwareAction,
+                StateAwareTarget = filter.StateAwareTarget,
+                StateAwareAction = filter.StateAwareAction
+            });
+        }
+
+        ReportMode = ReportModes.FirstOrDefault(x => x.Value == settings.Report.Mode) ?? ReportModes[1];
+        IncludeAntennaPortNumber = settings.Report.IncludeAntennaPortNumber;
+        IncludeChannel = settings.Report.IncludeChannel;
+        IncludeFirstSeenTime = settings.Report.IncludeFirstSeenTime;
+        IncludeLastSeenTime = settings.Report.IncludeLastSeenTime;
+        IncludeSeenCount = settings.Report.IncludeSeenCount;
+        IncludePeakRssi = settings.Report.IncludePeakRssi;
+        IncludePcBits = settings.Report.IncludePcBits;
+        IncludeCrc = settings.Report.IncludeCrc;
+
+        AttachedDataEnabled = settings.AttachedData?.Enabled ?? false;
+        AttachedDataMemoryBank = settings.AttachedData?.MemoryBank ?? MemoryBank.Tid;
+        AttachedDataWordPointer = settings.AttachedData?.WordPointer ?? (ushort)0;
+        AttachedDataWordCount = settings.AttachedData?.WordCount ?? (ushort)6;
+        AttachedDataAccessPassword = settings.AttachedData?.AccessPassword ?? "00000000";
     }
 
     [RelayCommand]
@@ -368,7 +420,7 @@ public partial class InventoryConfigViewModel : ViewModelBase
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
                 return;
             }
-            IsInventoryStateAwareEnabled = settings.InventoryStateAware;
+            settings.InventoryStateAware = IsInventoryStateAwareEnabled;
 
             settings.AutoStart.Mode = AutoStartMode;
             settings.AutoStart.GpiPortNumber = AutoStartGpiPortNumber;
@@ -458,9 +510,9 @@ public partial class InventoryConfigViewModel : ViewModelBase
         }
 
         if (settingsStore.TryGetSnapshot(out _)
-            && QueryInventoryConfigCommand.CanExecute(null))
+            && LoadInventoryConfigFromCacheCommand.CanExecute(null))
         {
-            QueryInventoryConfigCommand.Execute(null);
+            LoadInventoryConfigFromCacheCommand.Execute(null);
         }
     }
 }

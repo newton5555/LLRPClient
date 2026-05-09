@@ -203,9 +203,11 @@ public partial class AdvancedTagOpsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationStarted"));
             OperationResult = _languageService.GetLocalizedString("Common.Executing");
 
             attachedDataWasEnabled = reader.IsAttachedDataAccessSpecEnabled();
+            logs.LogOperation(GetLocalizedString("AdvancedTagOps.AOStateSaved", attachedDataWasEnabled.HasValue ? (attachedDataWasEnabled.Value ? "Enable" : "Disable") : "null"));
 
             if (reader.IsConnected)
             {
@@ -240,6 +242,7 @@ public partial class AdvancedTagOpsViewModel : ViewModelBase
         catch (Exception ex)
         {
             IsBusy = false;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationFinished"));
             CancelOperationTimeout();
             OperationResult = GetLocalizedString("AdvancedTagOps.OpFailed", ex.Message);
             logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Error, ex);
@@ -293,6 +296,7 @@ public partial class AdvancedTagOpsViewModel : ViewModelBase
     {
         CancelOperationTimeout();
         IsBusy = false;
+        WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationFinished"));
 
         if (!reader.IsConnected)
             return;
@@ -306,6 +310,7 @@ public partial class AdvancedTagOpsViewModel : ViewModelBase
             if (attachedDataWasEnabled.HasValue)
             {
                 reader.RestoreAttachedDataAccessSpec(attachedDataWasEnabled.Value);
+                logs.LogOperation(GetLocalizedString("AdvancedTagOps.AORestored", attachedDataWasEnabled.Value));
             }
 
             currentOpSequenceId = null;

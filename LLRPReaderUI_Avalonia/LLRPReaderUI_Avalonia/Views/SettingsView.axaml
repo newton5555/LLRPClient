@@ -52,9 +52,21 @@
                             </ComboBox>
 
                             <TextBlock Grid.Row="2" Text="{DynamicResource Settings.HopTableId}" VerticalAlignment="Center"/>
-                            <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ColumnDefinitions="80,*">
-                                <ComboBox ItemsSource="{Binding HopTableOptions}" SelectedItem="{Binding HopTableId}" Height="36"/>
-                                <TextBlock Grid.Column="1" Text="{Binding SelectedHopTableFrequencies}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="120,*" Width="420">
+                                <ComboBox ItemsSource="{Binding HopTableOptions}"
+                                          SelectedItem="{Binding HopTableId}"
+                                          Width="120"
+                                          HorizontalAlignment="Left"
+                                          Height="36"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding SelectedHopTableFrequencies}"
+                                           Foreground="{DynamicResource TextMutedBrush}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           MaxWidth="290"
+                                           VerticalAlignment="Center"
+                                           Margin="10,0,0,0"/>
                             </Grid>
 
                             <TextBlock Grid.Row="4" Text="{DynamicResource Settings.ChannelIndex}" VerticalAlignment="Center"/>

@@ -390,6 +390,8 @@
     <sys:String x:Key="InventoryConfig.WordCount">读取字数</sys:String>
     <sys:String x:Key="InventoryConfig.AccessPasswordHex">访问密码(HEX)</sys:String>
     <sys:String x:Key="InventoryConfig.ReadConfig">读取寻卡配置</sys:String>
+    <sys:String x:Key="InventoryConfig.LoadCache">从缓存加载</sys:String>
+    <sys:String x:Key="InventoryConfig.GetFromDevice">从设备获取参数</sys:String>
     <sys:String x:Key="InventoryConfig.SaveConfig">保存寻卡配置</sys:String>
 
     <!-- AdvancedTagOps -->
@@ -409,6 +411,8 @@
     <sys:String x:Key="AdvancedTagOps.OpStarted">已启动 {0} (OpSequence ID: {1})</sys:String>
     <sys:String x:Key="AdvancedTagOps.OpFailed">执行失败：{0}</sys:String>
     <sys:String x:Key="AdvancedTagOps.Ready">设备已连接，可执行高级标签操作</sys:String>
+    <sys:String x:Key="AdvancedTagOps.AOStateSaved">保存附加数据 AO 状态：{0}</sys:String>
+    <sys:String x:Key="AdvancedTagOps.AORestored">已恢复附加数据 AccessSpec，Enable={0}</sys:String>
     <sys:String x:Key="AdvancedTagOps.CleanupFailed">清理操作失败：{0}</sys:String>
     <sys:String x:Key="AdvancedTagOps.StandardSummary">标准摘要 (LLRP 1.0.1)</sys:String>
     <sys:String x:Key="AdvancedTagOps.CommonParams">公共参数</sys:String>
