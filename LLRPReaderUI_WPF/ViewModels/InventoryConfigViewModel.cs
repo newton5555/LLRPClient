@@ -278,31 +278,64 @@ public partial class InventoryConfigViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void QueryInventoryConfig()
+    private void LoadInventoryConfigFromCache()
+    {
+        try
+        {
+            if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
+            {
+                OperationResult = _languageService.GetLocalizedString("InventoryConfig.CacheEmpty");
+                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.CacheEmpty"), Microsoft.Extensions.Logging.LogLevel.Warning);
+                return;
+            }
+
+            ApplySettingsSnapshot(settings);
+
+            OperationResult = _languageService.GetLocalizedString("InventoryConfig.LoadCacheSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.LoadCacheSuccess"));
+        }
+        catch (Exception ex)
+        {
+            OperationResult = GetLocalizedString("InventoryConfig.LoadCacheFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("InventoryConfig.LoadCacheFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
+        }
+    }
+
+    [RelayCommand]
+    private void QueryInventoryConfigFromDevice()
     {
         try
         {
             if (!reader.IsConnected)
             {
                 OperationResult = _languageService.GetLocalizedString("InventoryConfig.ConnectReaderFirst");
-                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.ReadFailed"), Microsoft.Extensions.Logging.LogLevel.Warning);
+                logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.GetDeviceFailedNotConnected"), Microsoft.Extensions.Logging.LogLevel.Warning);
                 return;
             }
 
-            if (!settingsStore.TryGetSnapshot(out var settings) || settings is null)
+            Settings settings;
+            try
             {
-                OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetSettingsFirst");
-                return;
+                settings = reader.QuerySettings();
             }
-            ApplySettingsSnapshot(settings);
+            catch (LLRPSdkException ex) when (
+                ex.Message.Contains("has not been configured", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("configuration is invalid", StringComparison.OrdinalIgnoreCase))
+            {
+                reader.ApplyDefaultSettings();
+                settings = reader.QuerySettings();
+            }
 
-            OperationResult = _languageService.GetLocalizedString("InventoryConfig.ReadSuccess");
-            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.ReadSuccess"));
+            settingsStore.Set(settings);
+            ApplySettingsSnapshot(settings);
+            OperationResult = _languageService.GetLocalizedString("InventoryConfig.GetDeviceSuccess");
+            logs.LogOperation(_languageService.GetLocalizedString("InventoryConfig.GetDeviceSuccess"));
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("InventorySettingsLoadedFromDevice"));
         }
         catch (Exception ex)
         {
-            OperationResult = GetLocalizedString("InventoryConfig.ReadError", ex.Message);
-            logs.LogOperation(GetLocalizedString("InventoryConfig.ReadError", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
+            OperationResult = GetLocalizedString("InventoryConfig.GetDeviceFailed", ex.Message);
+            logs.LogOperation(GetLocalizedString("InventoryConfig.GetDeviceFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
         }
     }
 
@@ -477,9 +510,9 @@ public partial class InventoryConfigViewModel : ObservableObject
         }
 
         if (settingsStore.TryGetSnapshot(out _)
-            && QueryInventoryConfigCommand.CanExecute(null))
+            && LoadInventoryConfigFromCacheCommand.CanExecute(null))
         {
-            QueryInventoryConfigCommand.Execute(null);
+            LoadInventoryConfigFromCacheCommand.Execute(null);
         }
     }
 }

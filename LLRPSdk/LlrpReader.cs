@@ -60,6 +60,7 @@ namespace LLRPSdk
         private System.Timers.Timer keepaliveTimer = new System.Timers.Timer();
         private bool _isKeepaliveMonitorEnabled = false;
         private ConcurrentDictionary<int, TagData> outstandingAuthenticateRequests = new ConcurrentDictionary<int, TagData>();
+        private readonly ConcurrentDictionary<uint, byte> activeUserTagOpAccessSpecIds = new ConcurrentDictionary<uint, byte>();
         private List<ReaderEventNotificationState> cachedReaderEventNotifications;
 
         /// <summary>
@@ -1022,6 +1023,7 @@ namespace LLRPSdk
         {
             if (sequence == null || sequence.Ops.Count == 0)
                 throw new LLRPSdkException("Cannot add an empty operation sequence");
+            this.TrackTagOpAccessSpec(sequence);
             this.AddAccessSpec(sequence);
             if (sequence.State != SequenceState.Active)
                 return;
@@ -1044,10 +1046,18 @@ namespace LLRPSdk
         /// <exception cref="T:LLRPSdk.LLRPSdkException">
         /// Thrown if the referenced sequence does not exist on the reader.
         /// </exception>
-        public void DeleteOpSequence(uint sequenceId) => this.DeleteAccessSpec(sequenceId);
+        public void DeleteOpSequence(uint sequenceId)
+        {
+            this.UntrackTagOpAccessSpec(sequenceId);
+            this.DeleteAccessSpec(sequenceId);
+        }
 
         /// <summary>Deletes all tag operation sequences from the reader.</summary>
-        public void DeleteAllOpSequences() => this.DeleteAccessSpec(0U);
+        public void DeleteAllOpSequences()
+        {
+            this.activeUserTagOpAccessSpecIds.Clear();
+            this.DeleteAccessSpec(0U);
+        }
 
         /// <summary>
         /// Checks if the attached data access spec is currently enabled on the reader.
@@ -2967,7 +2977,6 @@ namespace LLRPSdk
 
         private void OnTagReportAvailableInternal(MSG_RO_ACCESS_REPORT msg)
         {
-            List<string> stringList = new List<string>();
             if (msg.TagReportData != null && msg.TagReportData.Length != 0)
             {
                 this.LogLlrpMessage($"RX RO_ACCESS_REPORT (MsgId={msg.MSG_ID}) tags={msg.TagReportData.Length}");
@@ -2975,50 +2984,51 @@ namespace LLRPSdk
                 TagOpReport results = new TagOpReport();
                 for (int index1 = 0; index1 < msg.TagReportData.Length; ++index1)
                 {
+                    var tagReportData = msg.TagReportData[index1];
                     Tag tag = new Tag();
-                    if (msg.TagReportData[index1].EPCParameter.Count > 0)
+                    if (tagReportData.EPCParameter.Count > 0)
                     {
-                        List<ushort> data = !(msg.TagReportData[index1].EPCParameter[0].GetType() == typeof(PARAM_EPC_96)) ? LlrpReader.BitArrayToList(((PARAM_EPCData)msg.TagReportData[index1].EPCParameter[0]).EPC) : LlrpReader.BitArrayToList(((PARAM_EPC_96)msg.TagReportData[index1].EPCParameter[0]).EPC);
+                        List<ushort> data = !(tagReportData.EPCParameter[0].GetType() == typeof(PARAM_EPC_96)) ? LlrpReader.BitArrayToList(((PARAM_EPCData)tagReportData.EPCParameter[0]).EPC) : LlrpReader.BitArrayToList(((PARAM_EPC_96)tagReportData.EPCParameter[0]).EPC);
                         tag.Epc = TagData.FromWordList(data);
-                        if (msg.TagReportData[index1].AntennaID != null)
+                        if (tagReportData.AntennaID != null)
                         {
-                            tag.AntennaPortNumber = msg.TagReportData[index1].AntennaID.AntennaID;
+                            tag.AntennaPortNumber = tagReportData.AntennaID.AntennaID;
                             tag.IsAntennaPortNumberPresent = true;
                         }
-                        if (msg.TagReportData[index1].ChannelIndex != null)
+                        if (tagReportData.ChannelIndex != null)
                         {
-                            tag.ChannelInMhz = this._readerCapabilities.TxFrequencies[(int)msg.TagReportData[index1].ChannelIndex.ChannelIndex - 1];
+                            tag.ChannelInMhz = this._readerCapabilities.TxFrequencies[(int)tagReportData.ChannelIndex.ChannelIndex - 1];
                             tag.IsChannelInMhzPresent = true;
                         }
-                        if (msg.TagReportData[index1].FirstSeenTimestampUTC != null)
+                        if (tagReportData.FirstSeenTimestampUTC != null)
                         {
-                            tag.FirstSeenTime = new Timestamp(msg.TagReportData[index1].FirstSeenTimestampUTC.Microseconds);
+                            tag.FirstSeenTime = new Timestamp(tagReportData.FirstSeenTimestampUTC.Microseconds);
                             tag.IsFirstSeenTimePresent = true;
                         }
-                        if (msg.TagReportData[index1].LastSeenTimestampUTC != null)
+                        if (tagReportData.LastSeenTimestampUTC != null)
                         {
-                            tag.LastSeenTime = new Timestamp(msg.TagReportData[index1].LastSeenTimestampUTC.Microseconds);
+                            tag.LastSeenTime = new Timestamp(tagReportData.LastSeenTimestampUTC.Microseconds);
                             tag.IsLastSeenTimePresent = true;
                         }
-                        if (msg.TagReportData[index1].TagSeenCount != null)
+                        if (tagReportData.TagSeenCount != null)
                         {
-                            tag.TagSeenCount = msg.TagReportData[index1].TagSeenCount.TagCount;
+                            tag.TagSeenCount = tagReportData.TagSeenCount.TagCount;
                             tag.IsSeenCountPresent = true;
                         }
-                        if (msg.TagReportData[index1].PeakRSSI != null)
+                        if (tagReportData.PeakRSSI != null)
                         {
-                            tag.PeakRssi = (double)msg.TagReportData[index1].PeakRSSI.PeakRSSI;
+                            tag.PeakRssi = (double)tagReportData.PeakRSSI.PeakRSSI;
                             tag.IsPeakRssiPresent = true;
                         }
-                        int length = msg.TagReportData[index1].AirProtocolTagData.Length;
+                        int length = tagReportData.AirProtocolTagData.Length;
                         for (int index2 = 0; index2 < length; ++index2)
                         {
-                            if (msg.TagReportData[index1].AirProtocolTagData[index2] is PARAM_C1G2_CRC paramC1G2Crc)
+                            if (tagReportData.AirProtocolTagData[index2] is PARAM_C1G2_CRC paramC1G2Crc)
                             {
                                 tag.Crc = paramC1G2Crc.CRC;
                                 tag.IsCrcPresent = true;
                             }
-                            else if (msg.TagReportData[index1].AirProtocolTagData[index2] is PARAM_C1G2_PC paramC1G2Pc)
+                            else if (tagReportData.AirProtocolTagData[index2] is PARAM_C1G2_PC paramC1G2Pc)
                             {
                                 tag.PcBits = paramC1G2Pc.PC_Bits;
                                 tag.IsPcBitsPresent = true;
@@ -3026,15 +3036,17 @@ namespace LLRPSdk
                         }
                         report.Tags.Add(tag);
                     }
-                    if (msg.TagReportData[index1].AccessCommandOpSpecResult != null)
+                    tag.AccessSpecId = tagReportData.AccessSpecID?.AccessSpecID;
+                    if (tagReportData.AccessCommandOpSpecResult != null)
                     {
-                        int length = msg.TagReportData[index1].AccessCommandOpSpecResult.Length;
+                        tag.HasAccessOperationResults = tagReportData.AccessCommandOpSpecResult.Length > 0;
+                        int length = tagReportData.AccessCommandOpSpecResult.Length;
                         for (int index4 = 0; index4 < length; ++index4)
                         {
-                            uint accessSpecId = msg.TagReportData[index1].AccessSpecID.AccessSpecID;
-                            if (msg.TagReportData[index1].AccessCommandOpSpecResult[index4] is PARAM_C1G2ReadOpSpecResult)
+                            uint accessSpecId = tag.AccessSpecId ?? 0U;
+                            if (tagReportData.AccessCommandOpSpecResult[index4] is PARAM_C1G2ReadOpSpecResult)
                             {
-                                PARAM_C1G2ReadOpSpecResult readOpSpecResult = msg.TagReportData[index1].AccessCommandOpSpecResult[index4] as PARAM_C1G2ReadOpSpecResult;
+                                PARAM_C1G2ReadOpSpecResult readOpSpecResult = tagReportData.AccessCommandOpSpecResult[index4] as PARAM_C1G2ReadOpSpecResult;
                                 TagReadOpResult tagReadOpResult1 = new TagReadOpResult();
                                 tagReadOpResult1.Result = (ReadResultStatus)readOpSpecResult.Result;
                                 tagReadOpResult1.OpId = readOpSpecResult.OpSpecID;
@@ -3046,9 +3058,9 @@ namespace LLRPSdk
                                 tag.ReadOperationResults.Add(tagReadOpResult2); // 附加数据直接关联到标签
                                 results.Results.Add((TagOpResult)tagReadOpResult2);
                             }
-                            else if (msg.TagReportData[index1].AccessCommandOpSpecResult[index4] is PARAM_C1G2WriteOpSpecResult)
+                            else if (tagReportData.AccessCommandOpSpecResult[index4] is PARAM_C1G2WriteOpSpecResult)
                             {
-                                PARAM_C1G2WriteOpSpecResult writeOpSpecResult = msg.TagReportData[index1].AccessCommandOpSpecResult[index4] as PARAM_C1G2WriteOpSpecResult;
+                                PARAM_C1G2WriteOpSpecResult writeOpSpecResult = tagReportData.AccessCommandOpSpecResult[index4] as PARAM_C1G2WriteOpSpecResult;
                                 TagWriteOpResult tagWriteOpResult1 = new TagWriteOpResult();
                                 tagWriteOpResult1.Result = (WriteResultStatus)writeOpSpecResult.Result;
                                 tagWriteOpResult1.OpId = writeOpSpecResult.OpSpecID;
@@ -3059,9 +3071,9 @@ namespace LLRPSdk
                                 TagWriteOpResult tagWriteOpResult2 = tagWriteOpResult1;
                                 results.Results.Add((TagOpResult)tagWriteOpResult2);
                             }
-                            else if (msg.TagReportData[index1].AccessCommandOpSpecResult[index4] is PARAM_C1G2BlockWriteOpSpecResult)
+                            else if (tagReportData.AccessCommandOpSpecResult[index4] is PARAM_C1G2BlockWriteOpSpecResult)
                             {
-                                PARAM_C1G2BlockWriteOpSpecResult writeOpSpecResult = msg.TagReportData[index1].AccessCommandOpSpecResult[index4] as PARAM_C1G2BlockWriteOpSpecResult;
+                                PARAM_C1G2BlockWriteOpSpecResult writeOpSpecResult = tagReportData.AccessCommandOpSpecResult[index4] as PARAM_C1G2BlockWriteOpSpecResult;
                                 TagWriteOpResult tagWriteOpResult3 = new TagWriteOpResult();
                                 tagWriteOpResult3.Result = (WriteResultStatus)writeOpSpecResult.Result;
                                 tagWriteOpResult3.OpId = writeOpSpecResult.OpSpecID;
@@ -3072,9 +3084,9 @@ namespace LLRPSdk
                                 TagWriteOpResult tagWriteOpResult4 = tagWriteOpResult3;
                                 results.Results.Add((TagOpResult)tagWriteOpResult4);
                             }
-                            else if (msg.TagReportData[index1].AccessCommandOpSpecResult[index4] is PARAM_C1G2BlockEraseOpSpecResult)
+                            else if (tagReportData.AccessCommandOpSpecResult[index4] is PARAM_C1G2BlockEraseOpSpecResult)
                             {
-                                PARAM_C1G2BlockEraseOpSpecResult eraseOpSpecResult = msg.TagReportData[index1].AccessCommandOpSpecResult[index4] as PARAM_C1G2BlockEraseOpSpecResult;
+                                PARAM_C1G2BlockEraseOpSpecResult eraseOpSpecResult = tagReportData.AccessCommandOpSpecResult[index4] as PARAM_C1G2BlockEraseOpSpecResult;
                                 TagBlockEraseOpResult tagBlockEraseOpResult = new TagBlockEraseOpResult();
                                 tagBlockEraseOpResult.Result = (BlockEraseResultStatus)eraseOpSpecResult.Result;
                                 tagBlockEraseOpResult.OpId = eraseOpSpecResult.OpSpecID;
@@ -3082,9 +3094,9 @@ namespace LLRPSdk
                                 tagBlockEraseOpResult.Tag = tag;
                                 results.Results.Add((TagOpResult)tagBlockEraseOpResult);
                             }
-                            else if (msg.TagReportData[index1].AccessCommandOpSpecResult[index4] is PARAM_C1G2LockOpSpecResult)
+                            else if (tagReportData.AccessCommandOpSpecResult[index4] is PARAM_C1G2LockOpSpecResult)
                             {
-                                PARAM_C1G2LockOpSpecResult lockOpSpecResult = msg.TagReportData[index1].AccessCommandOpSpecResult[index4] as PARAM_C1G2LockOpSpecResult;
+                                PARAM_C1G2LockOpSpecResult lockOpSpecResult = tagReportData.AccessCommandOpSpecResult[index4] as PARAM_C1G2LockOpSpecResult;
                                 TagLockOpResult tagLockOpResult1 = new TagLockOpResult();
                                 tagLockOpResult1.OpId = lockOpSpecResult.OpSpecID;
                                 tagLockOpResult1.SequenceId = accessSpecId;
@@ -3093,9 +3105,9 @@ namespace LLRPSdk
                                 TagLockOpResult tagLockOpResult2 = tagLockOpResult1;
                                 results.Results.Add((TagOpResult)tagLockOpResult2);
                             }
-                            else if (msg.TagReportData[index1].AccessCommandOpSpecResult[index4] is PARAM_C1G2KillOpSpecResult)
+                            else if (tagReportData.AccessCommandOpSpecResult[index4] is PARAM_C1G2KillOpSpecResult)
                             {
-                                PARAM_C1G2KillOpSpecResult killOpSpecResult = msg.TagReportData[index1].AccessCommandOpSpecResult[index4] as PARAM_C1G2KillOpSpecResult;
+                                PARAM_C1G2KillOpSpecResult killOpSpecResult = tagReportData.AccessCommandOpSpecResult[index4] as PARAM_C1G2KillOpSpecResult;
                                 TagKillOpResult tagKillOpResult1 = new TagKillOpResult();
                                 tagKillOpResult1.OpId = killOpSpecResult.OpSpecID;
                                 tagKillOpResult1.SequenceId = accessSpecId;
@@ -3106,6 +3118,9 @@ namespace LLRPSdk
                             }
                         }
                     }
+
+                    tag.ReportSource = this.ResolveTagReportSource(tag);
+                    this.LogLlrpMessage(this.FormatTagReportClassificationLog(tag));
                 }
                 if (report.Tags.Count > 0 && this.TagsReported != null)
                     this.TagsReported(this, report);
@@ -3114,6 +3129,56 @@ namespace LLRPSdk
             }
             if (msg.Custom == null)
                 return;
+        }
+
+        private TagReportSource ResolveTagReportSource(Tag tag)
+        {
+            if (!tag.AccessSpecId.HasValue)
+                return tag.HasAccessOperationResults
+                    ? TagReportSource.Unknown
+                    : TagReportSource.Inventory;
+            if(tag.AccessSpecId.Value != 0U)
+            {
+
+            }
+            return tag.AccessSpecId.Value == ATTACHED_DATA_ACCESS_SPEC_ID
+                ? TagReportSource.AttachedData
+                : this.activeUserTagOpAccessSpecIds.ContainsKey(tag.AccessSpecId.Value)
+                    ? TagReportSource.TagOperation
+                    : tag.HasAccessOperationResults
+                        ? TagReportSource.TagOperation
+                        : TagReportSource.Inventory;
+        }
+
+        private void TrackTagOpAccessSpec(TagOpSequence sequence)
+        {
+            if (sequence == null || sequence.Id == ATTACHED_DATA_ACCESS_SPEC_ID)
+                return;
+
+            // User-initiated read/write/advanced tag ops are added as explicit AccessSpecs with a target tag.
+            if (sequence.TargetTag?.Data == null)
+                return;
+
+            this.activeUserTagOpAccessSpecIds[sequence.Id] = 0;
+        }
+
+        private void UntrackTagOpAccessSpec(uint sequenceId)
+        {
+            if (sequenceId == 0U)
+            {
+                this.activeUserTagOpAccessSpecIds.Clear();
+                return;
+            }
+
+            this.activeUserTagOpAccessSpecIds.TryRemove(sequenceId, out _);
+        }
+
+        private string FormatTagReportClassificationLog(Tag tag)
+        {
+            string epc = tag.Epc?.ToHexString();
+            string accessSpecId = tag.AccessSpecId.HasValue ? tag.AccessSpecId.Value.ToString() : "null";
+            bool trackedAsUserOp = tag.AccessSpecId.HasValue && this.activeUserTagOpAccessSpecIds.ContainsKey(tag.AccessSpecId.Value);
+            return $"TagReport classify EPC={epc ?? "-"} AccessSpecId={accessSpecId} HasAccessResults={tag.HasAccessOperationResults} TrackedUserOp={trackedAsUserOp} ReadOpResults={tag.ReadOperationResults.Count} Source={tag.ReportSource}";
         }
 
         /// <summary>

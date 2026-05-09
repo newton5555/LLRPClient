@@ -268,7 +268,8 @@ public partial class InventoryViewModel : ViewModelBase
         // 默认只在寻卡中处理；手动拉缓存命令触发后短时间窗口内也允许处理
         if (!IsRunning && !fromManualPull)
             return;
-
+        if(report.Tags is null || report.Tags.Count == 0)
+            return;
         RunOnUi(() =>
         {
             TotalReports++;
@@ -277,6 +278,8 @@ public partial class InventoryViewModel : ViewModelBase
 
             foreach (var tag in report.Tags)
             {
+                if(tag.ReportSource==TagReportSource.Unknown|| tag.ReportSource == TagReportSource.TagOperation) 
+                    continue;
                 var epc = tag.Epc?.ToHexString() ?? string.Empty;
                 var attachedData = "-";
                 if (AttachedDataEnabled && tag.ReadOperationResults is { Count: > 0 })

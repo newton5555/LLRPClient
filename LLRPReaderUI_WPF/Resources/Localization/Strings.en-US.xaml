@@ -260,9 +260,12 @@
     <sys:String x:Key="InventoryConfig.Waiting">Not operated</sys:String>
     <sys:String x:Key="InventoryConfig.ConnectReaderFirst">Please connect reader first</sys:String>
     <sys:String x:Key="InventoryConfig.GetSettingsFirst">Please get settings from Settings page first</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadFailed">Read inventory config failed: Device not connected</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadSuccess">Inventory configuration loaded</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadError">Read failed: {0}</sys:String>
+    <sys:String x:Key="InventoryConfig.CacheEmpty">Cache is empty. Get settings from device first.</sys:String>
+    <sys:String x:Key="InventoryConfig.LoadCacheSuccess">Inventory configuration loaded from cache</sys:String>
+    <sys:String x:Key="InventoryConfig.LoadCacheFailed">Load from cache failed: {0}</sys:String>
+    <sys:String x:Key="InventoryConfig.GetDeviceFailedNotConnected">Get inventory settings from device failed: Device not connected</sys:String>
+    <sys:String x:Key="InventoryConfig.GetDeviceSuccess">Inventory settings retrieved from device</sys:String>
+    <sys:String x:Key="InventoryConfig.GetDeviceFailed">Get from device failed: {0}</sys:String>
     <sys:String x:Key="InventoryConfig.SaveFailedNotConnected">Save inventory config failed: Device not connected</sys:String>
     <sys:String x:Key="InventoryConfig.SaveSuccess">Inventory configuration sent</sys:String>
     <sys:String x:Key="InventoryConfig.SaveError">Save failed: {0}</sys:String>
@@ -420,7 +423,8 @@
     <sys:String x:Key="InventoryConfig.WordStartAddr">Word Start Address</sys:String>
     <sys:String x:Key="InventoryConfig.WordCount">Word Count</sys:String>
     <sys:String x:Key="InventoryConfig.AccessPasswordHex">Access Password (HEX)</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadConfig">Read Inventory Config</sys:String>
+    <sys:String x:Key="InventoryConfig.LoadCache">Load from Cache</sys:String>
+    <sys:String x:Key="InventoryConfig.GetFromDevice">Get from Device</sys:String>
     <sys:String x:Key="InventoryConfig.SaveConfig">Save Inventory Config</sys:String>
 
     <!-- AdvancedTagOps UI -->

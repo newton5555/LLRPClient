@@ -204,6 +204,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
         try
         {
             IsBusy = true;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationStarted"));
             OperationResult = _languageService.GetLocalizedString("Common.Executing");
 
             attachedDataWasEnabled = reader.IsAttachedDataAccessSpecEnabled();
@@ -243,6 +244,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
         catch (Exception ex)
         {
             IsBusy = false;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationFinished"));
             CancelOperationTimeout();
             OperationResult = GetLocalizedString("AdvancedTagOps.OpFailed", ex.Message);
             logs.LogOperation(OperationResult, Microsoft.Extensions.Logging.LogLevel.Error, ex);
@@ -343,6 +345,7 @@ public partial class AdvancedTagOpsViewModel : ObservableObject
     {
         CancelOperationTimeout();
         IsBusy = false;
+        WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationFinished"));
 
         if (!reader.IsConnected)
             return;

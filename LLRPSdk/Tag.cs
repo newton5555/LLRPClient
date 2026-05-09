@@ -78,8 +78,14 @@ namespace LLRPSdk
     /// <summary>Results of an Optimized Read operation.</summary>
     public List<TagReadOpResult> ReadOperationResults { get; set; }
 
+    /// <summary>The AccessSpec identifier associated with this tag report, if present.</summary>
+    public uint? AccessSpecId { get; set; }
 
+    /// <summary>Whether the report carried any access operation results.</summary>
+    public bool HasAccessOperationResults { get; set; }
 
+    /// <summary>The inferred source of the tag report.</summary>
+    public TagReportSource ReportSource { get; set; }
 
 
    
@@ -139,6 +145,7 @@ namespace LLRPSdk
      
 
       this.ReadOperationResults = new List<TagReadOpResult>();
+      this.ReportSource = TagReportSource.Inventory;
      
       this.IsAntennaPortNumberPresent = false;
       this.IsChannelInMhzPresent = false;

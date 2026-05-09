@@ -260,9 +260,12 @@
     <sys:String x:Key="InventoryConfig.Waiting">未操作</sys:String>
     <sys:String x:Key="InventoryConfig.ConnectReaderFirst">请先连接读写器</sys:String>
     <sys:String x:Key="InventoryConfig.GetSettingsFirst">请先在参数配置页点击获取参数</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadFailed">读取寻卡配置失败：设备未连接</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadSuccess">已读取寻卡配置</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadError">读取失败：{0}</sys:String>
+    <sys:String x:Key="InventoryConfig.CacheEmpty">缓存为空，请先从设备获取参数</sys:String>
+    <sys:String x:Key="InventoryConfig.LoadCacheSuccess">已从缓存加载寻卡配置</sys:String>
+    <sys:String x:Key="InventoryConfig.LoadCacheFailed">从缓存加载失败：{0}</sys:String>
+    <sys:String x:Key="InventoryConfig.GetDeviceFailedNotConnected">从设备获取寻卡参数失败：设备未连接</sys:String>
+    <sys:String x:Key="InventoryConfig.GetDeviceSuccess">已从设备获取寻卡参数</sys:String>
+    <sys:String x:Key="InventoryConfig.GetDeviceFailed">从设备获取失败：{0}</sys:String>
     <sys:String x:Key="InventoryConfig.SaveFailedNotConnected">保存寻卡配置失败：设备未连接</sys:String>
     <sys:String x:Key="InventoryConfig.SaveSuccess">寻卡配置已下发</sys:String>
     <sys:String x:Key="InventoryConfig.SaveError">保存失败：{0}</sys:String>
@@ -420,7 +423,8 @@
     <sys:String x:Key="InventoryConfig.WordStartAddr">起始字地址</sys:String>
     <sys:String x:Key="InventoryConfig.WordCount">读取字数</sys:String>
     <sys:String x:Key="InventoryConfig.AccessPasswordHex">访问密码(HEX)</sys:String>
-    <sys:String x:Key="InventoryConfig.ReadConfig">读取寻卡配置</sys:String>
+    <sys:String x:Key="InventoryConfig.LoadCache">从缓存加载</sys:String>
+    <sys:String x:Key="InventoryConfig.GetFromDevice">从设备获取参数</sys:String>
     <sys:String x:Key="InventoryConfig.SaveConfig">保存寻卡配置</sys:String>
 
     <!-- AdvancedTagOps UI -->

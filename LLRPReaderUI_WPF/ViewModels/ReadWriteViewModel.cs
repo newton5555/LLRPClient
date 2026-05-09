@@ -113,6 +113,7 @@ public partial class ReadWriteViewModel : ObservableObject
         try
         {
             IsBusy = true;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationStarted"));
             ReadData = string.Empty;
             OperationResult = _languageService.GetLocalizedString("ReadWrite.Reading");
 
@@ -179,6 +180,7 @@ public partial class ReadWriteViewModel : ObservableObject
         catch (Exception ex)
         {
             IsBusy = false;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationFinished"));
             CancelReadTimeout();
             OperationResult = GetLocalizedString("ReadWrite.ReadFailed", ex.Message);
             logs.LogOperation(GetLocalizedString("ReadWrite.ReadFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
@@ -222,6 +224,7 @@ public partial class ReadWriteViewModel : ObservableObject
             var writeTagData = TagData.FromHexString(dataText);
 
             IsBusy = true;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationStarted"));
             OperationResult = _languageService.GetLocalizedString("ReadWrite.Writing");
 
             attachedDataWasEnabled = reader.IsAttachedDataAccessSpecEnabled();
@@ -281,6 +284,7 @@ public partial class ReadWriteViewModel : ObservableObject
         catch (Exception ex)
         {
             IsBusy = false;
+            WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationFinished"));
             CancelReadTimeout();
             OperationResult = GetLocalizedString("ReadWrite.WriteFailed", ex.Message);
             logs.LogOperation(GetLocalizedString("ReadWrite.WriteFailed", ex.Message), Microsoft.Extensions.Logging.LogLevel.Error, ex);
@@ -397,6 +401,7 @@ public partial class ReadWriteViewModel : ObservableObject
     {
         CancelReadTimeout();
         IsBusy = false;
+        WeakReferenceMessenger.Default.Send(new StatusUpdateRequestedMessage("TagOperationFinished"));
 
         // 操作完成后清空本次 OpSequence，并恢复附加数据 AO 的状态
         if (reader.IsConnected)
