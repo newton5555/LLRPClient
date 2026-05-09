@@ -356,12 +356,7 @@ public partial class InventoryViewModel : ObservableObject
                 Epc = aggregationKey
             };
             aggregatedTags[aggregationKey] = row;
-            ReceivedTags.Insert(0, row);
-        }
-        else
-        {
-            ReceivedTags.Remove(row);
-            ReceivedTags.Insert(0, row);
+            ReceivedTags.Add(row);
         }
 
         var reportSeenCount = tag.IsSeenCountPresent ? tag.TagSeenCount : (ushort)1;
@@ -610,20 +605,47 @@ public partial class InventoryViewModel : ObservableObject
     }
 }
 
-public class InventoryTagItemViewModel
+public partial class InventoryTagItemViewModel : ObservableObject
 {
-    public DateTime ReceiveTime { get; set; }
-    public string Epc { get; set; } = string.Empty;
-    public string Antenna { get; set; } = "-";
-    public string ChannelMhz { get; set; } = "-";
-    public string Rssi { get; set; } = "-";
-    public string SeenCount { get; set; } = "-";
-    public string Pc { get; set; } = "-";
-    public string Crc { get; set; } = "-";
-    public string FirstSeenTimestampUtc { get; set; } = "-";
-    public string LastSeenTimestampUtc { get; set; } = "-";
-    public string AttachedData { get; set; } = "-";
-    public int SeenCountValue { get; set; }
-    public DateTime? FirstSeenTimestampValueUtc { get; set; }
-    public DateTime? LastSeenTimestampValueUtc { get; set; }
+    [ObservableProperty]
+    private DateTime receiveTime;
+
+    [ObservableProperty]
+    private string epc = string.Empty;
+
+    [ObservableProperty]
+    private string antenna = "-";
+
+    [ObservableProperty]
+    private string channelMhz = "-";
+
+    [ObservableProperty]
+    private string rssi = "-";
+
+    [ObservableProperty]
+    private string seenCount = "-";
+
+    [ObservableProperty]
+    private string pc = "-";
+
+    [ObservableProperty]
+    private string crc = "-";
+
+    [ObservableProperty]
+    private string firstSeenTimestampUtc = "-";
+
+    [ObservableProperty]
+    private string lastSeenTimestampUtc = "-";
+
+    [ObservableProperty]
+    private string attachedData = "-";
+
+    [ObservableProperty]
+    private int seenCountValue;
+
+    [ObservableProperty]
+    private DateTime? firstSeenTimestampValueUtc;
+
+    [ObservableProperty]
+    private DateTime? lastSeenTimestampValueUtc;
 }
