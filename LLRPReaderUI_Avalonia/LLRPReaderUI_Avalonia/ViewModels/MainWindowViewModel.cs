@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+ï»¿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LLRPReaderUI_Avalonia.Logging;
@@ -195,7 +195,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             DeviceStatusText = $"{deviceText}: {_languageService.GetLocalizedString("Status.NotConnected")}";
             InventoryStatusText = $"{inventoryText}: {_languageService.GetLocalizedString("Status.Unknown")}";
-            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: {FormatAntennas(status.Antennas)}";
             GpiStatusText = $"{_languageService.GetLocalizedString("Status.GPI")}: --";
             GpoStatusText = $"{_languageService.GetLocalizedString("Status.GPO")}: --";
         }
@@ -203,7 +203,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             DeviceStatusText = $"{deviceText}: {(status.IsConnected ? _languageService.GetLocalizedString("Status.Connected") : _languageService.GetLocalizedString("Status.NotConnected"))}";
             InventoryStatusText = $"{inventoryText}: {(status.IsSingulating ? _languageService.GetLocalizedString("Status.Running") : _languageService.GetLocalizedString("Status.Idle"))}";
-            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: {FormatAntennas(status.Antennas)}";
         }
     }
 
@@ -247,6 +247,26 @@ public partial class MainWindowViewModel : ViewModelBase
         return raw;
     }
 
+    private static string FormatAntennas(AntennaStatusGroup antennas)
+    {
+        if (antennas is null)
+        {
+            return "--";
+        }
+
+        var parts = antennas
+            .Cast<AntennaStatus>()
+            .OrderBy(x => x.PortNumber)
+            .Select(x => $"{x.PortNumber}:{(x.IsConnected ? "è¿ž" : "æ–­")}")
+            .ToList();
+
+        if (parts.Count == 0)
+        {
+            return "--";
+        }
+
+        return string.Join(" ", parts);
+    }
     partial void OnSelectedNavigationItemChanged(NavigationItem? value)
     {
         if (value is null)
@@ -266,7 +286,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private static string BuildWindowTitle()
     {
-        //return "LLRP ¿Í»§¶Ë";
+        //return "LLRP ï¿½Í»ï¿½ï¿½ï¿½";
         const string appName = "LLRP Reader UI";
         var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
 
@@ -335,7 +355,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 : $"{_languageService.GetLocalizedString("Status.GPO")}: {_languageService.GetLocalizedString("Status.NoResponse")}";
 
             IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: {FormatIdentification(status.ReaderIdentity)}";
-            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: {FormatAntennas(status.Antennas)}";
         }
         else
         {

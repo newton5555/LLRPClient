@@ -211,7 +211,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             DeviceStatusText = $"{deviceText}: {(status.IsConnected ? _languageService.GetLocalizedString("Status.Connected") : _languageService.GetLocalizedString("Status.NotConnected"))}";
             InventoryStatusText = $"{inventoryText}: {(status.IsSingulating ? _languageService.GetLocalizedString("Status.Running") : _languageService.GetLocalizedString("Status.Idle"))}";
-            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: {FormatAntennas(status.Antennas)}";
         }
     }
 
@@ -351,12 +351,33 @@ public partial class MainWindowViewModel : ObservableObject
                 : $"{_languageService.GetLocalizedString("Status.GPO")}: {_languageService.GetLocalizedString("Status.NoResponse")}";
 
             IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: {FormatIdentification(status.ReaderIdentity)}";
-            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: --";
+            AntennaStatusText = $"{_languageService.GetLocalizedString("Inventory.Antenna")}: {FormatAntennas(status.Antennas)}";
         }
         else
         {
             UpdateStatusTexts(null);
             IdentificationStatusText = $"{_languageService.GetLocalizedString("Status.MAC")}: --";
         }
+    }
+
+    private static string FormatAntennas(AntennaStatusGroup antennas)
+    {
+        if (antennas is null)
+        {
+            return "--";
+        }
+
+        var parts = antennas
+            .Cast<AntennaStatus>()
+            .OrderBy(x => x.PortNumber)
+            .Select(x => $"{x.PortNumber}:{(x.IsConnected ? "连" : "断")}")
+            .ToList();
+
+        if (parts.Count == 0)
+        {
+            return "--";
+        }
+
+        return string.Join(" ", parts);
     }
 }
