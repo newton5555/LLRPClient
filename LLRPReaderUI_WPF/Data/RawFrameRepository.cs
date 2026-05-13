@@ -103,5 +103,22 @@ namespace LLRPReaderUI_WPF.Data
             await _ctx.SaveChangesAsync().ConfigureAwait(false);
             return count;
         }
+
+        public async Task<int> DeleteOlderThanAsync(DateTime cutoffUtc)
+        {
+            var entities = await _ctx.RawFrames
+                .Where(f => f.Timestamp < cutoffUtc)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            if (entities.Count == 0)
+            {
+                return 0;
+            }
+
+            _ctx.RawFrames.RemoveRange(entities);
+            await _ctx.SaveChangesAsync().ConfigureAwait(false);
+            return entities.Count;
+        }
     }
 }

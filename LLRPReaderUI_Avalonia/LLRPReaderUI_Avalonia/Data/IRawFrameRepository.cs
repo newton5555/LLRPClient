@@ -11,5 +11,6 @@ namespace LLRPReaderUI_Avalonia.Data
         Task<List<RawFrameEntity>> GetRecentAsync(int take = 1000);
         Task<List<RawFrameEntity>> GetByFilterAsync(DateTime? startDate, DateTime? endDate, string? direction, string? deviceId, int take = 1000);
         Task<int> ClearAllAsync();
+        Task<int> DeleteOlderThanAsync(DateTime cutoffUtc);
     }
 }

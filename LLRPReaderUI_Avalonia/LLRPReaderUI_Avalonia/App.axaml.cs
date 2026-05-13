@@ -82,6 +82,19 @@ public partial class App : Application
 
         Ioc.Default.ConfigureServices(services.BuildServiceProvider());
 
+        if (loggingConfig.RawFrameLogging?.Enabled == true)
+        {
+            try
+            {
+                var repo = Ioc.Default.GetRequiredService<IRawFrameRepository>();
+                var cutoff = DateTime.UtcNow.AddDays(-7);
+                _ = repo.DeleteOlderThanAsync(cutoff);
+            }
+            catch
+            {
+            }
+        }
+
         _ = Ioc.Default.GetRequiredService<LlrpLoggingBridge>();
 
         // 初始化主题和语言服务

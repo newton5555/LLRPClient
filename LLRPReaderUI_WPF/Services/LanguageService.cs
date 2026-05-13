@@ -43,7 +43,10 @@ public class LanguageService
 
     public void Initialize()
     {
-        ApplyLanguage(CurrentLanguage);
+        if (CurrentLanguage != AppLanguage.ZhCN)
+        {
+            ApplyLanguage(CurrentLanguage);
+        }
     }
 
     public void SetLanguage(AppLanguage language)

@@ -53,7 +53,10 @@ public class ThemeService
 
     public void Initialize()
     {
-        ApplyTheme(CurrentTheme);
+        if (CurrentTheme != AppTheme.Light)
+        {
+            ApplyTheme(CurrentTheme);
+        }
     }
 
     public void SetTheme(AppTheme theme)
