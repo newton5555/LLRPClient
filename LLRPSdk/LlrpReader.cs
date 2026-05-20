@@ -896,12 +896,18 @@ namespace LLRPSdk
         {
             if (!this.IsConnected)
                 throw new LLRPSdkException("You must connect to the reader before configuring it.");
-            this.ApplySettings(new Settings(this._readerCapabilities.AntennaCount,
+
+            var settings = new Settings(this._readerCapabilities.AntennaCount,
                 this._readerCapabilities.GpiCount,
                 this._readerCapabilities.GpoCount,
                 this._readerCapabilities.FirmwareVersion,
                 this._readerCapabilities.RfModes.FirstOrDefault()
-                ));
+                );
+
+            settings.Report.IncludeAntennaPortNumber = true;
+            settings.Report.IncludeChannel = true;
+            settings.Report.IncludePeakRssi = true;
+            this.ApplySettings(settings);
         }
 
         /// <summary>

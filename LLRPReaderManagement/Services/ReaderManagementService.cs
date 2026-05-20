@@ -40,6 +40,7 @@ public sealed class ReaderManagementService
 
             var wasSingulating = EnsureStoppedIfSingulating();
             var settings = QueryInitialSettings();
+         
             state.SetConnected(endpoint, repository.ReaderCapabilities, settings);
             logs.Log("Reader", wasSingulating
                 ? $"Connected to {endpoint}; active inventory was stopped during initialization."
@@ -123,6 +124,7 @@ public sealed class ReaderManagementService
 
         repository.ApplyDefaultSettings();
         var settings = repository.QuerySettings();
+       
         state.SetSettings(settings);
         logs.Log("Config", $"SDK default settings applied to {repository.ActiveEndpoint}.");
     }
