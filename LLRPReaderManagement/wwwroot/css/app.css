@@ -639,6 +639,10 @@ input:focus, select:focus {
   font-size: 12px;
   font-weight: 500;
   color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .tag-list-item-meta {
