@@ -1,0 +1,149 @@
+@page "/readers"
+@inject ReadersViewModel Vm
+@implements IDisposable
+
+<div class="section-header">
+    <h2 class="section-title">Reader Management</h2>
+    <button class="btn btn-primary" @onclick="() => showAddModal = true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Reader
+    </button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: var(--space-4);">
+    @if (Vm.State.Readers.Count == 0)
+    {
+        <button class="add-reader-card" @onclick="() => showAddModal = true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span style="font-size: 13px; font-weight: 500;">Add LLRP Reader</span>
+        </button>
+    }
+
+    @foreach (var reader in Vm.State.Readers)
+    {
+        <div class="reader-card-full @(reader.IsConnected ? "connected" : "error")">
+            <div class="reader-card-head">
+                <div class="reader-card-head-left">
+                    <div class="reader-icon @(reader.IsConnected ? "" : "reader-icon-danger")">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+                    </div>
+                    <div>
+                        <div class="reader-name" style="font-size: 15px; font-weight: 600;">@reader.Name @(Vm.State.ActiveEndpoint == reader.Endpoint ? "(Active)" : "")</div>
+                        <div style="font-size: 12px; font-family: var(--font-mono); color: var(--muted);">@reader.Endpoint · LLRP</div>
+                    </div>
+                </div>
+                <span class="status-badge @(reader.IsConnected ? "connected" : "disconnected")">@(reader.IsConnected ? "Connected" : "Disconnected")</span>
+            </div>
+
+            <div class="reader-card-body">
+                <div>
+                    <div class="reader-field-label">Model</div>
+                    <div class="reader-field-value">@reader.Model</div>
+                </div>
+                <div>
+                    <div class="reader-field-label">Firmware</div>
+                    <div class="reader-field-value">@reader.Firmware</div>
+                </div>
+                <div>
+                    <div class="reader-field-label">Inventory</div>
+                    <div class="reader-field-value">@(reader.IsInventoryRunning ? "Running" : "Stopped")</div>
+                </div>
+                <div>
+                    <div class="reader-field-label">Tags Read (Session)</div>
+                    <div class="reader-field-value">@reader.TotalReports.ToString("N0")</div>
+                </div>
+                <div>
+                    <div class="reader-field-label">Current ROSPEC</div>
+                    <div class="reader-field-value">@(reader.IsInventoryRunning ? "#1 - Continuous" : "-")</div>
+                </div>
+                <div>
+                    <div class="reader-field-label">GPI / GPO</div>
+                    <div class="reader-field-value">@reader.GpiCount / @reader.GpoCount</div>
+                </div>
+            </div>
+
+            <div style="padding: 0 var(--space-5) var(--space-4);">
+                <div class="reader-field-label" style="margin-bottom: var(--space-2);">Antennas</div>
+                <div class="antenna-list">
+                    @for (var i = 1; i <= Math.Max(1, reader.AntennaCount); i++)
+                    {
+                        <div class="antenna-chip"><div class="antenna-dot"></div> Ant @i · ready</div>
+                    }
+                </div>
+            </div>
+
+            <div class="reader-card-actions">
+                <button class="btn btn-sm" @onclick="() => Select(reader.Endpoint)">Set Active</button>
+                <a class="btn btn-sm" href="/config">Configure</a>
+                <a class="btn btn-sm" href="/rospec">ROSPEC</a>
+                <button class="btn btn-sm btn-danger" style="margin-left: auto;" @onclick="() => Disconnect(reader.Endpoint)">Disconnect</button>
+            </div>
+        </div>
+    }
+
+    @if (Vm.State.Readers.Count > 0)
+    {
+        <button class="add-reader-card" @onclick="() => showAddModal = true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span style="font-size: 13px; font-weight: 500;">Add LLRP Reader</span>
+        </button>
+    }
+</div>
+
+<div class="modal-overlay @(showAddModal ? "open" : "")">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title">Add LLRP Reader</span>
+            <button class="btn btn-icon" @onclick="() => showAddModal = false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Reader Name</label>
+                <input type="text" value="Auto detected after connect" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">IP Address / Endpoint</label>
+                <input type="text" @bind="Vm.Endpoint" placeholder="192.168.40.233 or host:5084">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">LLRP Port</label>
+                    <input type="number" value="5084" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Timeout (sec)</label>
+                    <input type="number" value="30" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Reader Model</label>
+                <select disabled>
+                    <option>Other (auto-detect)</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" @onclick="() => showAddModal = false">Cancel</button>
+            <button class="btn btn-primary" @onclick="ConnectFromModal" disabled="@Vm.State.IsBusy">Connect</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool showAddModal;
+
+    protected override void OnInitialized() => Vm.State.Changed += OnStateChanged;
+
+    private async Task ConnectFromModal()
+    {
+        showAddModal = false;
+        await Vm.ConnectAsync();
+    }
+
+    private void Select(string endpoint) => Vm.Select(endpoint);
+    private void Disconnect(string endpoint) => Vm.Disconnect(endpoint);
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Vm.State.Changed -= OnStateChanged;
+}

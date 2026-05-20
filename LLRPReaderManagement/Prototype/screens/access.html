@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Access Operations — LLRP RFID Client</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/layout.css">
+<style>
+.access-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-4);
+  height: calc(100vh - 140px);
+}
+
+.tag-selector {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tag-selector-header {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tag-selector-header input {
+  flex: 1;
+  font-size: 12px;
+  padding: 5px 8px;
+}
+
+.tag-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tag-list-item {
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.tag-list-item:hover { background: var(--accent-bg-subtle); }
+.tag-list-item.selected { background: var(--accent-bg); border-left: 2px solid var(--accent); }
+
+.tag-list-item-epc {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.tag-list-item-meta {
+  font-size: 11px;
+  color: var(--muted-light);
+  margin-top: 2px;
+}
+
+.operations-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.op-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.op-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.op-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.op-card-body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.op-result {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  min-height: 60px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--muted);
+}
+
+.op-result.success { border-color: var(--status-ok); color: var(--fg); }
+.op-result.error { border-color: var(--status-danger); color: var(--status-danger); }
+
+.bank-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-2);
+}
+
+.bank-tab {
+  padding: var(--space-1) var(--space-3);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-right: none;
+  background: var(--bg);
+  transition: background 0.12s, color 0.12s;
+}
+
+.bank-tab:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.bank-tab:last-child { border-right: 1px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+
+.bank-tab.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.memory-view {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.memory-cell {
+  background: var(--surface);
+  padding: 4px 2px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg);
+  min-width: 28px;
+}
+
+.memory-cell.header {
+  background: var(--bg);
+  color: var(--muted-light);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.memory-cell.highlight {
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-topbar">
+    <h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      LLRP RFID Client
+    </h1>
+    <div class="topbar-meta">
+      <span>LLRP v1.0.1</span>
+      <span>|</span>
+      <span id="clock">14:32:07</span>
+    </div>
+  </header>
+
+  <aside class="app-sidebar">
+    <nav>
+      <div class="nav-section">Overview</div>
+      <a href="dashboard.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a href="readers.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>Readers</a>
+      <div class="nav-section">Scanning</div>
+      <a href="inventory.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>Tag Inventory</a>
+      <a href="history.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tag History</a>
+      <div class="nav-section">Configuration</div>
+      <a href="config.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-7-3.5 5.2-3m1.6-1 5.2-3M5 5.5l5.2 3m1.6 1 5.2 3"/></svg>Reader Config</a>
+      <a href="rospec.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>ROSPEC</a>
+      <a href="access.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Access Ops</a>
+    </nav>
+  </aside>
+
+  <main class="app-content fade-in">
+    <div class="section-header">
+      <h2 class="section-title">Access Operations</h2>
+      <div class="flex gap-2">
+        <select style="font-size: 13px; padding: 6px 10px;">
+          <option>Impinj R700 — Dock A</option>
+          <option>Zebra FX9600 — Line 2</option>
+          <option>Impinj R420 — Gate 3</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="access-layout">
+      <!-- Tag selector -->
+      <div class="tag-selector">
+        <div class="tag-selector-header">
+          <input type="text" placeholder="Search EPC..." id="tagSearch" oninput="filterTags()">
+          <span style="font-size: 11px; color: var(--muted-light); font-family: var(--font-mono);" id="tagCountLabel">47 tags</span>
+        </div>
+        <div class="tag-list" id="tagList">
+          <!-- JS fills -->
+        </div>
+      </div>
+
+      <!-- Operations -->
+      <div class="operations-panel">
+        <!-- Selected tag info -->
+        <div class="card" style="padding: var(--space-3) var(--space-4);">
+          <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-light);">Selected Tag</span>
+            <span id="selectedEPC" style="font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--accent);">E280 1160 6000 0208 3456 7890</span>
+            <span id="selectedReader" style="font-size: 12px; color: var(--muted); margin-left: auto;">Dock A · Ant 2 · −42 dBm</span>
+          </div>
+        </div>
+
+        <!-- Read -->
+        <div class="op-card">
+          <div class="op-card-header">
+            <span class="op-card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              Read Memory
+            </span>
+            <button class="btn btn-sm btn-primary" onclick="executeOp('read')">Execute</button>
+          </div>
+          <div class="op-card-body">
+            <div class="bank-tabs">
+              <div class="bank-tab active" onclick="selectBank(this)">Reserved</div>
+              <div class="bank-tab" onclick="selectBank(this)">EPC</div>
+              <div class="bank-tab" onclick="selectBank(this)">TID</div>
+              <div class="bank-tab" onclick="selectBank(this)">User</div>
+            </div>
+            <div style="display: flex; gap: var(--space-3);">
+              <div class="form-group" style="flex: 1;">
+                <label class="form-label">Word Pointer</label>
+                <input type="number" value="0" min="0" style="width: 100%;">
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label class="form-label">Word Count</label>
+                <input type="number" value="8" min="1" max="32" style="width: 100%;">
+              </div>
+            </div>
+            <div class="op-result" id="readResult">Ready to execute. Select a tag and click Execute.</div>
+          </div>
+        </div>
+
+        <!-- Write -->
+        <div class="op-card">
+          <div class="op-card-header">
+            <span class="op-card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Write Memory
+            </span>
+            <button class="btn btn-sm btn-primary" onclick="executeOp('write')">Execute</button>
+          </div>
+          <div class="op-card-body">
+            <div class="bank-tabs">
+              <div class="bank-tab" onclick="selectBank(this)">Reserved</div>
+              <div class="bank-tab active" onclick="selectBank(this)">EPC</div>
+              <div class="bank-tab" onclick="selectBank(this)">TID</div>
+              <div class="bank-tab" onclick="selectBank(this)">User</div>
+            </div>
+            <div style="display: flex; gap: var(--space-3);">
+              <div class="form-group" style="flex: 1;">
+                <label class="form-label">Word Pointer</label>
+                <input type="number" value="2" min="0" style="width: 100%;">
+              </div>
+              <div class="form-group" style="flex: 2;">
+                <label class="form-label">Data (Hex Words)</label>
+                <input type="text" value="1234 5678 9ABC DEF0" placeholder="e.g. 1234 5678" style="width: 100%; font-family: var(--font-mono);">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Access Password (Hex)</label>
+              <input type="text" value="00000000" placeholder="00000000" style="font-family: var(--font-mono); max-width: 200px;">
+            </div>
+            <div class="op-result" id="writeResult">Ready to execute. Data will be written to the selected tag's EPC memory bank.</div>
+          </div>
+        </div>
+
+        <!-- Lock / Kill -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <div class="op-card">
+            <div class="op-card-header">
+              <span class="op-card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Lock
+              </span>
+              <button class="btn btn-sm" onclick="executeOp('lock')">Execute</button>
+            </div>
+            <div class="op-card-body">
+              <div class="form-group">
+                <label class="form-label">Lock Mask</label>
+                <select>
+                  <option>EPC Write Lock</option>
+                  <option>TID Write Lock</option>
+                  <option>User Write Lock</option>
+                  <option>Access Password Lock</option>
+                  <option>Kill Password Lock</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Lock Action</label>
+                <select>
+                  <option>Write Lock</option>
+                  <option>Perma Lock</option>
+                  <option>Unlock</option>
+                </select>
+              </div>
+              <div class="op-result" id="lockResult" style="min-height: 40px;">Select lock parameters and execute.</div>
+            </div>
+          </div>
+
+          <div class="op-card">
+            <div class="op-card-header">
+              <span class="op-card-title" style="color: var(--status-danger);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Kill
+              </span>
+              <button class="btn btn-sm btn-danger" onclick="executeOp('kill')">Execute</button>
+            </div>
+            <div class="op-card-body">
+              <div class="form-group">
+                <label class="form-label">Kill Password (Hex)</label>
+                <input type="text" placeholder="00000000" style="font-family: var(--font-mono); max-width: 200px;">
+              </div>
+              <div style="font-size: 12px; color: var(--status-danger); padding: var(--space-2); background: var(--status-danger-bg); border-radius: var(--radius-sm);">
+                Warning: Kill permanently disables the tag. This action cannot be undone.
+              </div>
+              <div class="op-result" id="killResult" style="min-height: 40px;">Enter kill password and execute.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Memory viewer -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Memory Map — Selected Tag</span>
+            <button class="btn btn-sm" onclick="refreshMemory()">Refresh</button>
+          </div>
+          <div style="margin-bottom: var(--space-2); font-size: 11px; color: var(--muted);">EPC Bank (16 words)</div>
+          <div class="memory-view" id="memoryView">
+            <!-- JS fills -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Tag list
+const tags = [];
+for (let i = 0; i < 47; i++) {
+  const chars = '0123456789ABCDEF';
+  let epc = 'E280 1160 6000 ';
+  for (let j = 0; j < 4; j++) {
+    for (let k = 0; k < 4; k++) epc += chars[Math.floor(Math.random() * 16)];
+    epc += ' ';
+  }
+  tags.push({
+    epc: epc.trim(),
+    reader: ['Dock A', 'Line 2', 'Gate 3'][Math.floor(Math.random() * 3)],
+    antenna: Math.floor(Math.random() * 4) + 1,
+    rssi: Math.round((-30 - Math.random() * 45) * 10) / 10
+  });
+}
+
+let selectedIdx = 0;
+
+function renderTagList() {
+  const list = document.getElementById('tagList');
+  const search = document.getElementById('tagSearch').value.toUpperCase();
+  list.innerHTML = '';
+
+  tags.forEach((t, i) => {
+    if (search && !t.epc.includes(search)) return;
+    const el = document.createElement('div');
+    el.className = 'tag-list-item' + (i === selectedIdx ? ' selected' : '');
+    el.innerHTML = `
+      <div class="tag-list-item-epc">${t.epc}</div>
+      <div class="tag-list-item-meta">${t.reader} · Ant ${t.antenna} · ${t.rssi} dBm</div>
+    `;
+    el.onclick = () => { selectedIdx = i; selectTag(t); renderTagList(); };
+    list.appendChild(el);
+  });
+}
+
+function selectTag(tag) {
+  document.getElementById('selectedEPC').textContent = tag.epc;
+  document.getElementById('selectedReader').textContent = `${tag.reader} · Ant ${tag.antenna} · ${tag.rssi} dBm`;
+  refreshMemory();
+}
+
+function filterTags() { renderTagList(); }
+
+renderTagList();
+
+// Memory view
+function refreshMemory() {
+  const view = document.getElementById('memoryView');
+  view.innerHTML = '';
+  // Header row
+  for (let i = 0; i < 16; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'memory-cell header';
+    cell.textContent = i.toString(16).toUpperCase().padStart(2, '0');
+    view.appendChild(cell);
+  }
+  // Data row
+  const chars = '0123456789ABCDEF';
+  for (let i = 0; i < 16; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'memory-cell' + (i >= 2 && i <= 5 ? ' highlight' : '');
+    let word = '';
+    for (let j = 0; j < 4; j++) word += chars[Math.floor(Math.random() * 16)];
+    cell.textContent = word;
+    view.appendChild(cell);
+  }
+}
+
+refreshMemory();
+
+function selectBank(el) {
+  el.parentElement.querySelectorAll('.bank-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function executeOp(type) {
+  const resultEl = document.getElementById(type + 'Result');
+  resultEl.className = 'op-result';
+  resultEl.textContent = 'Executing...';
+
+  setTimeout(() => {
+    const success = Math.random() > 0.1;
+    if (success) {
+      resultEl.className = 'op-result success';
+      if (type === 'read') {
+        const chars = '0123456789ABCDEF';
+        let data = '';
+        for (let i = 0; i < 16; i++) {
+          for (let j = 0; j < 4; j++) data += chars[Math.floor(Math.random() * 16)];
+          if (i < 15) data += ' ';
+        }
+        resultEl.textContent = `OK — Read 8 words from EPC bank:\n${data}\n\nAccessPassword: 00000000`;
+      } else if (type === 'write') {
+        resultEl.textContent = 'OK — 4 words written to EPC bank at word pointer 2.\nVerify: PASS';
+      } else if (type === 'lock') {
+        resultEl.textContent = 'OK — EPC write lock applied successfully.';
+      } else if (type === 'kill') {
+        resultEl.textContent = 'OK — Tag killed permanently.';
+      }
+    } else {
+      resultEl.className = 'op-result error';
+      resultEl.textContent = `ERROR — Operation failed.\nTag may have moved out of range or access password mismatch.`;
+    }
+  }, 600 + Math.random() * 400);
+}
+</script>
+</body>
+</html>

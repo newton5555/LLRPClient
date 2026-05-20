@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tag History — LLRP RFID Client</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/layout.css">
+<style>
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.filter-bar input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 140px 2fr 1fr 80px 80px 100px 140px;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.history-row:hover { background: var(--accent-bg-subtle); }
+
+.history-row.header {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-light);
+  background: var(--bg);
+  font-family: var(--font-body);
+  position: sticky;
+  top: 0;
+}
+
+.history-time { color: var(--muted-light); font-size: 11px; }
+.history-epc { font-weight: 500; color: var(--fg); }
+.history-type {
+  font-family: var(--font-body);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.history-type.read { background: var(--status-info-bg); color: var(--status-info); }
+.history-type.write { background: var(--status-ok-bg); color: var(--status-ok); }
+.history-type.lock { background: var(--status-warn-bg); color: var(--status-warn); }
+.history-type.kill { background: var(--status-danger-bg); color: var(--status-danger); }
+.history-type.inventory { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+.history-reader { font-family: var(--font-body); color: var(--muted); }
+.history-rssi { color: var(--muted); }
+.history-result {
+  font-family: var(--font-body);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.history-result.success { background: var(--status-ok-bg); color: var(--status-ok); }
+.history-result.fail { background: var(--status-danger-bg); color: var(--status-danger); }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pagination-controls {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.page-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.page-btn:hover { background: var(--bg); }
+.page-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-topbar">
+    <h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      LLRP RFID Client
+    </h1>
+    <div class="topbar-meta">
+      <span>LLRP v1.0.1</span>
+      <span>|</span>
+      <span id="clock">14:32:07</span>
+    </div>
+  </header>
+
+  <aside class="app-sidebar">
+    <nav>
+      <div class="nav-section">Overview</div>
+      <a href="dashboard.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a href="readers.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>Readers</a>
+      <div class="nav-section">Scanning</div>
+      <a href="inventory.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>Tag Inventory</a>
+      <a href="history.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tag History</a>
+      <div class="nav-section">Configuration</div>
+      <a href="config.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-7-3.5 5.2-3m1.6-1 5.2-3M5 5.5l5.2 3m1.6 1 5.2 3"/></svg>Reader Config</a>
+      <a href="rospec.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>ROSPEC</a>
+      <a href="access.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Access Ops</a>
+    </nav>
+  </aside>
+
+  <main class="app-content fade-in">
+    <div class="section-header">
+      <h2 class="section-title">Tag History</h2>
+      <div class="flex gap-2">
+        <button class="btn btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <input type="text" placeholder="Search EPC..." id="searchInput" oninput="filterTable()">
+      <select id="typeFilter" onchange="filterTable()" style="min-width: 120px;">
+        <option value="">All Types</option>
+        <option value="inventory">Inventory</option>
+        <option value="read">Read</option>
+        <option value="write">Write</option>
+        <option value="lock">Lock</option>
+        <option value="kill">Kill</option>
+      </select>
+      <select id="readerFilter" onchange="filterTable()" style="min-width: 120px;">
+        <option value="">All Readers</option>
+        <option value="Dock A">Dock A</option>
+        <option value="Line 2">Line 2</option>
+        <option value="Gate 3">Gate 3</option>
+      </select>
+      <select id="resultFilter" onchange="filterTable()" style="min-width: 100px;">
+        <option value="">All Results</option>
+        <option value="success">Success</option>
+        <option value="fail">Failed</option>
+      </select>
+      <input type="date" id="dateFilter" onchange="filterTable()" style="min-width: 140px;">
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap" style="max-height: calc(100vh - 340px); overflow-y: auto;">
+      <div id="historyTable">
+        <div class="history-row header">
+          <span>Time</span>
+          <span>EPC</span>
+          <span>Operation</span>
+          <span>Reader</span>
+          <span>Antenna</span>
+          <span>RSSI</span>
+          <span>Result</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <span>Showing 1–50 of 2,847 events</span>
+      <div class="pagination-controls">
+        <button class="page-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">4</button>
+        <button class="page-btn">...</button>
+        <button class="page-btn">57</button>
+        <button class="page-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+const readers = ['Dock A', 'Line 2', 'Gate 3'];
+const types = ['inventory', 'inventory', 'inventory', 'inventory', 'read', 'write', 'lock', 'kill'];
+const antennas = [1, 2, 3, 4];
+const results = ['success', 'success', 'success', 'success', 'success', 'fail'];
+
+function randomEPC() {
+  const chars = '0123456789ABCDEF';
+  let epc = 'E280 1160 6000 ';
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) epc += chars[Math.floor(Math.random() * 16)];
+    epc += ' ';
+  }
+  return epc.trim();
+}
+
+// Generate history data
+const historyData = [];
+const now = Date.now();
+for (let i = 0; i < 500; i++) {
+  const type = types[Math.floor(Math.random() * types.length)];
+  historyData.push({
+    time: new Date(now - i * 12000 - Math.random() * 5000),
+    epc: randomEPC(),
+    type: type,
+    reader: readers[Math.floor(Math.random() * readers.length)],
+    antenna: antennas[Math.floor(Math.random() * antennas.length)],
+    rssi: Math.round((-30 - Math.random() * 45) * 10) / 10,
+    result: type === 'kill' ? (Math.random() > 0.1 ? 'success' : 'fail') : results[Math.floor(Math.random() * results.length)]
+  });
+}
+
+let filteredData = [...historyData];
+let currentPage = 1;
+const pageSize = 50;
+
+function renderHistory() {
+  const table = document.getElementById('historyTable');
+  const header = table.querySelector('.history-row.header');
+  table.innerHTML = '';
+  table.appendChild(header);
+
+  const start = (currentPage - 1) * pageSize;
+  const page = filteredData.slice(start, start + pageSize);
+
+  page.forEach(row => {
+    const el = document.createElement('div');
+    el.className = 'history-row';
+    el.innerHTML = `
+      <span class="history-time">${row.time.toLocaleString('en-GB', { hour12: false })}</span>
+      <span class="history-epc">${row.epc}</span>
+      <span><span class="history-type ${row.type}">${row.type}</span></span>
+      <span class="history-reader">${row.reader}</span>
+      <span>Ant ${row.antenna}</span>
+      <span class="history-rssi">${row.rssi.toFixed(1)} dBm</span>
+      <span><span class="history-result ${row.result}">${row.result}</span></span>
+    `;
+    table.appendChild(el);
+  });
+}
+
+function filterTable() {
+  const search = document.getElementById('searchInput').value.toUpperCase();
+  const type = document.getElementById('typeFilter').value;
+  const reader = document.getElementById('readerFilter').value;
+  const result = document.getElementById('resultFilter').value;
+
+  filteredData = historyData.filter(row => {
+    if (search && !row.epc.includes(search)) return false;
+    if (type && row.type !== type) return false;
+    if (reader && row.reader !== reader) return false;
+    if (result && row.result !== result) return false;
+    return true;
+  });
+
+  currentPage = 1;
+  renderHistory();
+
+  document.querySelector('.pagination span').textContent =
+    `Showing 1–${Math.min(pageSize, filteredData.length)} of ${filteredData.length.toLocaleString()} events`;
+}
+
+renderHistory();
+</script>
+</body>
+</html>

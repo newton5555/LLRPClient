@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reader Config — LLRP RFID Client</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/layout.css">
+<style>
+.config-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.config-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.config-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.config-section-body {
+  padding: var(--space-5);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.config-section-body.full {
+  grid-template-columns: 1fr;
+}
+
+.antenna-config {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+.antenna-config-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.antenna-config-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.antenna-config-name {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--border-strong);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle.on { background: var(--accent); }
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggle.on::after { transform: translateX(16px); }
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.slider-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+.slider-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  min-width: 50px;
+  text-align: right;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-topbar">
+    <h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      LLRP RFID Client
+    </h1>
+    <div class="topbar-meta">
+      <span>LLRP v1.0.1</span>
+      <span>|</span>
+      <span id="clock">14:32:07</span>
+    </div>
+  </header>
+
+  <aside class="app-sidebar">
+    <nav>
+      <div class="nav-section">Overview</div>
+      <a href="dashboard.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a href="readers.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>Readers</a>
+      <div class="nav-section">Scanning</div>
+      <a href="inventory.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>Tag Inventory</a>
+      <a href="history.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tag History</a>
+      <div class="nav-section">Configuration</div>
+      <a href="config.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-7-3.5 5.2-3m1.6-1 5.2-3M5 5.5l5.2 3m1.6 1 5.2 3"/></svg>Reader Config</a>
+      <a href="rospec.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>ROSPEC</a>
+      <a href="access.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Access Ops</a>
+    </nav>
+  </aside>
+
+  <main class="app-content fade-in">
+    <div class="section-header">
+      <h2 class="section-title">Reader Configuration</h2>
+      <div class="flex gap-2">
+        <select id="readerSelect" style="font-size: 13px; padding: 6px 10px;" onchange="switchReader()">
+          <option>Impinj R700 — Dock A</option>
+          <option>Zebra FX9600 — Line 2</option>
+          <option>Impinj R420 — Gate 3</option>
+        </select>
+        <button class="btn btn-primary btn-sm">Apply Changes</button>
+        <button class="btn btn-sm">Reset to Defaults</button>
+      </div>
+    </div>
+
+    <!-- General Settings -->
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">General Settings</span>
+        <span class="status-badge connected">Connected</span>
+      </div>
+      <div class="config-section-body">
+        <div class="form-group">
+          <label class="form-label">Reader Name</label>
+          <input type="text" value="Impinj R700 — Dock A">
+        </div>
+        <div class="form-group">
+          <label class="form-label">IP Address</label>
+          <input type="text" value="192.168.1.101">
+        </div>
+        <div class="form-group">
+          <label class="form-label">LLRP Port</label>
+          <input type="number" value="5084">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Keepalive Interval (ms)</label>
+          <input type="number" value="10000">
+        </div>
+      </div>
+    </div>
+
+    <!-- RF Settings -->
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">RF Settings</span>
+      </div>
+      <div class="config-section-body">
+        <div class="form-group">
+          <label class="form-label">Transmit Power</label>
+          <div class="slider-row">
+            <input type="range" min="10" max="32.5" step="0.5" value="30" id="powerSlider" oninput="updateSlider('powerValue', this.value, ' dBm')">
+            <span class="slider-value" id="powerValue">30.0 dBm</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Frequency Hop Rate</label>
+          <select>
+            <option>Normal (50 hops/sec)</option>
+            <option>Fast (200 hops/sec)</option>
+            <option>Fixed Channel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Regulatory Region</label>
+          <select>
+            <option>FCC (US)</option>
+            <option>ETSI (EU)</option>
+            <option>TELEC (JP)</option>
+            <option>SRRC (CN)</option>
+            <option>IC (CA)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Channel Index</label>
+          <select>
+            <option>Auto (Frequency Hop)</option>
+            <option>Channel 1 (902.75 MHz)</option>
+            <option>Channel 2 (903.25 MHz)</option>
+            <option>Channel 3 (903.75 MHz)</option>
+            <option>...</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Antenna Configuration -->
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Antenna Configuration</span>
+        <span style="font-size: 12px; color: var(--muted);">4 antennas detected</span>
+      </div>
+      <div style="padding: var(--space-4) var(--space-5);">
+        <div class="antenna-config">
+          <div class="antenna-config-card">
+            <div class="antenna-config-header">
+              <span class="antenna-config-name">Antenna 1</span>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Power (dBm)</label>
+              <div class="slider-row">
+                <input type="range" min="10" max="32.5" step="0.5" value="30" oninput="this.nextElementSibling.textContent = parseFloat(this.value).toFixed(1) + ' dBm'">
+                <span class="slider-value">30.0 dBm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Receive Sensitivity</label>
+              <div class="slider-row">
+                <input type="range" min="-80" max="-20" step="1" value="-70" oninput="this.nextElementSibling.textContent = this.value + ' dBm'">
+                <span class="slider-value">-70 dBm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="antenna-config-card">
+            <div class="antenna-config-header">
+              <span class="antenna-config-name">Antenna 2</span>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Power (dBm)</label>
+              <div class="slider-row">
+                <input type="range" min="10" max="32.5" step="0.5" value="30" oninput="this.nextElementSibling.textContent = parseFloat(this.value).toFixed(1) + ' dBm'">
+                <span class="slider-value">30.0 dBm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Receive Sensitivity</label>
+              <div class="slider-row">
+                <input type="range" min="-80" max="-20" step="1" value="-70" oninput="this.nextElementSibling.textContent = this.value + ' dBm'">
+                <span class="slider-value">-70 dBm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="antenna-config-card">
+            <div class="antenna-config-header">
+              <span class="antenna-config-name">Antenna 3</span>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Power (dBm)</label>
+              <div class="slider-row">
+                <input type="range" min="10" max="32.5" step="0.5" value="28" oninput="this.nextElementSibling.textContent = parseFloat(this.value).toFixed(1) + ' dBm'">
+                <span class="slider-value">28.0 dBm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Receive Sensitivity</label>
+              <div class="slider-row">
+                <input type="range" min="-80" max="-20" step="1" value="-70" oninput="this.nextElementSibling.textContent = this.value + ' dBm'">
+                <span class="slider-value">-70 dBm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="antenna-config-card">
+            <div class="antenna-config-header">
+              <span class="antenna-config-name">Antenna 4</span>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Power (dBm)</label>
+              <div class="slider-row">
+                <input type="range" min="10" max="32.5" step="0.5" value="30" oninput="this.nextElementSibling.textContent = parseFloat(this.value).toFixed(1) + ' dBm'">
+                <span class="slider-value">30.0 dBm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Receive Sensitivity</label>
+              <div class="slider-row">
+                <input type="range" min="-80" max="-20" step="1" value="-65" oninput="this.nextElementSibling.textContent = this.value + ' dBm'">
+                <span class="slider-value">-65 dBm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Settings -->
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Inventory Settings</span>
+      </div>
+      <div class="config-section-body">
+        <div class="form-group">
+          <label class="form-label">Session</label>
+          <select>
+            <option>S0</option>
+            <option selected>S1</option>
+            <option>S2</option>
+            <option>S3</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Search Mode</label>
+          <select>
+            <option>Single Target</option>
+            <option selected>Dual Target</option>
+            <option>Single Target with Suppression</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tag Population Estimate</label>
+          <input type="number" value="300">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Q Value</label>
+          <select>
+            <option>Auto</option>
+            <option>Q0</option>
+            <option>Q1</option>
+            <option>Q4</option>
+            <option selected>Q7</option>
+            <option>Q15</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- GPI/GPO -->
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">GPI / GPO</span>
+      </div>
+      <div class="config-section-body full">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3);">
+          <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--space-3); text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-light); margin-bottom: var(--space-2);">GPI 1</div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--status-ok); margin: 0 auto;"></div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: var(--space-1);">HIGH</div>
+          </div>
+          <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--space-3); text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-light); margin-bottom: var(--space-2);">GPI 2</div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--border-strong); margin: 0 auto;"></div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: var(--space-1);">LOW</div>
+          </div>
+          <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--space-3); text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-light); margin-bottom: var(--space-2);">GPO 1</div>
+            <div class="toggle on" onclick="this.classList.toggle('on')" style="margin: 0 auto;"></div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: var(--space-1);">ON</div>
+          </div>
+          <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--space-3); text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-light); margin-bottom: var(--space-2);">GPO 2</div>
+            <div class="toggle" onclick="this.classList.toggle('on')" style="margin: 0 auto;"></div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: var(--space-1);">OFF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function updateSlider(id, value, suffix) {
+  document.getElementById(id).textContent = parseFloat(value).toFixed(1) + suffix;
+}
+
+function switchReader() {
+  // In a real app, this would load reader-specific config
+  const select = document.getElementById('readerSelect');
+  const name = select.value;
+  document.querySelector('.config-section-title').textContent = 'General Settings';
+}
+</script>
+</body>
+</html>

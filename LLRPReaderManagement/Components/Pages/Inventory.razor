@@ -1,0 +1,98 @@
+@page "/inventory"
+@inject InventoryViewModel Vm
+@implements IDisposable
+
+<div class="section-header">
+    <h2 class="section-title">Tag Inventory</h2>
+    <div class="flex gap-2">
+        <button class="btn btn-sm" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+        </button>
+        <button class="btn btn-sm" @onclick="Vm.Clear">Clear</button>
+    </div>
+</div>
+
+<div class="scan-controls">
+    <div class="scan-indicator @(Vm.State.IsInventoryRunning ? "active" : "paused")"></div>
+    <span style="font-size: 13px; font-weight: 600;">@(Vm.State.IsInventoryRunning ? "Scanning Active" : "Scanning Paused")</span>
+    <span style="font-size: 12px; color: var(--muted); font-family: var(--font-mono);">@DateTime.Now.ToString("HH:mm:ss")</span>
+    <div style="margin-left: auto; display: flex; gap: var(--space-2);">
+        @if (Vm.State.IsInventoryRunning)
+        {
+            <button class="btn btn-sm" @onclick="Vm.Stop">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                Pause
+            </button>
+        }
+        else
+        {
+            <button class="btn btn-sm btn-primary" @onclick="Vm.Start">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Start
+            </button>
+        }
+        <button class="btn btn-sm" @onclick="Vm.Pull">Pull</button>
+        <select style="font-size: 12px; padding: 4px 8px;">
+            <option>Primary Reader</option>
+        </select>
+    </div>
+</div>
+
+<div class="stats-bar">
+    <div class="stats-bar-item">
+        <span class="stats-bar-label">Unique Tags</span>
+        <span class="stats-bar-value">@Vm.State.Tags.Count</span>
+    </div>
+    <div class="stats-bar-item">
+        <span class="stats-bar-label">Total Reads</span>
+        <span class="stats-bar-value">@Vm.State.TotalReports.ToString("N0")</span>
+    </div>
+    <div class="stats-bar-item">
+        <span class="stats-bar-label">Read Rate</span>
+        <span class="stats-bar-value">@(Vm.State.IsInventoryRunning ? "Live" : "-")</span>
+    </div>
+    <div class="stats-bar-item">
+        <span class="stats-bar-label">Avg RSSI</span>
+        <span class="stats-bar-value">@AverageRssi</span>
+    </div>
+</div>
+
+<div class="table-wrap" style="max-height: calc(100vh - 320px); overflow-y: auto;">
+    <div class="tag-row header">
+        <span>EPC</span>
+        <span>RSSI</span>
+        <span>Count</span>
+            <span>Reader</span>
+        <span>Antenna</span>
+        <span>Last Seen</span>
+    </div>
+    @if (Vm.State.Tags.Count == 0)
+    {
+        <div class="empty-state">No tag reports yet.</div>
+    }
+    @foreach (var tag in Vm.State.Tags)
+    {
+        <div class="tag-row">
+            <span class="tag-epc">@tag.Epc</span>
+            <span>
+                <span class="rssi-bar"><span style="width: @RssiWidth(tag.Rssi); background: @RssiColor(tag.Rssi);"></span></span>
+                <span class="mono">@tag.Rssi.ToString("0.0")</span>
+            </span>
+            <span>@tag.SeenCount</span>
+            <span>@tag.ReaderEndpoint</span>
+            <span>Ant @tag.Antenna</span>
+            <span>@tag.LastSeen.ToString("HH:mm:ss.fff")</span>
+        </div>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized() => Vm.State.Changed += OnStateChanged;
+
+    private string AverageRssi => Vm.State.Tags.Count == 0 ? "-" : $"{Vm.State.Tags.Average(x => x.Rssi):0.0} dBm";
+    private static string RssiColor(double rssi) => rssi > -40 ? "var(--status-ok)" : rssi > -55 ? "var(--status-warn)" : "var(--status-danger)";
+    private static string RssiWidth(double rssi) => $"{Math.Min(100, Math.Max(5, (rssi + 80) * 2.5)):0}%";
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Vm.State.Changed -= OnStateChanged;
+}

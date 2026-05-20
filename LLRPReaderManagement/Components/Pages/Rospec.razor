@@ -1,0 +1,121 @@
+@page "/rospec"
+@inject RospecViewModel Vm
+@implements IDisposable
+
+<div class="section-header">
+    <h2 class="section-title">ROSPEC Management</h2>
+    <div class="flex gap-2">
+        <select style="font-size: 13px; padding: 6px 10px;" value="@Vm.State.ActiveEndpoint" @onchange="OnReaderChanged">
+            @foreach (var reader in Vm.State.Readers)
+            {
+                <option value="@reader.Endpoint">@reader.Name - @reader.Endpoint</option>
+            }
+        </select>
+        <button class="btn btn-primary btn-sm" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New ROSPEC
+        </button>
+    </div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: var(--space-4);">
+    <div class="rospec-card @(Vm.State.IsInventoryRunning ? "active" : "")">
+        <div class="rospec-head">
+            <div class="rospec-head-left">
+                <span class="rospec-id">ROSpec #1</span>
+                <span class="rospec-name">Continuous Inventory - All Antennas</span>
+            </div>
+            <span class="status-badge @(Vm.State.IsInventoryRunning ? "connected" : "disconnected")">
+                @(Vm.State.IsInventoryRunning ? "Running" : "Stopped")
+            </span>
+        </div>
+        <div class="rospec-body">
+            <div>
+                <div class="rospec-field-label">Priority</div>
+                <div class="rospec-field-value">0 (Highest)</div>
+            </div>
+            <div>
+                <div class="rospec-field-label">Trigger</div>
+                <div class="rospec-field-value">Immediate</div>
+            </div>
+            <div>
+                <div class="rospec-field-label">Stop Trigger</div>
+                <div class="rospec-field-value">None (Continuous)</div>
+            </div>
+            <div>
+                <div class="rospec-field-label">Reader</div>
+                <div class="rospec-field-value">@Vm.State.Endpoint</div>
+            </div>
+            <div>
+                <div class="rospec-field-label">Session</div>
+                <div class="rospec-field-value">S@(Vm.State.Settings?.Session.ToString() ?? "-")</div>
+            </div>
+            <div>
+                <div class="rospec-field-label">Tags Read</div>
+                <div class="rospec-field-value">@Vm.State.TotalReports.ToString("N0")</div>
+            </div>
+        </div>
+        <div class="rospec-spec">
+            <div class="rospec-spec-title">Spec Details</div>
+            <div class="spec-param">
+                <span class="spec-param-key">InventorySpec.session</span>
+                <span class="spec-param-value">S@(Vm.State.Settings?.Session.ToString() ?? "-")</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">InventorySpec.searchMode</span>
+                <span class="spec-param-value">@(Vm.State.Settings?.InventorySearchMode.ToString() ?? "-")</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">AntennaIDs</span>
+                <span class="spec-param-value">@AntennaText</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">TagReportContentSelector</span>
+                <span class="spec-param-value">EPC, RSSI, AntennaID, First/Last Seen, Seen Count</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">ReportSource</span>
+                <span class="spec-param-value">LLRPSdk TagsReported event</span>
+            </div>
+        </div>
+        <div class="rospec-actions">
+            @if (Vm.State.IsInventoryRunning)
+            {
+                <button class="btn btn-sm btn-danger" @onclick="Vm.Stop">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    Stop
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-sm btn-primary" @onclick="Vm.Start" disabled="@(!Vm.State.IsConnected)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Start
+                </button>
+            }
+            <a class="btn btn-sm" href="/config">Edit</a>
+            <a class="btn btn-sm" href="/inventory">Inventory</a>
+            <span style="margin-left: auto; color: var(--muted); font-size: 12px;">SDK-managed default ROSPEC</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized() => Vm.State.Changed += OnStateChanged;
+
+    private string AntennaText => Vm.State.AntennaCount == 0
+        ? "-"
+        : string.Join(", ", Enumerable.Range(1, (int)Vm.State.AntennaCount));
+
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+    private void OnReaderChanged(ChangeEventArgs args)
+    {
+        var endpoint = args.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(endpoint))
+        {
+            Vm.SelectReader(endpoint);
+        }
+    }
+
+    public void Dispose() => Vm.State.Changed -= OnStateChanged;
+}

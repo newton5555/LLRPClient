@@ -1,0 +1,123 @@
+@page "/history"
+@inject AppState State
+@implements IDisposable
+
+<div class="section-header">
+    <h2 class="section-title">Tag History</h2>
+    <div class="flex gap-2">
+        <button class="btn btn-sm" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+        </button>
+    </div>
+</div>
+
+<div class="filter-bar">
+    <input type="text" placeholder="Search EPC..." @bind="SearchText" @bind:event="oninput">
+    <select @bind="ReaderFilter" style="min-width: 160px;">
+        <option value="">All Readers</option>
+        @foreach (var reader in State.Readers)
+        {
+            <option value="@reader.Endpoint">@reader.Name</option>
+        }
+    </select>
+    <select @bind="ResultFilter" style="min-width: 120px;">
+        <option value="">All Results</option>
+        <option value="success">Success</option>
+        <option value="info">Info</option>
+        <option value="warning">Warning</option>
+        <option value="error">Error</option>
+    </select>
+    <input type="date" style="min-width: 140px;" disabled>
+</div>
+
+<div class="table-wrap" style="max-height: calc(100vh - 340px); overflow-y: auto;">
+    <div class="history-row header">
+        <span>Time</span>
+        <span>EPC / Message</span>
+        <span>Operation</span>
+        <span>Reader</span>
+        <span>Antenna</span>
+        <span>RSSI</span>
+        <span>Result</span>
+    </div>
+    @if (Rows.Count == 0)
+    {
+        <div class="empty-state">No history rows match the filters.</div>
+    }
+    @foreach (var row in Rows.Take(50))
+    {
+        <div class="history-row">
+            <span class="history-time">@row.Time.ToString("yyyy-MM-dd HH:mm:ss")</span>
+            <span class="history-epc">@row.Text</span>
+            <span><span class="history-type @row.TypeClass">@row.Operation</span></span>
+            <span class="history-reader">@row.Reader</span>
+            <span>@row.Antenna</span>
+            <span class="history-rssi">@row.Rssi</span>
+            <span><span class="history-result @row.ResultClass">@row.Result</span></span>
+        </div>
+    }
+</div>
+
+<div class="pagination">
+    <span>Showing 1-@Math.Min(50, Rows.Count) of @Rows.Count events</span>
+    <div class="pagination-controls">
+        <button class="page-btn active">1</button>
+    </div>
+</div>
+
+@code {
+    private string SearchText { get; set; } = string.Empty;
+    private string ReaderFilter { get; set; } = string.Empty;
+    private string ResultFilter { get; set; } = string.Empty;
+
+    private IReadOnlyList<HistoryRow> Rows
+    {
+        get
+        {
+            var tagRows = State.Tags.Select(tag => new HistoryRow(
+                tag.LastSeen,
+                tag.Epc,
+                "inventory",
+                tag.ReaderEndpoint,
+                $"Ant {tag.Antenna}",
+                $"{tag.Rssi:0.0} dBm",
+                "success",
+                "inventory",
+                "success"));
+
+            var logRows = State.Logs.Select(log => new HistoryRow(
+                log.Timestamp,
+                log.Message,
+                log.Category,
+                "-",
+                "-",
+                "-",
+                log.Level.ToString(),
+                log.Category.ToLowerInvariant(),
+                log.Level >= Microsoft.Extensions.Logging.LogLevel.Error ? "fail" : "success"));
+
+            return tagRows.Concat(logRows)
+                .Where(row => string.IsNullOrWhiteSpace(SearchText) || row.Text.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                .Where(row => string.IsNullOrWhiteSpace(ReaderFilter) || string.Equals(row.Reader, ReaderFilter, StringComparison.OrdinalIgnoreCase))
+                .Where(row => string.IsNullOrWhiteSpace(ResultFilter) || row.Result.Contains(ResultFilter, StringComparison.OrdinalIgnoreCase) || row.ResultClass.Contains(ResultFilter, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(row => row.Time)
+                .ToList();
+        }
+    }
+
+    protected override void OnInitialized() => State.Changed += OnStateChanged;
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => State.Changed -= OnStateChanged;
+
+    private sealed record HistoryRow(
+        DateTime Time,
+        string Text,
+        string Operation,
+        string Reader,
+        string Antenna,
+        string Rssi,
+        string Result,
+        string TypeClass,
+        string ResultClass);
+}

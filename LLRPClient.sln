@@ -17,6 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LLRPReaderUI_Avalonia", "LL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRPReaderUI_Avalonia.Android", "LLRPReaderUI_Avalonia\LLRPReaderUI_Avalonia.Android\LLRPReaderUI_Avalonia.Android.csproj", "{EFF4D9E4-C211-7292-0865-6E19E6A6FF67}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LLRPReaderUI_Blazor", "LLRPReaderUI_Blazor", "{45278DB4-F1B7-4B45-AB04-361CD5C1DA07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRPReaderManagement", "LLRPReaderManagement\LLRPReaderManagement.csproj", "{35169127-13E8-4A07-8789-769711351733}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +52,10 @@ Global
 		{EFF4D9E4-C211-7292-0865-6E19E6A6FF67}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{EFF4D9E4-C211-7292-0865-6E19E6A6FF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFF4D9E4-C211-7292-0865-6E19E6A6FF67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35169127-13E8-4A07-8789-769711351733}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35169127-13E8-4A07-8789-769711351733}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35169127-13E8-4A07-8789-769711351733}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35169127-13E8-4A07-8789-769711351733}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +64,7 @@ Global
 		{86BDE3A2-2D20-BA87-2ADC-1134CABA10B8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5C945BA9-1AB7-D26C-DA71-5782377E85A1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{EFF4D9E4-C211-7292-0865-6E19E6A6FF67} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{35169127-13E8-4A07-8789-769711351733} = {45278DB4-F1B7-4B45-AB04-361CD5C1DA07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9DB26AF4-99D0-4EA8-A234-B15C7B7A299C}

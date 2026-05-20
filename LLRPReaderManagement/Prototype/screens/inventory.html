@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tag Inventory — LLRP RFID Client</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/layout.css">
+<style>
+.scan-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.scan-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.scan-indicator.active {
+  background: var(--status-ok);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.scan-indicator.paused { background: var(--status-warn); }
+.scan-indicator.stopped { background: var(--muted-light); }
+
+.tag-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 80px 100px 80px 120px;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  transition: background 0.1s;
+}
+
+.tag-row:hover { background: var(--accent-bg-subtle); }
+
+.tag-row.header {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-light);
+  background: var(--bg);
+  font-family: var(--font-body);
+  position: sticky;
+  top: 0;
+}
+
+.tag-row.new {
+  animation: flashNew 0.6s ease-out;
+}
+
+@keyframes flashNew {
+  0% { background: var(--accent-bg); }
+  100% { background: transparent; }
+}
+
+.tag-epc {
+  font-weight: 500;
+  color: var(--fg);
+  letter-spacing: 0.02em;
+}
+
+.tag-rssi {
+  color: var(--muted);
+}
+
+.tag-count {
+  color: var(--muted-light);
+}
+
+.tag-reader {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tag-ant {
+  color: var(--muted-light);
+}
+
+.tag-time {
+  color: var(--muted-light);
+  font-size: 11px;
+}
+
+.rssi-bar {
+  width: 60px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+.rssi-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.stats-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  font-size: 12px;
+}
+
+.stats-bar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stats-bar-label {
+  color: var(--muted-light);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stats-bar-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-topbar">
+    <h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      LLRP RFID Client
+    </h1>
+    <div class="topbar-meta">
+      <span>LLRP v1.0.1</span>
+      <span>|</span>
+      <span id="clock">14:32:07</span>
+    </div>
+  </header>
+
+  <aside class="app-sidebar">
+    <nav>
+      <div class="nav-section">Overview</div>
+      <a href="dashboard.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a href="readers.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>Readers</a>
+      <div class="nav-section">Scanning</div>
+      <a href="inventory.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>Tag Inventory</a>
+      <a href="history.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tag History</a>
+      <div class="nav-section">Configuration</div>
+      <a href="config.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-7-3.5 5.2-3m1.6-1 5.2-3M5 5.5l5.2 3m1.6 1 5.2 3"/></svg>Reader Config</a>
+      <a href="rospec.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>ROSPEC</a>
+      <a href="access.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Access Ops</a>
+    </nav>
+  </aside>
+
+  <main class="app-content fade-in">
+    <div class="section-header">
+      <h2 class="section-title">Tag Inventory</h2>
+      <div class="flex gap-2">
+        <button class="btn btn-sm" onclick="exportCSV()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button class="btn btn-sm" id="clearBtn" onclick="clearTags()">Clear</button>
+      </div>
+    </div>
+
+    <!-- Scan controls -->
+    <div class="scan-controls">
+      <div class="scan-indicator active" id="scanDot"></div>
+      <span style="font-size: 13px; font-weight: 600;" id="scanLabel">Scanning Active</span>
+      <span style="font-size: 12px; color: var(--muted); font-family: var(--font-mono);" id="scanDuration">00:14:32</span>
+      <div style="margin-left: auto; display: flex; gap: var(--space-2);">
+        <button class="btn btn-sm" id="pauseBtn" onclick="toggleScan()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          Pause
+        </button>
+        <select style="font-size: 12px; padding: 4px 8px;">
+          <option>All Readers</option>
+          <option>Dock A</option>
+          <option>Line 2</option>
+          <option>Gate 3</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stats-bar-item">
+        <span class="stats-bar-label">Unique Tags</span>
+        <span class="stats-bar-value" id="uniqueCount">847</span>
+      </div>
+      <div class="stats-bar-item">
+        <span class="stats-bar-label">Total Reads</span>
+        <span class="stats-bar-value" id="totalReads">12,847</span>
+      </div>
+      <div class="stats-bar-item">
+        <span class="stats-bar-label">Read Rate</span>
+        <span class="stats-bar-value">2,412 / min</span>
+      </div>
+      <div class="stats-bar-item">
+        <span class="stats-bar-label">Avg RSSI</span>
+        <span class="stats-bar-value">−44.2 dBm</span>
+      </div>
+    </div>
+
+    <!-- Tag table -->
+    <div class="table-wrap" style="max-height: calc(100vh - 320px); overflow-y: auto;">
+      <div id="tagTable">
+        <div class="tag-row header">
+          <span>EPC</span>
+          <span>RSSI</span>
+          <span>Count</span>
+          <span>Reader</span>
+          <span>Antenna</span>
+          <span>Last Seen</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Clock
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Scan duration timer
+let scanSeconds = 872;
+setInterval(() => {
+  scanSeconds++;
+  const m = Math.floor(scanSeconds / 60);
+  const s = scanSeconds % 60;
+  const h = Math.floor(m / 60);
+  document.getElementById('scanDuration').textContent =
+    String(h).padStart(2,'0') + ':' + String(m % 60).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}, 1000);
+
+// Simulated tag data
+const readers = ['Dock A', 'Line 2', 'Gate 3'];
+const antennas = [1, 2, 3, 4, 5, 6, 7, 8];
+let tags = [];
+let tagId = 0;
+
+function randomEPC() {
+  const chars = '0123456789ABCDEF';
+  let epc = 'E280 1160 6000 ';
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) epc += chars[Math.floor(Math.random() * 16)];
+    epc += ' ';
+  }
+  return epc.trim();
+}
+
+function rssiColor(rssi) {
+  if (rssi > -40) return 'var(--status-ok)';
+  if (rssi > -55) return 'var(--status-warn)';
+  return 'var(--status-danger)';
+}
+
+function rssiWidth(rssi) {
+  return Math.min(100, Math.max(5, (rssi + 80) * 2.5)) + '%';
+}
+
+// Seed initial tags
+for (let i = 0; i < 50; i++) {
+  const rssi = -30 - Math.random() * 45;
+  tags.push({
+    id: tagId++,
+    epc: randomEPC(),
+    rssi: Math.round(rssi * 10) / 10,
+    count: Math.floor(Math.random() * 200) + 1,
+    reader: readers[Math.floor(Math.random() * readers.length)],
+    antenna: antennas[Math.floor(Math.random() * 4)],
+    time: new Date(Date.now() - Math.random() * 600000)
+  });
+}
+
+function renderTag(tag, isNew) {
+  const row = document.createElement('div');
+  row.className = 'tag-row' + (isNew ? ' new' : '');
+  row.innerHTML = `
+    <span class="tag-epc">${tag.epc}</span>
+    <span class="tag-rssi">${tag.rssi.toFixed(1)} dBm <span class="rssi-bar"><span class="rssi-bar-fill" style="width: ${rssiWidth(tag.rssi)}; background: ${rssiColor(tag.rssi)};"></span></span></span>
+    <span class="tag-count">${tag.count}</span>
+    <span class="tag-reader">${tag.reader}</span>
+    <span class="tag-ant">Ant ${tag.antenna}</span>
+    <span class="tag-time">${tag.time.toLocaleTimeString('en-GB')}</span>
+  `;
+  return row;
+}
+
+function renderAll() {
+  const table = document.getElementById('tagTable');
+  const header = table.querySelector('.tag-row.header');
+  table.innerHTML = '';
+  table.appendChild(header);
+  tags.sort((a, b) => b.time - a.time);
+  tags.forEach(t => table.appendChild(renderTag(t, false)));
+}
+
+renderAll();
+
+// Simulate live reads
+let scanning = true;
+setInterval(() => {
+  if (!scanning) return;
+  // Update an existing tag or add new
+  if (Math.random() > 0.3 && tags.length > 0) {
+    const t = tags[Math.floor(Math.random() * tags.length)];
+    t.count++;
+    t.rssi = Math.round((t.rssi + (Math.random() - 0.5) * 4) * 10) / 10;
+    t.time = new Date();
+  } else {
+    const rssi = -30 - Math.random() * 45;
+    const newTag = {
+      id: tagId++,
+      epc: randomEPC(),
+      rssi: Math.round(rssi * 10) / 10,
+      count: 1,
+      reader: readers[Math.floor(Math.random() * readers.length)],
+      antenna: antennas[Math.floor(Math.random() * 4)],
+      time: new Date()
+    };
+    tags.unshift(newTag);
+    if (tags.length > 200) tags.pop();
+    document.getElementById('uniqueCount').textContent = tags.length.toLocaleString();
+  }
+  document.getElementById('totalReads').textContent = tags.reduce((s, t) => s + t.count, 0).toLocaleString();
+  renderAll();
+}, 800);
+
+function toggleScan() {
+  scanning = !scanning;
+  const dot = document.getElementById('scanDot');
+  const label = document.getElementById('scanLabel');
+  const btn = document.getElementById('pauseBtn');
+  if (scanning) {
+    dot.className = 'scan-indicator active';
+    label.textContent = 'Scanning Active';
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause';
+  } else {
+    dot.className = 'scan-indicator paused';
+    label.textContent = 'Scanning Paused';
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume';
+  }
+}
+
+function clearTags() {
+  tags = [];
+  tagId = 0;
+  document.getElementById('uniqueCount').textContent = '0';
+  document.getElementById('totalReads').textContent = '0';
+  renderAll();
+}
+
+function exportCSV() {
+  let csv = 'EPC,RSSI,Count,Reader,Antenna,Last Seen\n';
+  tags.forEach(t => {
+    csv += `"${t.epc}",${t.rssi},${t.count},"${t.reader}",${t.antenna},"${t.time.toISOString()}"\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tag-inventory-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

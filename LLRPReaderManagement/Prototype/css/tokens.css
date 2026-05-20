@@ -1,0 +1,62 @@
+/* LLRP RFID Client — Tech Utility Tokens */
+:root {
+  /* Surface */
+  --bg: oklch(98% 0.005 250);
+  --surface: oklch(100% 0 0);
+  --surface-raised: oklch(99.5% 0.001 250);
+
+  /* Text */
+  --fg: oklch(22% 0.02 240);
+  --muted: oklch(50% 0.018 240);
+  --muted-light: oklch(62% 0.012 250);
+
+  /* Border */
+  --border: oklch(90% 0.008 240);
+  --border-strong: oklch(82% 0.01 240);
+
+  /* Accent — green for "connected/active" */
+  --accent: oklch(58% 0.16 145);
+  --accent-hover: oklch(52% 0.16 145);
+  --accent-bg: oklch(95% 0.04 145);
+  --accent-bg-subtle: oklch(97% 0.02 145);
+
+  /* Status */
+  --status-ok: oklch(58% 0.16 145);
+  --status-ok-bg: oklch(95% 0.04 145);
+  --status-warn: oklch(68% 0.16 75);
+  --status-warn-bg: oklch(95% 0.06 75);
+  --status-danger: oklch(55% 0.2 25);
+  --status-danger-bg: oklch(95% 0.05 25);
+  --status-info: oklch(55% 0.14 250);
+  --status-info-bg: oklch(95% 0.04 250);
+
+  /* Fonts */
+  --font-display: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.05);
+  --shadow-md: 0 1px 3px oklch(0% 0 0 / 0.08), 0 1px 2px oklch(0% 0 0 / 0.06);
+
+  /* Z-index */
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+}

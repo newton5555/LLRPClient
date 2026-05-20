@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROSPEC Management — LLRP RFID Client</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/layout.css">
+<style>
+.rospec-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.rospec-card.active { border-color: var(--accent); }
+
+.rospec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.rospec-head-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rospec-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.rospec-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.rospec-body {
+  padding: var(--space-4) var(--space-5);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.rospec-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-light);
+  margin-bottom: 2px;
+}
+
+.rospec-field-value {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--fg);
+}
+
+.rospec-spec {
+  padding: 0 var(--space-5) var(--space-4);
+}
+
+.rospec-spec-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.spec-param {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.spec-param:last-child { border-bottom: none; }
+
+.spec-param-key {
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.spec-param-value {
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.rospec-actions {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.timeline-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-time {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--muted-light);
+}
+
+.timeline-text {
+  font-size: 13px;
+  color: var(--fg);
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-topbar">
+    <h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      LLRP RFID Client
+    </h1>
+    <div class="topbar-meta">
+      <span>LLRP v1.0.1</span>
+      <span>|</span>
+      <span id="clock">14:32:07</span>
+    </div>
+  </header>
+
+  <aside class="app-sidebar">
+    <nav>
+      <div class="nav-section">Overview</div>
+      <a href="dashboard.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a href="readers.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>Readers</a>
+      <div class="nav-section">Scanning</div>
+      <a href="inventory.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>Tag Inventory</a>
+      <a href="history.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tag History</a>
+      <div class="nav-section">Configuration</div>
+      <a href="config.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-7-3.5 5.2-3m1.6-1 5.2-3M5 5.5l5.2 3m1.6 1 5.2 3"/></svg>Reader Config</a>
+      <a href="rospec.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>ROSPEC</a>
+      <a href="access.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Access Ops</a>
+    </nav>
+  </aside>
+
+  <main class="app-content fade-in">
+    <div class="section-header">
+      <h2 class="section-title">ROSPEC Management</h2>
+      <div class="flex gap-2">
+        <select style="font-size: 13px; padding: 6px 10px;">
+          <option>All Readers</option>
+          <option>Impinj R700 — Dock A</option>
+          <option>Zebra FX9600 — Line 2</option>
+          <option>Impinj R420 — Gate 3</option>
+        </select>
+        <button class="btn btn-primary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New ROSPEC
+        </button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+      <!-- ROSPEC 1 — Active -->
+      <div class="rospec-card active">
+        <div class="rospec-head">
+          <div class="rospec-head-left">
+            <span class="rospec-id">ROSpec #1</span>
+            <span class="rospec-name">Continuous Inventory — All Antennas</span>
+          </div>
+          <span class="status-badge connected">Running</span>
+        </div>
+        <div class="rospec-body">
+          <div>
+            <div class="rospec-field-label">Priority</div>
+            <div class="rospec-field-value">0 (Highest)</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Trigger</div>
+            <div class="rospec-field-value">Immediate</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Stop Trigger</div>
+            <div class="rospec-field-value">None (Continuous)</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Reader</div>
+            <div class="rospec-field-value">All Connected</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Started</div>
+            <div class="rospec-field-value">14:29:48</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Tags Read</div>
+            <div class="rospec-field-value">847,203</div>
+          </div>
+        </div>
+        <div class="rospec-spec">
+          <div class="rospec-spec-title">Spec Details</div>
+          <div class="spec-param">
+            <span class="spec-param-key">InventorySpec.session</span>
+            <span class="spec-param-value">S1</span>
+          </div>
+          <div class="spec-param">
+            <span class="spec-param-key">InventorySpec.searchMode</span>
+            <span class="spec-param-value">DualTarget</span>
+          </div>
+          <div class="spec-param">
+            <span class="spec-param-key">AntennaIDs</span>
+            <span class="spec-param-value">1, 2, 3, 4</span>
+          </div>
+          <div class="spec-param">
+            <span class="spec-param-key">TagReportContentSelector</span>
+            <span class="spec-param-value">EPC, RSSI, AntennaID, FirstSeenTimestamp</span>
+          </div>
+          <div class="spec-param">
+            <span class="spec-param-key">ReportEveryN</span>
+            <span class="spec-param-value">Disabled</span>
+          </div>
+        </div>
+        <div class="rospec-actions">
+          <button class="btn btn-sm btn-danger">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            Stop
+          </button>
+          <button class="btn btn-sm">Edit</button>
+          <button class="btn btn-sm">Duplicate</button>
+          <button class="btn btn-sm" style="margin-left: auto; color: var(--status-danger);">Delete</button>
+        </div>
+      </div>
+
+      <!-- ROSPEC 2 — Inactive -->
+      <div class="rospec-card">
+        <div class="rospec-head">
+          <div class="rospec-head-left">
+            <span class="rospec-id">ROSpec #2</span>
+            <span class="rospec-name">Gate 3 — Triggered Read on GPI</span>
+          </div>
+          <span class="status-badge disconnected">Stopped</span>
+        </div>
+        <div class="rospec-body">
+          <div>
+            <div class="rospec-field-label">Priority</div>
+            <div class="rospec-field-value">1</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Trigger</div>
+            <div class="rospec-field-value">GPI 1 Rising Edge</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Stop Trigger</div>
+            <div class="rospec-field-value">Duration 5000ms</div>
+          </div>
+        </div>
+        <div class="rospec-spec">
+          <div class="rospec-spec-title">Spec Details</div>
+          <div class="spec-param">
+            <span class="spec-param-key">InventorySpec.session</span>
+            <span class="spec-param-value">S2</span>
+          </div>
+          <div class="spec-param">
+            <span class="spec-param-key">InventorySpec.searchMode</span>
+            <span class="spec-param-value">SingleTarget</span>
+          </div>
+          <div class="spec-param">
+            <span class="spec-param-key">AntennaIDs</span>
+            <span class="spec-param-value">1, 2</span>
+          </div>
+        </div>
+        <div class="rospec-actions">
+          <button class="btn btn-sm btn-primary">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start
+          </button>
+          <button class="btn btn-sm">Edit</button>
+          <button class="btn btn-sm">Duplicate</button>
+          <button class="btn btn-sm" style="margin-left: auto; color: var(--status-danger);">Delete</button>
+        </div>
+      </div>
+
+      <!-- ROSPEC 3 -->
+      <div class="rospec-card">
+        <div class="rospec-head">
+          <div class="rospec-head-left">
+            <span class="rospec-id">ROSpec #3</span>
+            <span class="rospec-name">Line 2 — Periodic Inventory (10s interval)</span>
+          </div>
+          <span class="status-badge disconnected">Stopped</span>
+        </div>
+        <div class="rospec-body">
+          <div>
+            <div class="rospec-field-label">Priority</div>
+            <div class="rospec-field-value">2</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Trigger</div>
+            <div class="rospec-field-value">Periodic — 10000ms</div>
+          </div>
+          <div>
+            <div class="rospec-field-label">Stop Trigger</div>
+            <div class="rospec-field-value">Tag Count ≥ 100</div>
+          </div>
+        </div>
+        <div class="rospec-actions">
+          <button class="btn btn-sm btn-primary">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start
+          </button>
+          <button class="btn btn-sm">Edit</button>
+          <button class="btn btn-sm">Duplicate</button>
+          <button class="btn btn-sm" style="margin-left: auto; color: var(--status-danger);">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="card" style="margin-top: var(--space-6);">
+      <div class="card-header">
+        <span class="card-title">ROSPEC Event Log</span>
+      </div>
+      <div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background: var(--status-ok);"></div>
+          <div class="timeline-content">
+            <div class="timeline-time">14:31:38</div>
+            <div class="timeline-text">ROSpec #1 started on all readers — continuous inventory mode</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background: var(--status-info);"></div>
+          <div class="timeline-content">
+            <div class="timeline-time">14:30:02</div>
+            <div class="timeline-text">ROSpec #2 configured — Gate 3 GPI-triggered read</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background: var(--status-danger);"></div>
+          <div class="timeline-content">
+            <div class="timeline-time">14:30:55</div>
+            <div class="timeline-text">ROSpec #1 paused on Dock B — reader disconnected</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background: var(--status-warn);"></div>
+          <div class="timeline-content">
+            <div class="timeline-time">14:29:48</div>
+            <div class="timeline-text">ROSpec #1 auto-resumed on Dock A — reader reconnected</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+</body>
+</html>

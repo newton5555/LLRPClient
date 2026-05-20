@@ -1,0 +1,107 @@
+@page "/"
+@inject DashboardViewModel Vm
+@inject AppState State
+@implements IDisposable
+
+<div class="section-header">
+    <h2 class="section-title">Dashboard</h2>
+    <div class="flex gap-2">
+        <a class="btn btn-sm" href="/readers">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Manage
+        </a>
+    </div>
+</div>
+
+<div class="stat-grid" style="margin-bottom: var(--space-6);">
+    @foreach (var metric in Vm.Metrics)
+    {
+        <div class="stat-card">
+            <div class="stat-label">@metric.Label</div>
+            <div class="stat-value">@metric.Value</div>
+            <div class="stat-change @metric.Tone">@metric.Hint</div>
+        </div>
+    }
+</div>
+
+<div class="grid-2" style="margin-bottom: var(--space-6);">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Reader Fleet</span>
+            <a href="/readers" class="btn btn-sm">Manage</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+            @foreach (var reader in State.Readers.Take(4))
+            {
+                <div class="reader-mini">
+                    <div class="reader-mini-status @(reader.IsConnected ? "ok" : "err")"></div>
+                    <div class="reader-mini-info">
+                        <div class="reader-mini-name">@reader.Name</div>
+                        <div class="reader-mini-detail">@reader.Endpoint · Ant @reader.AntennaCount · @reader.Model</div>
+                    </div>
+                    <div class="reader-mini-tags">@reader.TotalReports</div>
+                </div>
+            }
+            @if (State.Readers.Count == 0)
+            {
+                <div class="empty-state">No readers connected.</div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Read Rate - Last 60 Minutes</span>
+        </div>
+        <div class="chart-placeholder">
+            @foreach (var height in ChartBars)
+            {
+                <div class="chart-bar" style="height: @height%;"></div>
+            }
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: var(--space-2); font-size: 11px; color: var(--muted-light); font-family: var(--font-mono);">
+            <span>@DateTime.Now.AddMinutes(-60).ToString("HH:mm")</span>
+            <span>@DateTime.Now.AddMinutes(-30).ToString("HH:mm")</span>
+            <span>@DateTime.Now.ToString("HH:mm")</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">Recent Activity</span>
+        <a href="/history" class="btn btn-sm">View All</a>
+    </div>
+    <div>
+        @if (Vm.Activity.Count == 0 && Vm.RecentTags.Count == 0)
+        {
+            <div class="empty-state">No activity yet.</div>
+        }
+        @foreach (var tag in Vm.RecentTags.Take(5))
+        {
+            <div class="activity-item">
+                <div class="activity-dot" style="background: var(--status-ok);"></div>
+                <span class="activity-time">@tag.LastSeen.ToString("HH:mm:ss")</span>
+                <span>Tag <code style="font-family: var(--font-mono); font-size: 12px; background: var(--bg); padding: 1px 6px; border-radius: 3px;">@tag.Epc</code> read by <strong>@tag.ReaderEndpoint</strong> · Ant @tag.Antenna · RSSI @tag.Rssi.ToString("0.0") dBm</span>
+            </div>
+        }
+        @foreach (var entry in Vm.Activity.Take(6))
+        {
+            <div class="activity-item">
+                <div class="activity-dot @entry.Level.ToString().ToLowerInvariant()"></div>
+                <span class="activity-time">@entry.Timestamp.ToString("HH:mm:ss")</span>
+                <span>@entry.Category: @entry.Message</span>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private int[] ChartBars => Enumerable.Range(0, 48)
+        .Select(i => 18 + Math.Abs(((i * 17) + State.TotalReports) % 74))
+        .ToArray();
+
+    protected override void OnInitialized() => State.Changed += OnStateChanged;
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => State.Changed -= OnStateChanged;
+}

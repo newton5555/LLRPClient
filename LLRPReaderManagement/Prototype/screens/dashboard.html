@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — LLRP RFID Client</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/layout.css">
+<style>
+.chart-placeholder {
+  height: 200px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-4);
+  gap: 3px;
+  overflow: hidden;
+}
+
+.chart-bar {
+  flex: 1;
+  min-width: 4px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.chart-bar:hover { opacity: 1; }
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.activity-item:last-child { border-bottom: none; }
+
+.activity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.activity-time {
+  font-family: var(--font-mono);
+  color: var(--muted-light);
+  font-size: 11px;
+  min-width: 60px;
+}
+
+.reader-mini {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.reader-mini-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.reader-mini-status.ok { background: var(--status-ok); }
+.reader-mini-status.warn { background: var(--status-warn); }
+.reader-mini-status.err { background: var(--status-danger); }
+
+.reader-mini-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.reader-mini-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.reader-mini-detail {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--muted-light);
+}
+
+.reader-mini-tags {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <!-- Top bar -->
+  <header class="app-topbar">
+    <h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      LLRP RFID Client
+    </h1>
+    <div class="topbar-meta">
+      <span>LLRP v1.0.1</span>
+      <span>|</span>
+      <span id="clock">14:32:07</span>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="app-sidebar">
+    <nav>
+      <div class="nav-section">Overview</div>
+      <a href="dashboard.html" class="active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="readers.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+        Readers
+      </a>
+
+      <div class="nav-section">Scanning</div>
+      <a href="inventory.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        Tag Inventory
+      </a>
+      <a href="history.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Tag History
+      </a>
+
+      <div class="nav-section">Configuration</div>
+      <a href="config.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-7-3.5 5.2-3m1.6-1 5.2-3M5 5.5l5.2 3m1.6 1 5.2 3"/></svg>
+        Reader Config
+      </a>
+      <a href="rospec.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        ROSPEC
+      </a>
+      <a href="access.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Access Ops
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="app-content fade-in">
+    <div class="section-header">
+      <h2 class="section-title">Dashboard</h2>
+      <div class="flex gap-2">
+        <button class="btn btn-sm" onclick="location.reload()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-grid" style="margin-bottom: var(--space-6);">
+      <div class="stat-card">
+        <div class="stat-label">Active Readers</div>
+        <div class="stat-value">3</div>
+        <div class="stat-change up">of 4 configured</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tags in Range</div>
+        <div class="stat-value" id="tagCount">847</div>
+        <div class="stat-change up">+12 last 60s</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Read Rate</div>
+        <div class="stat-value">2.4k</div>
+        <div class="stat-change">tags/min</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Uptime</div>
+        <div class="stat-value">14h</div>
+        <div class="stat-change">since 00:32</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom: var(--space-6);">
+      <!-- Reader fleet -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Reader Fleet</span>
+          <a href="readers.html" class="btn btn-sm">Manage</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+          <div class="reader-mini">
+            <div class="reader-mini-status ok"></div>
+            <div class="reader-mini-info">
+              <div class="reader-mini-name">Impinj R700 — Dock A</div>
+              <div class="reader-mini-detail">192.168.1.101 · Ant 1–4 · 30 dBm</div>
+            </div>
+            <div class="reader-mini-tags">312</div>
+          </div>
+          <div class="reader-mini">
+            <div class="reader-mini-status ok"></div>
+            <div class="reader-mini-info">
+              <div class="reader-mini-name">Zebra FX9600 — Line 2</div>
+              <div class="reader-mini-detail">192.168.1.102 · Ant 1–8 · 28 dBm</div>
+            </div>
+            <div class="reader-mini-tags">284</div>
+          </div>
+          <div class="reader-mini">
+            <div class="reader-mini-status ok"></div>
+            <div class="reader-mini-info">
+              <div class="reader-mini-name">Impinj R420 — Gate 3</div>
+              <div class="reader-mini-detail">192.168.1.103 · Ant 1–2 · 25 dBm</div>
+            </div>
+            <div class="reader-mini-tags">251</div>
+          </div>
+          <div class="reader-mini">
+            <div class="reader-mini-status err"></div>
+            <div class="reader-mini-info">
+              <div class="reader-mini-name">Impinj R700 — Dock B</div>
+              <div class="reader-mini-detail">192.168.1.104 · Disconnected</div>
+            </div>
+            <div class="reader-mini-tags" style="color: var(--muted-light);">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Read rate chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Read Rate — Last 60 Minutes</span>
+        </div>
+        <div class="chart-placeholder" id="chart">
+          <!-- JS fills bars -->
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: var(--space-2); font-size: 11px; color: var(--muted-light); font-family: var(--font-mono);">
+          <span>13:32</span>
+          <span>14:02</span>
+          <span>14:32</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Recent Activity</span>
+        <a href="history.html" class="btn btn-sm">View All</a>
+      </div>
+      <div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--status-ok);"></div>
+          <span class="activity-time">14:31:42</span>
+          <span>Tag <code style="font-family: var(--font-mono); font-size: 12px; background: var(--bg); padding: 1px 6px; border-radius: 3px;">E280 1160 6000 0208 3456 7890</code> read by <strong>Dock A</strong> · Ant 2 · RSSI −42 dBm</span>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--status-info);"></div>
+          <span class="activity-time">14:31:38</span>
+          <span>ROSPEC #1 started on <strong>Line 2</strong> — continuous inventory mode</span>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--status-warn);"></div>
+          <span class="activity-time">14:31:20</span>
+          <span>Antenna 3 on <strong>Gate 3</strong> reported low signal — RSSI −78 dBm</span>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--status-danger);"></div>
+          <span class="activity-time">14:30:55</span>
+          <span><strong>Dock B</strong> connection lost — TCP timeout after 30s</span>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--status-ok);"></div>
+          <span class="activity-time">14:30:12</span>
+          <span>Tag <code style="font-family: var(--font-mono); font-size: 12px; background: var(--bg); padding: 1px 6px; border-radius: 3px;">E280 1160 6000 0208 AABB CCDD</code> written by <strong>Dock A</strong> · 12 bytes</span>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--status-ok);"></div>
+          <span class="activity-time">14:29:48</span>
+          <span>Reader <strong>Impinj R700 — Dock A</strong> connected via LLRP</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Clock
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Chart bars
+const chart = document.getElementById('chart');
+for (let i = 0; i < 60; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'chart-bar';
+  const h = 20 + Math.random() * 80 + (i > 40 ? 20 : 0);
+  bar.style.height = h + '%';
+  bar.title = Math.round(h * 24) + ' tags/min';
+  chart.appendChild(bar);
+}
+
+// Tag count animation
+let tagCount = 847;
+setInterval(() => {
+  tagCount += Math.floor(Math.random() * 3);
+  document.getElementById('tagCount').textContent = tagCount.toLocaleString();
+}, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reader Management — LLRP RFID Client</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/layout.css">
+<style>
+.reader-card-full {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.reader-card-full.connected { border-color: var(--accent); }
+.reader-card-full.error { border-color: var(--status-danger); }
+
+.reader-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.reader-card-head-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.reader-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.reader-card-body {
+  padding: var(--space-4) var(--space-5);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.reader-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-light);
+  margin-bottom: 2px;
+}
+
+.reader-field-value {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--fg);
+}
+
+.reader-card-actions {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.antenna-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.antenna-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.antenna-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-ok);
+  flex-shrink: 0;
+}
+
+.add-reader-card {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10);
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  gap: var(--space-2);
+}
+
+.add-reader-card:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: oklch(0% 0 0 / 0.5);
+  z-index: var(--z-overlay);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px oklch(0% 0 0 / 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-topbar">
+    <h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      LLRP RFID Client
+    </h1>
+    <div class="topbar-meta">
+      <span>LLRP v1.0.1</span>
+      <span>|</span>
+      <span id="clock">14:32:07</span>
+    </div>
+  </header>
+
+  <aside class="app-sidebar">
+    <nav>
+      <div class="nav-section">Overview</div>
+      <a href="dashboard.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="readers.html" class="active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+        Readers
+      </a>
+      <div class="nav-section">Scanning</div>
+      <a href="inventory.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        Tag Inventory
+      </a>
+      <a href="history.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Tag History
+      </a>
+      <div class="nav-section">Configuration</div>
+      <a href="config.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-7-3.5 5.2-3m1.6-1 5.2-3M5 5.5l5.2 3m1.6 1 5.2 3"/></svg>
+        Reader Config
+      </a>
+      <a href="rospec.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        ROSPEC
+      </a>
+      <a href="access.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Access Ops
+      </a>
+    </nav>
+  </aside>
+
+  <main class="app-content fade-in">
+    <div class="section-header">
+      <h2 class="section-title">Reader Management</h2>
+      <button class="btn btn-primary" onclick="document.getElementById('addModal').classList.add('open')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Reader
+      </button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+      <!-- Reader 1 -->
+      <div class="reader-card-full connected">
+        <div class="reader-card-head">
+          <div class="reader-card-head-left">
+            <div class="reader-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+            </div>
+            <div>
+              <div class="reader-name" style="font-size: 15px; font-weight: 600;">Impinj R700 — Dock A</div>
+              <div style="font-size: 12px; font-family: var(--font-mono); color: var(--muted);">192.168.1.101 · LLRP Port 5084</div>
+            </div>
+          </div>
+          <span class="status-badge connected">Connected</span>
+        </div>
+        <div class="reader-card-body">
+          <div>
+            <div class="reader-field-label">Model</div>
+            <div class="reader-field-value">Impinj Speedway R700</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Firmware</div>
+            <div class="reader-field-value">v5.12.2.240</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Connected Since</div>
+            <div class="reader-field-value">14:29:48 today</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Tags Read (Session)</div>
+            <div class="reader-field-value">1,247,832</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Current ROSPEC</div>
+            <div class="reader-field-value">#1 — Continuous</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Power</div>
+            <div class="reader-field-value">30.0 dBm</div>
+          </div>
+        </div>
+        <div style="padding: 0 var(--space-5) var(--space-4);">
+          <div class="reader-field-label" style="margin-bottom: var(--space-2);">Antennas</div>
+          <div class="antenna-list">
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 1 · −38 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 2 · −42 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 3 · −45 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 4 · −41 dBm</div>
+          </div>
+        </div>
+        <div class="reader-card-actions">
+          <button class="btn btn-sm">Configure</button>
+          <button class="btn btn-sm">ROSPEC</button>
+          <button class="btn btn-sm" style="margin-left: auto;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Restart
+          </button>
+          <button class="btn btn-sm btn-danger">Disconnect</button>
+        </div>
+      </div>
+
+      <!-- Reader 2 -->
+      <div class="reader-card-full connected">
+        <div class="reader-card-head">
+          <div class="reader-card-head-left">
+            <div class="reader-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+            </div>
+            <div>
+              <div class="reader-name" style="font-size: 15px; font-weight: 600;">Zebra FX9600 — Line 2</div>
+              <div style="font-size: 12px; font-family: var(--font-mono); color: var(--muted);">192.168.1.102 · LLRP Port 5084</div>
+            </div>
+          </div>
+          <span class="status-badge connected">Connected</span>
+        </div>
+        <div class="reader-card-body">
+          <div>
+            <div class="reader-field-label">Model</div>
+            <div class="reader-field-value">Zebra FX9600</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Firmware</div>
+            <div class="reader-field-value">v3.8.10</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Connected Since</div>
+            <div class="reader-field-value">08:15:22 today</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Tags Read (Session)</div>
+            <div class="reader-field-value">892,441</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Current ROSPEC</div>
+            <div class="reader-field-value">#1 — Continuous</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Power</div>
+            <div class="reader-field-value">28.0 dBm</div>
+          </div>
+        </div>
+        <div style="padding: 0 var(--space-5) var(--space-4);">
+          <div class="reader-field-label" style="margin-bottom: var(--space-2);">Antennas</div>
+          <div class="antenna-list">
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 1 · −35 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 2 · −39 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 3 · −44 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 4 · −40 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 5 · −37 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 6 · −42 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 7 · −46 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 8 · −43 dBm</div>
+          </div>
+        </div>
+        <div class="reader-card-actions">
+          <button class="btn btn-sm">Configure</button>
+          <button class="btn btn-sm">ROSPEC</button>
+          <button class="btn btn-sm" style="margin-left: auto;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Restart
+          </button>
+          <button class="btn btn-sm btn-danger">Disconnect</button>
+        </div>
+      </div>
+
+      <!-- Reader 3 -->
+      <div class="reader-card-full connected">
+        <div class="reader-card-head">
+          <div class="reader-card-head-left">
+            <div class="reader-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+            </div>
+            <div>
+              <div class="reader-name" style="font-size: 15px; font-weight: 600;">Impinj R420 — Gate 3</div>
+              <div style="font-size: 12px; font-family: var(--font-mono); color: var(--muted);">192.168.1.103 · LLRP Port 5084</div>
+            </div>
+          </div>
+          <span class="status-badge connected">Connected</span>
+        </div>
+        <div class="reader-card-body">
+          <div>
+            <div class="reader-field-label">Model</div>
+            <div class="reader-field-value">Impinj Speedway R420</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Firmware</div>
+            <div class="reader-field-value">v5.14.0.120</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Connected Since</div>
+            <div class="reader-field-value">06:00:01 today</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Tags Read (Session)</div>
+            <div class="reader-field-value">2,103,887</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Current ROSPEC</div>
+            <div class="reader-field-value">#1 — Continuous</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Power</div>
+            <div class="reader-field-value">25.0 dBm</div>
+          </div>
+        </div>
+        <div style="padding: 0 var(--space-5) var(--space-4);">
+          <div class="reader-field-label" style="margin-bottom: var(--space-2);">Antennas</div>
+          <div class="antenna-list">
+            <div class="antenna-chip"><div class="antenna-dot"></div> Ant 1 · −33 dBm</div>
+            <div class="antenna-chip"><div class="antenna-dot" style="background: var(--status-warn);"></div> Ant 2 · −72 dBm</div>
+          </div>
+        </div>
+        <div class="reader-card-actions">
+          <button class="btn btn-sm">Configure</button>
+          <button class="btn btn-sm">ROSPEC</button>
+          <button class="btn btn-sm" style="margin-left: auto;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Restart
+          </button>
+          <button class="btn btn-sm btn-danger">Disconnect</button>
+        </div>
+      </div>
+
+      <!-- Reader 4 — disconnected -->
+      <div class="reader-card-full error">
+        <div class="reader-card-head">
+          <div class="reader-card-head-left">
+            <div class="reader-icon" style="color: var(--status-danger);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+            </div>
+            <div>
+              <div class="reader-name" style="font-size: 15px; font-weight: 600;">Impinj R700 — Dock B</div>
+              <div style="font-size: 12px; font-family: var(--font-mono); color: var(--muted);">192.168.1.104 · LLRP Port 5084</div>
+            </div>
+          </div>
+          <span class="status-badge disconnected">Disconnected</span>
+        </div>
+        <div class="reader-card-body">
+          <div>
+            <div class="reader-field-label">Last Seen</div>
+            <div class="reader-field-value" style="color: var(--status-danger);">14:30:55 — TCP timeout</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Error</div>
+            <div class="reader-field-value" style="color: var(--status-danger);">LLRP_CONNECTION_LOST</div>
+          </div>
+          <div>
+            <div class="reader-field-label">Retry Count</div>
+            <div class="reader-field-value">3 / 5</div>
+          </div>
+        </div>
+        <div class="reader-card-actions">
+          <button class="btn btn-sm btn-primary">Reconnect</button>
+          <button class="btn btn-sm">View Log</button>
+          <button class="btn btn-sm" style="margin-left: auto; color: var(--status-danger);">Remove</button>
+        </div>
+      </div>
+
+      <!-- Add reader placeholder -->
+      <div class="add-reader-card" onclick="document.getElementById('addModal').classList.add('open')">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span style="font-size: 13px; font-weight: 500;">Add LLRP Reader</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Add Reader Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add LLRP Reader</span>
+      <button class="btn btn-icon" onclick="document.getElementById('addModal').classList.remove('open')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Reader Name</label>
+        <input type="text" placeholder="e.g. Impinj R700 — Dock C">
+      </div>
+      <div class="form-group">
+        <label class="form-label">IP Address</label>
+        <input type="text" placeholder="192.168.1.105">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">LLRP Port</label>
+          <input type="number" value="5084">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Timeout (sec)</label>
+          <input type="number" value="30">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reader Model</label>
+        <select>
+          <option>Impinj Speedway R700</option>
+          <option>Impinj Speedway R420</option>
+          <option>Zebra FX9600</option>
+          <option>Zebra FX7500</option>
+          <option>ThingMagic M6e</option>
+          <option>Other (auto-detect)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Keepalive Interval (ms)</label>
+        <input type="number" value="10000">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="document.getElementById('addModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="document.getElementById('addModal').classList.remove('open')">Connect</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+</body>
+</html>
