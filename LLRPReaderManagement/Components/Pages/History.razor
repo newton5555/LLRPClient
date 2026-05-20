@@ -1,11 +1,12 @@
 @page "/history"
 @inject AppState State
+@inject IJSRuntime JS
 @implements IDisposable
 
 <div class="section-header">
     <h2 class="section-title">Tag History</h2>
     <div class="flex gap-2">
-        <button class="btn btn-sm" disabled>
+        <button class="btn btn-sm" @onclick="ExportCsv" disabled="@(Rows.Count == 0)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Export
         </button>
@@ -104,6 +105,22 @@
                 .OrderByDescending(row => row.Time)
                 .ToList();
         }
+    }
+
+    private async Task ExportCsv()
+    {
+        var rows = Rows;
+        if (rows.Count == 0) return;
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Time,EPC / Message,Operation,Reader,Antenna,RSSI,Result");
+        foreach (var r in rows)
+        {
+            sb.AppendLine($"\"{r.Time:yyyy-MM-dd HH:mm:ss}\",\"{r.Text}\",\"{r.Operation}\",\"{r.Reader}\",\"{r.Antenna}\",\"{r.Rssi}\",\"{r.Result}\"");
+        }
+
+        var fileName = $"tag-history-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+        await JS.InvokeVoidAsync("downloadFileFromText", fileName, sb.ToString());
     }
 
     protected override void OnInitialized() => State.Changed += OnStateChanged;

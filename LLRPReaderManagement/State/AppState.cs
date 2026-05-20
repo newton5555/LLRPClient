@@ -24,6 +24,7 @@ public sealed class AppState
 
     public event Action? Changed;
 
+    public DateTime StartupTime { get; } = DateTime.Now;
     public string Endpoint { get; set; } = "192.168.40.233";
     public string ActiveEndpoint { get; private set; } = "192.168.40.233";
     public string ConnectionStatus { get; private set; } = "Disconnected";

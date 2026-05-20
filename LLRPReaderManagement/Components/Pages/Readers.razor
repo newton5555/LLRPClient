@@ -35,49 +35,75 @@
                 <span class="status-badge @(reader.IsConnected ? "connected" : "disconnected")">@(reader.IsConnected ? "Connected" : "Disconnected")</span>
             </div>
 
-            <div class="reader-card-body">
-                <div>
-                    <div class="reader-field-label">Model</div>
-                    <div class="reader-field-value">@reader.Model</div>
+            @if (reader.IsConnected)
+            {
+                <div class="reader-card-body">
+                    <div>
+                        <div class="reader-field-label">Model</div>
+                        <div class="reader-field-value">@reader.Model</div>
+                    </div>
+                    <div>
+                        <div class="reader-field-label">Firmware</div>
+                        <div class="reader-field-value">@reader.Firmware</div>
+                    </div>
+                    <div>
+                        <div class="reader-field-label">Inventory</div>
+                        <div class="reader-field-value">@(reader.IsInventoryRunning ? "Running" : "Stopped")</div>
+                    </div>
+                    <div>
+                        <div class="reader-field-label">Tags Read (Session)</div>
+                        <div class="reader-field-value">@reader.TotalReports.ToString("N0")</div>
+                    </div>
+                    <div>
+                        <div class="reader-field-label">Current ROSPEC</div>
+                        <div class="reader-field-value">@(reader.IsInventoryRunning ? "#1 - Continuous" : "-")</div>
+                    </div>
+                    <div>
+                        <div class="reader-field-label">GPI / GPO</div>
+                        <div class="reader-field-value">@reader.GpiCount / @reader.GpoCount</div>
+                    </div>
                 </div>
-                <div>
-                    <div class="reader-field-label">Firmware</div>
-                    <div class="reader-field-value">@reader.Firmware</div>
-                </div>
-                <div>
-                    <div class="reader-field-label">Inventory</div>
-                    <div class="reader-field-value">@(reader.IsInventoryRunning ? "Running" : "Stopped")</div>
-                </div>
-                <div>
-                    <div class="reader-field-label">Tags Read (Session)</div>
-                    <div class="reader-field-value">@reader.TotalReports.ToString("N0")</div>
-                </div>
-                <div>
-                    <div class="reader-field-label">Current ROSPEC</div>
-                    <div class="reader-field-value">@(reader.IsInventoryRunning ? "#1 - Continuous" : "-")</div>
-                </div>
-                <div>
-                    <div class="reader-field-label">GPI / GPO</div>
-                    <div class="reader-field-value">@reader.GpiCount / @reader.GpoCount</div>
-                </div>
-            </div>
 
-            <div style="padding: 0 var(--space-5) var(--space-4);">
-                <div class="reader-field-label" style="margin-bottom: var(--space-2);">Antennas</div>
-                <div class="antenna-list">
-                    @for (var i = 1; i <= Math.Max(1, reader.AntennaCount); i++)
-                    {
-                        <div class="antenna-chip"><div class="antenna-dot"></div> Ant @i · ready</div>
-                    }
+                <div style="padding: 0 var(--space-5) var(--space-4);">
+                    <div class="reader-field-label" style="margin-bottom: var(--space-2);">Antennas</div>
+                    <div class="antenna-list">
+                        @for (var i = 1; i <= Math.Max(1, reader.AntennaCount); i++)
+                        {
+                            <div class="antenna-chip"><div class="antenna-dot"></div> Ant @i · ready</div>
+                        }
+                    </div>
                 </div>
-            </div>
 
-            <div class="reader-card-actions">
-                <button class="btn btn-sm" @onclick="() => Select(reader.Endpoint)">Set Active</button>
-                <a class="btn btn-sm" href="/config">Configure</a>
-                <a class="btn btn-sm" href="/rospec">ROSPEC</a>
-                <button class="btn btn-sm btn-danger" style="margin-left: auto;" @onclick="() => Disconnect(reader.Endpoint)">Disconnect</button>
-            </div>
+                <div class="reader-card-actions">
+                    <button class="btn btn-sm" @onclick="() => Select(reader.Endpoint)">Set Active</button>
+                    <a class="btn btn-sm" href="/config">Configure</a>
+                    <a class="btn btn-sm" href="/rospec">ROSPEC</a>
+                    <button class="btn btn-sm btn-danger" style="margin-left: auto;" @onclick="() => Disconnect(reader.Endpoint)">Disconnect</button>
+                </div>
+            }
+            else
+            {
+                <div class="reader-card-body">
+                    <div>
+                        <div class="reader-field-label">Last Seen</div>
+                        <div class="reader-field-value" style="color: var(--status-danger);">TCP timeout</div>
+                    </div>
+                    <div>
+                        <div class="reader-field-label">Error</div>
+                        <div class="reader-field-value" style="color: var(--status-danger);">LLRP_CONNECTION_LOST</div>
+                    </div>
+                    <div>
+                        <div class="reader-field-label">Retry Count</div>
+                        <div class="reader-field-value">Disconnected / Inactive</div>
+                    </div>
+                </div>
+
+                <div class="reader-card-actions">
+                    <button class="btn btn-sm btn-primary" @onclick="() => Vm.ConnectAsync(reader.Endpoint)" disabled="@Vm.State.IsBusy">Reconnect</button>
+                    <a class="btn btn-sm" href="/history">View Log</a>
+                    <button class="btn btn-sm" style="margin-left: auto; color: var(--status-danger);" @onclick="() => Disconnect(reader.Endpoint)">Remove</button>
+                </div>
+            }
         </div>
     }
 

@@ -13,6 +13,7 @@ public sealed class ReadersViewModel(AppState state, ReaderManagementService rea
 
     public AppState State => state;
     public Task ConnectAsync() => readers.ConnectAsync(Endpoint);
+    public Task ConnectAsync(string endpoint) => readers.ConnectAsync(endpoint);
     public void Disconnect() => readers.Disconnect();
     public void Disconnect(string endpoint) => readers.Disconnect(endpoint);
     public void Select(string endpoint) => readers.SelectReader(endpoint);

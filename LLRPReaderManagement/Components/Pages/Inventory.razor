@@ -1,11 +1,12 @@
 @page "/inventory"
 @inject InventoryViewModel Vm
+@inject IJSRuntime JS
 @implements IDisposable
 
 <div class="section-header">
     <h2 class="section-title">Tag Inventory</h2>
     <div class="flex gap-2">
-        <button class="btn btn-sm" disabled>
+        <button class="btn btn-sm" @onclick="ExportCsv" disabled="@(Vm.State.Tags.Count == 0)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Export CSV
         </button>
@@ -93,6 +94,23 @@
     private string AverageRssi => Vm.State.Tags.Count == 0 ? "-" : $"{Vm.State.Tags.Average(x => x.Rssi):0.0} dBm";
     private static string RssiColor(double rssi) => rssi > -40 ? "var(--status-ok)" : rssi > -55 ? "var(--status-warn)" : "var(--status-danger)";
     private static string RssiWidth(double rssi) => $"{Math.Min(100, Math.Max(5, (rssi + 80) * 2.5)):0}%";
+
+    private async Task ExportCsv()
+    {
+        var tags = Vm.State.Tags;
+        if (tags.Count == 0) return;
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("EPC,RSSI,Count,Reader,Antenna,Last Seen");
+        foreach (var t in tags)
+        {
+            sb.AppendLine($"\"{t.Epc}\",{t.Rssi:0.0},{t.SeenCount},\"{t.ReaderEndpoint}\",Ant {t.Antenna},\"{t.LastSeen:yyyy-MM-dd HH:mm:ss.fff}\"");
+        }
+
+        var fileName = $"tag-inventory-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+        await JS.InvokeVoidAsync("downloadFileFromText", fileName, sb.ToString());
+    }
+
     private void OnStateChanged() => InvokeAsync(StateHasChanged);
     public void Dispose() => Vm.State.Changed -= OnStateChanged;
 }
