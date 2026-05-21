@@ -29,6 +29,7 @@ public interface ILlrpReaderRepository
     bool QuerySingulatingState();
     void ApplyDefaultSettings();
     void ApplySettings(Settings settings);
+    void SetGpo(ushort port, bool state);
     void AddOpSequence(TagOpSequence sequence);
     void DeleteAllOpSequences();
 }

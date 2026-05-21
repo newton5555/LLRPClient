@@ -22,7 +22,9 @@ public sealed record InventoryTagItem(
     double Rssi,
     ushort SeenCount,
     double Channel,
-    DateTime LastSeen);
+    DateTime LastSeen,
+    string AttachedData,
+    string ReportSource);
 
 public sealed record LogEntry(DateTime Timestamp, LogLevel Level, string Category, string Message);
 
@@ -31,3 +33,5 @@ public sealed record ReaderMetric(string Label, string Value, string Hint, strin
 public sealed record FeatureItem(string Label, string Value);
 
 public sealed record AccessOperationResult(bool Success, string Message, string? Data = null);
+
+public sealed record ReadRatePoint(DateTime Minute, int Count);

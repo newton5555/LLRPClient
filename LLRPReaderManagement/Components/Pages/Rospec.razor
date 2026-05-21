@@ -23,7 +23,7 @@
         <div class="rospec-head">
             <div class="rospec-head-left">
                 <span class="rospec-id">ROSpec #1</span>
-                <span class="rospec-name">Continuous Inventory - All Antennas</span>
+                <span class="rospec-name">Inventory ROSpec - SDK Settings</span>
             </div>
             <span class="status-badge @(Vm.State.IsInventoryRunning ? "connected" : "disconnected")">
                 @(Vm.State.IsInventoryRunning ? "Running" : "Stopped")
@@ -36,11 +36,11 @@
             </div>
             <div>
                 <div class="rospec-field-label">Trigger</div>
-                <div class="rospec-field-value">Immediate</div>
+                <div class="rospec-field-value">@(Vm.State.Settings?.AutoStart.Mode.ToString() ?? "-")</div>
             </div>
             <div>
                 <div class="rospec-field-label">Stop Trigger</div>
-                <div class="rospec-field-value">None (Continuous)</div>
+                <div class="rospec-field-value">@(Vm.State.Settings?.AutoStop.Mode.ToString() ?? "-")</div>
             </div>
             <div>
                 <div class="rospec-field-label">Reader</div>
@@ -66,12 +66,36 @@
                 <span class="spec-param-value">@(Vm.State.Settings?.InventorySearchMode.ToString() ?? "-")</span>
             </div>
             <div class="spec-param">
+                <span class="spec-param-key">InventorySpec.target</span>
+                <span class="spec-param-value">@(Vm.State.Settings?.InventoryTarget.ToString() ?? "-")</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">InventorySpec.stateAware</span>
+                <span class="spec-param-value">@(Vm.State.Settings?.InventoryStateAware == true ? "Enabled" : "Disabled")</span>
+            </div>
+            <div class="spec-param">
                 <span class="spec-param-key">AntennaIDs</span>
                 <span class="spec-param-value">@AntennaText</span>
             </div>
             <div class="spec-param">
                 <span class="spec-param-key">TagReportContentSelector</span>
-                <span class="spec-param-value">EPC, RSSI, AntennaID, First/Last Seen, Seen Count</span>
+                <span class="spec-param-value">@ReportSelectorText</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">FilterMode</span>
+                <span class="spec-param-value">@(Vm.State.Settings?.Filters.Mode.ToString() ?? "-")</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">AutoStart</span>
+                <span class="spec-param-value">@AutoStartText</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">AutoStop</span>
+                <span class="spec-param-value">@AutoStopText</span>
+            </div>
+            <div class="spec-param">
+                <span class="spec-param-key">AttachedData</span>
+                <span class="spec-param-value">@AttachedDataText</span>
             </div>
             <div class="spec-param">
                 <span class="spec-param-key">ReportSource</span>
@@ -93,9 +117,10 @@
                     Start
                 </button>
             }
-            <a class="btn btn-sm" href="/config">Edit</a>
+            <a class="btn btn-sm" href="/inventory-config">Inventory Params</a>
+            <a class="btn btn-sm" href="/config">Reader Config</a>
             <a class="btn btn-sm" href="/inventory">Inventory</a>
-            <span style="margin-left: auto; color: var(--muted); font-size: 12px;">SDK-managed default ROSPEC</span>
+            <span style="margin-left: auto; color: var(--muted); font-size: 12px;">Generated from LLRPSdk Settings</span>
         </div>
     </div>
 </div>
@@ -105,7 +130,49 @@
 
     private string AntennaText => Vm.State.AntennaCount == 0
         ? "-"
-        : string.Join(", ", Enumerable.Range(1, (int)Vm.State.AntennaCount));
+        : string.Join(", ", Vm.State.Settings?.Antennas.AntennaConfigs.Where(x => x.IsEnabled).Select(x => x.PortNumber)
+            ?? Enumerable.Range(1, (int)Vm.State.AntennaCount).Select(x => (ushort)x));
+
+    private string ReportSelectorText
+    {
+        get
+        {
+            var report = Vm.State.Settings?.Report;
+            if (report is null)
+            {
+                return "-";
+            }
+
+            var fields = new List<string> { $"Mode={report.Mode}" };
+            if (report.IncludeAntennaPortNumber) fields.Add("AntennaID");
+            if (report.IncludeChannel) fields.Add("Channel");
+            if (report.IncludePeakRssi) fields.Add("RSSI");
+            if (report.IncludeFirstSeenTime) fields.Add("FirstSeen");
+            if (report.IncludeLastSeenTime) fields.Add("LastSeen");
+            if (report.IncludeSeenCount) fields.Add("SeenCount");
+            if (report.IncludePcBits) fields.Add("PC");
+            if (report.IncludeCrc) fields.Add("CRC");
+            if (report.IncludeTxPower) fields.Add("TxPower");
+            if (report.IncludeXPCWords) fields.Add("XPC");
+            if (report.IncludeEnhancedIntegra) fields.Add("EnhancedIntegra");
+            if (report.IncludeEndpointICVerification) fields.Add("EndpointIC");
+            return string.Join(", ", fields);
+        }
+    }
+
+    private string AutoStartText => Vm.State.Settings?.AutoStart is null
+        ? "-"
+        : $"{Vm.State.Settings.AutoStart.Mode}, GPI={Vm.State.Settings.AutoStart.GpiPortNumber}/{(Vm.State.Settings.AutoStart.GpiLevel ? "HIGH" : "LOW")}, Delay={Vm.State.Settings.AutoStart.FirstDelayInMs}ms, Period={Vm.State.Settings.AutoStart.PeriodInMs}ms";
+
+    private string AutoStopText => Vm.State.Settings?.AutoStop is null
+        ? "-"
+        : $"{Vm.State.Settings.AutoStop.Mode}, Duration={Vm.State.Settings.AutoStop.DurationInMs}ms, GPI={Vm.State.Settings.AutoStop.GpiPortNumber}/{(Vm.State.Settings.AutoStop.GpiLevel ? "HIGH" : "LOW")}, Timeout={Vm.State.Settings.AutoStop.Timeout}ms";
+
+    private string AttachedDataText => Vm.State.Settings?.AttachedData is null
+        ? "-"
+        : Vm.State.Settings.AttachedData.Enabled
+            ? $"{Vm.State.Settings.AttachedData.MemoryBank}, Ptr={Vm.State.Settings.AttachedData.WordPointer}, Words={Vm.State.Settings.AttachedData.WordCount}"
+            : "Disabled";
 
     private void OnStateChanged() => InvokeAsync(StateHasChanged);
     private void OnReaderChanged(ChangeEventArgs args)

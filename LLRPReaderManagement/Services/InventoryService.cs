@@ -27,8 +27,8 @@ public sealed class InventoryService(ILlrpReaderRepository repository, AppState 
             return;
         }
 
-        var started = repository.StartAll();
         state.ClearTags();
+        var started = repository.StartAll();
         foreach (var endpoint in started)
         {
             state.SetInventoryRunning(endpoint, true);

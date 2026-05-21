@@ -28,6 +28,7 @@ namespace LLRPReaderManagement
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<ReadersViewModel>();
             builder.Services.AddTransient<InventoryViewModel>();
+            builder.Services.AddTransient<InventoryConfigViewModel>();
             builder.Services.AddTransient<AccessViewModel>();
             builder.Services.AddTransient<ConfigViewModel>();
             builder.Services.AddTransient<RospecViewModel>();

@@ -20,7 +20,10 @@ public sealed class AppState
     private readonly object gate = new();
     private readonly Dictionary<string, ReaderRuntime> readers = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, InventoryTagItem> tags = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, ushort> tagSeenCounts = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<LogEntry> logs = new();
+    private readonly SortedDictionary<DateTime, int> readRateByMinute = new();
+    private readonly Queue<ReadRatePoint> readEvents = new();
 
     public event Action? Changed;
 
@@ -32,6 +35,17 @@ public sealed class AppState
     public bool IsConnected => Readers.Any(x => x.IsConnected);
     public bool IsInventoryRunning => Readers.Any(x => x.IsInventoryRunning);
     public int TotalReports => Readers.Sum(x => x.TotalReports);
+    public int RollingReadRatePerMinute
+    {
+        get
+        {
+            lock (gate)
+            {
+                TrimReadEvents(DateTime.Now);
+                return readEvents.Sum(x => x.Count);
+            }
+        }
+    }
     public string ReaderModel => ActiveRuntime?.FeatureSet?.ReaderModel ?? "-";
     public string Firmware => ActiveRuntime?.FeatureSet?.FirmwareVersion ?? "-";
     public uint AntennaCount => ActiveRuntime?.FeatureSet?.AntennaCount ?? 0;
@@ -39,6 +53,7 @@ public sealed class AppState
     public ushort GpoCount => ActiveRuntime?.FeatureSet?.GpoCount ?? 0;
     public FeatureSet? FeatureSet => ActiveRuntime?.FeatureSet;
     public Settings? Settings => ActiveRuntime?.Settings;
+    public Status? Status { get; private set; }
 
     public IReadOnlyList<ReaderSummary> Readers
     {
@@ -73,6 +88,25 @@ public sealed class AppState
             lock (gate)
             {
                 return logs.OrderByDescending(x => x.Timestamp).Take(500).ToList();
+            }
+        }
+    }
+
+    public IReadOnlyList<ReadRatePoint> ReadRateLast60Minutes
+    {
+        get
+        {
+            lock (gate)
+            {
+                var nowMinute = TruncateToMinute(DateTime.Now);
+                var start = nowMinute.AddMinutes(-59);
+                return Enumerable.Range(0, 60)
+                    .Select(i =>
+                    {
+                        var minute = start.AddMinutes(i);
+                        return new ReadRatePoint(minute, readRateByMinute.TryGetValue(minute, out var count) ? count : 0);
+                    })
+                    .ToList();
             }
         }
     }
@@ -209,8 +243,16 @@ public sealed class AppState
         Notify();
     }
 
+    public void SetStatus(Status status)
+    {
+        Status = status;
+        Notify();
+    }
+
     public void AddTags(string endpoint, IEnumerable<Tag> reportedTags)
     {
+        var reportCount = 0;
+        var now = DateTime.Now;
         lock (gate)
         {
             foreach (var tag in reportedTags)
@@ -221,19 +263,49 @@ public sealed class AppState
                     continue;
                 }
 
-                if (readers.TryGetValue(endpoint, out var reader))
+                var tagKey = $"{endpoint}|{epc}";
+                var seenCount = tag.IsSeenCountPresent ? tag.TagSeenCount : (ushort)1;
+                var delta = 1;
+                if (tag.IsSeenCountPresent)
                 {
-                    reader.TotalReports++;
+                    delta = tagSeenCounts.TryGetValue(tagKey, out var previous) && seenCount >= previous
+                        ? Math.Max(0, seenCount - previous)
+                        : Math.Max(1, (int)seenCount);
+                    tagSeenCounts[tagKey] = seenCount;
                 }
 
-                tags[$"{endpoint}|{epc}"] = new InventoryTagItem(
+                reportCount += delta;
+                if (readers.TryGetValue(endpoint, out var reader))
+                {
+                    reader.TotalReports += delta;
+                }
+
+                tags[tagKey] = new InventoryTagItem(
                     epc,
                     endpoint,
                     tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber : (ushort)0,
                     tag.IsPeakRssiPresent ? tag.PeakRssi : 0,
-                    tag.IsSeenCountPresent ? tag.TagSeenCount : (ushort)1,
+                    seenCount,
                     tag.IsChannelInMhzPresent ? tag.ChannelInMhz : 0,
-                    DateTime.Now);
+                    now,
+                    GetAttachedData(tag),
+                    tag.ReportSource.ToString());
+            }
+
+            if (reportCount > 0)
+            {
+                var minute = TruncateToMinute(now);
+                readRateByMinute[minute] = readRateByMinute.TryGetValue(minute, out var existing)
+                    ? existing + reportCount
+                    : reportCount;
+                readEvents.Enqueue(new ReadRatePoint(now, reportCount));
+                TrimReadEvents(now);
+
+                var cutoff = minute.AddMinutes(-120);
+                foreach (var key in readRateByMinute.Keys.Where(x => x < cutoff).ToList())
+                {
+                    readRateByMinute.Remove(key);
+                }
             }
         }
 
@@ -247,6 +319,9 @@ public sealed class AppState
         lock (gate)
         {
             tags.Clear();
+            tagSeenCounts.Clear();
+            readRateByMinute.Clear();
+            readEvents.Clear();
             foreach (var reader in readers.Values)
             {
                 reader.TotalReports = 0;
@@ -298,4 +373,24 @@ public sealed class AppState
     }
 
     private void Notify() => Changed?.Invoke();
+
+    private void TrimReadEvents(DateTime now)
+    {
+        var cutoff = now.AddSeconds(-60);
+        while (readEvents.Count > 0 && readEvents.Peek().Minute < cutoff)
+        {
+            readEvents.Dequeue();
+        }
+    }
+
+    private static DateTime TruncateToMinute(DateTime value) =>
+        new(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0, value.Kind);
+
+    private static string GetAttachedData(Tag tag)
+    {
+        var read = tag.ReadOperationResults?
+            .LastOrDefault(x => x.Result == ReadResultStatus.Success && x.Data is not null);
+
+        return read?.Data?.ToHexWordString() ?? string.Empty;
+    }
 }

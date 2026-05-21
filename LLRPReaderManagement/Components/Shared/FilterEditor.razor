@@ -1,0 +1,72 @@
+<div class="antenna-config-card">
+    <div class="antenna-config-header">
+        <span class="antenna-config-name">@Title</span>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Memory Bank</label>
+        <select value="@Filter.MemoryBank.ToString()" @onchange="SetMemoryBank">
+            @foreach (var bank in Enum.GetValues<MemoryBank>())
+            {
+                <option value="@bank">@bank</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Bit Pointer</label>
+        <input type="number" min="0" value="@Filter.BitPointer" @onchange="SetBitPointer">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Bit Count</label>
+        <input type="number" min="0" value="@Filter.BitCount" @onchange="SetBitCount">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Filter Op</label>
+        <select value="@Filter.FilterOp.ToString()" @onchange="SetFilterOp">
+            @foreach (var op in Enum.GetValues<TagFilterOp>())
+            {
+                <option value="@op">@op</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Tag Mask Hex</label>
+        <input type="text" value="@Filter.TagMask" @onchange="args => Filter.TagMask = args.Value?.ToString()?.Trim() ?? string.Empty">
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Filter";
+    [Parameter, EditorRequired] public TagFilter Filter { get; set; } = null!;
+
+    private void SetMemoryBank(ChangeEventArgs args)
+    {
+        if (Enum.TryParse<MemoryBank>(args.Value?.ToString(), out var value))
+        {
+            Filter.MemoryBank = value;
+        }
+    }
+
+    private void SetFilterOp(ChangeEventArgs args)
+    {
+        if (Enum.TryParse<TagFilterOp>(args.Value?.ToString(), out var value))
+        {
+            Filter.FilterOp = value;
+        }
+    }
+
+    private void SetBitPointer(ChangeEventArgs args)
+    {
+        if (ushort.TryParse(args.Value?.ToString(), out var value))
+        {
+            Filter.BitPointer = value;
+        }
+    }
+
+    private void SetBitCount(ChangeEventArgs args)
+    {
+        if (int.TryParse(args.Value?.ToString(), out var value))
+        {
+            Filter.BitCount = Math.Max(0, value);
+        }
+    }
+}

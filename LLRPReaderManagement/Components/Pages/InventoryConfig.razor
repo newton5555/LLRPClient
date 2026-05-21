@@ -1,0 +1,393 @@
+@page "/inventory-config"
+@using LLRPSdk
+@inject InventoryConfigViewModel Vm
+@implements IDisposable
+
+<div class="section-header">
+    <div>
+        <h2 class="section-title">Inventory Parameters</h2>
+        <div class="section-subtitle">ROSpec triggers, tag filters, report fields and attached data read settings.</div>
+    </div>
+    <div class="flex gap-2">
+        <select style="font-size: 13px; padding: 6px 10px;" value="@Vm.State.ActiveEndpoint" @onchange="OnReaderChanged">
+            @foreach (var reader in Vm.State.Readers)
+            {
+                <option value="@reader.Endpoint">@reader.Name - @reader.Endpoint</option>
+            }
+        </select>
+        <button class="btn btn-primary btn-sm" @onclick="Vm.Apply" disabled="@(!CanEdit)">Save Config</button>
+        <button class="btn btn-sm" @onclick="Vm.Refresh" disabled="@(!Vm.State.IsConnected)">Get From Device</button>
+    </div>
+</div>
+
+@if (Settings is null)
+{
+    <div class="empty-state">Connect a reader and query settings before editing inventory parameters.</div>
+}
+else
+{
+    <div class="config-section">
+        <div class="config-section-header">
+            <span class="config-section-title">Operation Triggers</span>
+        </div>
+        <div class="config-section-body">
+            <div class="form-group">
+                <label class="form-label">Auto Start Mode</label>
+                <select value="@Settings.AutoStart.Mode.ToString()" @onchange="SetAutoStartMode" disabled="@(!CanEdit)">
+                    @foreach (var mode in Vm.AutoStartModes)
+                    {
+                        <option value="@mode">@mode</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Start GPI Port</label>
+                <input type="number" min="1" value="@Settings.AutoStart.GpiPortNumber" @onchange="args => SetUshort(args, v => Settings.AutoStart.GpiPortNumber = v)" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Start GPI Level</label>
+                <select value="@Settings.AutoStart.GpiLevel.ToString().ToLowerInvariant()" @onchange="args => SetBool(args, v => Settings.AutoStart.GpiLevel = v)" disabled="@(!CanEdit)">
+                    <option value="false">LOW</option>
+                    <option value="true">HIGH</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">First Delay (ms)</label>
+                <input type="number" min="0" value="@Settings.AutoStart.FirstDelayInMs" @onchange="args => SetUint(args, v => Settings.AutoStart.FirstDelayInMs = v)" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Period (ms)</label>
+                <input type="number" min="0" value="@Settings.AutoStart.PeriodInMs" @onchange="args => SetUint(args, v => Settings.AutoStart.PeriodInMs = v)" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">UTC Timestamp</label>
+                <input type="number" min="0" value="@Settings.AutoStart.UtcTimestamp" @onchange="SetAutoStartUtc" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Auto Stop Mode</label>
+                <select value="@Settings.AutoStop.Mode.ToString()" @onchange="SetAutoStopMode" disabled="@(!CanEdit)">
+                    @foreach (var mode in Vm.AutoStopModes)
+                    {
+                        <option value="@mode">@mode</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Duration (ms)</label>
+                <input type="number" min="0" value="@Settings.AutoStop.DurationInMs" @onchange="args => SetUint(args, v => Settings.AutoStop.DurationInMs = v)" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stop GPI Port</label>
+                <input type="number" min="1" value="@Settings.AutoStop.GpiPortNumber" @onchange="args => SetUshort(args, v => Settings.AutoStop.GpiPortNumber = v)" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stop GPI Level</label>
+                <select value="@Settings.AutoStop.GpiLevel.ToString().ToLowerInvariant()" @onchange="args => SetBool(args, v => Settings.AutoStop.GpiLevel = v)" disabled="@(!CanEdit)">
+                    <option value="false">LOW</option>
+                    <option value="true">HIGH</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stop Timeout</label>
+                <input type="number" min="0" value="@Settings.AutoStop.Timeout" @onchange="args => SetUint(args, v => Settings.AutoStop.Timeout = v)" readonly="@(!CanEdit)">
+            </div>
+        </div>
+    </div>
+
+    <div class="config-section">
+        <div class="config-section-header">
+            <span class="config-section-title">Data Filtering</span>
+            <span style="font-size: 12px; color: var(--muted);">Matches Docs/Tag_Filter_UI_Test_Guide.md</span>
+        </div>
+        <div class="config-section-body full">
+            <div class="form-group">
+                <label class="form-label">Filter Mode</label>
+                <select value="@Settings.Filters.Mode.ToString()" @onchange="SetFilterMode" disabled="@(!CanEdit)">
+                    @foreach (var mode in Vm.TagFilterModes)
+                    {
+                        <option value="@mode">@mode</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        @if (Vm.ShowTagFilter1)
+        {
+            <div style="padding: 0 var(--space-5) var(--space-4);">
+                <FilterEditor Title="Tag Filter 1" Filter="Settings.Filters.TagFilter1" />
+            </div>
+        }
+        @if (Vm.ShowTagFilter2)
+        {
+            <div style="padding: 0 var(--space-5) var(--space-4);">
+                <FilterEditor Title="Tag Filter 2" Filter="Settings.Filters.TagFilter2" />
+            </div>
+        }
+        @if (Vm.ShowTagSelectFilters)
+        {
+            <div style="padding: 0 var(--space-5) var(--space-5);">
+                @if (!Vm.CanUseStateAwareFilters)
+                {
+                    <div class="result-box" style="border-color: var(--status-danger); color: var(--status-danger);">
+                        Enable Inventory State Aware in Reader Configuration before saving state-aware filters.
+                    </div>
+                }
+                <div class="toolbar">
+                    <button class="btn btn-sm" @onclick="AddTagSelectFilter" disabled="@(!CanEdit)">Add Filter</button>
+                    <span class="mono">@Settings.Filters.TagSelectFilters.Count filter(s)</span>
+                </div>
+                <div class="antenna-config">
+                    @foreach (var filter in Settings.Filters.TagSelectFilters)
+                    {
+                        <div class="antenna-config-card">
+                            <div class="antenna-config-header">
+                                <span class="antenna-config-name">Select Filter</span>
+                                <button class="btn btn-sm btn-danger" @onclick="() => RemoveTagSelectFilter(filter)" disabled="@(!CanEdit)">Delete</button>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Memory Bank</label>
+                                <select value="@filter.MemoryBank.ToString()" @onchange="args => SetEnum<MemoryBank>(args, v => filter.MemoryBank = v)" disabled="@(!CanEdit)">
+                                    @foreach (var bank in Vm.MemoryBanks)
+                                    {
+                                        <option value="@bank">@bank</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Bit Pointer</label>
+                                <input type="number" min="0" value="@filter.BitPointer" @onchange="args => SetUshort(args, v => filter.BitPointer = v)" readonly="@(!CanEdit)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Bit Count</label>
+                                <input type="number" min="0" value="@filter.BitCount" @onchange="args => SetInt(args, v => filter.BitCount = v)" readonly="@(!CanEdit)">
+                            </div>
+                            @if (Vm.ShowStateUnawareActions)
+                            {
+                                <div class="form-group">
+                                    <label class="form-label">Match Action</label>
+                                    <select value="@filter.MatchAction.ToString()" @onchange="args => SetEnum<StateUnawareAction>(args, v => filter.MatchAction = v)" disabled="@(!CanEdit)">
+                                        @foreach (var action in Vm.StateUnawareActions)
+                                        {
+                                            <option value="@action">@action</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Non Match Action</label>
+                                    <select value="@filter.NonMatchAction.ToString()" @onchange="args => SetEnum<StateUnawareAction>(args, v => filter.NonMatchAction = v)" disabled="@(!CanEdit)">
+                                        @foreach (var action in Vm.StateUnawareActions)
+                                        {
+                                            <option value="@action">@action</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
+                            @if (Vm.ShowStateAwareActions)
+                            {
+                                <div class="form-group">
+                                    <label class="form-label">State Aware Target</label>
+                                    <select value="@filter.StateAwareTarget.ToString()" @onchange="args => SetEnum<ENUM_C1G2StateAwareTarget>(args, v => filter.StateAwareTarget = v)" disabled="@(!CanEdit)">
+                                        @foreach (var target in Vm.StateAwareTargets)
+                                        {
+                                            <option value="@target">@target</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State Aware Action</label>
+                                    <select value="@filter.StateAwareAction.ToString()" @onchange="args => SetEnum<ENUM_C1G2StateAwareAction>(args, v => filter.StateAwareAction = v)" disabled="@(!CanEdit)">
+                                        @foreach (var action in Vm.StateAwareActions)
+                                        {
+                                            <option value="@action">@action</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label class="form-label">Tag Mask Hex</label>
+                                <input type="text" value="@filter.TagMask" @onchange="args => filter.TagMask = args.Value?.ToString()?.Trim() ?? string.Empty" readonly="@(!CanEdit)">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="config-section reporting-section">
+        <div class="config-section-header">
+            <span class="config-section-title">Reporting Strategy</span>
+        </div>
+        <div class="config-section-body reporting-strategy-body">
+            <div class="form-group report-mode-field">
+                <label class="form-label">Report Mode</label>
+                <select value="@Settings.Report.Mode.ToString()" @onchange="SetReportMode" disabled="@(!CanEdit)">
+                    @foreach (var mode in Vm.ReportModes)
+                    {
+                        <option value="@mode">@mode</option>
+                    }
+                </select>
+            </div>
+            <div class="report-flags-grid">
+                @foreach (var item in ReportFlags)
+                {
+                    <div class="report-toggle-field">
+                        <span class="report-toggle-label">@item.Label</span>
+                        <button type="button" class="toggle @(item.Value ? "on" : "")" @onclick="item.Toggle" disabled="@(!CanEdit)" aria-label="@item.Label"></button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="config-section">
+        <div class="config-section-header">
+            <span class="config-section-title">Attached Data</span>
+        </div>
+        <div class="config-section-body">
+            <div class="form-group">
+                <label class="form-label">Enable Attached Data</label>
+                <button type="button" class="toggle @(Settings.AttachedData.Enabled ? "on" : "")" @onclick="() => Settings.AttachedData.Enabled = !Settings.AttachedData.Enabled" disabled="@(!CanEdit)" aria-label="Enable attached data"></button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Memory Bank</label>
+                <select value="@Settings.AttachedData.MemoryBank.ToString()" @onchange="args => SetEnum<MemoryBank>(args, v => Settings.AttachedData.MemoryBank = v)" disabled="@(!CanEdit)">
+                    @foreach (var bank in Vm.MemoryBanks)
+                    {
+                        <option value="@bank">@bank</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Word Start Address</label>
+                <input type="number" min="0" value="@Settings.AttachedData.WordPointer" @onchange="args => SetUshort(args, v => Settings.AttachedData.WordPointer = v)" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Word Count</label>
+                <input type="number" min="0" value="@Settings.AttachedData.WordCount" @onchange="args => SetUshort(args, v => Settings.AttachedData.WordCount = v)" readonly="@(!CanEdit)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Access Password Hex</label>
+                <input type="text" value="@Settings.AttachedData.AccessPassword" @onchange="SetAttachedDataAccessPassword" readonly="@(!CanEdit)">
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private Settings? Settings => Vm.Settings;
+    private bool CanEdit => Vm.State.Reader.IsConnected && Settings is not null;
+
+    private IReadOnlyList<ReportFlagItem> ReportFlags => Settings is null ? [] :
+    [
+        new("Include Antenna", Settings.Report.IncludeAntennaPortNumber, () => Settings.Report.IncludeAntennaPortNumber = !Settings.Report.IncludeAntennaPortNumber),
+        new("Include Channel", Settings.Report.IncludeChannel, () => Settings.Report.IncludeChannel = !Settings.Report.IncludeChannel),
+        new("Include First Seen", Settings.Report.IncludeFirstSeenTime, () => Settings.Report.IncludeFirstSeenTime = !Settings.Report.IncludeFirstSeenTime),
+        new("Include Last Seen", Settings.Report.IncludeLastSeenTime, () => Settings.Report.IncludeLastSeenTime = !Settings.Report.IncludeLastSeenTime),
+        new("Include Seen Count", Settings.Report.IncludeSeenCount, () => Settings.Report.IncludeSeenCount = !Settings.Report.IncludeSeenCount),
+        new("Include Peak RSSI", Settings.Report.IncludePeakRssi, () => Settings.Report.IncludePeakRssi = !Settings.Report.IncludePeakRssi),
+        new("Include PC Bits", Settings.Report.IncludePcBits, () => Settings.Report.IncludePcBits = !Settings.Report.IncludePcBits),
+        new("Include CRC", Settings.Report.IncludeCrc, () => Settings.Report.IncludeCrc = !Settings.Report.IncludeCrc),
+        new("Include Tx Power", Settings.Report.IncludeTxPower, () => Settings.Report.IncludeTxPower = !Settings.Report.IncludeTxPower),
+        new("Include XPC Words", Settings.Report.IncludeXPCWords, () => Settings.Report.IncludeXPCWords = !Settings.Report.IncludeXPCWords),
+        new("Include Enhanced Integra", Settings.Report.IncludeEnhancedIntegra, () => Settings.Report.IncludeEnhancedIntegra = !Settings.Report.IncludeEnhancedIntegra),
+        new("Include Endpoint IC Verification", Settings.Report.IncludeEndpointICVerification, () => Settings.Report.IncludeEndpointICVerification = !Settings.Report.IncludeEndpointICVerification)
+    ];
+
+    protected override void OnInitialized() => Vm.State.Changed += OnStateChanged;
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+
+    private void OnReaderChanged(ChangeEventArgs args)
+    {
+        var endpoint = args.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(endpoint))
+        {
+            Vm.SelectReader(endpoint);
+        }
+    }
+
+    private void SetAutoStartMode(ChangeEventArgs args) => SetEnum<AutoStartMode>(args, v => Settings!.AutoStart.Mode = v);
+    private void SetAutoStopMode(ChangeEventArgs args) => SetEnum<AutoStopMode>(args, v => Settings!.AutoStop.Mode = v);
+    private void SetFilterMode(ChangeEventArgs args)
+    {
+        SetEnum<TagFilterMode>(args, value =>
+        {
+            Settings!.Filters.Mode = value;
+            foreach (var filter in Settings.Filters.TagSelectFilters)
+            {
+                filter.UseStateAwareAction = value == TagFilterMode.UseStateAwareTagSelectFilters;
+            }
+        });
+    }
+    private void SetReportMode(ChangeEventArgs args) => SetEnum<ReportMode>(args, v => Settings!.Report.Mode = v);
+    private void SetAutoStartUtc(ChangeEventArgs args)
+    {
+        if (ulong.TryParse(args.Value?.ToString(), out var value))
+        {
+            Settings!.AutoStart.UtcTimestamp = value;
+        }
+    }
+
+    private void SetAttachedDataAccessPassword(ChangeEventArgs args)
+    {
+        Settings!.AttachedData.AccessPassword = string.IsNullOrWhiteSpace(args.Value?.ToString())
+            ? "00000000"
+            : args.Value.ToString()!.Trim();
+    }
+
+    private void AddTagSelectFilter()
+    {
+        Vm.AddTagSelectFilter();
+        StateHasChanged();
+    }
+
+    private void RemoveTagSelectFilter(TagSelectFilter filter)
+    {
+        Vm.RemoveTagSelectFilter(filter);
+        StateHasChanged();
+    }
+
+    private static void SetBool(ChangeEventArgs args, Action<bool> setter)
+    {
+        if (bool.TryParse(args.Value?.ToString(), out var value))
+        {
+            setter(value);
+        }
+    }
+
+    private static void SetUshort(ChangeEventArgs args, Action<ushort> setter)
+    {
+        if (ushort.TryParse(args.Value?.ToString(), out var value))
+        {
+            setter(value);
+        }
+    }
+
+    private static void SetUint(ChangeEventArgs args, Action<uint> setter)
+    {
+        if (uint.TryParse(args.Value?.ToString(), out var value))
+        {
+            setter(value);
+        }
+    }
+
+    private static void SetInt(ChangeEventArgs args, Action<int> setter)
+    {
+        if (int.TryParse(args.Value?.ToString(), out var value))
+        {
+            setter(Math.Max(0, value));
+        }
+    }
+
+    private static void SetEnum<T>(ChangeEventArgs args, Action<T> setter) where T : struct, Enum
+    {
+        if (Enum.TryParse<T>(args.Value?.ToString(), out var value))
+        {
+            setter(value);
+        }
+    }
+
+    public void Dispose() => Vm.State.Changed -= OnStateChanged;
+
+    private sealed record ReportFlagItem(string Label, bool Value, Action Toggle);
+}

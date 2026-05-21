@@ -3,7 +3,10 @@
 @implements IDisposable
 
 <div class="section-header">
-    <h2 class="section-title">Reader Configuration</h2>
+    <div>
+        <h2 class="section-title">Reader Configuration</h2>
+        <div class="section-subtitle">Basic reader, RF, state-aware inventory, GPIO and antenna settings.</div>
+    </div>
     <div class="flex gap-2">
         <select style="font-size: 13px; padding: 6px 10px;" value="@Vm.State.ActiveEndpoint" @onchange="OnReaderChanged">
             @foreach (var reader in Vm.State.Readers)
@@ -11,7 +14,7 @@
                 <option value="@reader.Endpoint">@reader.Name - @reader.Endpoint</option>
             }
         </select>
-        <button class="btn btn-primary btn-sm" @onclick="Vm.ApplyChanges" disabled="@(!Vm.State.Reader.IsConnected || Vm.State.Settings is null)">Apply Changes</button>
+        <button class="btn btn-primary btn-sm" @onclick="Vm.ApplyChanges" disabled="@(!CanEdit)">Apply Changes</button>
         <button class="btn btn-sm" @onclick="Vm.ApplyDefaults" disabled="@(!Vm.State.Reader.IsConnected)">SDK Defaults</button>
         <button class="btn btn-sm" @onclick="Vm.Refresh">Refresh</button>
     </div>
@@ -19,58 +22,164 @@
 
 <div class="config-section">
     <div class="config-section-header">
-        <span class="config-section-title">General Settings</span>
+        <span class="config-section-title">System Management</span>
         <span class="status-badge @(Vm.State.IsConnected ? "connected" : "disconnected")">@(Vm.State.IsConnected ? "Connected" : "Disconnected")</span>
     </div>
     <div class="config-section-body">
         <div class="form-group">
             <label class="form-label">Reader Name</label>
-            <input type="text" value="Primary Reader" readonly>
+            <input type="text" value="@Vm.State.Reader.Name" readonly>
         </div>
         <div class="form-group">
             <label class="form-label">IP Address</label>
             <input type="text" value="@Vm.State.Endpoint" readonly>
         </div>
         <div class="form-group">
-            <label class="form-label">LLRP Port</label>
-            <input type="number" value="5084" readonly>
+            <label class="form-label">Enable Keepalive</label>
+            <button type="button" class="toggle @(Settings?.Keepalives.Enabled == true ? "on" : "")" @onclick="ToggleKeepalive" disabled="@(!CanEdit)" aria-label="Enable keepalive"></button>
         </div>
         <div class="form-group">
             <label class="form-label">Keepalive Interval (ms)</label>
-            <input type="number" value="10000" readonly>
+            <input type="number" min="1" value="@(Settings?.Keepalives.PeriodInMs.ToString() ?? "0")" @onchange="SetKeepaliveInterval" readonly="@(!CanEdit)">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Hold Events And Reports</label>
+            <select value="@(Settings?.HoldReportsOnDisconnect == true ? "true" : "false")" @onchange="SetHoldReports" disabled="@(!CanEdit)">
+                <option value="false">Disabled</option>
+                <option value="true">Enabled</option>
+            </select>
         </div>
     </div>
 </div>
 
 <div class="config-section">
     <div class="config-section-header">
-        <span class="config-section-title">RF Settings</span>
+        <span class="config-section-title">Radio Physical Layer</span>
     </div>
     <div class="config-section-body">
         <div class="form-group">
-            <label class="form-label">Transmit Power</label>
-            <div class="slider-row">
-                <input type="range" min="10" max="32.5" step="0.5" value="@DefaultTxPower" disabled>
-                <span class="slider-value">@DefaultTxPower.ToString("0.0") dBm</span>
-            </div>
-        </div>
-        <div class="form-group">
             <label class="form-label">RF Mode</label>
-            <select disabled>
-                <option>@(Vm.State.Settings?.RfMode?.ToString() ?? "Auto")</option>
+            <select value="@(Settings?.RfMode?.ToString() ?? "")" @onchange="SetRfMode" disabled="@(!CanEdit)">
+                <option value="">Auto / Device Default</option>
+                @foreach (var option in Vm.RfModeOptions)
+                {
+                    <option value="@option.Id">@option.DisplayText</option>
+                }
             </select>
         </div>
         <div class="form-group">
-            <label class="form-label">Regulatory Region</label>
-            <select disabled>
-                <option>@(Vm.State.FeatureSet?.CommunicationsStandard.ToString() ?? "Unknown")</option>
+            <label class="form-label">Hop Table ID</label>
+            <select value="@(Settings?.HopTableId.ToString() ?? "0")" @onchange="SetHopTable" disabled="@(!CanEdit)">
+                @foreach (var id in Vm.HopTableOptions)
+                {
+                    <option value="@id">@id</option>
+                }
             </select>
         </div>
         <div class="form-group">
             <label class="form-label">Channel Index</label>
-            <select disabled>
-                <option>@(Vm.State.Settings?.ChannelIndex.ToString() ?? "Auto")</option>
+            <input type="number" min="0" value="@Vm.ChannelIndex.ToString()" @onchange="SetChannelIndex" readonly="@(!CanEdit)">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Channel Frequency</label>
+            <input type="text" value="@Vm.SelectedChannelFrequency" readonly>
+        </div>
+    </div>
+    <div style="padding: 0 var(--space-5) var(--space-5);">
+        <div class="result-box">
+            <div class="form-label">Hop Table Frequencies</div>
+            <div class="mono" style="margin-top: var(--space-2); white-space: normal;">@Vm.SelectedHopTableFrequencies</div>
+        </div>
+    </div>
+</div>
+
+<div class="config-section">
+    <div class="config-section-header">
+        <span class="config-section-title">Inventory Protocol</span>
+        <span style="font-size: 12px; color: var(--muted);">ROSpec singulation defaults</span>
+    </div>
+    <div class="config-section-body">
+        <div class="form-group">
+            <label class="form-label">Session</label>
+            <select value="@(Settings?.Session.ToString() ?? "0")" @onchange="SetSession" disabled="@(!CanEdit)">
+                <option value="0">S0</option>
+                <option value="1">S1</option>
+                <option value="2">S2</option>
+                <option value="3">S3</option>
             </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Tag Population Estimate</label>
+            <input type="number" min="1" max="65535" value="@(Settings?.TagPopulationEstimate.ToString() ?? "0")" @onchange="SetTagPopulation" readonly="@(!CanEdit)">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Inventory State Aware</label>
+            <button type="button" class="toggle @(Settings?.InventoryStateAware == true ? "on" : "")" @onclick="ToggleInventoryStateAware" disabled="@(!CanEdit || Vm.State.FeatureSet?.CanDoTagInventoryStateAwareSingulation != true)" aria-label="Inventory state aware"></button>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Inventory Target</label>
+            <select value="@(Settings?.InventoryTarget.ToString() ?? InventoryTarget.A.ToString())" @onchange="SetInventoryTarget" disabled="@(!CanEdit || !Vm.IsStateAwareOptionsEnabled)">
+                @foreach (var value in Enum.GetValues<InventoryTarget>())
+                {
+                    <option value="@value">@value</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Inventory Search Mode</label>
+            <select value="@(Settings?.InventorySearchMode.ToString() ?? InventorySearchMode.Not_SL.ToString())" @onchange="SetInventorySearchMode" disabled="@(!CanEdit || !Vm.IsStateAwareOptionsEnabled)">
+                @foreach (var value in Enum.GetValues<InventorySearchMode>())
+                {
+                    <option value="@value">@value</option>
+                }
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="config-section">
+    <div class="config-section-header">
+        <span class="config-section-title">GPIO</span>
+        <button class="btn btn-sm" @onclick="Vm.RefreshStatus" disabled="@(!Vm.State.IsConnected)">Refresh Status</button>
+    </div>
+    <div class="config-section-body">
+        <div class="form-group">
+            <label class="form-label">GPI Configuration</label>
+            <div style="display: grid; gap: var(--space-2);">
+                @foreach (var gpi in Vm.Gpis)
+                {
+                    <div class="spec-param">
+                        <span class="spec-param-key">GPI @gpi.PortNumber</span>
+                        <span class="flex items-center gap-3">
+                            <button type="button" class="toggle @(gpi.IsEnabled ? "on" : "")" @onclick="() => ToggleGpi(gpi.PortNumber)" disabled="@(!CanEdit)" aria-label="Enable GPI @gpi.PortNumber"></button>
+                            <span class="spec-param-value">@gpi.CurrentStateText</span>
+                        </span>
+                    </div>
+                }
+                @if (Vm.Gpis.Count == 0)
+                {
+                    <div class="empty-state">No GPI ports reported by the reader.</div>
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">GPO Output</label>
+            <div style="display: grid; gap: var(--space-2);">
+                @foreach (var gpo in Vm.Gpos)
+                {
+                    <div class="spec-param">
+                        <span class="spec-param-key">GPO @gpo.PortNumber</span>
+                        <span class="flex items-center gap-3">
+                            <button type="button" class="toggle @(gpo.DesiredState ? "on" : "")" @onclick="() => Vm.SetGpo(gpo.PortNumber, !gpo.DesiredState)" disabled="@(!Vm.State.IsConnected)" aria-label="Set GPO @gpo.PortNumber"></button>
+                            <span class="spec-param-value">@gpo.CurrentStateText</span>
+                        </span>
+                    </div>
+                }
+                @if (Vm.Gpos.Count == 0)
+                {
+                    <div class="empty-state">No GPO ports reported by the reader.</div>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -87,21 +196,25 @@
                 <div class="antenna-config-card">
                     <div class="antenna-config-header">
                         <span class="antenna-config-name">Antenna @ant.PortNumber</span>
-                        <button type="button" class="toggle @(ant.IsEnabled ? "on" : "")" @onclick="() => ToggleAntenna(ant)" aria-label="Toggle antenna @ant.PortNumber"></button>
+                        <button type="button" class="toggle @(ant.IsEnabled ? "on" : "")" @onclick="() => ToggleAntenna(ant)" disabled="@(!CanEdit)" aria-label="Toggle antenna @ant.PortNumber"></button>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Power (dBm)</label>
-                        <div class="slider-row">
-                            <input type="range" min="10" max="32.5" step="0.5" value="@ant.TxPowerInDbm" @oninput="args => SetAntennaTxPower(ant, args)">
-                            <span class="slider-value">@ant.TxPowerInDbm.ToString("0.0") dBm</span>
-                        </div>
+                        <select value="@ant.TxPowerInDbm.ToString(System.Globalization.CultureInfo.InvariantCulture)" @onchange="args => SetAntennaTxPower(ant, args)" disabled="@(!CanEdit)">
+                            @foreach (var power in PowerOptions(ant.TxPowerInDbm))
+                            {
+                                <option value="@power.ToString(System.Globalization.CultureInfo.InvariantCulture)">@power.ToString("0.0") dBm</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Receive Sensitivity</label>
-                        <div class="slider-row">
-                            <input type="range" min="-80" max="-20" step="1" value="@ant.RxSensitivityInDbm" @oninput="args => SetAntennaRxSensitivity(ant, args)">
-                            <span class="slider-value">@ant.RxSensitivityInDbm.ToString("0.0") dBm</span>
-                        </div>
+                        <select value="@ant.RxSensitivityInDbm.ToString(System.Globalization.CultureInfo.InvariantCulture)" @onchange="args => SetAntennaRxSensitivity(ant, args)" disabled="@IsRxSensitivityDisabled">
+                            @foreach (var sensitivity in SensitivityOptions(ant.RxSensitivityInDbm))
+                            {
+                                <option value="@sensitivity.ToString(System.Globalization.CultureInfo.InvariantCulture)">@sensitivity.ToString("0.0") dBm</option>
+                            }
+                        </select>
                     </div>
                 </div>
             }
@@ -109,53 +222,32 @@
     </div>
 </div>
 
-<div class="config-section">
-    <div class="config-section-header">
-        <span class="config-section-title">Inventory Settings</span>
-    </div>
-    <div class="config-section-body">
-        <div class="form-group">
-            <label class="form-label">Session</label>
-            <select value="@(Vm.State.Settings?.Session.ToString() ?? "0")" @onchange="SetSession" disabled="@(Vm.State.Settings is null)">
-                <option value="0">S0</option>
-                <option value="1">S1</option>
-                <option value="2">S2</option>
-                <option value="3">S3</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Search Mode</label>
-            <select disabled><option>@(Vm.State.Settings?.InventorySearchMode.ToString() ?? "-")</option></select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Tag Population Estimate</label>
-            <input type="number" min="1" max="65535" value="@(Vm.State.Settings?.TagPopulationEstimate.ToString() ?? "0")" @onchange="SetTagPopulation" readonly="@(Vm.State.Settings is null)">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Hold Reports</label>
-            <select value="@(Vm.State.Settings?.HoldReportsOnDisconnect == true ? "true" : "false")" @onchange="SetHoldReports" disabled="@(Vm.State.Settings is null)">
-                <option value="false">Disabled</option>
-                <option value="true">Enabled</option>
-            </select>
-        </div>
-    </div>
-</div>
-
 @code {
     protected override void OnInitialized() => Vm.State.Changed += OnStateChanged;
 
-    private double DefaultTxPower => Antennas.FirstOrDefault()?.TxPowerInDbm ?? 30;
+    private Settings? Settings => Vm.State.Settings;
+    private bool CanEdit => Vm.State.Reader.IsConnected && Settings is not null;
+    private bool IsRxSensitivityDisabled => !CanEdit || Vm.State.ReaderModel == "UF40";
 
-    private IReadOnlyList<LLRPSdk.AntennaConfig> Antennas =>
-        Vm.State.Settings?.Antennas?.AntennaConfigs?.ToList()
-        ?? Enumerable.Range(1, Math.Max(1, (int)Vm.State.AntennaCount)).Select(i => new LLRPSdk.AntennaConfig((ushort)i)
+    private IReadOnlyList<AntennaConfig> Antennas =>
+        Settings?.Antennas?.AntennaConfigs?.ToList()
+        ?? Enumerable.Range(1, Math.Max(1, (int)Vm.State.AntennaCount)).Select(i => new AntennaConfig((ushort)i)
         {
             IsEnabled = Vm.State.IsConnected,
             TxPowerInDbm = 30,
             RxSensitivityInDbm = -70
         }).ToList();
 
+    private IReadOnlyList<double> PowerOptions(double current) => Vm.TxPowerOptions.Contains(current)
+        ? Vm.TxPowerOptions
+        : Vm.TxPowerOptions.Concat([current]).Distinct().OrderBy(x => x).ToList();
+
+    private IReadOnlyList<double> SensitivityOptions(double current) => Vm.RxSensitivityOptions.Contains(current)
+        ? Vm.RxSensitivityOptions
+        : Vm.RxSensitivityOptions.Concat([current]).Distinct().OrderBy(x => x).ToList();
+
     private void OnStateChanged() => InvokeAsync(StateHasChanged);
+
     private void OnReaderChanged(ChangeEventArgs args)
     {
         var endpoint = args.Value?.ToString();
@@ -165,49 +257,134 @@
         }
     }
 
-    private void SetAntennaTxPower(LLRPSdk.AntennaConfig antenna, ChangeEventArgs args)
+    private void ToggleKeepalive()
     {
-        if (double.TryParse(args.Value?.ToString(), out var value))
+        if (Settings is not null)
         {
-            antenna.TxPowerInDbm = value;
+            Settings.Keepalives.Enabled = !Settings.Keepalives.Enabled;
         }
     }
 
-    private void SetAntennaRxSensitivity(LLRPSdk.AntennaConfig antenna, ChangeEventArgs args)
+    private void SetKeepaliveInterval(ChangeEventArgs args)
     {
-        if (double.TryParse(args.Value?.ToString(), out var value))
+        if (Settings is not null && uint.TryParse(args.Value?.ToString(), out var value))
         {
-            antenna.RxSensitivityInDbm = value;
+            Settings.Keepalives.PeriodInMs = Math.Max(1, value);
         }
     }
 
-    private void ToggleAntenna(LLRPSdk.AntennaConfig antenna)
+    private void SetRfMode(ChangeEventArgs args)
     {
-        antenna.IsEnabled = !antenna.IsEnabled;
+        if (Settings is null)
+        {
+            return;
+        }
+
+        Settings.RfMode = uint.TryParse(args.Value?.ToString(), out var value) ? value : null;
+    }
+
+    private void SetHopTable(ChangeEventArgs args)
+    {
+        if (Settings is not null && ushort.TryParse(args.Value?.ToString(), out var value))
+        {
+            Settings.HopTableId = value;
+        }
+    }
+
+    private void SetChannelIndex(ChangeEventArgs args)
+    {
+        if (ushort.TryParse(args.Value?.ToString(), out var value))
+        {
+            Vm.SetChannelIndex(value);
+        }
     }
 
     private void SetSession(ChangeEventArgs args)
     {
-        if (Vm.State.Settings is not null && ushort.TryParse(args.Value?.ToString(), out var value))
+        if (Settings is not null && ushort.TryParse(args.Value?.ToString(), out var value))
         {
-            Vm.State.Settings.Session = value;
+            Settings.Session = (ushort)Math.Clamp((int)value, 0, 3);
         }
     }
 
     private void SetTagPopulation(ChangeEventArgs args)
     {
-        if (Vm.State.Settings is not null && ushort.TryParse(args.Value?.ToString(), out var value))
+        if (Settings is not null && ushort.TryParse(args.Value?.ToString(), out var value))
         {
-            Vm.State.Settings.TagPopulationEstimate = value;
+            Settings.TagPopulationEstimate = (ushort)Math.Clamp((int)value, 1, ushort.MaxValue);
+        }
+    }
+
+    private void ToggleInventoryStateAware()
+    {
+        if (Settings is not null)
+        {
+            Settings.InventoryStateAware = !Settings.InventoryStateAware;
+        }
+    }
+
+    private void SetInventoryTarget(ChangeEventArgs args)
+    {
+        if (Settings is not null && Enum.TryParse<InventoryTarget>(args.Value?.ToString(), out var value))
+        {
+            Settings.InventoryTarget = value;
+        }
+    }
+
+    private void SetInventorySearchMode(ChangeEventArgs args)
+    {
+        if (Settings is not null && Enum.TryParse<InventorySearchMode>(args.Value?.ToString(), out var value))
+        {
+            Settings.InventorySearchMode = value;
         }
     }
 
     private void SetHoldReports(ChangeEventArgs args)
     {
-        if (Vm.State.Settings is not null && bool.TryParse(args.Value?.ToString(), out var value))
+        if (Settings is not null && bool.TryParse(args.Value?.ToString(), out var value))
         {
-            Vm.State.Settings.HoldReportsOnDisconnect = value;
+            Settings.HoldReportsOnDisconnect = value;
         }
+    }
+
+    private void ToggleGpi(ushort port)
+    {
+        if (Settings is null)
+        {
+            return;
+        }
+
+        var gpi = Settings.Gpis.GpiConfigs.FirstOrDefault(x => x.PortNumber == port);
+        if (gpi is null)
+        {
+            gpi = new GpiConfig { PortNumber = port };
+            Settings.Gpis.Add(gpi);
+        }
+
+        gpi.IsEnabled = !gpi.IsEnabled;
+    }
+
+    private void SetAntennaTxPower(AntennaConfig antenna, ChangeEventArgs args)
+    {
+        if (double.TryParse(args.Value?.ToString(), out var value))
+        {
+            antenna.MaxTxPower = false;
+            antenna.TxPowerInDbm = value;
+        }
+    }
+
+    private void SetAntennaRxSensitivity(AntennaConfig antenna, ChangeEventArgs args)
+    {
+        if (double.TryParse(args.Value?.ToString(), out var value))
+        {
+            antenna.MaxRxSensitivity = false;
+            antenna.RxSensitivityInDbm = value;
+        }
+    }
+
+    private void ToggleAntenna(AntennaConfig antenna)
+    {
+        antenna.IsEnabled = !antenna.IsEnabled;
     }
 
     public void Dispose() => Vm.State.Changed -= OnStateChanged;

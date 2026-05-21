@@ -30,7 +30,7 @@
     <input type="date" @bind="DateFilter" @bind:format="yyyy-MM-dd" style="min-width: 140px;">
 </div>
 
-<div class="table-wrap" style="max-height: calc(100vh - 340px); overflow-y: auto;">
+<div class="table-wrap history-grid" style="max-height: calc(100vh - 340px); overflow-y: auto;">
     <div class="history-row header">
         <span>Time</span>
         <span>EPC</span>
@@ -38,6 +38,7 @@
         <span>Reader</span>
         <span>Antenna</span>
         <span>RSSI</span>
+        <span>Attached Data</span>
         <span>Result</span>
     </div>
     @if (Rows.Count == 0)
@@ -53,6 +54,7 @@
             <span class="history-reader">@row.Reader</span>
             <span>@row.Antenna</span>
             <span class="history-rssi">@row.Rssi</span>
+            <span class="history-attached" title="@row.AttachedData">@row.AttachedData</span>
             <span><span class="history-result @row.ResultClass">@row.Result</span></span>
         </div>
     }
@@ -83,6 +85,7 @@
                     tag.ReaderEndpoint,
                     $"Ant {tag.Antenna}",
                     $"{tag.Rssi:0.0} dBm",
+                    string.IsNullOrWhiteSpace(tag.AttachedData) ? "-" : tag.AttachedData,
                     "success",
                     "inventory",
                     "success"))
@@ -101,10 +104,10 @@
         if (rows.Count == 0) return;
 
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine("Time,EPC / Message,Operation,Reader,Antenna,RSSI,Result");
+        sb.AppendLine("Time,EPC / Message,Operation,Reader,Antenna,RSSI,Attached Data,Result");
         foreach (var r in rows)
         {
-            sb.AppendLine($"\"{r.Time:yyyy-MM-dd HH:mm:ss}\",\"{r.Text}\",\"{r.Operation}\",\"{r.Reader}\",\"{r.Antenna}\",\"{r.Rssi}\",\"{r.Result}\"");
+            sb.AppendLine($"\"{r.Time:yyyy-MM-dd HH:mm:ss}\",\"{r.Text}\",\"{r.Operation}\",\"{r.Reader}\",\"{r.Antenna}\",\"{r.Rssi}\",\"{r.AttachedData}\",\"{r.Result}\"");
         }
 
         var fileName = $"tag-history-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
@@ -122,6 +125,7 @@
         string Reader,
         string Antenna,
         string Rssi,
+        string AttachedData,
         string Result,
         string TypeClass,
         string ResultClass);

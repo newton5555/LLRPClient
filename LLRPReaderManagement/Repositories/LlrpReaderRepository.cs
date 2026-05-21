@@ -187,6 +187,7 @@ public sealed class LlrpReaderRepository : ILlrpReaderRepository, IDisposable
     public bool QuerySingulatingState() => ActiveReader.QuerySingulatingState();
     public void ApplyDefaultSettings() => ActiveReader.ApplyDefaultSettings();
     public void ApplySettings(Settings settings) => ActiveReader.ApplySettingsWithoutFactoryReset(settings);
+    public void SetGpo(ushort port, bool state) => ActiveReader.SetGpo(port, state);
     public void AddOpSequence(TagOpSequence sequence) => ActiveReader.AddOpSequence(sequence);
     public void DeleteAllOpSequences() => ActiveReader.DeleteAllOpSequences();
 

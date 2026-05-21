@@ -111,6 +111,7 @@ public sealed class ReaderManagementService
 
         var settings = repository.QuerySettings();
         state.SetSettings(settings);
+        TryRefreshStatus();
         logs.Log("Config", "Reader settings refreshed.");
     }
 
@@ -126,6 +127,7 @@ public sealed class ReaderManagementService
         var settings = repository.QuerySettings();
        
         state.SetSettings(settings);
+        TryRefreshStatus();
         logs.Log("Config", $"SDK default settings applied to {repository.ActiveEndpoint}.");
     }
 
@@ -161,9 +163,36 @@ public sealed class ReaderManagementService
         repository.ApplySettings(state.Settings);
         var settings = repository.QuerySettings();
         state.SetSettings(settings);
+        TryRefreshStatus();
         logs.Log("Config", wasRunning
             ? $"Settings applied to {repository.ActiveEndpoint}; inventory was stopped."
             : $"Settings applied to {repository.ActiveEndpoint}.");
+    }
+
+    public void RefreshStatus()
+    {
+        if (!repository.IsConnected)
+        {
+            logs.Log("Config", "Connect a reader before querying status.", LogLevel.Warning);
+            return;
+        }
+
+        var status = repository.QueryStatus();
+        state.SetStatus(status);
+        logs.Log("GPIO", $"Status refreshed from {repository.ActiveEndpoint}.");
+    }
+
+    public void SetGpo(ushort port, bool value)
+    {
+        if (!repository.IsConnected)
+        {
+            logs.Log("GPIO", "Connect a reader before setting GPO.", LogLevel.Warning);
+            return;
+        }
+
+        repository.SetGpo(port, value);
+        TryRefreshStatus();
+        logs.Log("GPIO", $"GPO {port} set to {(value ? "HIGH" : "LOW")} on {repository.ActiveEndpoint}.");
     }
 
     private static (string Address, int? Port) ParseEndpoint(string endpoint)
@@ -216,5 +245,20 @@ public sealed class ReaderManagementService
     {
         return ex.Message.Contains("has not been configured", StringComparison.OrdinalIgnoreCase)
             || ex.Message.Contains("configuration is invalid", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void TryRefreshStatus()
+    {
+        try
+        {
+            if (repository.IsConnected)
+            {
+                state.SetStatus(repository.QueryStatus());
+            }
+        }
+        catch (Exception ex)
+        {
+            logs.Log("GPIO", $"Status refresh failed: {ex.Message}", LogLevel.Warning, ex);
+        }
     }
 }

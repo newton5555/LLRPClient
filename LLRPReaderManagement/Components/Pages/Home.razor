@@ -54,9 +54,9 @@
             <span class="card-title">Read Rate - Last 60 Minutes</span>
         </div>
         <div class="chart-placeholder">
-            @foreach (var height in ChartBars)
+            @foreach (var point in RatePoints)
             {
-                <div class="chart-bar" style="height: @height%;"></div>
+                <div class="chart-bar" title="@($"{point.Minute:HH:mm} - {point.Count}/min")" style="height: @GetBarHeight(point.Count)%;"></div>
             }
         </div>
         <div style="display: flex; justify-content: space-between; margin-top: var(--space-2); font-size: 11px; color: var(--muted-light); font-family: var(--font-mono);">
@@ -97,9 +97,9 @@
 </div>
 
 @code {
-    private int[] ChartBars => Enumerable.Range(0, 48)
-        .Select(i => 18 + Math.Abs(((i * 17) + State.TotalReports) % 74))
-        .ToArray();
+    private IReadOnlyList<ReadRatePoint> RatePoints => State.ReadRateLast60Minutes;
+    private int MaxRate => Math.Max(1, RatePoints.Max(x => x.Count));
+    private int GetBarHeight(int count) => count == 0 ? 2 : Math.Clamp((int)Math.Round((double)count / MaxRate * 100), 8, 100);
 
     private void RefreshDashboard() => StateHasChanged();
 
