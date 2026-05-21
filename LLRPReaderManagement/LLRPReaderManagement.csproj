@@ -22,7 +22,7 @@
         <Nullable>enable</Nullable>
 
         <!-- Display name -->
-        <ApplicationTitle>LLRP RFID Client</ApplicationTitle>
+        <ApplicationTitle>LLRP RFID Management</ApplicationTitle>
 
         <!-- App Identifier -->
         <ApplicationId>com.companyname.llrpreadermanagement</ApplicationId>
