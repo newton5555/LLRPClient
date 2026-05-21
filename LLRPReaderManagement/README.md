@@ -1,3 +1,9 @@
+# 项目概览 / Overview
+
+本仓库包含多个 LLRP RFID 客户端实现，其中 `LLRPReaderManagement` 为 .NET MAUI Blazor Hybrid（Razor Components）项目，用于管理 LLRP Reader 的连接、配置、盘点、ROSpec 与标签访问操作。
+
+This repository hosts multiple LLRP RFID client implementations. The `LLRPReaderManagement` project is a .NET MAUI Blazor Hybrid (Razor Components) app for managing LLRP readers, including connection management, configuration, inventory, ROSpec control, and tag access operations.
+
 # LLRPReaderManagement 技术说明
 
 `LLRPReaderManagement` 是一个 .NET MAUI Blazor Hybrid 项目，用 Razor Component 实现前端界面，通过 ViewModel/State/Service/Repository 分层调用 `LLRPSdk`，用于管理 LLRP RFID Reader 的连接、配置、盘点、ROSpec 和标签访问操作。
