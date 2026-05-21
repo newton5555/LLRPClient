@@ -10,6 +10,24 @@
 - `LLRPSdk`: [LLRPSdk](LLRPSdk)
 - `LTKNet` (LLRP-LTKNet): [LTKNet/LLRP](LTKNet/LLRP)
 
+## 项目结构（LLRPReaderManagement）
+
+```text
+LLRPReaderManagement/
+  Components/
+    Pages/              Razor 页面
+    Shared/AppShell     应用外壳、顶部栏、侧边栏
+    Routes.razor        Blazor 路由入口
+  ViewModels/           页面 ViewModel
+  State/AppState.cs     全局运行状态
+  Services/             业务服务
+  Repositories/         LLRPSdk 适配层
+  Models/               UI 使用的数据模型
+  wwwroot/css/app.css   原型样式整合后的应用样式
+  Prototype/            HTML 原型参考文件
+  MauiProgram.cs        DI 注册和 MAUI 启动配置
+```
+
 ## 1. LLRP 介绍
 
 LLRP（Low Level Reader Protocol，低层读写器协议）是 GS1 EPCglobal 定义的 RFID 读写器与上位机客户端之间的标准通信接口。之所以称为“低层”，是因为它提供了对 RFID 空口协议时序、读写器行为以及标签操作参数的细粒度控制，适合需要直接管理读写器能力、天线、盘点流程和标签命令的应用场景。
@@ -53,7 +71,7 @@ Impinj 提供了基于原版 LTKNet 扩展的 .NET 版本，增加了 IPv6 与 T
 
 ## 4. 本项目说明
 
-本仓库基于 Impinj 的 LTKNet 思路进行封装，聚焦标准 LLRP 协议能力，并按“协议库 + UI 示例”组织代码：
+本仓库基于 Impinj 的 LTKNet 思路进行封装，聚焦标准 LLRP 协议能力，并按“协议库 + UI 示例”组织代码，同时提供 .NET MAUI Blazor Hybrid（Razor Components）混合项目示例。
 
 - LTKNet-Impinj：Impinj维护的 标准 LTK（LTKNet）的 copy 版本。
 - LLRPSdk：参考 OctaneSdk 实现并剔除其中对 LLRP.Impinj.dll 的调用，仅保留标准 LLRP 报文能力；主要通过 LLRPSdk.LlrpReader 对外提供能力。

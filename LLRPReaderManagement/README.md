@@ -19,24 +19,6 @@ This repository hosts multiple LLRP RFID client implementations. The `LLRPReader
   - Windows 下追加：`net10.0-windows10.0.19041.0`
   - iOS / MacCatalyst 仅在显式传入 `EnableAppleTargets=true` 时启用
 
-## 项目结构
-
-```text
-LLRPReaderManagement/
-  Components/
-    Pages/              Razor 页面
-    Shared/AppShell     应用外壳、顶部栏、侧边栏
-    Routes.razor        Blazor 路由入口
-  ViewModels/           页面 ViewModel
-  State/AppState.cs     全局运行状态
-  Services/             业务服务
-  Repositories/         LLRPSdk 适配层
-  Models/               UI 使用的数据模型
-  wwwroot/css/app.css   原型样式整合后的应用样式
-  Prototype/            HTML 原型参考文件
-  MauiProgram.cs        DI 注册和 MAUI 启动配置
-```
-
 ## 架构分层
 
 ### Component
