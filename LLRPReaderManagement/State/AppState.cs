@@ -7,6 +7,7 @@ public sealed class AppState
 {
     private const int ReadRateWindowSeconds = 5;
     private const int MaxRawTagRows = 2000;
+    private const uint InventoryRoSpecId = 14150;
 
     private sealed class ReaderRuntime
     {
@@ -59,6 +60,7 @@ public sealed class AppState
     public FeatureSet? FeatureSet => ActiveRuntime?.FeatureSet;
     public Settings? Settings => ActiveRuntime?.Settings;
     public Status? Status { get; private set; }
+    public uint? CurrentRoSpecId => ActiveRuntime?.IsConnected == true ? InventoryRoSpecId : null;
 
     public IReadOnlyList<ReaderSummary> Readers
     {
@@ -128,7 +130,7 @@ public sealed class AppState
     }
 
     public ReaderSummary Reader => Readers.FirstOrDefault(x => string.Equals(x.Endpoint, ActiveEndpoint, StringComparison.OrdinalIgnoreCase))
-        ?? new ReaderSummary("Primary Reader", Endpoint, "-", "-", 0, 0, 0, false, false, Tags.Count, TotalReports);
+        ?? new ReaderSummary("Primary Reader", Endpoint, "-", "-", 0, 0, 0, false, false, null, Tags.Count, TotalReports);
 
     private ReaderRuntime? ActiveRuntime
     {
@@ -427,6 +429,7 @@ public sealed class AppState
             featureSet?.GpoCount ?? 0,
             runtime.IsConnected,
             runtime.IsInventoryRunning,
+            runtime.IsConnected ? InventoryRoSpecId : null,
             0,
             runtime.TotalReports);
     }

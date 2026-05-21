@@ -12,6 +12,7 @@ public sealed record ReaderSummary(
     ushort GpoCount,
     bool IsConnected,
     bool IsInventoryRunning,
+    uint? CurrentRoSpecId,
     int UniqueTags,
     int TotalReports);
 

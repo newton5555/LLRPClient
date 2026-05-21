@@ -56,7 +56,7 @@
                     </div>
                     <div>
                         <div class="reader-field-label">Current ROSPEC</div>
-                        <div class="reader-field-value">@(reader.IsInventoryRunning ? "#1 - Continuous" : "-")</div>
+                        <div class="reader-field-value">@FormatRoSpec(reader)</div>
                     </div>
                     <div>
                         <div class="reader-field-label">GPI / GPO</div>
@@ -170,6 +170,9 @@
 
     private void Select(string endpoint) => Vm.Select(endpoint);
     private void Disconnect(string endpoint) => Vm.Disconnect(endpoint);
+    private static string FormatRoSpec(ReaderSummary reader) =>
+        reader.CurrentRoSpecId is { } id ? $"#{id} - {(reader.IsInventoryRunning ? "Running" : "Stopped")}" : "-";
+
     private void OnStateChanged() => InvokeAsync(StateHasChanged);
     public void Dispose() => Vm.State.Changed -= OnStateChanged;
 }
