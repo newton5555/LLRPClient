@@ -37,4 +37,6 @@ public sealed record FeatureItem(string Label, string Value);
 
 public sealed record AccessOperationResult(bool Success, string Message, string? Data = null);
 
+public sealed record AppNotification(string Title, string Message, bool IsSuccess);
+
 public sealed record ReadRatePoint(DateTime Minute, int Count);

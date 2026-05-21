@@ -167,8 +167,32 @@ public sealed class ConfigViewModel(AppState state, ReaderManagementService read
         && state.Settings?.InventoryStateAware == true;
 
     public void Refresh() => readers.RefreshSettings();
-    public void ApplyChanges() => readers.ApplyCurrentSettings();
-    public void ApplyDefaults() => readers.ApplyDefaultSettings();
+
+    public void ApplyChanges()
+    {
+        try
+        {
+            readers.ApplyCurrentSettings();
+            state.ShowNotification("Settings applied", "Reader settings were applied successfully.", true);
+        }
+        catch (Exception ex)
+        {
+            state.ShowNotification("Apply failed", ex.Message, false);
+        }
+    }
+
+    public void ApplyDefaults()
+    {
+        try
+        {
+            readers.ApplyDefaultSettings();
+            state.ShowNotification("Defaults applied", "SDK default settings were applied successfully.", true);
+        }
+        catch (Exception ex)
+        {
+            state.ShowNotification("Apply failed", ex.Message, false);
+        }
+    }
     public void RefreshStatus() => readers.RefreshStatus();
     public void SetGpo(ushort port, bool value) => readers.SetGpo(port, value);
 

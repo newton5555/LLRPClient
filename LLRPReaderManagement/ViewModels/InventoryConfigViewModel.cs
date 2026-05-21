@@ -30,7 +30,19 @@ public sealed class InventoryConfigViewModel(AppState state, ReaderManagementSer
     public Settings? Settings => state.Settings;
 
     public void Refresh() => readers.RefreshSettings();
-    public void Apply() => readers.ApplyCurrentSettings();
+
+    public void Apply()
+    {
+        try
+        {
+            readers.ApplyCurrentSettings();
+            state.ShowNotification("Config saved", "Inventory parameters were saved successfully.", true);
+        }
+        catch (Exception ex)
+        {
+            state.ShowNotification("Save failed", ex.Message, false);
+        }
+    }
 
     public void SelectReader(string endpoint)
     {

@@ -156,10 +156,12 @@ else
                             <div class="form-group">
                                 <label class="form-label">Bit Pointer</label>
                                 <input type="number" min="0" value="@filter.BitPointer" @onchange="args => SetUshort(args, v => filter.BitPointer = v)" readonly="@(!CanEdit)">
+                                <div class="form-hint">Bit offset inside the selected memory bank. EPC prefix matching usually starts at bit pointer 32.</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Bit Count</label>
                                 <input type="number" min="0" value="@filter.BitCount" @onchange="args => SetInt(args, v => filter.BitCount = v)" readonly="@(!CanEdit)">
+                                <div class="form-hint">1 word = 16 bit. Example: mask <code>E280</code> is 16 bit.</div>
                             </div>
                             @if (Vm.ShowStateUnawareActions)
                             {
@@ -206,6 +208,7 @@ else
                             <div class="form-group">
                                 <label class="form-label">Tag Mask Hex</label>
                                 <input type="text" value="@filter.TagMask" @onchange="args => filter.TagMask = args.Value?.ToString()?.Trim() ?? string.Empty" readonly="@(!CanEdit)">
+                                <div class="form-hint">Hex mask. Example: <code>E280</code> + bit count 16 matches EPC values starting with E280.</div>
                             </div>
                         </div>
                     }
@@ -261,10 +264,12 @@ else
             <div class="form-group">
                 <label class="form-label">Word Start Address</label>
                 <input type="number" min="0" value="@Settings.AttachedData.WordPointer" @onchange="args => SetUshort(args, v => Settings.AttachedData.WordPointer = v)" readonly="@(!CanEdit)">
+                <div class="form-hint">Word offset, 1 word = 16 bit. EPC data <code>E280...</code> usually starts at word pointer 2.</div>
             </div>
             <div class="form-group">
                 <label class="form-label">Word Count</label>
                 <input type="number" min="0" value="@Settings.AttachedData.WordCount" @onchange="args => SetUshort(args, v => Settings.AttachedData.WordCount = v)" readonly="@(!CanEdit)">
+                <div class="form-hint">Read length in words. Example: <code>E280</code> is 1 word / 16 bit.</div>
             </div>
             <div class="form-group">
                 <label class="form-label">Access Password Hex</label>

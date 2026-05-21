@@ -14,10 +14,12 @@
     <div class="form-group">
         <label class="form-label">Bit Pointer</label>
         <input type="number" min="0" value="@Filter.BitPointer" @onchange="SetBitPointer" readonly="@(!CanEdit)">
+        <div class="form-hint">Bit offset inside the selected memory bank. EPC prefix matching usually starts at bit pointer 32.</div>
     </div>
     <div class="form-group">
         <label class="form-label">Bit Count</label>
         <input type="number" min="0" value="@Filter.BitCount" @onchange="SetBitCount" readonly="@(!CanEdit)">
+        <div class="form-hint">1 word = 16 bit. Example: mask <code>E280</code> is 16 bit.</div>
     </div>
     <div class="form-group">
         <label class="form-label">Filter Op</label>
@@ -31,6 +33,7 @@
     <div class="form-group">
         <label class="form-label">Tag Mask Hex</label>
         <input type="text" value="@Filter.TagMask" @onchange="args => Filter.TagMask = args.Value?.ToString()?.Trim() ?? string.Empty" readonly="@(!CanEdit)">
+        <div class="form-hint">Hex mask. Example: <code>E280</code> + bit count 16 matches EPC values starting with E280.</div>
     </div>
 </div>
 

@@ -60,6 +60,7 @@ public sealed class AppState
     public FeatureSet? FeatureSet => ActiveRuntime?.FeatureSet;
     public Settings? Settings => ActiveRuntime?.Settings;
     public Status? Status { get; private set; }
+    public AppNotification? Notification { get; private set; }
     public uint? CurrentRoSpecId => ActiveRuntime?.IsConnected == true ? InventoryRoSpecId : null;
 
     public IReadOnlyList<ReaderSummary> Readers
@@ -413,6 +414,18 @@ public sealed class AppState
             logs.Clear();
         }
 
+        Notify();
+    }
+
+    public void ShowNotification(string title, string message, bool isSuccess)
+    {
+        Notification = new AppNotification(title, message, isSuccess);
+        Notify();
+    }
+
+    public void ClearNotification()
+    {
+        Notification = null;
         Notify();
     }
 

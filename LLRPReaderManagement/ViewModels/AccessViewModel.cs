@@ -20,12 +20,26 @@ public sealed class AccessViewModel(AccessOperationService access, ReaderManagem
         {
             Result = "Stop inventory before running access operations.";
             Data = null;
+            state.ShowNotification("Read failed", Result, false);
             return;
         }
 
-        var result = await access.ReadAsync(TargetEpc, MemoryBank, WordPointer, WordCount);
-        Result = result.Message;
-        Data = result.Data;
+        try
+        {
+            var result = await access.ReadAsync(TargetEpc, MemoryBank, WordPointer, WordCount);
+            Result = result.Message;
+            Data = result.Data;
+            state.ShowNotification(
+                result.Success ? "Read completed" : "Read failed",
+                string.IsNullOrWhiteSpace(result.Data) ? result.Message : $"{result.Message}{Environment.NewLine}{result.Data}",
+                result.Success);
+        }
+        catch (Exception ex)
+        {
+            Result = $"Read failed: {ex.Message}";
+            Data = null;
+            state.ShowNotification("Read failed", ex.Message, false);
+        }
     }
 
     public async Task WriteAsync()
@@ -34,12 +48,23 @@ public sealed class AccessViewModel(AccessOperationService access, ReaderManagem
         {
             Result = "Stop inventory before running access operations.";
             Data = null;
+            state.ShowNotification("Write failed", Result, false);
             return;
         }
 
-        var result = await access.WriteAsync(TargetEpc, MemoryBank, WordPointer, WriteData, BlockWriteEnabled);
-        Result = result.Message;
-        Data = result.Data;
+        try
+        {
+            var result = await access.WriteAsync(TargetEpc, MemoryBank, WordPointer, WriteData, BlockWriteEnabled);
+            Result = result.Message;
+            Data = result.Data;
+            state.ShowNotification(result.Success ? "Write completed" : "Write failed", result.Message, result.Success);
+        }
+        catch (Exception ex)
+        {
+            Result = $"Write failed: {ex.Message}";
+            Data = null;
+            state.ShowNotification("Write failed", ex.Message, false);
+        }
     }
 
     public void Clear()

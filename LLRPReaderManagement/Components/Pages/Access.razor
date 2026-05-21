@@ -63,15 +63,18 @@
                     <div class="form-group" style="flex: 1;">
                         <label class="form-label">Word Pointer</label>
                         <input type="number" @bind="Vm.WordPointer" readonly="@(!CanOperate)" />
+                        <div class="form-hint">Word offset, 1 word = 16 bit. EPC data <code>E280...</code> usually starts at word pointer 2.</div>
                     </div>
                     <div class="form-group" style="flex: 1;">
                         <label class="form-label">Word Count</label>
                         <input type="number" @bind="Vm.WordCount" readonly="@(!CanOperate)" />
+                        <div class="form-hint">Read length in words. Example: <code>E280</code> is 1 word / 16 bit.</div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Target EPC</label>
                     <input type="text" @bind="Vm.TargetEpc" placeholder="EPC hex" style="font-family: var(--font-mono);" readonly="@(!CanOperate)" />
+                    <div class="form-hint">Target EPC is hex text. Example: filter/read EPC prefix <code>E280</code> = 16 bit.</div>
                 </div>
                 <div class="op-result @(Vm.Data is not null ? "success" : "")">
                     @Vm.Result
@@ -103,10 +106,12 @@
                     <div class="form-group" style="flex: 1;">
                         <label class="form-label">Word Pointer</label>
                         <input type="number" @bind="Vm.WordPointer" readonly="@(!CanOperate)" />
+                        <div class="form-hint">Write offset in words, 1 word = 16 bit. EPC word pointer 2 maps to the first EPC word, e.g. <code>E280</code>.</div>
                     </div>
                     <div class="form-group" style="flex: 2;">
                         <label class="form-label">Write Data</label>
                         <input type="text" @bind="Vm.WriteData" placeholder="Hex words, e.g. 1234ABCD" style="font-family: var(--font-mono);" readonly="@(!CanOperate)" />
+                        <div class="form-hint">Write data must be complete 16-bit words: 4 hex chars = 1 word. Example <code>E280</code> writes 1 word.</div>
                     </div>
                 </div>
                 <label class="inline-check"><input type="checkbox" @bind="Vm.BlockWriteEnabled" disabled="@(!CanOperate)" /> BlockWrite</label>

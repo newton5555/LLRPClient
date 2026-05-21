@@ -5,7 +5,7 @@
     <header class="app-topbar">
         <h1>
             <img class="brand-logo" src="icons/rfid-logo.svg" alt="" aria-hidden="true">
-            LLRP RFID Client
+            LLRP RFID Management
         </h1>
         <div class="topbar-meta">
             <span>LLRP v1.0.1</span><span>|</span><span>@DateTime.Now.ToString("HH:mm:ss")</span>
@@ -31,6 +31,23 @@
     @if (State.IsBusy)
     {
         <div class="busy-strip">@State.ConnectionStatus</div>
+    }
+    @if (State.Notification is { } notification)
+    {
+        <div class="notification-overlay">
+            <div class="notification-dialog @(notification.IsSuccess ? "success" : "error")" role="alertdialog" aria-modal="true">
+                <div class="notification-header">
+                    <span class="notification-title">@notification.Title</span>
+                    <button class="btn btn-icon" @onclick="State.ClearNotification" aria-label="Close notification">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="notification-body">@notification.Message</div>
+                <div class="notification-footer">
+                    <button class="btn btn-primary" @onclick="State.ClearNotification">OK</button>
+                </div>
+            </div>
+        </div>
     }
 </div>
 

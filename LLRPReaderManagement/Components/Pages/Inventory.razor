@@ -81,7 +81,6 @@
         <span>Antenna</span>
         <span>Attached Data</span>
         <span>Last Seen</span>
-        <span>First Seen</span>
     </div>
     @if (TotalRows == 0)
     {
@@ -100,7 +99,6 @@
             <span class="tag-ant">@tag.AntennaText</span>
             <span class="tag-attached" title="@tag.AttachedData">@DisplayAttachedData(tag)</span>
             <span class="tag-time">@tag.LastSeen.ToString("HH:mm:ss.fff")</span>
-            <span class="tag-time">@tag.FirstSeen.ToString("HH:mm:ss.fff")</span>
         </div>
     }
 </div>
@@ -173,10 +171,10 @@
         if (tags.Count == 0) return;
 
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine("EPC,RSSI,Count,Reader,Antenna,Attached Data,Report Source,Last Seen,First Seen");
+        sb.AppendLine("EPC,RSSI,Count,Reader,Antenna,Attached Data,Report Source,Last Seen");
         foreach (var t in tags)
         {
-            sb.AppendLine($"\"{t.Epc}\",{t.Rssi:0.0},{t.SeenCount},\"{t.ReaderEndpoint}\",\"{t.AntennaText}\",\"{t.AttachedData}\",\"{t.ReportSource}\",\"{t.LastSeen:yyyy-MM-dd HH:mm:ss.fff}\",\"{t.FirstSeen:yyyy-MM-dd HH:mm:ss.fff}\"");
+            sb.AppendLine($"\"{t.Epc}\",{t.Rssi:0.0},{t.SeenCount},\"{t.ReaderEndpoint}\",\"{t.AntennaText}\",\"{t.AttachedData}\",\"{t.ReportSource}\",\"{t.LastSeen:yyyy-MM-dd HH:mm:ss.fff}\"");
         }
 
         var fileName = $"tag-inventory-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
