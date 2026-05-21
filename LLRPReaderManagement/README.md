@@ -1,23 +1,44 @@
-# 项目概览 / Overview
+# LLRPReaderManagement
 
-本仓库包含多个 LLRP RFID 客户端实现，其中 `LLRPReaderManagement` 为 .NET MAUI Blazor Hybrid（Razor Components）项目，用于管理 LLRP Reader 的连接、配置、盘点、ROSpec 与标签访问操作。
+`LLRPReaderManagement` 是一个 .NET MAUI Blazor Hybrid（Razor Components）项目，用于管理 LLRP RFID Reader 的连接、配置、盘点、ROSpec 和标签访问操作。项目通过 ViewModel / State / Service / Repository 分层调用 `LLRPSdk`，页面不直接依赖 SDK Reader 对象。
 
-This repository hosts multiple LLRP RFID client implementations. The `LLRPReaderManagement` project is a .NET MAUI Blazor Hybrid (Razor Components) app for managing LLRP readers, including connection management, configuration, inventory, ROSpec control, and tag access operations.
+## 功能范围
 
-# LLRPReaderManagement 技术说明
-
-`LLRPReaderManagement` 是一个 .NET MAUI Blazor Hybrid 项目，用 Razor Component 实现前端界面，通过 ViewModel/State/Service/Repository 分层调用 `LLRPSdk`，用于管理 LLRP RFID Reader 的连接、配置、盘点、ROSpec 和标签访问操作。
+- 多 Reader 连接、断开和 Active Reader 切换
+- Reader 能力、天线、RF、报告和 Keepalive 配置查看与应用
+- 多设备盘点、标签缓存、标签来源 Reader 追踪
+- ROSpec 启动、停止和运行状态控制
+- 标签 EPC / TID / User / Reserved 区读写访问
+- 应用日志、标签历史和连接状态展示
 
 ## 技术栈
 
 - .NET MAUI Blazor Hybrid
-- Razor Component
+- Razor Components
 - Microsoft DI
 - `LLRPSdk` 项目引用
 - 多目标框架：
   - 默认：`net10.0-android`
   - Windows 下追加：`net10.0-windows10.0.19041.0`
   - iOS / MacCatalyst 仅在显式传入 `EnableAppleTargets=true` 时启用
+
+## 项目结构
+
+```text
+LLRPReaderManagement/
+  Components/
+    Pages/              Razor 页面
+    Shared/             应用外壳、共享组件、筛选器组件
+    Routes.razor        Blazor 路由入口
+  ViewModels/           页面 ViewModel
+  State/AppState.cs     全局运行状态
+  Services/             业务服务
+  Repositories/         LLRPSdk 适配层
+  Models/               UI 使用的数据模型
+  wwwroot/css/app.css   原型样式整合后的应用样式
+  Prototype/            HTML 原型参考文件
+  MauiProgram.cs        DI 注册和 MAUI 启动配置
+```
 
 ## 架构分层
 
@@ -28,10 +49,12 @@ Razor 页面只负责渲染 UI 和接收用户交互，主要文件在 `Componen
 - `Home.razor`：仪表盘
 - `Readers.razor`：Reader 连接和多设备列表
 - `Inventory.razor`：多设备盘点和标签列表
+- `InventoryConfig.razor`：盘点参数配置
 - `Config.razor`：Reader 参数配置
 - `Rospec.razor`：ROSpec 运行控制
 - `Access.razor`：标签读写访问操作
 - `History.razor`：标签和日志历史视图
+- `Logs.razor`：应用日志视图
 
 页面通过注入 ViewModel 调用业务能力，不直接调用 `LLRPSdk`。
 
@@ -70,6 +93,8 @@ Razor 页面只负责渲染 UI 和接收用户交互，主要文件在 `Componen
   - 创建并清理 TagOpSequence
 - `AppLogService`
   - 写入 UI 日志和调试日志
+- `EndpointHistoryService`
+  - 维护历史连接端点
 
 ### Repository
 
@@ -178,7 +203,7 @@ Access.razor
 
 ## 构建命令
 
-Windows 目标：
+从仓库根目录执行：
 
 ```powershell
 dotnet build .\LLRPReaderManagement\LLRPReaderManagement.csproj -f net10.0-windows10.0.19041.0 --no-restore -p:UseAppHost=false
@@ -204,4 +229,3 @@ dotnet build .\LLRPReaderManagement\LLRPReaderManagement.csproj -p:UseAppHost=fa
 - Access 操作当前基于 Active Reader，不是全设备广播。
 - `QueryTags(double)` 来自 SDK 的同步查询接口，目前仍用于手动拉取缓存标签，SDK 会给出 obsolete warning。
 - 多 Reader 的 `UniqueTags` 统计当前主要在全局标签列表中体现，Reader 卡片里更侧重连接状态和报告数。
-
