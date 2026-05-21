@@ -131,7 +131,13 @@
             </div>
             <div class="form-group">
                 <label class="form-label">IP Address / Endpoint</label>
-                <input type="text" @bind="Vm.Endpoint" placeholder="192.168.40.233 or host:5084">
+                <input type="text" @bind="Vm.Endpoint" list="reader-endpoint-history" autocomplete="off" placeholder="192.168.40.233 or host:5084">
+                <datalist id="reader-endpoint-history">
+                    @foreach (var endpoint in Vm.RecentEndpoints)
+                    {
+                        <option value="@endpoint"></option>
+                    }
+                </datalist>
             </div>
             <div class="grid-2">
                 <div class="form-group">

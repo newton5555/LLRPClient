@@ -22,6 +22,7 @@ namespace LLRPReaderManagement
             builder.Services.AddSingleton<AppState>();
             builder.Services.AddSingleton<ILlrpReaderRepository, LlrpReaderRepository>();
             builder.Services.AddSingleton<IAppLogService, AppLogService>();
+            builder.Services.AddSingleton<EndpointHistoryService>();
             builder.Services.AddSingleton<ReaderManagementService>();
             builder.Services.AddSingleton<InventoryService>();
             builder.Services.AddSingleton<AccessOperationService>();

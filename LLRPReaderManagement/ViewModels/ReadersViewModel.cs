@@ -3,7 +3,10 @@ using LLRPReaderManagement.State;
 
 namespace LLRPReaderManagement.ViewModels;
 
-public sealed class ReadersViewModel(AppState state, ReaderManagementService readers)
+public sealed class ReadersViewModel(
+    AppState state,
+    ReaderManagementService readers,
+    EndpointHistoryService endpointHistory)
 {
     public string Endpoint
     {
@@ -12,6 +15,7 @@ public sealed class ReadersViewModel(AppState state, ReaderManagementService rea
     }
 
     public AppState State => state;
+    public IReadOnlyList<string> RecentEndpoints => endpointHistory.RecentEndpoints;
     public Task ConnectAsync() => readers.ConnectAsync(Endpoint);
     public Task ConnectAsync(string endpoint) => readers.ConnectAsync(endpoint);
     public void Disconnect() => readers.Disconnect();

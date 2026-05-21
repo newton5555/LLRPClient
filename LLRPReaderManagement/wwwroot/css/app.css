@@ -440,6 +440,10 @@ input:focus, select:focus {
   box-shadow: 0 0 0 2px var(--accent-bg);
 }
 
+input[list]::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
+
 /* Tabs */
 .tabs {
   display: flex;

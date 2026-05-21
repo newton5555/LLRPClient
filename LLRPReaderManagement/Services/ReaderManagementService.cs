@@ -9,12 +9,18 @@ public sealed class ReaderManagementService
     private readonly ILlrpReaderRepository repository;
     private readonly AppState state;
     private readonly IAppLogService logs;
+    private readonly EndpointHistoryService endpointHistory;
 
-    public ReaderManagementService(ILlrpReaderRepository repository, AppState state, IAppLogService logs)
+    public ReaderManagementService(
+        ILlrpReaderRepository repository,
+        AppState state,
+        IAppLogService logs,
+        EndpointHistoryService endpointHistory)
     {
         this.repository = repository;
         this.state = state;
         this.logs = logs;
+        this.endpointHistory = endpointHistory;
 
         repository.TagsReported += (endpoint, tags) => state.AddTags(endpoint, tags);
         repository.ReaderStopped += endpoint => state.SetInventoryRunning(endpoint, false);
@@ -40,11 +46,12 @@ public sealed class ReaderManagementService
 
             var wasSingulating = EnsureStoppedIfSingulating();
             var settings = QueryInitialSettings();
-         
-            state.SetConnected(endpoint, repository.ReaderCapabilities, settings);
+
+            endpointHistory.Remember(targetEndpoint);
+            state.SetConnected(targetEndpoint, repository.ReaderCapabilities, settings);
             logs.Log("Reader", wasSingulating
-                ? $"Connected to {endpoint}; active inventory was stopped during initialization."
-                : $"Connected to {endpoint}");
+                ? $"Connected to {targetEndpoint}; active inventory was stopped during initialization."
+                : $"Connected to {targetEndpoint}");
         }
         catch (Exception ex)
         {
