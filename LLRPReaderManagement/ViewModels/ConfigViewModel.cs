@@ -25,8 +25,7 @@ public sealed class ConfigViewModel(AppState state, ReaderManagementService read
         new FeatureItem("GPI / GPO", $"{state.GpiCount} / {state.GpoCount}"),
         new FeatureItem("RF Mode", state.Settings?.RfMode?.ToString() ?? "-"),
         new FeatureItem("Session", state.Settings?.Session.ToString() ?? "-"),
-        new FeatureItem("Tag Population", state.Settings?.TagPopulationEstimate.ToString() ?? "-"),
-        new FeatureItem("Hold Reports", state.Settings is null ? "-" : state.Settings.HoldReportsOnDisconnect ? "Enabled" : "Disabled")
+        new FeatureItem("Tag Population", state.Settings?.TagPopulationEstimate.ToString() ?? "-")
     };
 
     public IReadOnlyList<RfModeOption> RfModeOptions

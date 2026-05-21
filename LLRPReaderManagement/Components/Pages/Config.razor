@@ -42,13 +42,6 @@
             <label class="form-label">Keepalive Interval (ms)</label>
             <input type="number" min="1" value="@(Settings?.Keepalives.PeriodInMs.ToString() ?? "0")" @onchange="SetKeepaliveInterval" readonly="@(!CanEdit)">
         </div>
-        <div class="form-group">
-            <label class="form-label">Hold Events And Reports</label>
-            <select value="@(Settings?.HoldReportsOnDisconnect == true ? "true" : "false")" @onchange="SetHoldReports" disabled="@(!CanEdit)">
-                <option value="false">Disabled</option>
-                <option value="true">Enabled</option>
-            </select>
-        </div>
     </div>
 </div>
 
@@ -352,14 +345,6 @@
         if (Settings is not null && Enum.TryParse<InventorySearchMode>(args.Value?.ToString(), out var value))
         {
             Settings.InventorySearchMode = value;
-        }
-    }
-
-    private void SetHoldReports(ChangeEventArgs args)
-    {
-        if (Settings is not null && bool.TryParse(args.Value?.ToString(), out var value))
-        {
-            Settings.HoldReportsOnDisconnect = value;
         }
     }
 
