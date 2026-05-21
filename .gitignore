@@ -362,6 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /.vscode
+/.claude/
 /Refs/.claude
 /Docs/LLRPReaderUI_WPF_UI操作手册.md
 /Docs/LLRPReaderUI_WPF_UI操作手册.pdf
