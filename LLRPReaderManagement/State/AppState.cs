@@ -81,11 +81,7 @@ public sealed class AppState
         {
             lock (gate)
             {
-                return tags.Values
-                    .OrderByDescending(x => x.FirstSeen)
-                    .ThenBy(x => x.ReaderEndpoint)
-                    .ThenBy(x => x.Epc)
-                    .ToList();
+                return tags.Values.ToList();
             }
         }
     }

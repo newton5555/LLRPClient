@@ -9,7 +9,7 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new MainPage()) { Title = "LLRPReaderManagement" };
+            return new Window(new MainPage()) { Title = "LLRP RFID Client" };
         }
     }
 }
