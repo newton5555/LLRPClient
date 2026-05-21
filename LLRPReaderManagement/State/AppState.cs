@@ -270,6 +270,16 @@ public sealed class AppState
         Notify();
     }
 
+    public void ClearLogs()
+    {
+        lock (gate)
+        {
+            logs.Clear();
+        }
+
+        Notify();
+    }
+
     private static ReaderSummary ToSummary(ReaderRuntime runtime)
     {
         var featureSet = runtime.FeatureSet;

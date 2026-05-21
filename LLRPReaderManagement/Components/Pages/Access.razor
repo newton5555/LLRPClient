@@ -59,10 +59,19 @@
                         <button class="bank-tab @(Vm.MemoryBank == bank ? "active" : "")" @onclick="() => Vm.MemoryBank = bank">@bank</button>
                     }
                 </div>
-                <div class="form-grid access-form">
-                    <label>Word Pointer <input type="number" @bind="Vm.WordPointer" /></label>
-                    <label>Word Count <input type="number" @bind="Vm.WordCount" /></label>
-                    <label>Target EPC <input @bind="Vm.TargetEpc" placeholder="EPC hex" /></label>
+                <div style="display: flex; gap: var(--space-3);">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Word Pointer</label>
+                        <input type="number" @bind="Vm.WordPointer" />
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Word Count</label>
+                        <input type="number" @bind="Vm.WordCount" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Target EPC</label>
+                    <input type="text" @bind="Vm.TargetEpc" placeholder="EPC hex" style="font-family: var(--font-mono);" />
                 </div>
                 <div class="op-result @(Vm.Data is not null ? "success" : "")">
                     @Vm.Result
@@ -90,11 +99,17 @@
                         <button class="bank-tab @(Vm.MemoryBank == bank ? "active" : "")" @onclick="() => Vm.MemoryBank = bank">@bank</button>
                     }
                 </div>
-                <div class="form-grid access-form">
-                    <label>Word Pointer <input type="number" @bind="Vm.WordPointer" /></label>
-                    <label>Write Data <input @bind="Vm.WriteData" placeholder="Hex words, e.g. 1234ABCD" /></label>
-                    <label class="inline-check"><input type="checkbox" @bind="Vm.BlockWriteEnabled" /> BlockWrite</label>
+                <div style="display: flex; gap: var(--space-3);">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Word Pointer</label>
+                        <input type="number" @bind="Vm.WordPointer" />
+                    </div>
+                    <div class="form-group" style="flex: 2;">
+                        <label class="form-label">Write Data</label>
+                        <input type="text" @bind="Vm.WriteData" placeholder="Hex words, e.g. 1234ABCD" style="font-family: var(--font-mono);" />
+                    </div>
                 </div>
+                <label class="inline-check"><input type="checkbox" @bind="Vm.BlockWriteEnabled" /> BlockWrite</label>
                 <div class="op-result">Write data must be hex and aligned to 16-bit words. EPC targeting uses bit pointer 32.</div>
             </div>
         </div>

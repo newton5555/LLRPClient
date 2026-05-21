@@ -1,0 +1,112 @@
+@page "/logs"
+@inject AppState State
+@inject IJSRuntime JS
+@implements IDisposable
+
+<div class="section-header">
+    <h2 class="section-title">Operation Logs</h2>
+    <div class="flex gap-2">
+        <button class="btn btn-sm" @onclick="ExportCsv" disabled="@(Rows.Count == 0)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+        </button>
+        <button class="btn btn-sm danger" @onclick="ClearLogs" disabled="@(Rows.Count == 0)">Clear</button>
+    </div>
+</div>
+
+<div class="filter-bar">
+    <input type="text" placeholder="Search message..." @bind="SearchText" @bind:event="oninput">
+    <select @bind="CategoryFilter" style="min-width: 120px;">
+        <option value="">All Categories</option>
+        @foreach (var cat in Categories)
+        {
+            <option value="@cat">@cat</option>
+        }
+    </select>
+    <select @bind="LevelFilter" style="min-width: 120px;">
+        <option value="">All Levels</option>
+        <option value="Information">Info</option>
+        <option value="Warning">Warning</option>
+        <option value="Error">Error</option>
+    </select>
+</div>
+
+<div class="table-wrap" style="max-height: calc(100vh - 340px); overflow-y: auto;">
+    <div class="history-row header">
+        <span>Time</span>
+        <span>Level</span>
+        <span>Category</span>
+        <span>Message</span>
+    </div>
+    @if (Rows.Count == 0)
+    {
+        <div class="empty-state">No log entries match the filters.</div>
+    }
+    @foreach (var row in Rows.Take(200))
+    {
+        <div class="history-row">
+            <span class="history-time">@row.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</span>
+            <span><span class="log-level @GetLevelClass(row.Level)">@row.Level</span></span>
+            <span class="log-category">@row.Category</span>
+            <span class="log-message">@row.Message</span>
+        </div>
+    }
+</div>
+
+<div class="pagination">
+    <span>Showing @Math.Min(200, Rows.Count) of @Rows.Count entries</span>
+</div>
+
+@code {
+    private string SearchText { get; set; } = string.Empty;
+    private string CategoryFilter { get; set; } = string.Empty;
+    private string LevelFilter { get; set; } = string.Empty;
+
+    private IReadOnlyList<string> Categories =>
+        State.Logs
+            .Select(l => l.Category)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+
+    private IReadOnlyList<LogEntry> Rows =>
+        State.Logs
+            .Where(l => string.IsNullOrWhiteSpace(SearchText) || l.Message.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+            .Where(l => string.IsNullOrWhiteSpace(CategoryFilter) || string.Equals(l.Category, CategoryFilter, StringComparison.OrdinalIgnoreCase))
+            .Where(l => string.IsNullOrWhiteSpace(LevelFilter) || string.Equals(l.Level.ToString(), LevelFilter, StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(l => l.Timestamp)
+            .Take(200)
+            .ToList();
+
+    private static string GetLevelClass(LogLevel level) => level switch
+    {
+        LogLevel.Error or LogLevel.Critical => "level-error",
+        LogLevel.Warning => "level-warn",
+        _ => "level-info"
+    };
+
+    private async Task ExportCsv()
+    {
+        var rows = Rows;
+        if (rows.Count == 0) return;
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Time,Level,Category,Message");
+        foreach (var r in rows)
+        {
+            sb.AppendLine($"\"{r.Timestamp:yyyy-MM-dd HH:mm:ss}\",\"{r.Level}\",\"{r.Category}\",\"{r.Message}\"");
+        }
+
+        var fileName = $"logs-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+        await JS.InvokeVoidAsync("downloadFileFromText", fileName, sb.ToString());
+    }
+
+    private void ClearLogs()
+    {
+        State.ClearLogs();
+    }
+
+    protected override void OnInitialized() => State.Changed += OnStateChanged;
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => State.Changed -= OnStateChanged;
+}

@@ -25,17 +25,15 @@
     <select @bind="ResultFilter" style="min-width: 120px;">
         <option value="">All Results</option>
         <option value="success">Success</option>
-        <option value="info">Info</option>
-        <option value="warning">Warning</option>
-        <option value="error">Error</option>
+        <option value="fail">Failed</option>
     </select>
-    <input type="date" style="min-width: 140px;" disabled>
+    <input type="date" @bind="DateFilter" @bind:format="yyyy-MM-dd" style="min-width: 140px;">
 </div>
 
 <div class="table-wrap" style="max-height: calc(100vh - 340px); overflow-y: auto;">
     <div class="history-row header">
         <span>Time</span>
-        <span>EPC / Message</span>
+        <span>EPC</span>
         <span>Operation</span>
         <span>Reader</span>
         <span>Antenna</span>
@@ -61,7 +59,7 @@
 </div>
 
 <div class="pagination">
-    <span>Showing 1-@Math.Min(50, Rows.Count) of @Rows.Count events</span>
+    <span>Showing 1-@Math.Min(50, Rows.Count) of @Rows.Count tags</span>
     <div class="pagination-controls">
         <button class="page-btn active">1</button>
     </div>
@@ -71,37 +69,27 @@
     private string SearchText { get; set; } = string.Empty;
     private string ReaderFilter { get; set; } = string.Empty;
     private string ResultFilter { get; set; } = string.Empty;
+    private DateTime? DateFilter { get; set; }
 
     private IReadOnlyList<HistoryRow> Rows
     {
         get
         {
-            var tagRows = State.Tags.Select(tag => new HistoryRow(
-                tag.LastSeen,
-                tag.Epc,
-                "inventory",
-                tag.ReaderEndpoint,
-                $"Ant {tag.Antenna}",
-                $"{tag.Rssi:0.0} dBm",
-                "success",
-                "inventory",
-                "success"));
-
-            var logRows = State.Logs.Select(log => new HistoryRow(
-                log.Timestamp,
-                log.Message,
-                log.Category,
-                "-",
-                "-",
-                "-",
-                log.Level.ToString(),
-                log.Category.ToLowerInvariant(),
-                log.Level >= Microsoft.Extensions.Logging.LogLevel.Error ? "fail" : "success"));
-
-            return tagRows.Concat(logRows)
+            return State.Tags
+                .Select(tag => new HistoryRow(
+                    tag.LastSeen,
+                    tag.Epc,
+                    "inventory",
+                    tag.ReaderEndpoint,
+                    $"Ant {tag.Antenna}",
+                    $"{tag.Rssi:0.0} dBm",
+                    "success",
+                    "inventory",
+                    "success"))
                 .Where(row => string.IsNullOrWhiteSpace(SearchText) || row.Text.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
                 .Where(row => string.IsNullOrWhiteSpace(ReaderFilter) || string.Equals(row.Reader, ReaderFilter, StringComparison.OrdinalIgnoreCase))
-                .Where(row => string.IsNullOrWhiteSpace(ResultFilter) || row.Result.Contains(ResultFilter, StringComparison.OrdinalIgnoreCase) || row.ResultClass.Contains(ResultFilter, StringComparison.OrdinalIgnoreCase))
+                .Where(row => string.IsNullOrWhiteSpace(ResultFilter) || string.Equals(row.ResultClass, ResultFilter, StringComparison.OrdinalIgnoreCase))
+                .Where(row => DateFilter is null || row.Time.Date == DateFilter.Value.Date)
                 .OrderByDescending(row => row.Time)
                 .ToList();
         }
