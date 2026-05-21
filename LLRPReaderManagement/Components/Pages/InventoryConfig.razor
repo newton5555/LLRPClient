@@ -16,7 +16,7 @@
             }
         </select>
         <button class="btn btn-primary btn-sm" @onclick="Vm.Apply" disabled="@(!CanEdit)">Save Config</button>
-        <button class="btn btn-sm" @onclick="Vm.Refresh" disabled="@(!Vm.State.IsConnected)">Get From Device</button>
+        <button class="btn btn-sm" @onclick="Vm.Refresh" disabled="@(!Vm.State.IsConnected || Vm.State.IsInventoryRunning)">Get From Device</button>
     </div>
 </div>
 
@@ -114,13 +114,13 @@ else
         @if (Vm.ShowTagFilter1)
         {
             <div style="padding: 0 var(--space-5) var(--space-4);">
-                <FilterEditor Title="Tag Filter 1" Filter="Settings.Filters.TagFilter1" />
+                <FilterEditor Title="Tag Filter 1" Filter="Settings.Filters.TagFilter1" CanEdit="@CanEdit" />
             </div>
         }
         @if (Vm.ShowTagFilter2)
         {
             <div style="padding: 0 var(--space-5) var(--space-4);">
-                <FilterEditor Title="Tag Filter 2" Filter="Settings.Filters.TagFilter2" />
+                <FilterEditor Title="Tag Filter 2" Filter="Settings.Filters.TagFilter2" CanEdit="@CanEdit" />
             </div>
         }
         @if (Vm.ShowTagSelectFilters)
@@ -276,7 +276,7 @@ else
 
 @code {
     private Settings? Settings => Vm.Settings;
-    private bool CanEdit => Vm.State.Reader.IsConnected && Settings is not null;
+    private bool CanEdit => Vm.State.Reader.IsConnected && Settings is not null && !Vm.State.IsInventoryRunning;
 
     private IReadOnlyList<ReportFlagItem> ReportFlags => Settings is null ? [] :
     [

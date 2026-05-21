@@ -4,7 +4,7 @@
     </div>
     <div class="form-group">
         <label class="form-label">Memory Bank</label>
-        <select value="@Filter.MemoryBank.ToString()" @onchange="SetMemoryBank">
+        <select value="@Filter.MemoryBank.ToString()" @onchange="SetMemoryBank" disabled="@(!CanEdit)">
             @foreach (var bank in Enum.GetValues<MemoryBank>())
             {
                 <option value="@bank">@bank</option>
@@ -13,15 +13,15 @@
     </div>
     <div class="form-group">
         <label class="form-label">Bit Pointer</label>
-        <input type="number" min="0" value="@Filter.BitPointer" @onchange="SetBitPointer">
+        <input type="number" min="0" value="@Filter.BitPointer" @onchange="SetBitPointer" readonly="@(!CanEdit)">
     </div>
     <div class="form-group">
         <label class="form-label">Bit Count</label>
-        <input type="number" min="0" value="@Filter.BitCount" @onchange="SetBitCount">
+        <input type="number" min="0" value="@Filter.BitCount" @onchange="SetBitCount" readonly="@(!CanEdit)">
     </div>
     <div class="form-group">
         <label class="form-label">Filter Op</label>
-        <select value="@Filter.FilterOp.ToString()" @onchange="SetFilterOp">
+        <select value="@Filter.FilterOp.ToString()" @onchange="SetFilterOp" disabled="@(!CanEdit)">
             @foreach (var op in Enum.GetValues<TagFilterOp>())
             {
                 <option value="@op">@op</option>
@@ -30,13 +30,14 @@
     </div>
     <div class="form-group">
         <label class="form-label">Tag Mask Hex</label>
-        <input type="text" value="@Filter.TagMask" @onchange="args => Filter.TagMask = args.Value?.ToString()?.Trim() ?? string.Empty">
+        <input type="text" value="@Filter.TagMask" @onchange="args => Filter.TagMask = args.Value?.ToString()?.Trim() ?? string.Empty" readonly="@(!CanEdit)">
     </div>
 </div>
 
 @code {
     [Parameter] public string Title { get; set; } = "Filter";
     [Parameter, EditorRequired] public TagFilter Filter { get; set; } = null!;
+    [Parameter] public bool CanEdit { get; set; } = true;
 
     private void SetMemoryBank(ChangeEventArgs args)
     {

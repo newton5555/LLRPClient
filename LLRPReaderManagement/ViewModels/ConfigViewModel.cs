@@ -136,14 +136,13 @@ public sealed class ConfigViewModel(AppState state, ReaderManagementService read
     {
         get
         {
-            var settingsByPort = state.Settings?.Gpis.GpiConfigs.ToDictionary(x => x.PortNumber) ?? [];
             var statusByPort = state.Status?.Gpis.Cast<GpiStatus>().ToDictionary(x => x.PortNumber, x => x.State) ?? [];
             return Enumerable.Range(1, state.GpiCount)
                 .Select(i =>
                 {
                     var port = (ushort)i;
                     var hasStatus = statusByPort.TryGetValue(port, out var status);
-                    return new GpiUiItem(port, settingsByPort.TryGetValue(port, out var config) && config.IsEnabled, hasStatus ? (status ? "HIGH" : "LOW") : "Unknown");
+                    return new GpiUiItem(port, hasStatus ? status : null, hasStatus ? (status ? "HIGH" : "LOW") : "Unknown");
                 })
                 .ToList();
         }
@@ -182,5 +181,5 @@ public sealed class ConfigViewModel(AppState state, ReaderManagementService read
 }
 
 public sealed record RfModeOption(uint Id, string DisplayText);
-public sealed record GpiUiItem(ushort PortNumber, bool IsEnabled, string CurrentStateText);
+public sealed record GpiUiItem(ushort PortNumber, bool? CurrentState, string CurrentStateText);
 public sealed record GpoUiItem(ushort PortNumber, bool DesiredState, string CurrentStateText);

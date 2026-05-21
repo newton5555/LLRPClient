@@ -82,7 +82,7 @@
             <div class="activity-item">
                 <div class="activity-dot" style="background: var(--status-ok);"></div>
                 <span class="activity-time">@tag.LastSeen.ToString("HH:mm:ss")</span>
-                <span>Tag <code style="font-family: var(--font-mono); font-size: 12px; background: var(--bg); padding: 1px 6px; border-radius: 3px;">@tag.Epc</code> read by <strong>@tag.ReaderEndpoint</strong> · Ant @tag.Antenna · RSSI @tag.Rssi.ToString("0.0") dBm</span>
+                <span>Tag <code style="font-family: var(--font-mono); font-size: 12px; background: var(--bg); padding: 1px 6px; border-radius: 3px;">@tag.Epc</code> read by <strong>@tag.ReaderEndpoint</strong> · @tag.AntennaText · RSSI @tag.Rssi.ToString("0.0") dBm</span>
             </div>
         }
         @foreach (var entry in Vm.Activity.Take(6))

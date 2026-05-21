@@ -19,9 +19,11 @@ public sealed record InventoryTagItem(
     string Epc,
     string ReaderEndpoint,
     ushort Antenna,
+    string AntennaText,
     double Rssi,
-    ushort SeenCount,
+    int SeenCount,
     double Channel,
+    DateTime FirstSeen,
     DateTime LastSeen,
     string AttachedData,
     string ReportSource);

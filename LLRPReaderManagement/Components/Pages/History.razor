@@ -83,7 +83,7 @@
                     tag.Epc,
                     "inventory",
                     tag.ReaderEndpoint,
-                    $"Ant {tag.Antenna}",
+                    tag.AntennaText,
                     $"{tag.Rssi:0.0} dBm",
                     string.IsNullOrWhiteSpace(tag.AttachedData) ? "-" : tag.AttachedData,
                     "success",

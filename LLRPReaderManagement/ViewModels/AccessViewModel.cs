@@ -1,8 +1,9 @@
 using LLRPReaderManagement.Services;
+using LLRPReaderManagement.State;
 
 namespace LLRPReaderManagement.ViewModels;
 
-public sealed class AccessViewModel(AccessOperationService access, ReaderManagementService readers)
+public sealed class AccessViewModel(AccessOperationService access, ReaderManagementService readers, AppState state)
 {
     public string TargetEpc { get; set; } = string.Empty;
     public string MemoryBank { get; set; } = "User";
@@ -15,6 +16,13 @@ public sealed class AccessViewModel(AccessOperationService access, ReaderManagem
 
     public async Task ReadAsync()
     {
+        if (state.IsInventoryRunning)
+        {
+            Result = "Stop inventory before running access operations.";
+            Data = null;
+            return;
+        }
+
         var result = await access.ReadAsync(TargetEpc, MemoryBank, WordPointer, WordCount);
         Result = result.Message;
         Data = result.Data;
@@ -22,6 +30,13 @@ public sealed class AccessViewModel(AccessOperationService access, ReaderManagem
 
     public async Task WriteAsync()
     {
+        if (state.IsInventoryRunning)
+        {
+            Result = "Stop inventory before running access operations.";
+            Data = null;
+            return;
+        }
+
         var result = await access.WriteAsync(TargetEpc, MemoryBank, WordPointer, WriteData, BlockWriteEnabled);
         Result = result.Message;
         Data = result.Data;

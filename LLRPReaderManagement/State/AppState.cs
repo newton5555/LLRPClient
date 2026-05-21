@@ -5,6 +5,9 @@ namespace LLRPReaderManagement.State;
 
 public sealed class AppState
 {
+    private const int ReadRateWindowSeconds = 5;
+    private const int MaxRawTagRows = 2000;
+
     private sealed class ReaderRuntime
     {
         public required string Endpoint { get; init; }
@@ -20,6 +23,8 @@ public sealed class AppState
     private readonly object gate = new();
     private readonly Dictionary<string, ReaderRuntime> readers = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, InventoryTagItem> tags = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<InventoryTagItem> rawTags = new();
+    private readonly Dictionary<string, SortedSet<ushort>> tagAntennas = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, ushort> tagSeenCounts = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<LogEntry> logs = new();
     private readonly SortedDictionary<DateTime, int> readRateByMinute = new();
@@ -35,14 +40,14 @@ public sealed class AppState
     public bool IsConnected => Readers.Any(x => x.IsConnected);
     public bool IsInventoryRunning => Readers.Any(x => x.IsInventoryRunning);
     public int TotalReports => Readers.Sum(x => x.TotalReports);
-    public int RollingReadRatePerMinute
+    public double RollingReadRatePerSecond
     {
         get
         {
             lock (gate)
             {
                 TrimReadEvents(DateTime.Now);
-                return readEvents.Sum(x => x.Count);
+                return readEvents.Sum(x => x.Count) / (double)ReadRateWindowSeconds;
             }
         }
     }
@@ -76,7 +81,22 @@ public sealed class AppState
         {
             lock (gate)
             {
-                return tags.Values.OrderByDescending(x => x.LastSeen).ToList();
+                return tags.Values
+                    .OrderByDescending(x => x.FirstSeen)
+                    .ThenBy(x => x.ReaderEndpoint)
+                    .ThenBy(x => x.Epc)
+                    .ToList();
+            }
+        }
+    }
+
+    public IReadOnlyList<InventoryTagItem> RawTags
+    {
+        get
+        {
+            lock (gate)
+            {
+                return rawTags.AsEnumerable().Reverse().ToList();
             }
         }
     }
@@ -274,22 +294,63 @@ public sealed class AppState
                     tagSeenCounts[tagKey] = seenCount;
                 }
 
+                var antenna = tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber : (ushort)0;
+                var rssi = tag.IsPeakRssiPresent ? tag.PeakRssi : 0;
+                var channel = tag.IsChannelInMhzPresent ? tag.ChannelInMhz : 0;
+                var attachedData = GetAttachedData(tag);
+                var reportSource = tag.ReportSource.ToString();
+
                 reportCount += delta;
                 if (readers.TryGetValue(endpoint, out var reader))
                 {
                     reader.TotalReports += delta;
                 }
 
+                rawTags.Add(new InventoryTagItem(
+                    epc,
+                    endpoint,
+                    antenna,
+                    FormatAntennaText(antenna),
+                    rssi,
+                    seenCount,
+                    channel,
+                    now,
+                    now,
+                    attachedData,
+                    reportSource));
+                if (rawTags.Count > MaxRawTagRows)
+                {
+                    rawTags.RemoveRange(0, rawTags.Count - MaxRawTagRows);
+                }
+
+                if (!tagAntennas.TryGetValue(tagKey, out var antennas))
+                {
+                    antennas = new SortedSet<ushort>();
+                    tagAntennas[tagKey] = antennas;
+                }
+
+                if (antenna > 0)
+                {
+                    antennas.Add(antenna);
+                }
+
+                var cumulativeSeenCount = tags.TryGetValue(tagKey, out var existing)
+                    ? existing.SeenCount + delta
+                    : Math.Max(1, delta);
+                var firstSeen = existing?.FirstSeen ?? now;
+
                 tags[tagKey] = new InventoryTagItem(
                     epc,
                     endpoint,
-                    tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber : (ushort)0,
-                    tag.IsPeakRssiPresent ? tag.PeakRssi : 0,
-                    seenCount,
-                    tag.IsChannelInMhzPresent ? tag.ChannelInMhz : 0,
+                    antenna,
+                    FormatAntennaText(antennas),
+                    rssi,
+                    cumulativeSeenCount,
+                    channel,
+                    firstSeen,
                     now,
-                    GetAttachedData(tag),
-                    tag.ReportSource.ToString());
+                    attachedData,
+                    reportSource);
             }
 
             if (reportCount > 0)
@@ -319,6 +380,8 @@ public sealed class AppState
         lock (gate)
         {
             tags.Clear();
+            rawTags.Clear();
+            tagAntennas.Clear();
             tagSeenCounts.Clear();
             readRateByMinute.Clear();
             readEvents.Clear();
@@ -376,7 +439,7 @@ public sealed class AppState
 
     private void TrimReadEvents(DateTime now)
     {
-        var cutoff = now.AddSeconds(-60);
+        var cutoff = now.AddSeconds(-ReadRateWindowSeconds);
         while (readEvents.Count > 0 && readEvents.Peek().Minute < cutoff)
         {
             readEvents.Dequeue();
@@ -385,6 +448,14 @@ public sealed class AppState
 
     private static DateTime TruncateToMinute(DateTime value) =>
         new(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0, value.Kind);
+
+    private static string FormatAntennaText(ushort antenna) => antenna > 0 ? $"Ant {antenna}" : "-";
+
+    private static string FormatAntennaText(IEnumerable<ushort> antennas)
+    {
+        var values = antennas.Where(x => x > 0).OrderBy(x => x).ToList();
+        return values.Count == 0 ? "-" : $"Ant {string.Join(", ", values)}";
+    }
 
     private static string GetAttachedData(Tag tag)
     {

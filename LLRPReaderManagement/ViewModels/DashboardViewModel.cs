@@ -9,7 +9,7 @@ public sealed class DashboardViewModel(AppState state)
     {
         new ReaderMetric("Active Readers", $"{state.Readers.Count(x => x.IsConnected)} of {state.Readers.Count}", state.ConnectionStatus, state.IsConnected ? "up" : ""),
         new ReaderMetric("Tags in Range", state.Tags.Count.ToString("N0"), $"{state.TotalReports:N0} total reports", "up"),
-        new ReaderMetric("Read Rate", $"{state.RollingReadRatePerMinute}/min", state.IsInventoryRunning ? "last 60 seconds" : "not scanning", state.IsInventoryRunning ? "up" : ""),
+        new ReaderMetric("Read Rate", $"{state.RollingReadRatePerSecond:0.0}/s", state.IsInventoryRunning ? "5s sliding window" : "not scanning", state.IsInventoryRunning ? "up" : ""),
         new ReaderMetric("System Uptime", GetUptimeValue(), $"since {state.StartupTime:HH:mm:ss}", "up")
     };
 

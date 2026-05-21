@@ -15,8 +15,8 @@
             }
         </select>
         <button class="btn btn-primary btn-sm" @onclick="Vm.ApplyChanges" disabled="@(!CanEdit)">Apply Changes</button>
-        <button class="btn btn-sm" @onclick="Vm.ApplyDefaults" disabled="@(!Vm.State.Reader.IsConnected)">SDK Defaults</button>
-        <button class="btn btn-sm" @onclick="Vm.Refresh">Refresh</button>
+        <button class="btn btn-sm" @onclick="Vm.ApplyDefaults" disabled="@(!Vm.State.Reader.IsConnected || Vm.State.IsInventoryRunning)">SDK Defaults</button>
+        <button class="btn btn-sm" @onclick="Vm.Refresh" disabled="@(Vm.State.IsInventoryRunning)">Refresh</button>
     </div>
 </div>
 
@@ -139,47 +139,31 @@
 
 <div class="config-section">
     <div class="config-section-header">
-        <span class="config-section-title">GPIO</span>
-        <button class="btn btn-sm" @onclick="Vm.RefreshStatus" disabled="@(!Vm.State.IsConnected)">Refresh Status</button>
+        <span class="config-section-title">GPI / GPO</span>
+        <button class="btn btn-sm" @onclick="Vm.RefreshStatus" disabled="@(!Vm.State.IsConnected || Vm.State.IsInventoryRunning)">Refresh Status</button>
     </div>
-    <div class="config-section-body">
-        <div class="form-group">
-            <label class="form-label">GPI Configuration</label>
-            <div style="display: grid; gap: var(--space-2);">
-                @foreach (var gpi in Vm.Gpis)
-                {
-                    <div class="spec-param">
-                        <span class="spec-param-key">GPI @gpi.PortNumber</span>
-                        <span class="flex items-center gap-3">
-                            <button type="button" class="toggle @(gpi.IsEnabled ? "on" : "")" @onclick="() => ToggleGpi(gpi.PortNumber)" disabled="@(!CanEdit)" aria-label="Enable GPI @gpi.PortNumber"></button>
-                            <span class="spec-param-value">@gpi.CurrentStateText</span>
-                        </span>
-                    </div>
-                }
-                @if (Vm.Gpis.Count == 0)
-                {
-                    <div class="empty-state">No GPI ports reported by the reader.</div>
-                }
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="form-label">GPO Output</label>
-            <div style="display: grid; gap: var(--space-2);">
-                @foreach (var gpo in Vm.Gpos)
-                {
-                    <div class="spec-param">
-                        <span class="spec-param-key">GPO @gpo.PortNumber</span>
-                        <span class="flex items-center gap-3">
-                            <button type="button" class="toggle @(gpo.DesiredState ? "on" : "")" @onclick="() => Vm.SetGpo(gpo.PortNumber, !gpo.DesiredState)" disabled="@(!Vm.State.IsConnected)" aria-label="Set GPO @gpo.PortNumber"></button>
-                            <span class="spec-param-value">@gpo.CurrentStateText</span>
-                        </span>
-                    </div>
-                }
-                @if (Vm.Gpos.Count == 0)
-                {
-                    <div class="empty-state">No GPO ports reported by the reader.</div>
-                }
-            </div>
+    <div class="config-section-body full">
+        <div class="gpio-grid">
+            @foreach (var gpi in Vm.Gpis)
+            {
+                <div class="gpio-card">
+                    <div class="gpio-name">GPI @gpi.PortNumber</div>
+                    <div class="gpio-dot @(gpi.CurrentState == true ? "high" : gpi.CurrentState == false ? "low" : "unknown")"></div>
+                    <div class="gpio-state">@gpi.CurrentStateText</div>
+                </div>
+            }
+            @foreach (var gpo in Vm.Gpos)
+            {
+                <div class="gpio-card">
+                    <div class="gpio-name">GPO @gpo.PortNumber</div>
+                    <button type="button" class="toggle @(gpo.DesiredState ? "on" : "") gpio-toggle" @onclick="() => Vm.SetGpo(gpo.PortNumber, !gpo.DesiredState)" disabled="@(!CanEdit)" aria-label="Set GPO @gpo.PortNumber"></button>
+                    <div class="gpio-state">@(gpo.DesiredState ? "ON" : "OFF")</div>
+                </div>
+            }
+            @if (Vm.Gpis.Count == 0 && Vm.Gpos.Count == 0)
+            {
+                <div class="empty-state">No GPIO ports reported by the reader.</div>
+            }
         </div>
     </div>
 </div>
@@ -226,17 +210,10 @@
     protected override void OnInitialized() => Vm.State.Changed += OnStateChanged;
 
     private Settings? Settings => Vm.State.Settings;
-    private bool CanEdit => Vm.State.Reader.IsConnected && Settings is not null;
+    private bool CanEdit => Vm.State.Reader.IsConnected && Settings is not null && !Vm.State.IsInventoryRunning;
     private bool IsRxSensitivityDisabled => !CanEdit || Vm.State.ReaderModel == "UF40";
 
-    private IReadOnlyList<AntennaConfig> Antennas =>
-        Settings?.Antennas?.AntennaConfigs?.ToList()
-        ?? Enumerable.Range(1, Math.Max(1, (int)Vm.State.AntennaCount)).Select(i => new AntennaConfig((ushort)i)
-        {
-            IsEnabled = Vm.State.IsConnected,
-            TxPowerInDbm = 30,
-            RxSensitivityInDbm = -70
-        }).ToList();
+    private IReadOnlyList<AntennaConfig> Antennas => BuildAntennaList();
 
     private IReadOnlyList<double> PowerOptions(double current) => Vm.TxPowerOptions.Contains(current)
         ? Vm.TxPowerOptions
@@ -245,6 +222,45 @@
     private IReadOnlyList<double> SensitivityOptions(double current) => Vm.RxSensitivityOptions.Contains(current)
         ? Vm.RxSensitivityOptions
         : Vm.RxSensitivityOptions.Concat([current]).Distinct().OrderBy(x => x).ToList();
+
+    private IReadOnlyList<AntennaConfig> BuildAntennaList()
+    {
+        var count = Math.Max(1, (int)Vm.State.AntennaCount);
+        if (Settings?.Antennas is null)
+        {
+            return Enumerable.Range(1, count)
+                .Select(CreateDefaultAntenna)
+                .ToList();
+        }
+
+        var existingByPort = Settings.Antennas.AntennaConfigs
+            .Where(x => x.PortNumber > 0)
+            .GroupBy(x => x.PortNumber)
+            .ToDictionary(x => x.Key, x => x.First());
+
+        var result = new List<AntennaConfig>(count);
+        for (var i = 1; i <= count; i++)
+        {
+            var port = (ushort)i;
+            if (!existingByPort.TryGetValue(port, out var antenna))
+            {
+                antenna = CreateDefaultAntenna(i);
+                antenna.IsEnabled = false;
+                Settings.Antennas.AntennaConfigs.Add(antenna);
+            }
+
+            result.Add(antenna);
+        }
+
+        return result;
+    }
+
+    private static AntennaConfig CreateDefaultAntenna(int port) => new((ushort)port)
+    {
+        IsEnabled = false,
+        TxPowerInDbm = 30,
+        RxSensitivityInDbm = -70
+    };
 
     private void OnStateChanged() => InvokeAsync(StateHasChanged);
 
@@ -345,23 +361,6 @@
         {
             Settings.HoldReportsOnDisconnect = value;
         }
-    }
-
-    private void ToggleGpi(ushort port)
-    {
-        if (Settings is null)
-        {
-            return;
-        }
-
-        var gpi = Settings.Gpis.GpiConfigs.FirstOrDefault(x => x.PortNumber == port);
-        if (gpi is null)
-        {
-            gpi = new GpiConfig { PortNumber = port };
-            Settings.Gpis.Add(gpi);
-        }
-
-        gpi.IsEnabled = !gpi.IsEnabled;
     }
 
     private void SetAntennaTxPower(AntennaConfig antenna, ChangeEventArgs args)
