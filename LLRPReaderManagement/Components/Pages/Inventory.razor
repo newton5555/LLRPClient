@@ -6,9 +6,17 @@
 <div class="section-header">
     <h2 class="section-title">Tag Inventory</h2>
     <div class="flex gap-2">
-        <button class="btn btn-sm" @onclick="ExportCsv" disabled="@(TotalRows == 0)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export CSV
+        <button class="btn btn-sm" @onclick="ExportCsv" disabled="@(TotalRows == 0 || isExporting)">
+            @if (isExporting)
+            {
+                <span class="spinner" style="width: 14px; height: 14px; margin-right: 4px; border-width: 2px;"></span>
+                <span>Exporting...</span>
+            }
+            else
+            {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export CSV</span>
+            }
         </button>
         <button class="btn btn-sm" @onclick="ClearInventory">Clear</button>
     </div>
@@ -86,20 +94,41 @@
     {
         <div class="empty-state">No tag reports yet.</div>
     }
-    @foreach (var tag in PageTags)
+    @if (UseAggregation)
     {
-        <div class="tag-row">
-            <span class="tag-epc">@tag.Epc</span>
-            <span class="tag-rssi-cell">
-                <span class="rssi-bar"><span class="rssi-bar-fill" style="width: @RssiWidth(tag.Rssi); background: @RssiColor(tag.Rssi);"></span></span>
-                <span class="mono">@tag.Rssi.ToString("0.0")</span>
-            </span>
-            <span class="tag-count">@tag.SeenCount</span>
-            <span class="tag-reader">@tag.ReaderEndpoint</span>
-            <span class="tag-ant">@tag.AntennaText</span>
-            <span class="tag-attached" title="@tag.AttachedData">@DisplayAttachedData(tag)</span>
-            <span class="tag-time">@tag.LastSeen.ToString("HH:mm:ss.fff")</span>
-        </div>
+        @foreach (var tag in PageTags)
+        {
+            <div class="tag-row" @key="tag.Epc">
+                <span class="tag-epc">@tag.Epc</span>
+                <span class="tag-rssi-cell">
+                    <span class="rssi-bar"><span class="rssi-bar-fill" style="width: @RssiWidth(tag.Rssi); background: @RssiColor(tag.Rssi);"></span></span>
+                    <span class="mono">@tag.Rssi.ToString("0.0")</span>
+                </span>
+                <span class="tag-count">@tag.SeenCount</span>
+                <span class="tag-reader">@tag.ReaderEndpoint</span>
+                <span class="tag-ant">@tag.AntennaText</span>
+                <span class="tag-attached" title="@tag.AttachedData">@DisplayAttachedData(tag)</span>
+                <span class="tag-time">@tag.LastSeen.ToString("HH:mm:ss.fff")</span>
+            </div>
+        }
+    }
+    else
+    {
+        @foreach (var tag in PageTags)
+        {
+            <div class="tag-row">
+                <span class="tag-epc">@tag.Epc</span>
+                <span class="tag-rssi-cell">
+                    <span class="rssi-bar"><span class="rssi-bar-fill" style="width: @RssiWidth(tag.Rssi); background: @RssiColor(tag.Rssi);"></span></span>
+                    <span class="mono">@tag.Rssi.ToString("0.0")</span>
+                </span>
+                <span class="tag-count">@tag.SeenCount</span>
+                <span class="tag-reader">@tag.ReaderEndpoint</span>
+                <span class="tag-ant">@tag.AntennaText</span>
+                <span class="tag-attached" title="@tag.AttachedData">@DisplayAttachedData(tag)</span>
+                <span class="tag-time">@tag.LastSeen.ToString("HH:mm:ss.fff")</span>
+            </div>
+        }
     }
 </div>
 
@@ -165,20 +194,39 @@
         }
     }
 
+    private bool isExporting;
+
     private async Task ExportCsv()
     {
         var tags = DisplayTags;
         if (tags.Count == 0) return;
 
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine("EPC,RSSI,Count,Reader,Antenna,Attached Data,Report Source,Last Seen");
-        foreach (var t in tags)
-        {
-            sb.AppendLine($"\"{t.Epc}\",{t.Rssi:0.0},{t.SeenCount},\"{t.ReaderEndpoint}\",\"{t.AntennaText}\",\"{t.AttachedData}\",\"{t.ReportSource}\",\"{t.LastSeen:yyyy-MM-dd HH:mm:ss.fff}\"");
-        }
+        isExporting = true;
+        StateHasChanged();
+        await Task.Delay(16); // Allow UI to render the "Exporting..." state
 
-        var fileName = $"tag-inventory-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
-        await JS.InvokeVoidAsync("downloadFileFromText", fileName, sb.ToString());
+        try
+        {
+            var fileName = $"tag-inventory-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+
+            var csvData = await Task.Run(() =>
+            {
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("EPC,RSSI,Count,Reader,Antenna,Attached Data,Report Source,Last Seen");
+                foreach (var t in tags)
+                {
+                    sb.AppendLine($"\"{t.Epc}\",{t.Rssi:0.0},{t.SeenCount},\"{t.ReaderEndpoint}\",\"{t.AntennaText}\",\"{t.AttachedData}\",\"{t.ReportSource}\",\"{t.LastSeen:yyyy-MM-dd HH:mm:ss.fff}\"");
+                }
+                return sb.ToString();
+            });
+
+            await JS.InvokeVoidAsync("downloadFileFromText", fileName, csvData);
+        }
+        finally
+        {
+            isExporting = false;
+            StateHasChanged();
+        }
     }
 
     private void OnStateChanged() => InvokeAsync(StateHasChanged);

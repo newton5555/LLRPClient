@@ -216,6 +216,8 @@
         ? Vm.RxSensitivityOptions
         : Vm.RxSensitivityOptions.Concat([current]).Distinct().OrderBy(x => x).ToList();
 
+    private Dictionary<ushort, AntennaConfig> _cachedAntennas = new();
+
     private IReadOnlyList<AntennaConfig> BuildAntennaList()
     {
         var count = Math.Max(1, (int)Vm.State.AntennaCount);
@@ -237,23 +239,46 @@
             var port = (ushort)i;
             if (!existingByPort.TryGetValue(port, out var antenna))
             {
-                antenna = CreateDefaultAntenna(i);
-                antenna.IsEnabled = false;
+                if (_cachedAntennas.TryGetValue(port, out var cached))
+                {
+                    antenna = new AntennaConfig(port)
+                    {
+                        IsEnabled = false,
+                        MaxTxPower = false,
+                        TxPowerInDbm = cached.TxPowerInDbm,
+                        MaxRxSensitivity = false,
+                        RxSensitivityInDbm = cached.RxSensitivityInDbm,
+                        PortName = cached.PortName
+                    };
+                }
+                else
+                {
+                    antenna = CreateDefaultAntenna(i);
+                }
                 Settings.Antennas.AntennaConfigs.Add(antenna);
             }
 
+            _cachedAntennas[port] = antenna;
             result.Add(antenna);
         }
 
         return result;
     }
 
-    private static AntennaConfig CreateDefaultAntenna(int port) => new((ushort)port)
+    private AntennaConfig CreateDefaultAntenna(int port)
     {
-        IsEnabled = false,
-        TxPowerInDbm = 30,
-        RxSensitivityInDbm = -70
-    };
+        var defaultTx = Vm.TxPowerOptions.Count > 0 ? Vm.TxPowerOptions.First() : 30d;
+        var defaultRx = Vm.RxSensitivityOptions.Count > 0 ? Vm.RxSensitivityOptions.First() : -70d;
+
+        return new AntennaConfig((ushort)port)
+        {
+            IsEnabled = false,
+            MaxTxPower = false,
+            TxPowerInDbm = defaultTx,
+            MaxRxSensitivity = false,
+            RxSensitivityInDbm = defaultRx
+        };
+    }
 
     private void OnStateChanged() => InvokeAsync(StateHasChanged);
 

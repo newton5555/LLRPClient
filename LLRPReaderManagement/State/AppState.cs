@@ -21,13 +21,18 @@ public sealed class AppState
         public Settings? Settings { get; set; }
     }
 
+    private readonly record struct TagKey(string Endpoint, string Epc);
+
     private readonly object gate = new();
     private readonly Dictionary<string, ReaderRuntime> readers = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, InventoryTagItem> tags = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<TagKey, InventoryTagItem> tags = new();
     private readonly List<InventoryTagItem> rawTags = new();
-    private readonly Dictionary<string, SortedSet<ushort>> tagAntennas = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, ushort> tagSeenCounts = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<TagKey, uint> tagAntennas = new();
+    private readonly Dictionary<TagKey, ushort> tagSeenCounts = new();
     private readonly List<LogEntry> logs = new();
+    
+    private int notifyPending = 0;
+    private long lastNotifyTicks = 0;
     private readonly SortedDictionary<DateTime, int> readRateByMinute = new();
     private readonly Queue<ReadRatePoint> readEvents = new();
 
@@ -282,7 +287,7 @@ public sealed class AppState
                     continue;
                 }
 
-                var tagKey = $"{endpoint}|{epc}";
+                var tagKey = new TagKey(endpoint, epc);
                 var seenCount = tag.IsSeenCountPresent ? tag.TagSeenCount : (ushort)1;
                 var delta = 1;
                 if (tag.IsSeenCountPresent)
@@ -291,6 +296,15 @@ public sealed class AppState
                         ? Math.Max(0, seenCount - previous)
                         : Math.Max(1, (int)seenCount);
                     tagSeenCounts[tagKey] = seenCount;
+                }
+
+                var cumulativeSeenCount = tags.TryGetValue(tagKey, out var existing)
+                    ? existing.SeenCount + delta
+                    : Math.Max(1, delta);
+
+                if (existing == null && tags.Count >= 100000)
+                {
+                    continue; // Reached hard limit, stop adding unique EPCs
                 }
 
                 var antenna = tag.IsAntennaPortNumberPresent ? tag.AntennaPortNumber : (ushort)0;
@@ -305,11 +319,22 @@ public sealed class AppState
                     reader.TotalReports += delta;
                 }
 
+                if (!tagAntennas.TryGetValue(tagKey, out var antennaMask))
+                {
+                    antennaMask = 0;
+                }
+
+                if (antenna > 0 && antenna <= 32)
+                {
+                    antennaMask |= (1u << (antenna - 1));
+                    tagAntennas[tagKey] = antennaMask;
+                }
+
                 rawTags.Add(new InventoryTagItem(
                     epc,
                     endpoint,
                     antenna,
-                    FormatAntennaText(antenna),
+                    FormatAntennaText(antennaMask),
                     rssi,
                     seenCount,
                     channel,
@@ -322,27 +347,13 @@ public sealed class AppState
                     rawTags.RemoveRange(0, rawTags.Count - MaxRawTagRows);
                 }
 
-                if (!tagAntennas.TryGetValue(tagKey, out var antennas))
-                {
-                    antennas = new SortedSet<ushort>();
-                    tagAntennas[tagKey] = antennas;
-                }
-
-                if (antenna > 0)
-                {
-                    antennas.Add(antenna);
-                }
-
-                var cumulativeSeenCount = tags.TryGetValue(tagKey, out var existing)
-                    ? existing.SeenCount + delta
-                    : Math.Max(1, delta);
                 var firstSeen = existing?.FirstSeen ?? now;
 
                 tags[tagKey] = new InventoryTagItem(
                     epc,
                     endpoint,
                     antenna,
-                    FormatAntennaText(antennas),
+                    FormatAntennaText(antennaMask),
                     rssi,
                     cumulativeSeenCount,
                     channel,
@@ -369,7 +380,7 @@ public sealed class AppState
             }
         }
 
-        Notify();
+        ThrottleNotify();
     }
 
     public void AddTags(IEnumerable<Tag> reportedTags) => AddTags(ActiveEndpoint, reportedTags);
@@ -404,7 +415,7 @@ public sealed class AppState
             }
         }
 
-        Notify();
+        ThrottleNotify();
     }
 
     public void ClearLogs()
@@ -414,7 +425,7 @@ public sealed class AppState
             logs.Clear();
         }
 
-        Notify();
+        ThrottleNotify();
     }
 
     public void ShowNotification(string title, string message, bool isSuccess)
@@ -449,6 +460,29 @@ public sealed class AppState
 
     private void Notify() => Changed?.Invoke();
 
+    private void ThrottleNotify()
+    {
+        var now = Environment.TickCount64;
+        var last = Interlocked.Read(ref lastNotifyTicks);
+        if (now - last > 250)
+        {
+            Interlocked.Exchange(ref lastNotifyTicks, now);
+            Notify();
+        }
+        else
+        {
+            if (Interlocked.CompareExchange(ref notifyPending, 1, 0) == 0)
+            {
+                _ = Task.Delay(250).ContinueWith(_ =>
+                {
+                    Interlocked.Exchange(ref notifyPending, 0);
+                    Interlocked.Exchange(ref lastNotifyTicks, Environment.TickCount64);
+                    Notify();
+                });
+            }
+        }
+    }
+
     private void TrimReadEvents(DateTime now)
     {
         var cutoff = now.AddSeconds(-ReadRateWindowSeconds);
@@ -463,10 +497,18 @@ public sealed class AppState
 
     private static string FormatAntennaText(ushort antenna) => antenna > 0 ? $"Ant {antenna}" : "-";
 
-    private static string FormatAntennaText(IEnumerable<ushort> antennas)
+    private static string FormatAntennaText(uint antennaMask)
     {
-        var values = antennas.Where(x => x > 0).OrderBy(x => x).ToList();
-        return values.Count == 0 ? "-" : $"Ant {string.Join(", ", values)}";
+        if (antennaMask == 0) return "-";
+        var list = new List<int>();
+        for (int i = 0; i < 32; i++)
+        {
+            if ((antennaMask & (1u << i)) != 0)
+            {
+                list.Add(i + 1);
+            }
+        }
+        return $"Ant {string.Join(", ", list)}";
     }
 
     private static string GetAttachedData(Tag tag)

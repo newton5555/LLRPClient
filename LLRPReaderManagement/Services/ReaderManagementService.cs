@@ -248,10 +248,14 @@ public sealed class ReaderManagementService
         }
     }
 
+    // Workaround for LLRPSdkException not providing strongly-typed error codes.
+    private const string ErrMsgNotConfigured = "has not been configured";
+    private const string ErrMsgInvalidConfig = "configuration is invalid";
+
     private static bool IsMissingOrInvalidConfiguration(LLRPSdk.LLRPSdkException ex)
     {
-        return ex.Message.Contains("has not been configured", StringComparison.OrdinalIgnoreCase)
-            || ex.Message.Contains("configuration is invalid", StringComparison.OrdinalIgnoreCase);
+        return ex.Message.Contains(ErrMsgNotConfigured, StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains(ErrMsgInvalidConfig, StringComparison.OrdinalIgnoreCase);
     }
 
     private void TryRefreshStatus()
