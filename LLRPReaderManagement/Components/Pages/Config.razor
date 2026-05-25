@@ -1,5 +1,6 @@
 @page "/config"
 @inject ConfigViewModel Vm
+@inject Microsoft.JSInterop.IJSRuntime JS
 @implements IDisposable
 
 <div class="section-header">
@@ -199,6 +200,52 @@
     </div>
 </div>
 
+<div class="config-section">
+    <div class="config-section-header">
+        <span class="config-section-title">Configuration Backup & Restore</span>
+        <span style="font-size: 12px; color: var(--muted);">Import and export LLRP Settings as XML files</span>
+    </div>
+    <div class="config-section-body" style="display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-4) var(--space-5);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); width: 100%;">
+            <p style="margin: 0; font-size: 13px; color: var(--text);">Backup your current reader configuration (Antennas, RF, Session, Keepalives) or restore from an XML backup.</p>
+            <div style="display: flex; gap: var(--space-2); flex-shrink: 0; align-items: center;">
+                <InputFile OnChange="@OnImportFilePicked" style="display: none;" id="config-import-file-input" accept=".xml" />
+                <label class="btn btn-sm" for="config-import-file-input" style="cursor: pointer; margin-bottom: 0; display: inline-flex; align-items: center; justify-content: center; height: 32px; border: 1px solid var(--border); padding: 0 15px; border-radius: 4px; font-size: 13px; font-weight: 500; background-color: var(--card-bg);">
+                    Import Config
+                </label>
+                <button class="btn btn-sm" @onclick="ExportConfig" disabled="@(!CanEdit || Vm.State.IsInventoryRunning)" style="height: 32px; font-size: 13px;">
+                    Export Config
+                </button>
+            </div>
+        </div>
+        
+        @if (importPreview != null)
+        {
+            <div class="result-box" style="margin-top: var(--space-2); border-color: @(showCompatibilityWarning ? "var(--warning)" : "var(--accent)"); background-color: rgba(0, 0, 0, 0.1); padding: var(--space-3); border-radius: 6px;">
+                <div style="font-weight: 600; color: @(showCompatibilityWarning ? "var(--warning)" : "var(--accent)"); margin-bottom: var(--space-2); font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                    <span>@(showCompatibilityWarning ? "⚠️ Compatibility Alert" : "📋 Configuration Preview")</span>
+                </div>
+                <div style="font-size: 13px; display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2); margin-bottom: var(--space-3); border-bottom: 1px solid var(--border); padding-bottom: var(--space-2);">
+                    <div>Exported Device Model: <strong style="color: var(--text);">@importPreview.Model</strong></div>
+                    <div>Antenna Ports: <strong style="color: var(--text);">@importPreview.AntennaCount</strong></div>
+                    <div>Export Date: <strong style="color: var(--text);">@importPreview.ExportedAt.ToString("yyyy-MM-dd HH:mm:ss")</strong></div>
+                    <div>GPI / GPO: <strong style="color: var(--text);">@importPreview.GpiCount / @importPreview.GpoCount</strong></div>
+                </div>
+                @if (showCompatibilityWarning)
+                {
+                    <div style="color: var(--warning); font-size: 12px; margin-bottom: var(--space-3); line-height: 1.5; font-weight: 500;">
+                        Warning: The configuration file model (@importPreview.Model) or antenna count (@importPreview.AntennaCount) does not match your current device (@Vm.State.ReaderModel, @Vm.State.AntennaCount). Applying these settings may cause LLRP errors.
+                    </div>
+                }
+                <div style="display: flex; gap: var(--space-2);">
+                    <button class="btn btn-primary btn-sm" @onclick="ConfirmImport">Confirm & Apply</button>
+                    <button class="btn btn-sm" @onclick="CancelImport">Cancel</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
 @code {
     protected override void OnInitialized() => Vm.State.Changed += OnStateChanged;
 
@@ -394,6 +441,110 @@
     private void ToggleAntenna(AntennaConfig antenna)
     {
         antenna.IsEnabled = !antenna.IsEnabled;
+    }
+
+    private ReaderConfigurationPack? importPreview;
+    private bool showCompatibilityWarning;
+
+    private async Task OnImportFilePicked(InputFileChangeEventArgs args)
+    {
+        try
+        {
+            var file = args.File;
+            if (file == null) return;
+
+            using var stream = file.OpenReadStream(1024 * 1024); // max 1MB
+            using var reader = new StreamReader(stream);
+            var xml = await reader.ReadToEndAsync();
+
+            var pack = ReaderConfigurationPack.FromXmlString(xml);
+            if (pack == null || string.IsNullOrEmpty(pack.AddRoSpecXml) || string.IsNullOrEmpty(pack.SetReaderConfigXml))
+            {
+                Vm.State.ShowNotification("Import Failed", "The selected XML file is not a valid LLRP configuration pack.", false);
+                return;
+            }
+
+            importPreview = pack;
+            showCompatibilityWarning = (pack.Model != Vm.State.ReaderModel) || (pack.AntennaCount != Vm.State.AntennaCount);
+            
+            Vm.State.ShowNotification("File Loaded", "Configuration loaded. Please review the compatibility preview below.", true);
+        }
+        catch (Exception ex)
+        {
+            Vm.State.ShowNotification("Import Failed", $"Failed to parse XML: {ex.Message}", false);
+        }
+    }
+
+    private void CancelImport()
+    {
+        importPreview = null;
+        showCompatibilityWarning = false;
+    }
+
+    private void ConfirmImport()
+    {
+        if (importPreview == null || string.IsNullOrEmpty(importPreview.AddRoSpecXml) || string.IsNullOrEmpty(importPreview.SetReaderConfigXml)) return;
+
+        try
+        {
+            if (Vm.State.Settings != null)
+            {
+                var settings = Vm.ImportLlrpXml(importPreview.AddRoSpecXml, importPreview.SetReaderConfigXml);
+
+                Vm.State.SetSettings(settings);
+                Vm.State.ShowNotification("Import Success", "Configuration loaded into memory. Click 'Apply Changes' at the top to save it to the reader.", true);
+            }
+            else
+            {
+                Vm.State.ShowNotification("Import Failed", "No active reader connection to apply settings.", false);
+            }
+        }
+        catch (Exception ex)
+        {
+            Vm.State.ShowNotification("Import Failed", $"Failed to apply settings: {ex.Message}", false);
+        }
+        finally
+        {
+            importPreview = null;
+            showCompatibilityWarning = false;
+        }
+    }
+
+    private async Task ExportConfig()
+    {
+        if (Vm.State.Settings == null)
+        {
+            Vm.State.ShowNotification("Export Failed", "No reader configuration available to export.", false);
+            return;
+        }
+
+        try
+        {
+            var addRoSpecXml = Vm.ExportAddRoSpecXml();
+            var setReaderConfigXml = Vm.ExportSetReaderConfigXml();
+
+            var pack = new ReaderConfigurationPack
+            {
+                Brand = "Generic LLRP",
+                Model = Vm.State.ReaderModel,
+                AntennaCount = Vm.State.AntennaCount,
+                GpiCount = Vm.State.GpiCount,
+                GpoCount = Vm.State.GpoCount,
+                ExportedAt = DateTime.Now,
+                AddRoSpecXml = addRoSpecXml,
+                SetReaderConfigXml = setReaderConfigXml
+            };
+
+            var xml = pack.ToXmlString();
+            var fileName = $"{Vm.State.Reader.Name.Replace(" ", "_")}_Config_{DateTime.Now:yyyyMMdd_HHmmss}.xml";
+
+            await JS.InvokeVoidAsync("downloadFileFromText", fileName, xml);
+            Vm.State.ShowNotification("Export Completed", $"Configuration exported to {fileName}", true);
+        }
+        catch (Exception ex)
+        {
+            Vm.State.ShowNotification("Export Failed", ex.Message, false);
+        }
     }
 
     public void Dispose() => Vm.State.Changed -= OnStateChanged;

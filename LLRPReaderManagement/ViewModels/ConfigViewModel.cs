@@ -201,6 +201,10 @@ public sealed class ConfigViewModel(AppState state, ReaderManagementService read
         readers.SelectReader(endpoint);
         Refresh();
     }
+
+    public string ExportAddRoSpecXml() => readers.ExportAddRoSpecXml();
+    public string ExportSetReaderConfigXml() => readers.ExportSetReaderConfigXml();
+    public Settings ImportLlrpXml(string addRoSpecXml, string setReaderConfigXml) => readers.ImportLlrpXml(addRoSpecXml, setReaderConfigXml);
 }
 
 public sealed record RfModeOption(uint Id, string DisplayText);

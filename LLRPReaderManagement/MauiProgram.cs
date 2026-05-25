@@ -20,6 +20,7 @@ namespace LLRPReaderManagement
 
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddSingleton<AppState>();
+            builder.Services.AddSingleton<LlrpSimulator>();
             builder.Services.AddSingleton<ILlrpReaderRepository, LlrpReaderRepository>();
             builder.Services.AddSingleton<IAppLogService, AppLogService>();
             builder.Services.AddSingleton<EndpointHistoryService>();

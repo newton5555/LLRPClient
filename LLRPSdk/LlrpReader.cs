@@ -2062,6 +2062,26 @@ namespace LLRPSdk
         }
 
         /// <summary>
+        /// Maps standard LLRP messages back to the Settings object.
+        /// </summary>
+        public Settings ParseSettingsFromLlrpMessages(MSG_ADD_ROSPEC addRoSpec, MSG_SET_READER_CONFIG setReaderConfig)
+        {
+            if (addRoSpec?.ROSpec == null || setReaderConfig == null)
+                throw new LLRPSdkException("Invalid import configuration. ADD_ROSPEC or SET_READER_CONFIG is missing.");
+
+            var mockConfig = new MSG_GET_READER_CONFIG_RESPONSE
+            {
+                KeepaliveSpec = setReaderConfig.KeepaliveSpec,
+                GPIPortCurrentState = setReaderConfig.GPIPortCurrentState,
+                EventsAndReports = setReaderConfig.EventsAndReports,
+                ReaderEventNotificationSpec = setReaderConfig.ReaderEventNotificationSpec
+            };
+
+            Settings settings = this.ParseRoSpecAndConfig(addRoSpec.ROSpec, mockConfig, mockConfig, mockConfig, mockConfig);
+            return settings;
+        }
+
+        /// <summary>
         /// Query ReaderEventNotificationSpec and return actual event enable states from reader.
         /// </summary>
         /// <returns>Reader configured event notification states.</returns>

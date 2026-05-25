@@ -190,6 +190,14 @@ public sealed class LlrpReaderRepository : ILlrpReaderRepository, IDisposable
     public void SetGpo(ushort port, bool state) => ActiveReader.SetGpo(port, state);
     public void AddOpSequence(TagOpSequence sequence) => ActiveReader.AddOpSequence(sequence);
     public void DeleteAllOpSequences() => ActiveReader.DeleteAllOpSequences();
+    public string ExportAddRoSpecXml() => ActiveReader.BuildAddROSpecMessage(QuerySettings()).ToString();
+    public string ExportSetReaderConfigXml() => ActiveReader.BuildSetReaderConfigMessage(QuerySettings()).ToString();
+    public Settings ImportLlrpXml(string addRoSpecXml, string setReaderConfigXml)
+    {
+        var addRoSpec = Org.LLRP.LTK.LLRPV1.MSG_ADD_ROSPEC.FromString(addRoSpecXml);
+        var setReaderConfig = Org.LLRP.LTK.LLRPV1.MSG_SET_READER_CONFIG.FromString(setReaderConfigXml);
+        return ActiveReader.ParseSettingsFromLlrpMessages(addRoSpec, setReaderConfig);
+    }
 
     public void Dispose()
     {

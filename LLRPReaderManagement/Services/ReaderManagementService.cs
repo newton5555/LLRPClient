@@ -272,4 +272,8 @@ public sealed class ReaderManagementService
             logs.Log("GPIO", $"Status refresh failed: {ex.Message}", LogLevel.Warning, ex);
         }
     }
+
+    public string ExportAddRoSpecXml() => repository.ExportAddRoSpecXml();
+    public string ExportSetReaderConfigXml() => repository.ExportSetReaderConfigXml();
+    public LLRPSdk.Settings ImportLlrpXml(string addRoSpecXml, string setReaderConfigXml) => repository.ImportLlrpXml(addRoSpecXml, setReaderConfigXml);
 }

@@ -32,4 +32,7 @@ public interface ILlrpReaderRepository
     void SetGpo(ushort port, bool state);
     void AddOpSequence(TagOpSequence sequence);
     void DeleteAllOpSequences();
+    string ExportAddRoSpecXml();
+    string ExportSetReaderConfigXml();
+    Settings ImportLlrpXml(string addRoSpecXml, string setReaderConfigXml);
 }
