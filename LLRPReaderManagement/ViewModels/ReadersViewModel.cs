@@ -25,10 +25,6 @@ public sealed class ReadersViewModel(
     public void Disconnect(string endpoint)
     {
         readers.Disconnect(endpoint);
-        if (string.Equals(endpoint, "127.0.0.1:50840", StringComparison.OrdinalIgnoreCase))
-        {
-            simulator.Stop();
-        }
     }
 
     public void Select(string endpoint) => readers.SelectReader(endpoint);
@@ -37,8 +33,8 @@ public sealed class ReadersViewModel(
     {
         if (simulator.IsRunning)
         {
-            simulator.Stop();
             readers.Disconnect("127.0.0.1:50840");
+            simulator.Stop();
             state.ShowNotification("Simulator Stopped", "The local LLRP virtual reader was stopped.", true);
         }
         else
