@@ -431,7 +431,10 @@ namespace LLRPReaderManagement.Services
                     disRoRes.MSG_ID = msgId;
                     disRoRes.LLRPStatus = new PARAM_LLRPStatus { StatusCode = ENUM_StatusCode.M_Success };
                     SendMsg(stream, disRoRes);
+                    _isInventoryRunning = false;
                     _roSpecState = ENUM_ROSpecState.Disabled;
+                    _tagReportTimer?.Dispose();
+                    _tagReportTimer = null;
                     break;
 
                 case 22: // START_ROSPEC
