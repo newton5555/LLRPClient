@@ -1,6 +1,6 @@
-namespace Org.LLRP.LTK.LLRPV1
+锘縩amespace Org.LLRP.LTK.LLRPV1
 {
-    //实现一个串口的LLRP通信接口，暂时不实现，后续有需要再说
+    //实锟斤拷一锟斤拷锟斤拷锟节碉拷LLRP通锟脚接口ｏ拷锟斤拷时锟斤拷实锟街ｏ拷锟斤拷锟斤拷锟斤拷锟斤拷要锟斤拷说
     public class SerialPortAdapter : CommunicationInterface
     {
 

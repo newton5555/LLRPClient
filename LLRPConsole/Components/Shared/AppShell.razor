@@ -1,0 +1,167 @@
+﻿@inject AppState State
+@inject ReadersViewModel ReadersVm
+@implements IDisposable
+
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true"></div>
+            <div>
+                <div class="brand-title">LLRP 管理台</div>
+                <div class="brand-sub">ReaderOps Console</div>
+            </div>
+        </div>
+        <div class="nav-group">
+            <div class="nav-title">工作区</div>
+            
+            <NavLink class="nav-btn" href="/readers" Match="NavLinkMatch.Prefix" title="Reader 连接">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="4" y="5" width="16" height="10" rx="2"/><path d="M8 19h8M12 15v4"/>
+                </svg>
+                <span class="label">Reader 连接</span>
+                <span class="nav-count">@State.Readers.Count(x => x.IsConnected)</span>
+            </NavLink>
+
+            <NavLink class="nav-btn" href="/config" title="ROSpec 设置 / 获取">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="3"/><path d="M4 12h3M17 12h3M12 4v3M12 17v3"/>
+                </svg>
+                <span class="label">ROSpec 设置 / 获取</span>
+                <span class="nav-count">RO</span>
+            </NavLink>
+
+            <NavLink class="nav-btn" href="/antenna" title="盘存参数">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 20V8"/><path d="M7 8a5 5 0 0 1 10 0"/><path d="M4 8a8 8 0 0 1 16 0"/>
+                </svg>
+                <span class="label">盘存参数</span>
+                <span class="nav-count">RF</span>
+            </NavLink>
+
+            <NavLink class="nav-btn" href="/inventory" title="实时盘存">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 7h16M4 12h16M4 17h10"/><path d="M18 16l2 2 3-4"/>
+                </svg>
+                <span class="label">实时盘存</span>
+                <span class="nav-count" id="tagCountNav">@State.Tags.Count</span>
+            </NavLink>
+
+            <NavLink class="nav-btn" href="/access" title="标签读写">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>
+                </svg>
+                <span class="label">标签读写</span>
+                <span class="nav-count">RW</span>
+            </NavLink>
+
+            <NavLink class="nav-btn" href="/logs" title="LLRP 消息">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M5 5h14v14H5z"/><path d="M8 9h8M8 13h5"/>
+                </svg>
+                <span class="label">LLRP 消息</span>
+                <span class="nav-count">MSG</span>
+            </NavLink>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="panel-sub">现场健康度</div>
+            <div class="health-row">
+                <span><span class="dot @(State.Readers.Any(x => x.IsConnected) ? "ok" : "danger")"></span> 在线 Reader</span>
+                <strong>@State.Readers.Count(x => x.IsConnected) / @Math.Max(1, State.Readers.Count)</strong>
+            </div>
+            <div class="health-row">
+                <span><span class="dot @(State.Readers.Any(x => x.IsInventoryRunning) ? "ok" : "danger")"></span> ROSpec</span>
+                <strong>@State.Readers.Count(x => x.IsInventoryRunning) 个启用</strong>
+            </div>
+            <div class="health-row">
+                <span><span class="dot warn"></span> AccessSpec</span>
+                <strong>1 个待下发</strong>
+            </div>
+        </div>
+    </aside>
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <div class="crumb">@State.CurrentCrumb</div>
+                <strong id="selectedReader">@SelectedReaderText</strong>
+            </div>
+            <div class="top-actions">
+                <input class="search" id="globalSearch" placeholder="搜索 Reader、EPC、ROSpec 或消息" @bind="SearchQuery" @bind:event="oninput" />
+                <button class="btn" id="syncBtn" @onclick="GetReaderConfig">Get Reader Config</button>
+                <button class="btn primary" id="connectBtn" @onclick="ConnectReader">连接 Reader</button>
+            </div>
+        </header>
+        @ChildContent
+    </main>
+</div>
+
+<div class="toast @(ShowToast ? "show" : "")" id="toast">@ToastMessage</div>
+
+@if (State.Notification is { } notification)
+{
+    <div class="toast show" style="bottom: 80px; background: var(--surface); border-color: @(notification.IsSuccess ? "var(--ok)" : "var(--danger)"); color: var(--fg); pointer-events: auto;">
+        <div style="font-weight: bold; margin-bottom: 4px;">@notification.Title</div>
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">@notification.Message</div>
+        <button class="btn compact primary" @onclick="State.ClearNotification">确认</button>
+    </div>
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private bool ShowToast { get; set; }
+    private string ToastMessage { get; set; } = "";
+
+    private string SearchQuery
+    {
+        get => State.SearchQuery;
+        set => State.SearchQuery = value;
+    }
+
+    private string SelectedReaderText => string.IsNullOrEmpty(State.ActiveEndpoint) 
+        ? "未选择 Reader" 
+        : $"{State.Readers.FirstOrDefault(r => string.Equals(r.Endpoint, State.ActiveEndpoint, StringComparison.OrdinalIgnoreCase))?.Name ?? "Reader"} · {State.ActiveEndpoint}";
+
+    protected override void OnInitialized()
+    {
+        State.Changed += OnStateChanged;
+    }
+
+    private void OnStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void TriggerToast(string msg)
+    {
+        ToastMessage = msg;
+        ShowToast = true;
+        StateHasChanged();
+        Task.Delay(1800).ContinueWith(_ => {
+            ShowToast = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    private void GetReaderConfig()
+    {
+        TriggerToast("已发送 GET_READER_CONFIG，等待参数返回");
+    }
+
+    private async Task ConnectReader()
+    {
+        TriggerToast("连接请求已发送，等待 LLRP 握手");
+        try
+        {
+            await ReadersVm.ConnectAsync();
+        }
+        catch (Exception ex)
+        {
+            State.ShowNotification("连接失败", ex.Message, false);
+        }
+    }
+
+    public void Dispose()
+    {
+        State.Changed -= OnStateChanged;
+    }
+}

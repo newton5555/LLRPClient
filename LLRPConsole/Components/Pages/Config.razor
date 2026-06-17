@@ -1,0 +1,219 @@
+﻿@page "/config"
+@inject ConfigViewModel Vm
+@inject RospecViewModel RospecVm
+@inject InventoryConfigViewModel InvConfigVm
+@implements IDisposable
+
+<section class="content">
+    <section class="screen" id="config">
+        <div class="screen-head">
+            <div>
+                <h1>ROSpec 设置与获取</h1>
+                <p>围绕 ADD_ROSPEC、GET_ROSPECS、ENABLE_ROSPEC 和 START_ROSPEC 管理盘存任务，关注触发器、AISpec、ReportSpec 与设备当前运行参数的差异。</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn" @onclick="GetRospecs" disabled="@(!Vm.State.IsConnected)">Get ROSpecs</button>
+                <button class="btn primary" @onclick="ApplyChanges" disabled="@(!CanEdit)">下发 ROSpec</button>
+            </div>
+        </div>
+
+        <div class="grid-4">
+            <div class="metric">
+                <div class="metric-label">ROSpec ID</div>
+                <div class="metric-value">@RoSpecIdText</div>
+                <div class="metric-foot">Inbound-Gate</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">当前状态</div>
+                <div class="metric-value">@CurrentStatusText</div>
+                <div class="metric-foot">ENABLE 后可启动</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Report Trigger</div>
+                <div class="metric-value">@ReportTriggerText</div>
+                <div class="metric-foot">Report Mode</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">RO Boundary</div>
+                <div class="metric-value">Null</div>
+                <div class="metric-foot">持续盘存</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="panel pad">
+                <div class="panel-head flush">
+                    <h2>ROSpec 参数</h2>
+                    <span class="status info">本地草稿</span>
+                </div>
+                
+                @if (Vm.State.Settings is not null)
+                {
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>ROSpecID</label>
+                            <input class="input mono" value="14150" readonly />
+                        </div>
+                        <div class="field">
+                            <label>Priority</label>
+                            <input class="input mono" value="0" readonly />
+                        </div>
+                        <div class="field">
+                            <label>StartTrigger</label>
+                            <select class="select" @bind="StartTriggerMode">
+                                @foreach (var mode in InvConfigVm.AutoStartModes)
+                                {
+                                    <option value="@mode">@mode</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>StopTrigger</label>
+                            <select class="select" @bind="StopTriggerMode">
+                                @foreach (var mode in InvConfigVm.AutoStopModes)
+                                {
+                                    <option value="@mode">@mode</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>ReportTrigger</label>
+                            <select class="select" @bind="ReportMode">
+                                @foreach (var mode in InvConfigVm.ReportModes)
+                                {
+                                    <option value="@mode">@mode</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>N / Timeout (ms)</label>
+                            <input class="input mono" @bind="ReportN" type="number" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="color: var(--muted); text-align: center; padding: 24px 0;">
+                        请先在 "Reader 连接" 页面连接读写器以加载参数。
+                    </div>
+                }
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>设备返回的 ROSpec</h2>
+                    <span class="panel-sub">GET_ROSPECS response</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>状态</th>
+                            <th>AISpec</th>
+                            <th>ReportSpec</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Vm.State.IsConnected)
+                        {
+                            <tr>
+                                <td class="mono">14150</td>
+                                <td>
+                                    <span class="status @(Vm.State.IsInventoryRunning ? "ok" : "warn")">
+                                        @(Vm.State.IsInventoryRunning ? "Running" : "Stopped")
+                                    </span>
+                                </td>
+                                <td>ANT @AntennaText / S@(Vm.State.Settings?.Session.ToString() ?? "-")</td>
+                                <td>@ReportTriggerText</td>
+                                <td>
+                                    @if (Vm.State.IsInventoryRunning)
+                                    {
+                                        <button class="btn compact danger" @onclick="RospecVm.Stop">Stop</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn compact primary" @onclick="RospecVm.Start">Start</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--muted); padding: 24px;">
+                                    无可用设备 ROSpec 记录，请连接 Reader 后重试。
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</section>
+
+@code {
+    private string RoSpecIdText => Vm.State.CurrentRoSpecId is { } id ? id.ToString() : "—";
+    private string CurrentStatusText => Vm.State.IsInventoryRunning ? "Active" : "Inactive";
+    private string ReportTriggerText => Vm.State.Settings is null ? "—" : $"{Vm.State.Settings.Report.Mode}";
+
+    private bool CanEdit => Vm.State.IsConnected && Vm.State.Settings is not null && !Vm.State.IsInventoryRunning;
+
+    private string AntennaText => Vm.State.AntennaCount == 0
+        ? "-"
+        : string.Join(",", Vm.State.Settings?.Antennas.AntennaConfigs.Where(x => x.IsEnabled).Select(x => (int)x.PortNumber)
+            ?? Enumerable.Range(1, (int)Vm.State.AntennaCount));
+
+    private LLRPSdk.AutoStartMode StartTriggerMode
+    {
+        get => Vm.State.Settings?.AutoStart.Mode ?? LLRPSdk.AutoStartMode.Immediate;
+        set { if (Vm.State.Settings is not null) Vm.State.Settings.AutoStart.Mode = value; }
+    }
+
+    private LLRPSdk.AutoStopMode StopTriggerMode
+    {
+        get => Vm.State.Settings?.AutoStop.Mode ?? LLRPSdk.AutoStopMode.None;
+        set { if (Vm.State.Settings is not null) Vm.State.Settings.AutoStop.Mode = value; }
+    }
+
+    private LLRPSdk.ReportMode ReportMode
+    {
+        get => Vm.State.Settings?.Report.Mode ?? LLRPSdk.ReportMode.Individual;
+        set { if (Vm.State.Settings is not null) Vm.State.Settings.Report.Mode = value; }
+    }
+
+    private ushort reportN = 128;
+    private ushort ReportN
+    {
+        get => reportN;
+        set => reportN = value;
+    }
+
+    protected override void OnInitialized()
+    {
+        Vm.State.CurrentCrumb = "LLRP / ROSpec 设置";
+        Vm.State.Changed += OnStateChanged;
+    }
+
+    private void OnStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void GetRospecs()
+    {
+        Vm.Refresh();
+        Vm.State.ShowNotification("ROSpec Sync", "GET_ROSPECS query sent successfully.", true);
+    }
+
+    private void ApplyChanges()
+    {
+        Vm.ApplyChanges();
+    }
+
+    public void Dispose()
+    {
+        Vm.State.Changed -= OnStateChanged;
+    }
+}

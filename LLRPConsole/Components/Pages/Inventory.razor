@@ -1,0 +1,138 @@
+﻿@page "/inventory"
+@inject InventoryViewModel Vm
+@inject IJSRuntime JS
+@implements IDisposable
+
+<section class="content">
+    <section class="screen" id="inventory">
+        <div class="screen-head">
+            <div>
+                <h1>实时盘存与 ReportSpec</h1>
+                <p>基于当前 ROSpec 启停盘存，观察 TagReportData 中的 EPC、AntennaID、PeakRSSI、FirstSeen 和 TagSeenCount。</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn" id="clearReads" @onclick="ClearInventory">清空窗口</button>
+                <button class="btn primary" id="streamBtn" @onclick="ToggleStream" disabled="@(!Vm.State.IsConnected)">
+                    @(Vm.State.IsInventoryRunning ? "STOP_ROSPEC" : "START_ROSPEC")
+                </button>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="metric">
+                <div class="metric-label">TagReportData</div>
+                <div class="metric-value" id="windowTags">@FilteredTags.Count()</div>
+                <div class="metric-foot">当前窗口去重 EPC</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">读取速率</div>
+                <div class="metric-value" id="readRate">@ReadRateText</div>
+                <div class="metric-foot">最近 5 秒滚动平均</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">最高 PeakRSSI</div>
+                <div class="metric-value">@MaxRssiText</div>
+                <div class="metric-foot">ANT-01</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <h2>TagReportData 流</h2>
+                <span class="panel-sub">时间 / EPC / AntennaID / PeakRSSI / TagSeenCount</span>
+            </div>
+            <div class="read-stream" id="readStream">
+                @foreach (var tag in FilteredRawTags.Take(80))
+                {
+                    <div class="read-line" title="点击复制 EPC" style="cursor: pointer;" @onclick="() => CopyEpc(tag.Epc)">
+                        <span>@tag.LastSeen.ToString("HH:mm:ss")</span>
+                        <span>@tag.Epc</span>
+                        <span>@tag.AntennaText</span>
+                        <span>@tag.Rssi.ToString("0") dBm</span>
+                        <span>@tag.SeenCount 次</span>
+                    </div>
+                }
+                @if (!FilteredRawTags.Any())
+                {
+                    <div style="color: var(--muted); text-align: center; padding: 48px;">
+                        等待盘存启动并接收标签报告...
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</section>
+
+@code {
+    private string ReadRateText => Vm.State.IsInventoryRunning ? $"{Vm.State.RollingReadRatePerSecond:F0}/s" : "0/s";
+    
+    private string MaxRssiText => Vm.State.Tags.Count == 0 
+        ? "—" 
+        : $"{Vm.State.Tags.Max(x => x.Rssi):0} dBm";
+
+    private IEnumerable<InventoryTagItem> FilteredTags
+    {
+        get
+        {
+            var query = Vm.State.SearchQuery?.Trim();
+            if (string.IsNullOrEmpty(query)) return Vm.State.Tags;
+            return Vm.State.Tags.Where(t => t.Epc.Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    private IEnumerable<InventoryTagItem> FilteredRawTags
+    {
+        get
+        {
+            var query = Vm.State.SearchQuery?.Trim();
+            if (string.IsNullOrEmpty(query)) return Vm.State.RawTags;
+            return Vm.State.RawTags.Where(t => t.Epc.Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        Vm.State.CurrentCrumb = "LLRP / 实时盘存";
+        Vm.State.Changed += OnStateChanged;
+    }
+
+    private void ToggleStream()
+    {
+        if (Vm.State.IsInventoryRunning)
+        {
+            Vm.Stop();
+        }
+        else
+        {
+            Vm.Start();
+        }
+    }
+
+    private void ClearInventory()
+    {
+        Vm.Clear();
+    }
+
+    private async Task CopyEpc(string epc)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", epc);
+            Vm.State.ShowNotification("已复制 EPC", $"{epc.Substring(0, Math.Min(8, epc.Length))}...", true);
+        }
+        catch
+        {
+            // Fallback if JS clipboard API fails in MAUI WebView
+        }
+    }
+
+    private void OnStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Vm.State.Changed -= OnStateChanged;
+    }
+}

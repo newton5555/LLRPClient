@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using LLRPSdk;
 using Org.LLRP.LTK.LLRPV1;
 

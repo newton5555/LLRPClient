@@ -1,4 +1,4 @@
-namespace LLRPSdk
+﻿namespace LLRPSdk
 {
     /// <summary>
     /// Specifies the search mode (S flag) for inventory.

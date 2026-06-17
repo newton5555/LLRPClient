@@ -1,4 +1,4 @@
-using LLRPSdk;
+﻿using LLRPSdk;
 
 namespace LLRPReaderUI_WPF.Models;
 

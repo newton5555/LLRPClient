@@ -1,4 +1,4 @@
-namespace LLRPSdk;
+﻿namespace LLRPSdk;
 
 public enum TagReportSource
 {

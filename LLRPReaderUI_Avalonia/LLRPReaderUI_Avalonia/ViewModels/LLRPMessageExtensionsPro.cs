@@ -1,4 +1,4 @@
-using System.Xml;
+﻿using System.Xml;
 using LLRPReaderUI_Avalonia.Models;
 using Org.LLRP.LTK.LLRPV1.DataType;
 

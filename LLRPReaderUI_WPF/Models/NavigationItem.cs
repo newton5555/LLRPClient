@@ -1,4 +1,4 @@
-namespace LLRPReaderUI_WPF.Models;
+﻿namespace LLRPReaderUI_WPF.Models;
 
 using FontAwesome.Sharp;
 using System.ComponentModel;

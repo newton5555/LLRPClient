@@ -1,4 +1,4 @@
-using LLRPSdk;
+﻿using LLRPSdk;
 using LLRPReaderUI_Avalonia.Data;
 using LLRPReaderUI_Avalonia.Models;
 using Microsoft.Extensions.Logging;

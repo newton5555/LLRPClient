@@ -1,4 +1,4 @@
-// Global usings for Avalonia project
+﻿// Global usings for Avalonia project
 global using System;
 global using System.Collections.Generic;
 global using System.Collections.ObjectModel;

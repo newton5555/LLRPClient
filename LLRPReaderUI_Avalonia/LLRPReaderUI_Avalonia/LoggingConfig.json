@@ -1,4 +1,4 @@
-{
+﻿{
   "serilog": {
     "minimumLevel": "Debug",
     "writeTo": [

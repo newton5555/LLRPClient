@@ -1,4 +1,4 @@
-using LLRPReaderManagement.Models;
+﻿using LLRPReaderManagement.Models;
 using LLRPReaderManagement.Repositories;
 using LLRPReaderManagement.State;
 using LLRPSdk;

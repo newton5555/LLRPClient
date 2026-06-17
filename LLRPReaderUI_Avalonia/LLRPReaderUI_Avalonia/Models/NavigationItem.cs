@@ -1,4 +1,4 @@
-namespace LLRPReaderUI_Avalonia.Models;
+﻿namespace LLRPReaderUI_Avalonia.Models;
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

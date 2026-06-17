@@ -1,4 +1,4 @@
-namespace Org.LLRP.LTK.LLRPV1
+﻿namespace Org.LLRP.LTK.LLRPV1
 {
     internal readonly struct LlrpFrame
     {

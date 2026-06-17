@@ -1,4 +1,4 @@
-using LLRPReaderManagement.Services;
+﻿using LLRPReaderManagement.Services;
 using LLRPReaderManagement.State;
 
 namespace LLRPReaderManagement.ViewModels;

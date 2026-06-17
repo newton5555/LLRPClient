@@ -1,4 +1,4 @@
-using LLRPSdk;
+﻿using LLRPSdk;
 using Microsoft.Extensions.Logging;
 
 namespace LLRPReaderUI_WPF.Logging;

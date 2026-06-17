@@ -1,4 +1,4 @@
-namespace LLRPReaderUI_Avalonia.Logging;
+﻿namespace LLRPReaderUI_Avalonia.Logging;
 
 public enum AppLogCategory
 {

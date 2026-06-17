@@ -1,0 +1,165 @@
+﻿@page "/logs"
+@inject AppState State
+@inject IJSRuntime JS
+@implements IDisposable
+
+<section class="content">
+    <section class="screen" id="logs">
+        <div class="screen-head">
+            <div>
+                <h1>LLRP 消息跟踪</h1>
+                <p>按消息类型查看请求、响应和异步报告，用于排查参数下发、ROSpec 状态、AccessSpec 执行和 Keepalive 问题。</p>
+            </div>
+            <div class="toolbar">
+                <select class="select" style="width:150px;" @bind="LevelFilter">
+                    <option value="">全部消息</option>
+                    <option value="Error">错误响应</option>
+                    <option value="Warning">状态变化</option>
+                    <option value="Information">请求 / 响应</option>
+                </select>
+                <button class="btn primary" id="ackAll" @onclick="ExportCsv" disabled="@(FilteredLogs.Count == 0)">导出消息</button>
+                <button class="btn danger" @onclick="ClearLogs" disabled="@(FilteredLogs.Count == 0)">清空日志</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <h2>消息窗口</h2>
+                <span class="panel-sub">最近 LLRP 会话</span>
+            </div>
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>方向</th>
+                        <th>分类 / 消息类型</th>
+                        <th>状态</th>
+                        <th>处理</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in FilteredLogs.Take(100))
+                    {
+                        var dir = GetDirection(log);
+                        <tr style="@(log.Level == LogLevel.Error ? "background: color-mix(in oklch, var(--danger) 5%, transparent);" : "")">
+                            <td class="mono">@log.Timestamp.ToString("HH:mm:ss")</td>
+                            <td class="mono" style="font-weight: bold; color: @(dir == "TX" ? "var(--accent)" : dir == "RX" ? "var(--fg)" : "var(--muted)");">@dir</td>
+                            <td style="max-width: 450px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="@log.Message">
+                                <strong class="mono">@log.Category</strong> - @log.Message
+                            </td>
+                            <td>
+                                <span class="status @GetStatusClass(log.Level)">
+                                    @log.Level.ToString()
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn compact" @onclick="() => ViewDetails(log)">查看</button>
+                            </td>
+                        </tr>
+                    }
+                    @if (FilteredLogs.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--muted); padding: 36px;">
+                                没有匹配过滤条件的日志消息。
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>
+
+@code {
+    private string LevelFilter { get; set; } = string.Empty;
+
+    private List<LogEntry> FilteredLogs
+    {
+        get
+        {
+            var list = State.Logs.AsEnumerable();
+
+            var search = State.SearchQuery?.Trim();
+            if (!string.IsNullOrEmpty(search))
+            {
+                list = list.Where(x => x.Message.Contains(search, StringComparison.OrdinalIgnoreCase) 
+                                    || x.Category.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(LevelFilter))
+            {
+                list = list.Where(x => string.Equals(x.Level.ToString(), LevelFilter, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return list.ToList();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        State.CurrentCrumb = "LLRP / 消息跟踪";
+        State.Changed += OnStateChanged;
+    }
+
+    private string GetDirection(LogEntry log)
+    {
+        var msg = log.Message.ToLowerInvariant();
+        var cat = log.Category.ToLowerInvariant();
+        if (msg.Contains("tx") || msg.Contains("sent") || msg.Contains("sending") || cat.Contains("tx"))
+        {
+            return "TX";
+        }
+        if (msg.Contains("rx") || msg.Contains("received") || msg.Contains("receiving") || cat.Contains("rx"))
+        {
+            return "RX";
+        }
+        return "SYS";
+    }
+
+    private string GetStatusClass(LogLevel level) => level switch
+    {
+        LogLevel.Error or LogLevel.Critical => "danger",
+        LogLevel.Warning => "warn",
+        _ => "ok"
+    };
+
+    private void ViewDetails(LogEntry log)
+    {
+        State.ShowNotification(
+            $"日志详情 [{log.Level}]", 
+            $"时间: {log.Timestamp:yyyy-MM-dd HH:mm:ss.fff}\n分类: {log.Category}\n\n信息:\n{log.Message}", 
+            log.Level != LogLevel.Error);
+    }
+
+    private async Task ExportCsv()
+    {
+        var logs = FilteredLogs;
+        if (logs.Count == 0) return;
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Timestamp,Level,Category,Message");
+        foreach (var log in logs)
+        {
+            sb.AppendLine($"\"{log.Timestamp:yyyy-MM-dd HH:mm:ss.fff}\",\"{log.Level}\",\"{log.Category}\",\"{log.Message.Replace("\"", "\"\"")}\"");
+        }
+
+        var fileName = $"llrp-logs-{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+        await JS.InvokeVoidAsync("downloadFileFromText", fileName, sb.ToString());
+    }
+
+    private void ClearLogs()
+    {
+        State.ClearLogs();
+    }
+
+    private void OnStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        State.Changed -= OnStateChanged;
+    }
+}

@@ -1,4 +1,4 @@
-using LLRPReaderUI_Avalonia.Logging;
+﻿using LLRPReaderUI_Avalonia.Logging;
 using Microsoft.EntityFrameworkCore;
 
 namespace LLRPReaderUI_Avalonia.Data

@@ -1,4 +1,4 @@
-using LLRPReaderUI_WPF.Logging;
+﻿using LLRPReaderUI_WPF.Logging;
 using Microsoft.EntityFrameworkCore;
 
 namespace LLRPReaderUI_WPF.Data

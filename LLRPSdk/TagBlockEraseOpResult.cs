@@ -1,4 +1,4 @@
-#nullable disable
+﻿#nullable disable
 namespace LLRPSdk
 {
   /// <summary>Contains the results of a block erase operation.</summary>

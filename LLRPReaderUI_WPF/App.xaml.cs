@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LLRPSdk;
 using LLRPReaderUI_WPF.Logging;

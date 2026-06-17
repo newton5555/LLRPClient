@@ -1,0 +1,225 @@
+﻿@page "/antenna"
+@inject ConfigViewModel Vm
+@implements IDisposable
+
+<section class="content">
+    <section class="screen" id="antenna">
+        <div class="screen-head">
+            <div>
+                <h1>AISpec 与盘存参数</h1>
+                <p>配置天线集合、RF Transmitter、C1G2InventoryCommand、Session、Q 值和 Singulation Control，直接对应 ROSpec 内的 AISpec。</p>
+            </div>
+            <button class="btn primary" @onclick="ApplyConfig" disabled="@(!CanEdit)">应用盘存参数</button>
+        </div>
+
+        <div class="grid-4">
+            @for (var idx = 0; idx < Math.Max(4, (int)Vm.State.AntennaCount); idx++)
+            {
+                var antIndex = idx;
+                var ant = GetAntennaConfig(antIndex + 1);
+                <div class="antenna-card">
+                    <div class="antenna-top">
+                        <strong>ANT-0@(antIndex + 1)</strong>
+                        <button type="button" class="status @(ant.IsEnabled ? "ok" : "danger")" style="border: none; cursor: pointer; padding: 2px 10px;" @onclick="() => ToggleAntenna(ant)">
+                            @(ant.IsEnabled ? "启用" : "未启用")
+                        </button>
+                    </div>
+                    <input class="range" type="range" min="10" max="33" step="1" 
+                           value="@ant.TxPowerInDbm" 
+                           @oninput="(args) => OnPowerChanged(ant, args)"
+                           disabled="@(!CanEdit)" />
+                    <div class="mono">@ant.TxPowerInDbm.ToString("0.0") dBm · @GetRssiText(ant.TxPowerInDbm)</div>
+                </div>
+            }
+        </div>
+
+        <div class="grid-2">
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>InventoryParameterSpec</h2>
+                    <span class="panel-sub">C1G2 参数</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>参数</th>
+                            <th>当前值</th>
+                            <th>作用</th>
+                            <th>建议</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="mono">Session</td>
+                            <td>S@(Vm.State.Settings?.Session.ToString() ?? "—")</td>
+                            <td>控制标签盘存状态保持</td>
+                            <td>门禁连续读用 S1，密集标签可试 S2</td>
+                        </tr>
+                        <tr>
+                            <td class="mono">TagInventoryStateAware</td>
+                            <td>@(Vm.State.Settings?.InventoryStateAware.ToString().ToLower() ?? "—")</td>
+                            <td>只读取目标状态标签</td>
+                            <td>和 Target=A 搭配减少重复</td>
+                        </tr>
+                        <tr>
+                            <td class="mono">RF Mode</td>
+                            <td>@(Vm.State.Settings?.RfMode?.ToString() ?? "Auto / Device Default")</td>
+                            <td>调制和链路参数</td>
+                            <td>高速通过场景优先吞吐</td>
+                        </tr>
+                        <tr>
+                            <td class="mono">RF Mode Option</td>
+                            <td>
+                                <select class="select" style="height: 28px; font-size: 11px; padding: 2px;" value="@(Vm.State.Settings?.RfMode?.ToString() ?? "")" @onchange="OnRfModeChanged" disabled="@(!CanEdit)">
+                                    <option value="">Auto / Device Default</option>
+                                    @foreach (var opt in Vm.RfModeOptions)
+                                    {
+                                        <option value="@opt.Id">@opt.DisplayText</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>工作模式设置</td>
+                            <td>选择读写器支持的 RF Mode</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel pad">
+                <div class="panel-head flush">
+                    <h2>Singulation Control</h2>
+                    <span class="status info">AISpec</span>
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Target</label>
+                        <select class="select" @bind="InventoryTarget" disabled="@(!CanEdit)">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Session</label>
+                        <select class="select" @bind="SessionValue" disabled="@(!CanEdit)">
+                            <option value="0">S0</option>
+                            <option value="1">S1</option>
+                            <option value="2">S2</option>
+                            <option value="3">S3</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Tag Population</label>
+                        <input class="input mono" @bind="TagPopulationEstimate" type="number" disabled="@(!CanEdit)" />
+                    </div>
+                    <div class="field">
+                        <label>Transit Time (ms)</label>
+                        <input class="input mono" value="120 ms" readonly />
+                    </div>
+                    <div class="field" style="grid-column: span 2;">
+                        <label class="switch-row" style="cursor: pointer;">
+                            <span>Inventory State Aware (启用状态感知)</span>
+                            <button type="button" class="switch @(Vm.State.Settings?.InventoryStateAware == true ? "on" : "")" @onclick="ToggleStateAware" disabled="@(!CanEdit)" aria-label="Toggle State Aware">
+                                <span></span>
+                            </button>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+@code {
+    private bool CanEdit => Vm.State.IsConnected && Vm.State.Settings is not null && !Vm.State.IsInventoryRunning;
+
+    private LLRPSdk.Settings? Settings => Vm.State.Settings;
+
+    private LLRPSdk.InventoryTarget InventoryTarget
+    {
+        get => Vm.State.Settings?.InventoryTarget ?? LLRPSdk.InventoryTarget.A;
+        set { if (Vm.State.Settings is not null) Vm.State.Settings.InventoryTarget = value; }
+    }
+
+    private ushort SessionValue
+    {
+        get => Vm.State.Settings?.Session ?? 1;
+        set { if (Vm.State.Settings is not null) Vm.State.Settings.Session = value; }
+    }
+
+    private ushort TagPopulationEstimate
+    {
+        get => Vm.State.Settings?.TagPopulationEstimate ?? 64;
+        set { if (Vm.State.Settings is not null) Vm.State.Settings.TagPopulationEstimate = value; }
+    }
+
+    protected override void OnInitialized()
+    {
+        Vm.State.CurrentCrumb = "LLRP / 盘存参数";
+        Vm.State.Changed += OnStateChanged;
+    }
+
+    private LLRPSdk.AntennaConfig GetAntennaConfig(int port)
+    {
+        if (Settings is null)
+        {
+            return new LLRPSdk.AntennaConfig((ushort)port) { IsEnabled = false, TxPowerInDbm = 30 };
+        }
+
+        var config = Settings.Antennas.AntennaConfigs.FirstOrDefault(x => x.PortNumber == port);
+        if (config is null)
+        {
+            config = new LLRPSdk.AntennaConfig((ushort)port) { IsEnabled = false, TxPowerInDbm = 30 };
+            Settings.Antennas.AntennaConfigs.Add(config);
+        }
+        return config;
+    }
+
+    private void ToggleAntenna(LLRPSdk.AntennaConfig config)
+    {
+        if (!CanEdit) return;
+        config.IsEnabled = !config.IsEnabled;
+        StateHasChanged();
+    }
+
+    private void OnPowerChanged(LLRPSdk.AntennaConfig config, ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out var val))
+        {
+            config.TxPowerInDbm = val;
+        }
+    }
+
+    private string GetRssiText(double power)
+    {
+        if (power <= 12) return "未参与";
+        return $"RSSI -{(81 - power):0}";
+    }
+
+    private void OnRfModeChanged(ChangeEventArgs e)
+    {
+        if (Settings is null) return;
+        Settings.RfMode = uint.TryParse(e.Value?.ToString(), out var value) ? value : null;
+    }
+
+    private void ToggleStateAware()
+    {
+        if (!CanEdit || Settings is null) return;
+        Settings.InventoryStateAware = !Settings.InventoryStateAware;
+        StateHasChanged();
+    }
+
+    private void ApplyConfig()
+    {
+        Vm.ApplyChanges();
+    }
+
+    private void OnStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Vm.State.Changed -= OnStateChanged;
+    }
+}

@@ -1,4 +1,4 @@
-namespace LLRPReaderUI_WPF.Logging;
+﻿namespace LLRPReaderUI_WPF.Logging;
 
 public enum AppLogCategory
 {

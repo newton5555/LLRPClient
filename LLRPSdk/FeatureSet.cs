@@ -1,4 +1,4 @@
-using Org.LLRP.LTK.LLRPV1;
+﻿using Org.LLRP.LTK.LLRPV1;
 using Org.LLRP.LTK.LLRPV1.DataType;
 using System;
 using System.Collections.Generic;

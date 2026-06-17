@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace LLRPReaderUI_Avalonia.Converters;
 

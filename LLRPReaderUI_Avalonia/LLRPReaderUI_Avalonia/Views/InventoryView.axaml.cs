@@ -1,4 +1,4 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Input.Platform;
 using LLRPReaderUI_Avalonia.ViewModels;
 using System;

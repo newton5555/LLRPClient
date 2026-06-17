@@ -1,0 +1,199 @@
+﻿@page "/"
+@page "/readers"
+@inject ReadersViewModel Vm
+@implements IDisposable
+
+<section class="content">
+    <section class="screen" id="devices">
+        <div class="screen-head">
+            <div>
+                <h1>Reader 连接与能力识别</h1>
+                <p>管理 LLRP TCP 会话、Keepalive、Reader Capability 与当前配置快照，作为后续 ROSpec、AISpec 和 AccessSpec 操作的入口。</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn" @onclick="GetCapabilities" disabled="@(Vm.State.IsBusy || !Vm.State.IsConnected)">Get Capabilities</button>
+                <button class="btn @(Vm.Simulator.IsRunning ? "danger" : "primary")" @onclick="Vm.ToggleSimulatorAsync" disabled="@Vm.State.IsBusy">
+                    @(Vm.Simulator.IsRunning ? "关闭模拟器" : "启动模拟器 (50840)")
+                </button>
+            </div>
+        </div>
+
+        <div class="grid-4">
+            <div class="metric">
+                <div class="metric-label">在线 Reader</div>
+                <div class="metric-value">@ConnectedCount / @Math.Max(1, Vm.State.Readers.Count)</div>
+                <div class="metric-foot">@DisconnectedCount 台未握手</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">支持天线端口</div>
+                <div class="metric-value">@AntennaPorts</div>
+                <div class="metric-foot">来自 Active Capability</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">已启用 ROSpec</div>
+                <div class="metric-value">@ActiveRoSpecCount</div>
+                <div class="metric-foot">来自运行状态</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">平均 Keepalive</div>
+                <div class="metric-value">41ms</div>
+                <div class="metric-foot">LLRP keepalive</div>
+            </div>
+        </div>
+
+        <div class="split">
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>Reader 会话</h2>
+                    <span class="panel-sub">点击行选择后续 LLRP 操作对象</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>LLRP Endpoint</th>
+                            <th>会话状态</th>
+                            <th>Capability</th>
+                            <th>ROSpec ID</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var reader in FilteredReaders)
+                        {
+                            <tr class="@(Vm.State.ActiveEndpoint == reader.Endpoint ? "selected" : "")" style="cursor: pointer;" @onclick="() => Vm.Select(reader.Endpoint)">
+                                <td>
+                                    <strong>@reader.Name</strong><br />
+                                    <span class="panel-sub">Active Device</span>
+                                </td>
+                                <td class="mono">@reader.Endpoint</td>
+                                <td>
+                                    <span class="status @(reader.IsConnected ? "ok" : "danger")">
+                                        <span class="dot @(reader.IsConnected ? "ok" : "danger")"></span>
+                                        @(reader.IsConnected ? "Connected" : "Disconnected")
+                                    </span>
+                                </td>
+                                <td class="mono">@reader.Model / @reader.AntennaCount ANT</td>
+                                <td class="mono">@(reader.CurrentRoSpecId?.ToString() ?? "—")</td>
+                                <td>
+                                    @if (reader.IsConnected)
+                                    {
+                                        <button class="btn compact danger" @onclick:stopPropagation @onclick="() => Vm.Disconnect(reader.Endpoint)">断开</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn compact primary" @onclick:stopPropagation @onclick="() => Vm.ConnectAsync(reader.Endpoint)">重连</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @if (Vm.State.Readers.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--muted); padding: 24px;">
+                                    暂无已连接的 Reader 设备。请在右侧表单添加。
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel pad">
+                <div class="panel-head flush">
+                    <h2>添加新连接</h2>
+                    <p class="panel-sub">连接至指定的 LLRP 读写器会话</p>
+                </div>
+                <div class="form-grid" style="grid-template-columns: 1fr; gap: 12px;">
+                    <div class="field">
+                        <label>IP 地址 / 端口</label>
+                        <input class="input mono" @bind="Vm.Endpoint" placeholder="例如 192.168.1.100 或 127.0.0.1:5084" />
+                    </div>
+                    @if (Vm.RecentEndpoints.Count > 0)
+                    {
+                        <div class="field">
+                            <label>历史连接</label>
+                            <select class="select mono" @onchange="OnRecentSelect">
+                                <option value="">选择历史地址...</option>
+                                @foreach (var endpoint in Vm.RecentEndpoints)
+                                {
+                                    <option value="@endpoint">@endpoint</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    <div class="field">
+                        <label>超时时间 (秒)</label>
+                        <input class="input mono" type="number" value="30" readonly />
+                    </div>
+                </div>
+                <div class="actions-row flush-actions">
+                    <button class="btn primary" style="width: 100%;" @onclick="ConnectAsync" disabled="@Vm.State.IsBusy">
+                        @if (Vm.State.IsBusy)
+                        {
+                            <span>连接中...</span>
+                        }
+                        else
+                        {
+                            <span>建立 LLRP TCP 连接</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+@code {
+    private int ConnectedCount => Vm.State.Readers.Count(x => x.IsConnected);
+    private int DisconnectedCount => Vm.State.Readers.Count(x => !x.IsConnected);
+    private int ActiveRoSpecCount => Vm.State.Readers.Count(x => x.IsInventoryRunning);
+    private string AntennaPorts => Vm.State.IsConnected ? $"{Vm.State.AntennaCount} ANT" : "未知";
+
+    private IEnumerable<ReaderSummary> FilteredReaders
+    {
+        get
+        {
+            var query = Vm.State.SearchQuery?.Trim();
+            if (string.IsNullOrEmpty(query)) return Vm.State.Readers;
+            return Vm.State.Readers.Where(r => 
+                r.Name.Contains(query, StringComparison.OrdinalIgnoreCase) || 
+                r.Endpoint.Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        Vm.State.CurrentCrumb = "LLRP / Reader 连接";
+        Vm.State.Changed += OnStateChanged;
+    }
+
+    private void OnRecentSelect(ChangeEventArgs e)
+    {
+        var val = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(val))
+        {
+            Vm.Endpoint = val;
+        }
+    }
+
+    private async Task ConnectAsync()
+    {
+        await Vm.ConnectAsync();
+    }
+
+    private void GetCapabilities()
+    {
+        Vm.State.ShowNotification("Capability Info", $"Active Reader Model: {Vm.State.ReaderModel}, Antenna Count: {Vm.State.AntennaCount}", true);
+    }
+
+    private void OnStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Vm.State.Changed -= OnStateChanged;
+    }
+}

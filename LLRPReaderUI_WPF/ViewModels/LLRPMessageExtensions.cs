@@ -1,4 +1,4 @@
-using LLRPReaderUI_WPF.Models;
+﻿using LLRPReaderUI_WPF.Models;
 using Org.LLRP.LTK.LLRPV1;
 
 namespace LLRPReaderUI_WPF.ViewModels

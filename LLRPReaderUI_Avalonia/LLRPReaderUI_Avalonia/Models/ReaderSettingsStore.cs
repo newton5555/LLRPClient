@@ -1,4 +1,4 @@
-using LLRPSdk;
+﻿using LLRPSdk;
 using System.Linq;
 
 namespace LLRPReaderUI_Avalonia.Models;

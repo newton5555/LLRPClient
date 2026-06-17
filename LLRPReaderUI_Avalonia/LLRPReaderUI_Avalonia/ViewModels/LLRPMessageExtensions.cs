@@ -1,4 +1,4 @@
-using LLRPReaderUI_Avalonia.Models;
+﻿using LLRPReaderUI_Avalonia.Models;
 using Org.LLRP.LTK.LLRPV1;
 
 namespace LLRPReaderUI_Avalonia.ViewModels

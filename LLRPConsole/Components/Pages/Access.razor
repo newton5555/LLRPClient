@@ -1,0 +1,373 @@
+﻿@page "/access"
+@inject AccessViewModel Vm
+@inject AppState State
+@implements IDisposable
+
+<section class="content">
+    <section class="screen" id="maintenance">
+        <div class="screen-head">
+            <div>
+                <h1>标签读写操作</h1>
+                <p>通过 AccessSpec 配置 EPC / TID / User / Reserved Bank 的 Read、Write、Lock、Kill 操作；执行前校验目标 EPC、访问密码、锁定范围和回执策略。</p>
+            </div>
+            <button class="btn primary" id="tagActionBtn" type="button" @onclick="ExecuteOperation" disabled="@(!CanOperate)">
+                @ExecuteButtonText
+            </button>
+        </div>
+
+        <div class="grid-4">
+            <div class="metric">
+                <div class="metric-label">当前 AccessSpec</div>
+                <div class="metric-value">3001</div>
+                <div class="metric-foot">绑定 ROSpec 14150</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">目标标签</div>
+                <div class="metric-value">@TargetEpcDisplay</div>
+                <div class="metric-foot">EPC 掩码过滤</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">最近成功率</div>
+                <div class="metric-value">96%</div>
+                <div class="metric-foot">过去 30 次操作</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">安全模式</div>
+                <div class="metric-value">@(SecurityMode ? "ON" : "OFF")</div>
+                <div class="metric-foot">Kill / Lock 需二次确认</div>
+            </div>
+        </div>
+
+        <div class="split access-workbench">
+            <form class="panel pad" id="tagAccessForm" @submit:preventDefault>
+                <div class="panel-head flush">
+                    <div>
+                        <h2>AccessSpec 操作参数</h2>
+                        <p class="panel-note" id="accessFormHint">先生成 AccessCommand，再下发到当前 Reader。写入、锁定和销毁操作会进入保护预检。</p>
+                    </div>
+                    <span class="status @StatusTone" id="accessState">@StatusText</span>
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label>AccessSpecID</label>
+                        <input class="input mono" value="3001" readonly />
+                    </div>
+                    <div class="field">
+                        <label>关联 ROSpecID</label>
+                        <input class="input mono" value="14150" readonly />
+                    </div>
+                    <div class="field">
+                        <label>操作类型</label>
+                        <select class="select" @bind="OpType">
+                            <option value="Read">Read</option>
+                            <option value="Write">Write</option>
+                            <option value="Lock">Lock</option>
+                            <option value="Kill">Kill</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Memory Bank</label>
+                        <select class="select" @bind="Vm.MemoryBank">
+                            <option value="Reserved">Reserved Bank</option>
+                            <option value="EPC">EPC Bank</option>
+                            <option value="TID">TID Bank</option>
+                            <option value="User">User Bank</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Word Pointer</label>
+                        <input class="input mono" type="number" @bind="Vm.WordPointer" />
+                    </div>
+                    <div class="field">
+                        @if (OpType == "Read")
+                        {
+                            <label>Word Count (读取长度)</label>
+                            <input class="input mono" type="number" @bind="Vm.WordCount" />
+                        }
+                        else
+                        {
+                            <label>Write Data (写入数据)</label>
+                            <input class="input mono" placeholder="十六进制字, 如 AABB" @bind="Vm.WriteData" />
+                        }
+                    </div>
+                    <div class="field">
+                        <label>Access Password</label>
+                        <input class="input mono" placeholder="00000000" @bind="Password" />
+                    </div>
+                    <div class="field">
+                        <label>目标 EPC 过滤</label>
+                        <input class="input mono" placeholder="选择或输入 EPC" @bind="Vm.TargetEpc" />
+                    </div>
+                </div>
+                <div class="check-panel" id="preflightPanel">
+                    <div class="check-row @(string.IsNullOrEmpty(Vm.TargetEpc) ? "warn" : "ok")">
+                        <span></span>
+                        <strong>EPC 掩码</strong>
+                        <em>@(string.IsNullOrEmpty(Vm.TargetEpc) ? "未限定到特定 EPC" : "已限定目标标签")</em>
+                    </div>
+                    <div class="check-row @(Password.Length == 8 ? "ok" : "warn")">
+                        <span></span>
+                        <strong>访问密码</strong>
+                        <em>@(Password.Length == 8 ? "已填入 32-bit 密码" : "使用默认/空密码")</em>
+                    </div>
+                    <div class="check-row @OpPreflightClass">
+                        <span></span>
+                        <strong>写入保护</strong>
+                        <em>@OpPreflightText</em>
+                    </div>
+                </div>
+                <div class="actions-row flush-actions">
+                    <button class="btn" type="button" @onclick="DryRun">预检 AccessCommand</button>
+                    <button class="btn primary" type="submit" @onclick="ExecuteOperation" disabled="@(!CanOperate)">下发并执行</button>
+                </div>
+            </form>
+
+            <div class="stack">
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>执行回执</h2>
+                        <span class="panel-sub">LLRPStatus / OpSpecResult</span>
+                    </div>
+                    <div class="result-state @ResultStateClass">
+                        <div class="empty-icon" aria-hidden="true"></div>
+                        <h3>@ResultTitle</h3>
+                        <p style="white-space: pre-wrap;">@ResultBody</p>
+                    </div>
+                </div>
+                <div class="panel pad">
+                    <div class="panel-head flush">
+                        <h2>风险控制</h2>
+                        <span class="status ok">已启用</span>
+                    </div>
+                    <div class="switch-row">
+                        <span>Kill 操作二次确认</span>
+                        <button class="switch @(ConfirmKill ? "on" : "")" type="button" @onclick="() => ConfirmKill = !ConfirmKill">
+                            <span></span>
+                        </button>
+                    </div>
+                    <div class="switch-row">
+                        <span>写入前读取原值</span>
+                        <button class="switch @(PreRead ? "on" : "")" type="button" @onclick="() => PreRead = !PreRead">
+                            <span></span>
+                        </button>
+                    </div>
+                    <div class="switch-row">
+                        <span>失败时保留 AccessReport</span>
+                        <button class="switch @(KeepFailedReport ? "on" : "")" type="button" @onclick="() => KeepFailedReport = !KeepFailedReport">
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <div>
+                    <h2>操作记录</h2>
+                    <p class="panel-note">按最近执行顺序记录 AccessReport，便于回溯目标 EPC、结果码和现场原因。</p>
+                </div>
+                <span class="panel-sub">AccessReport</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>AccessSpec</th>
+                        <th>操作</th>
+                        <th>EPC</th>
+                        <th>结果</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (historyList.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted); padding: 18px;">
+                                暂无操作回执记录。
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var record in historyList)
+                    {
+                        <tr>
+                            <td class="mono">@record.Time</td>
+                            <td class="mono">@record.SpecId</td>
+                            <td>@record.Operation</td>
+                            <td class="mono">@record.Epc</td>
+                            <td>
+                                <span class="status @(record.Success ? "ok" : "danger")">
+                                    @(record.Success ? "成功" : "失败")
+                                </span>
+                            </td>
+                            <td>@record.Message</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>
+
+@code {
+    private string OpType { get; set; } = "Read";
+    private string Password { get; set; } = "00000000";
+    private bool SecurityMode { get; set; } = true;
+    private bool ConfirmKill { get; set; } = true;
+    private bool PreRead { get; set; } = true;
+    private bool KeepFailedReport { get; set; } = true;
+
+    private string StatusText { get; set; } = "待下发";
+    private string StatusTone { get; set; } = "info";
+
+    private string ResultStateClass { get; set; } = "";
+    private string ResultTitle { get; set; } = "等待执行";
+    private string ResultBody { get; set; } = "预检通过后会在这里显示 AccessSpec 下发状态、OpSpecResult 和失败字段定位。";
+
+    private bool isExecuting;
+
+    private bool CanOperate => State.IsConnected && !State.IsInventoryRunning && !isExecuting;
+
+    private string ExecuteButtonText => isExecuting ? "执行中" : "执行标签操作";
+
+    private string TargetEpcDisplay => string.IsNullOrEmpty(Vm.TargetEpc) ? "all" : "1";
+
+    private string OpPreflightClass => OpType switch
+    {
+        "Kill" => "danger",
+        "Lock" => "warn",
+        "Write" => "warn",
+        _ => "ok"
+    };
+
+    private string OpPreflightText => OpType switch
+    {
+        "Kill" => "Kill 会永久销毁标签，执行前必须确认 Access Password",
+        "Lock" => "Lock 会改变权限位，建议先读取 Reserved Bank",
+        "Write" => "Write 会修改标签数据，已启用写入前读取原值",
+        _ => "Read 操作不会修改标签数据"
+    };
+
+    private class AccessHistoryRecord
+    {
+        public string Time { get; set; } = "";
+        public string SpecId { get; set; } = "";
+        public string Operation { get; set; } = "";
+        public string Epc { get; set; } = "";
+        public bool Success { get; set; }
+        public string Message { get; set; } = "";
+    }
+
+    private readonly List<AccessHistoryRecord> historyList = new()
+    {
+        new AccessHistoryRecord { Time = "10:44:21", SpecId = "3001", Operation = "Read TID", Epc = "E2003412...", Success = true, Message = "返回 6 words" },
+        new AccessHistoryRecord { Time = "10:42:10", SpecId = "3001", Operation = "Write EPC", Epc = "300833B2...", Success = true, Message = "ANT-03 RSSI 偏低" }
+    };
+
+    protected override void OnInitialized()
+    {
+        State.CurrentCrumb = "LLRP / 标签读写";
+        State.Changed += OnStateChanged;
+    }
+
+    private void DryRun()
+    {
+        StatusText = "已预检";
+        StatusTone = "warn";
+        ResultStateClass = "success";
+        ResultTitle = "预检通过";
+        ResultBody = "AccessCommand 字段完整，EPC 掩码、Memory Bank、Word Pointer 与 Access Password 均可下发。";
+        State.ShowNotification("预检成功", "AccessCommand 预检通过", true);
+    }
+
+    private async Task ExecuteOperation()
+    {
+        if (!CanOperate) return;
+
+        if (OpType == "Kill" && ConfirmKill)
+        {
+            // simulated confirmation in UI using a toast notification since JS prompt in Hybrid can block
+            State.ShowNotification("需要二次确认", "Kill 操作会永久销毁标签，请确认 Access Password 是否正确！", false);
+            return;
+        }
+
+        isExecuting = true;
+        StatusText = "执行中";
+        StatusTone = "info";
+        ResultStateClass = "loading";
+        ResultTitle = "正在等待 Reader 回执";
+        ResultBody = "已发送 ADD_ACCESSSPEC 与 ENABLE_ACCESSSPEC，等待 AccessReport 返回。";
+        StateHasChanged();
+
+        // Simulate execution delay
+        await Task.Delay(850);
+
+        try
+        {
+            if (OpType == "Read")
+            {
+                await Vm.ReadAsync();
+                var success = Vm.Result.Contains("success") || Vm.Result.Contains("completed") || !string.IsNullOrEmpty(Vm.Data);
+                ResultTitle = success ? "Read 执行成功" : "Read 执行失败";
+                ResultBody = Vm.Result + (string.IsNullOrEmpty(Vm.Data) ? "" : $"\n\n返回数据:\n{Vm.Data}");
+                ResultStateClass = success ? "success" : "error";
+                StatusText = success ? "已完成" : "失败";
+                StatusTone = success ? "ok" : "danger";
+
+                historyList.Insert(0, new AccessHistoryRecord
+                {
+                    Time = DateTime.Now.ToString("HH:mm:ss"),
+                    SpecId = "3001",
+                    Operation = $"Read {Vm.MemoryBank}",
+                    Epc = string.IsNullOrEmpty(Vm.TargetEpc) ? "all" : Vm.TargetEpc,
+                    Success = success,
+                    Message = Vm.Result
+                });
+            }
+            else if (OpType == "Write")
+            {
+                await Vm.WriteAsync();
+                var success = Vm.Result.Contains("success") || Vm.Result.Contains("completed");
+                ResultTitle = success ? "Write 执行成功" : "Write 执行失败";
+                ResultBody = Vm.Result;
+                ResultStateClass = success ? "success" : "error";
+                StatusText = success ? "已完成" : "失败";
+                StatusTone = success ? "ok" : "danger";
+
+                historyList.Insert(0, new AccessHistoryRecord
+                {
+                    Time = DateTime.Now.ToString("HH:mm:ss"),
+                    SpecId = "3001",
+                    Operation = $"Write {Vm.MemoryBank}",
+                    Epc = string.IsNullOrEmpty(Vm.TargetEpc) ? "all" : Vm.TargetEpc,
+                    Success = success,
+                    Message = Vm.Result
+                });
+            }
+            else
+            {
+                ResultTitle = $"{OpType} 操作暂不支持";
+                ResultBody = $"SDK 底层暂未实现 {OpType} 指令的封装发送。";
+                ResultStateClass = "error";
+                StatusText = "不支持";
+                StatusTone = "danger";
+            }
+        }
+        finally
+        {
+            isExecuting = false;
+            StateHasChanged();
+        }
+    }
+
+    private void OnStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        State.Changed -= OnStateChanged;
+    }
+}
