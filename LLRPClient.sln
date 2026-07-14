@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRPReaderManagement", "LLR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRPConsole", "LLRPConsole\LLRPConsole.csproj", "{86A67C88-9AC6-4FB6-A6D3-FD80C4271314}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRP.Cli", "LLRP.Cli\LLRP.Cli.csproj", "{5A42BC83-531B-400F-A2EF-12D858F88153}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +132,18 @@ Global
 		{86A67C88-9AC6-4FB6-A6D3-FD80C4271314}.Release|x64.Build.0 = Release|Any CPU
 		{86A67C88-9AC6-4FB6-A6D3-FD80C4271314}.Release|x86.ActiveCfg = Release|Any CPU
 		{86A67C88-9AC6-4FB6-A6D3-FD80C4271314}.Release|x86.Build.0 = Release|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Debug|x64.Build.0 = Debug|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Debug|x86.Build.0 = Debug|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|x64.ActiveCfg = Release|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|x64.Build.0 = Release|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|x86.ActiveCfg = Release|Any CPU
+		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
