@@ -6,17 +6,27 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>LLRP.Cli</RootNamespace>
+    <Version>2.0.0</Version>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>llrp</ToolCommandName>
+    <PackageId>LLRP.Cli</PackageId>
+    <Authors>LLRPClient contributors</Authors>
+    <Description>Production command-line console for standards-compliant LLRP readers.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Terminal.Gui" Version="2.4.3" />
     <PackageReference Include="Spectre.Console" Version="0.55.2" />
-    <PackageReference Include="Terminal.Gui.Interop.Spectre" Version="2.4.3" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LLRPSdk\LLRPSdk.csproj" />
     <ProjectReference Include="..\LTKNet\LLRP\LLRP-LTKNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

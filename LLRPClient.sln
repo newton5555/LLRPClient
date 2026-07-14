@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRPConsole", "LLRPConsole\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRP.Cli", "LLRP.Cli\LLRP.Cli.csproj", "{5A42BC83-531B-400F-A2EF-12D858F88153}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLRP.Cli.Tests", "LLRP.Cli.Tests\LLRP.Cli.Tests.csproj", "{91D9708B-3A53-46C7-A27C-527DD06B1266}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +146,18 @@ Global
 		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|x64.Build.0 = Release|Any CPU
 		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A42BC83-531B-400F-A2EF-12D858F88153}.Release|x86.Build.0 = Release|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Debug|x64.Build.0 = Debug|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Debug|x86.Build.0 = Debug|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Release|x64.ActiveCfg = Release|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Release|x64.Build.0 = Release|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Release|x86.ActiveCfg = Release|Any CPU
+		{91D9708B-3A53-46C7-A27C-527DD06B1266}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

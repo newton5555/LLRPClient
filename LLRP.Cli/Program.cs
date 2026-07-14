@@ -1,23 +1,28 @@
-using System;
-using Terminal.Gui.App;
+﻿using LLRP.Cli.Delivery;
+using Spectre.Console.Cli;
 
 namespace LLRP.Cli;
 
-public class Program
+public static class Program
 {
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
-        try
+        var app = new CommandApp();
+        app.SetDefaultCommand<ConsoleCommand>()
+            .WithDescription("Launch the interactive LLRP command REPL.");
+        app.Configure(config =>
         {
-            using IApplication app = Application.Create();
-            app.Init();
-            
-            var win = new AppWindow(app);
-            app.Run(win);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
+            config.SetApplicationName("llrp");
+            config.UseStrictParsing();
+            config.AddCommand<SendCommand>("send")
+                .WithDescription("Send a standard LLRP request through LLRPSdk and display every TX/RX frame.");
+            config.AddCommand<MonitorCommand>("monitor")
+                .WithDescription("Connect to a reader and continuously decode received LLRP frames.");
+            config.AddCommand<DecodeCommand>("decode")
+                .WithDescription("Decode one captured LLRP frame from hexadecimal text or a file.");
+            config.AddCommand<ConsoleCommand>("console")
+                .WithDescription("Launch the interactive LLRP command REPL.");
+        });
+        return app.Run(args);
     }
 }

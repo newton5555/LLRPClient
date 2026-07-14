@@ -274,6 +274,71 @@ namespace LLRPSdk
             this.DisableRoSpec();
         }
 
+        /// <summary>Enable a specific ROSpec by ID. Exposed for CLI/interactive tools that need to address non-default ROSpec IDs.</summary>
+        public void EnableRoSpec(uint roSpecId)
+        {
+            if (this.reader == null)
+                throw new LLRPSdkException("You must connect to the reader before enabling rospec.");
+            MSG_ERROR_MESSAGE msg_err;
+            var req = new MSG_ENABLE_ROSPEC { ROSpecID = roSpecId };
+            MSG_ENABLE_ROSPEC_RESPONSE rsp = this.reader.ENABLE_ROSPEC(req, out msg_err, this.MessageTimeout);
+            this.LogTransaction(req, (Message)rsp, msg_err, "ENABLE_ROSPEC");
+            LlrpReader.CheckForNullReply("ENABLE_ROSPEC", (Message)rsp, msg_err);
+            LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, "ENABLE_ROSPEC");
+        }
+
+        /// <summary>Disable a specific ROSpec by ID.</summary>
+        public void DisableRoSpec(uint roSpecId)
+        {
+            if (this.reader == null)
+                throw new LLRPSdkException("You must connect to the reader before disabling rospec.");
+            MSG_ERROR_MESSAGE msg_err;
+            var req = new MSG_DISABLE_ROSPEC { ROSpecID = roSpecId };
+            MSG_DISABLE_ROSPEC_RESPONSE rsp = this.reader.DISABLE_ROSPEC(req, out msg_err, this.MessageTimeout);
+            this.LogTransaction(req, (Message)rsp, msg_err, "DISABLE_ROSPEC");
+            LlrpReader.CheckForNullReply("DISABLE_ROSPEC", (Message)rsp, msg_err);
+            LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, "DISABLE_ROSPEC");
+        }
+
+        /// <summary>Delete a specific ROSpec by ID. Pass 0 to delete all (per LLRP spec).</summary>
+        public void DeleteRoSpec(uint roSpecId)
+        {
+            if (this.reader == null)
+                throw new LLRPSdkException("You must connect to the reader before deleting rospecs.");
+            MSG_ERROR_MESSAGE msg_err;
+            var req = new MSG_DELETE_ROSPEC { ROSpecID = roSpecId };
+            MSG_DELETE_ROSPEC_RESPONSE rsp = this.reader.DELETE_ROSPEC(req, out msg_err, this.MessageTimeout);
+            this.LogTransaction(req, (Message)rsp, msg_err, "DELETE_ROSPEC");
+            LlrpReader.CheckForNullReply("DELETE_ROSPEC", (Message)rsp, msg_err);
+            LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, "DELETE_ROSPEC");
+        }
+
+        /// <summary>Start a specific ROSpec by ID.</summary>
+        public void StartRoSpec(uint roSpecId)
+        {
+            if (this.reader == null)
+                throw new LLRPSdkException("You must connect to the reader before starting rospec.");
+            MSG_ERROR_MESSAGE msg_err;
+            var req = new MSG_START_ROSPEC { ROSpecID = roSpecId };
+            MSG_START_ROSPEC_RESPONSE rsp = this.reader.START_ROSPEC(req, out msg_err, this.MessageTimeout);
+            this.LogTransaction(req, (Message)rsp, msg_err, "START_ROSPEC");
+            LlrpReader.CheckForNullReply("START_ROSPEC", (Message)rsp, msg_err);
+            LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, "START_ROSPEC");
+        }
+
+        /// <summary>Stop a specific ROSpec by ID.</summary>
+        public void StopRoSpec(uint roSpecId)
+        {
+            if (this.reader == null)
+                throw new LLRPSdkException("You must connect to the reader before stopping rospec.");
+            MSG_ERROR_MESSAGE msg_err;
+            var req = new MSG_STOP_ROSPEC { ROSpecID = roSpecId };
+            MSG_STOP_ROSPEC_RESPONSE rsp = this.reader.STOP_ROSPEC(req, out msg_err, this.MessageTimeout);
+            this.LogTransaction(req, (Message)rsp, msg_err, "STOP_ROSPEC");
+            LlrpReader.CheckForNullReply("STOP_ROSPEC", (Message)rsp, msg_err);
+            LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, "STOP_ROSPEC");
+        }
+
         /// <summary>
         /// Starts the reader. Tag reports will be received asynchronously via an event.
         /// </summary>
@@ -1147,6 +1212,13 @@ namespace LLRPSdk
             return featureSet;
         }
 
+        /// <summary>Queries the standard GET_READER_CONFIG data requested by the caller.</summary>
+        public MSG_GET_READER_CONFIG_RESPONSE QueryReaderConfiguration(ENUM_GetReaderConfigRequestedData requestedData) =>
+            this.GetReaderConfig(requestedData);
+
+        /// <summary>Queries all ROSpec definitions and their current reader states.</summary>
+        public MSG_GET_ROSPECS_RESPONSE QueryRoSpecs() => this.GetRoSpecs();
+
 
 
         private void SetCustomReaderConfig(ICustom_Parameter param, string msgType)
@@ -1454,6 +1526,15 @@ namespace LLRPSdk
             string str = "ADD_ROSPEC";
             LlrpReader.CheckForNullReply(str, (Message)rsp, msg_err);
             LlrpReader.CheckLlrpReply(rsp.LLRPStatus, msg_err, str);
+        }
+
+        /// <summary>Adds a standard ROSpec supplied by an interactive or automation client.</summary>
+        /// <param name="roSpec">The complete ROSpec parameter to add.</param>
+        public void AddRoSpec(PARAM_ROSpec roSpec)
+        {
+            if (roSpec == null)
+                throw new ArgumentNullException(nameof(roSpec));
+            this.AddRoSpec(new MSG_ADD_ROSPEC { ROSpec = roSpec });
         }
 
         /// <summary>Build up an LTK add ROSpec message.</summary>
