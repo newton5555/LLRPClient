@@ -105,6 +105,7 @@ public sealed class ReaderContext
             case ReaderOperation.Rospecs:
                 if (_rospecStates.Count == 0) Phase = ReaderWorkflowPhase.Configured;
                 break;
+            case ReaderOperation.CreateDefaultRospec:
             case ReaderOperation.ApplyDefaultSettings:
                 _rospecStates[1] = "Inactive";
                 CurrentRospecId = 1;
@@ -192,12 +193,12 @@ public static class PromptChain
     {
         ReaderWorkflowPhase.Offline => [new("connect <host>", "establish an LLRP session")],
         ReaderWorkflowPhase.Faulted => [new($"connect {context.Host ?? "<host>"}{(context.Port > 0 ? $" {context.Port}" : string.Empty)}", "recover the lost connection"), new("status", "inspect the last failure")],
-        ReaderWorkflowPhase.Connected => [new("send capabilities", "verify protocol compatibility and discover reader features")],
-        ReaderWorkflowPhase.Ready => [new("send rospecs", "discover installed ROSpecs and their actual states"), new("send configuration", "inspect the current reader configuration")],
-        ReaderWorkflowPhase.Configured => [new("send apply-default-settings", "create a usable default ROSpec"), new("send rospecs", "refresh ROSpec state from the reader")],
-        ReaderWorkflowPhase.RospecDisabled => [new($"send enable-rospec {context.CurrentRospecId ?? 1}", "enable the selected ROSpec")],
-        ReaderWorkflowPhase.RospecEnabled => [new($"send start-rospec {context.CurrentRospecId ?? 1}", "start inventory"), new("send rospecs", "refresh ROSpec state")],
-        ReaderWorkflowPhase.InventoryActive => [new("monitor 30", "stream tag reports and reader events"), new($"send stop-rospec {context.CurrentRospecId ?? 1}", "stop inventory")],
+        ReaderWorkflowPhase.Connected => [new("caps", "verify protocol compatibility and discover reader features")],
+        ReaderWorkflowPhase.Ready => [new("rospec list", "discover installed ROSpecs and their actual states"), new("config", "inspect the current reader configuration")],
+        ReaderWorkflowPhase.Configured => [new("rospec create default", "create a usable default ROSpec"), new("rospec list", "refresh ROSpec state from the reader")],
+        ReaderWorkflowPhase.RospecDisabled => [new($"rospec enable {context.CurrentRospecId ?? 1}", "enable the selected ROSpec")],
+        ReaderWorkflowPhase.RospecEnabled => [new($"rospec start {context.CurrentRospecId ?? 1}", "start inventory"), new("rospec list", "refresh ROSpec state")],
+        ReaderWorkflowPhase.InventoryActive => [new("monitor 30", "stream tag reports and reader events"), new($"rospec stop {context.CurrentRospecId ?? 1}", "stop inventory")],
         _ => []
     };
 }
@@ -216,7 +217,7 @@ public static class OperationRules
             var active = context.RospecStates.FirstOrDefault(item => Is(item.Value, "Active"));
             return active.Key == 0
                 ? OperationPreflight.Permit
-                : new(false, $"ROSpec {active.Key} is active.", $"Run `send stop-rospec {active.Key}` before deleting all ROSpecs.");
+                : new(false, $"ROSpec {active.Key} is active.", $"Run `rospec stop {active.Key}` before deleting all ROSpecs.");
         }
         if (rospecId == 0 || !context.RospecStates.TryGetValue(rospecId, out var state))
             return OperationPreflight.Permit;
@@ -224,21 +225,21 @@ public static class OperationRules
         return operation switch
         {
             ReaderOperation.EnableRospec when Is(state, "Active") =>
-                new(false, $"ROSpec {rospecId} is already active.", $"Run `send stop-rospec {rospecId}` before changing its enabled state."),
+                new(false, $"ROSpec {rospecId} is already active.", $"Run `rospec stop {rospecId}` before changing its enabled state."),
             ReaderOperation.EnableRospec when Is(state, "Inactive") =>
-                new(false, $"ROSpec {rospecId} is already enabled.", $"Run `send start-rospec {rospecId}` to begin inventory."),
+                new(false, $"ROSpec {rospecId} is already enabled.", $"Run `rospec start {rospecId}` to begin inventory."),
             ReaderOperation.StartRospec when Is(state, "Disabled") =>
-                new(false, $"ROSpec {rospecId} is disabled.", $"Run `send enable-rospec {rospecId}` first."),
+                new(false, $"ROSpec {rospecId} is disabled.", $"Run `rospec enable {rospecId}` first."),
             ReaderOperation.StartRospec when Is(state, "Active") =>
                 new(false, $"ROSpec {rospecId} is already active.", "Run `monitor 30` to observe reports."),
             ReaderOperation.StopRospec when !Is(state, "Active") =>
-                new(false, $"ROSpec {rospecId} is not active (reader state: {state}).", $"Run `send rospecs` to refresh state before stopping it."),
+                new(false, $"ROSpec {rospecId} is not active (reader state: {state}).", $"Run `rospec list` to refresh state before stopping it."),
             ReaderOperation.DisableRospec when Is(state, "Active") =>
-                new(false, $"ROSpec {rospecId} is active.", $"Run `send stop-rospec {rospecId}` before disabling it."),
+                new(false, $"ROSpec {rospecId} is active.", $"Run `rospec stop {rospecId}` before disabling it."),
             ReaderOperation.DisableRospec when Is(state, "Disabled") =>
-                new(false, $"ROSpec {rospecId} is already disabled.", $"Run `send enable-rospec {rospecId}` when ready."),
+                new(false, $"ROSpec {rospecId} is already disabled.", $"Run `rospec enable {rospecId}` when ready."),
             ReaderOperation.DeleteRospec when Is(state, "Active") =>
-                new(false, $"ROSpec {rospecId} is active.", $"Run `send stop-rospec {rospecId}` before deleting it."),
+                new(false, $"ROSpec {rospecId} is active.", $"Run `rospec stop {rospecId}` before deleting it."),
             _ => OperationPreflight.Permit
         };
     }

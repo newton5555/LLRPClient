@@ -23,8 +23,9 @@ public static class CommandCatalog
         new("connect", "connect [host] [port] [--tls] [--timeout-ms <ms>]", "Connect and negotiate with an LLRP reader."),
         new("disconnect", "disconnect", "Close or clear the current reader connection."),
         new("status", "status", "Show connection, workflow, ROSpec and frame state."),
-        new("send", "send <operation> [rospec-id]", "Build through LLRPSdk, send, correlate and decode a standard request.", true),
-        new("rospec", "rospec edit <id> [options]", "Inspect or edit common fields of an installed ROSpec.", true),
+        new("caps", "caps", "Query reader capabilities and verify protocol compatibility.", true),
+        new("config", "config", "Query the complete reader configuration.", true),
+        new("rospec", "rospec list|show|create|edit|enable|disable|start|stop|delete", "Inspect, create and control installed ROSpecs.", true),
         new("monitor", "monitor [seconds]", "Stream received frames immediately; 0 runs until Ctrl+C.", true),
         new("frames", "frames [count]", "Show the most recent captured frames."),
         new("clear", "clear", "Clear the terminal."),
@@ -81,9 +82,8 @@ public static class CommandCatalog
             var command = parsed.Tokens.FirstOrDefault()?.ToLowerInvariant();
             candidates = command switch
             {
-                "send" => CompleteSend(parsed, context),
                 "rospec" => CompleteRospec(parsed, context),
-                "help" or "?" => Commands.Select(item => item.Name).Concat(Operations.Select(item => item.Name)),
+                "help" or "?" => Commands.Select(item => item.Name),
                 "monitor" => ["0", "10", "30", "60"],
                 "frames" => ["10", "20", "50", "100"],
                 _ => []
@@ -108,14 +108,20 @@ public static class CommandCatalog
 
     private static IEnumerable<string> CompleteRospec(CompletionParse parsed, ReaderContext context)
     {
-        if (parsed.Tokens.Count == 1 && parsed.EndsWithSeparator ||
-            parsed.Tokens.Count == 2 && !parsed.EndsWithSeparator)
-            return ["edit"];
-        if (!parsed.Tokens.ElementAtOrDefault(1).Equals("edit", StringComparison.OrdinalIgnoreCase))
-            return [];
-        if (parsed.Tokens.Count == 2 && parsed.EndsWithSeparator ||
-            parsed.Tokens.Count == 3 && !parsed.EndsWithSeparator)
+        var actions = new[] { "list", "show", "create", "edit", "enable", "disable", "start", "stop", "delete" };
+        if (parsed.Tokens.Count == 1 && parsed.EndsWithSeparator || parsed.Tokens.Count == 2 && !parsed.EndsWithSeparator)
+            return actions;
+
+        var action = parsed.Tokens.ElementAtOrDefault(1)?.ToLowerInvariant();
+        if (action is null) return actions;
+        if (action == "create")
+            return parsed.Tokens.Count == 2 && parsed.EndsWithSeparator || parsed.Tokens.Count == 3 && !parsed.EndsWithSeparator
+                ? ["default"]
+                : [];
+        if (action == "list") return [];
+        if (parsed.Tokens.Count == 2 && parsed.EndsWithSeparator || parsed.Tokens.Count == 3 && !parsed.EndsWithSeparator)
             return context.KnownRospecIds.Select(id => id.ToString()).DefaultIfEmpty("1");
+        if (action != "edit") return [];
 
         var valueOption = parsed.EndsWithSeparator
             ? parsed.Tokens.LastOrDefault()

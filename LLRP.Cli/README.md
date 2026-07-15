@@ -16,9 +16,9 @@ The prompt reflects the observed workflow rather than merely the TCP state:
 
 ```text
 llrp[offline] > connect 192.168.1.100
-llrp[192.168.1.100|ready] > send rospecs
-llrp[192.168.1.100|rospec-disabled] > send enable-rospec 1
-llrp[192.168.1.100|rospec-enabled] > send start-rospec 1
+llrp[192.168.1.100|ready] > rospec list
+llrp[192.168.1.100|rospec-disabled] > rospec enable 1
+llrp[192.168.1.100|rospec-enabled] > rospec start 1
 llrp[192.168.1.100|inventory] > monitor 30
 ```
 
@@ -37,11 +37,13 @@ horizontally instead of wrapping the active input row. History is stored under
 the user's local application-data directory; credentials are never collected
 or stored.
 
-Run `help` or `help send` inside the console. Core commands are:
+Run `help` or `help rospec` inside the console. Core commands are:
 
 - `connect [host] [port] [--tls] [--timeout-ms <ms>]`
 - `disconnect`, `status`, `frames [count]`
-- `send <operation> [rospec-id]`
+- `caps`, `config`
+- `rospec list|show|create|edit|enable|disable|start|stop|delete`
+- `rospec edit <id> [options]`
 - `monitor [seconds]` (`0` means until Ctrl+C/Esc)
 - `clear`, `help [topic]`, `quit`
 
@@ -49,25 +51,48 @@ If `connect` is entered without arguments, a validated host/port/TLS/timeout
 wizard is shown. Commands that can start or destructively change reader state
 require confirmation in the interactive console.
 
-## Supported standard operations
+## Reader and ROSpec operations
 
-`capabilities`, `configuration`, `rospecs`, `apply-default-settings`,
-`enable-rospec`, `disable-rospec`, `start-rospec`, `stop-rospec`,
-`delete-rospec`, and `delete-all-rospecs`.
+`caps` issues standard `GET_READER_CAPABILITIES`, and `config` issues standard
+`GET_READER_CONFIG(All)`. ROSpec operations are grouped under `rospec`:
+`list`, `show`, `create default`, `edit`, `enable`, `disable`, `start`, `stop`,
+and `delete`.
 
-`configuration` issues standard `GET_READER_CONFIG(All)` and `rospecs` issues
-standard `GET_ROSPECS`. The default-settings operation intentionally uses the
-SDK's generated default configuration; no configuration or inventory is
-started implicitly on connection.
+`rospec list` issues standard `GET_ROSPECS`. If the list is empty,
+`rospec create default` uses the SDK-generated default ROSpec and sends only
+`ADD_ROSPEC` followed by `ENABLE_ROSPEC`; it does not reset the reader or
+delete other configuration.
+
+## Edit an installed ROSpec
+
+Read the editable values without changing the reader:
+
+```text
+rospec edit 1
+```
+
+Apply one or more common standard fields:
+
+```text
+rospec edit 1 --session 2 --population 64 --stop-ms 30000
+rospec edit 1 --report-every 1 --include-antenna on --include-rssi on
+```
+
+Supported fields are priority, C1G2 session and tag-population estimate,
+ROSpec duration stop trigger, report interval, antenna ID and peak RSSI report
+selectors. The editor reads the original ROSpec, preserves unedited standard
+and custom parameters, and only replaces it when a value actually changes. An
+active ROSpec is stopped and disabled first; after `DELETE_ROSPEC` and
+`ADD_ROSPEC`, its previous Disabled, Inactive or Active state is restored. If
+the new `ADD_ROSPEC` is rejected, the CLI attempts to restore the original.
+Every request and response in this sequence is shown as a semantic tree and raw
+Hex.
 
 ## Automation commands
 
 The one-shot commands use the same transport, decoder and output path:
 
 ```powershell
-dotnet run --project LLRP.Cli -- send capabilities --host 192.168.1.100
-dotnet run --project LLRP.Cli -- send rospecs --host 192.168.1.100 --output json
-dotnet run --project LLRP.Cli -- send start-rospec --rospec-id 1 --host 192.168.1.100
 dotnet run --project LLRP.Cli -- monitor --host 192.168.1.100 --duration-seconds 0
 dotnet run --project LLRP.Cli -- decode --hex 04160000000E0000002A00000001
 dotnet run --project LLRP.Cli -- decode --file .\captured-frame.txt --output json
@@ -79,13 +104,19 @@ protocol version, declared/captured lengths, status, summary, Hex and decoder
 warning. Invalid arguments return exit code `2`; connection, timeout and reader
 operation failures return `1`.
 
-## Build, test and package
+## Build, test and publish
 
 ```powershell
 dotnet build LLRP.Cli\LLRP.Cli.csproj
 dotnet test LLRP.Cli.Tests\LLRP.Cli.Tests.csproj
-dotnet pack LLRP.Cli\LLRP.Cli.csproj -c Release
+dotnet publish LLRP.Cli\LLRP.Cli.csproj -c Release
 ```
+
+The framework-dependent executable is produced as `LLRP.Cli.exe` and can be
+run directly on a machine with the matching .NET runtime when kept with its
+published DLLs. `dotnet pack` remains optional and produces a .NET Tool package
+that must be installed with `dotnet tool install`; the `.nupkg` itself is not an
+executable.
 
 The tests include a simulated LLRP transport that emits raw standard request,
 successful response and rejected response frames. They verify message-number

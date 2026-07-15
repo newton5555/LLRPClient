@@ -9,6 +9,7 @@ public enum ReaderOperation
     Capabilities,
     Configuration,
     Rospecs,
+    CreateDefaultRospec,
     ApplyDefaultSettings,
     EnableRospec,
     DisableRospec,
@@ -184,6 +185,15 @@ internal sealed class SdkReaderTransport : IReaderTransport
             case ReaderOperation.Capabilities: _ = _reader.QueryFeatureSet(); break;
             case ReaderOperation.Configuration: _ = _reader.QueryReaderConfiguration(ENUM_GetReaderConfigRequestedData.All); break;
             case ReaderOperation.Rospecs: _ = _reader.QueryRoSpecs(); break;
+            case ReaderOperation.CreateDefaultRospec:
+                var existing = _reader.QueryRoSpecs();
+                if (existing.ROSpec is { Length: > 0 })
+                    throw new InvalidOperationException("The reader already has ROSpecs; run `rospec list` and choose an existing ROSpec.");
+                var settings = _reader.QueryDefaultSettings();
+                var message = _reader.BuildAddROSpecMessage(settings);
+                _reader.AddRoSpec(message.ROSpec);
+                _reader.EnableRoSpec(message.ROSpec.ROSpecID);
+                break;
             case ReaderOperation.ApplyDefaultSettings: _reader.ApplyDefaultSettings(); break;
             case ReaderOperation.EnableRospec: _reader.EnableRoSpec(rospecId); break;
             case ReaderOperation.DisableRospec: _reader.DisableRoSpec(rospecId); break;

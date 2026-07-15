@@ -67,6 +67,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\LLRPSdk\LLRPSdk.csproj" />
+        <ProjectReference Include="..\LTKNet\LLRP\LLRP-LTKNet.csproj" />
     </ItemGroup>
 
 </Project>

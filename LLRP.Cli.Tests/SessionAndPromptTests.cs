@@ -1,5 +1,6 @@
 ﻿using LLRP.Cli.Delivery;
 using Org.LLRP.LTK.LLRPV1;
+using Org.LLRP.LTK.LLRPV1.DataType;
 
 namespace LLRP.Cli.Tests;
 
@@ -44,13 +45,16 @@ public sealed class SessionAndPromptTests
         Assert.StartsWith("connect", PromptChain.GetNextActions(context)[0].Command);
 
         context.Connected("reader", 5084, false);
-        Assert.Equal("send capabilities", PromptChain.GetNextActions(context)[0].Command);
+        Assert.Equal("caps", PromptChain.GetNextActions(context)[0].Command);
 
         context.OperationSucceeded(ReaderOperation.Capabilities, 0);
-        Assert.Equal("send rospecs", PromptChain.GetNextActions(context)[0].Command);
+        Assert.Equal("rospec list", PromptChain.GetNextActions(context)[0].Command);
 
-        context.OperationSucceeded(ReaderOperation.ApplyDefaultSettings, 0);
-        Assert.Equal("send start-rospec 1", PromptChain.GetNextActions(context)[0].Command);
+        context.OperationSucceeded(ReaderOperation.Rospecs, 0);
+        Assert.Equal("rospec create default", PromptChain.GetNextActions(context)[0].Command);
+
+        context.OperationSucceeded(ReaderOperation.CreateDefaultRospec, 0);
+        Assert.Equal("rospec start 1", PromptChain.GetNextActions(context)[0].Command);
 
         context.OperationSucceeded(ReaderOperation.StartRospec, 1);
         Assert.Equal("monitor 30", PromptChain.GetNextActions(context)[0].Command);
@@ -65,11 +69,11 @@ public sealed class SessionAndPromptTests
 
         context.Connected("reader", 5084, false);
         context.OperationSucceeded(ReaderOperation.Capabilities, 0);
-        Assert.Contains("send", CommandCatalog.Complete("s", 1, context));
-        Assert.Contains("start-rospec", CommandCatalog.Complete("send st", 7, context));
+        Assert.Contains("caps", CommandCatalog.Complete("ca", 2, context));
+        Assert.Contains("start", CommandCatalog.Complete("rospec st", 9, context));
 
-        context.OperationSucceeded(ReaderOperation.ApplyDefaultSettings, 0);
-        Assert.Contains("1", CommandCatalog.Complete("send start-rospec ", 18, context));
+        context.OperationSucceeded(ReaderOperation.CreateDefaultRospec, 0);
+        Assert.Contains("1", CommandCatalog.Complete("rospec start ", 13, context));
     }
 
     [Fact]
@@ -107,7 +111,7 @@ public sealed class SessionAndPromptTests
         context.OperationSucceeded(ReaderOperation.DisableRospec, 1);
         var result = OperationRules.Validate(context, ReaderOperation.StartRospec, 1);
         Assert.False(result.Allowed);
-        Assert.Contains("enable-rospec 1", result.Recovery);
+        Assert.Contains("rospec enable 1", result.Recovery);
     }
 
     [Fact]
@@ -122,13 +126,57 @@ public sealed class SessionAndPromptTests
         ready.Connected("reader", 5084, false);
         ready.OperationSucceeded(ReaderOperation.Capabilities, 0);
         var suggestedQuery = CommandCatalog.Assist(string.Empty, 0, ready);
-        Assert.Equal("send rospecs", suggestedQuery.GhostSuffix);
+        Assert.Equal("rospec list", suggestedQuery.GhostSuffix);
         Assert.Contains("discover installed ROSpecs", suggestedQuery.Hint);
 
         ready.OperationSucceeded(ReaderOperation.ApplyDefaultSettings, 0);
-        var start = CommandCatalog.Assist("send st", 7, ready);
-        Assert.Equal("art-rospec 1", start.GhostSuffix);
-        Assert.Contains("Start inventory", start.Hint);
+        var start = CommandCatalog.Assist("rospec st", 9, ready);
+        Assert.Equal("art 1", start.GhostSuffix);
+        Assert.Contains("rospec", start.Hint);
+    }
+
+    [Fact]
+    public void RospecCompletionSuggestsSubcommandKnownIdOptionsAndValues()
+    {
+        var context = new ReaderContext();
+        context.Connected("reader", 5084, false);
+        context.Observe([RospecResponseFrame(CreateRospec(7))]);
+
+        Assert.Contains("edit", CommandCatalog.Complete("rospec ", 7, context));
+        Assert.Contains("default", CommandCatalog.Complete("rospec create ", 15, context));
+        Assert.Contains("7", CommandCatalog.Complete("rospec edit ", 12, context));
+        Assert.Contains("--session", CommandCatalog.Complete("rospec edit 7 --s", 18, context));
+        Assert.Contains("2", CommandCatalog.Complete("rospec edit 7 --session 2", 25, context));
+    }
+
+    [Fact]
+    public void RospecEditorClonesAndAppliesCommonFieldsWithoutChangingOriginal()
+    {
+        var original = CreateRospec(7);
+        var edited = RospecEditor.Clone(original);
+
+        var after = RospecEditor.Apply(edited, new(
+            Priority: 3,
+            Session: 2,
+            TagPopulation: 64,
+            StopAfterMilliseconds: 30_000,
+            ReportEvery: 10,
+            IncludeAntennaId: false,
+            IncludePeakRssi: true));
+
+        Assert.Equal((byte)3, after.Priority);
+        Assert.Equal((ushort)2, after.Session);
+        Assert.Equal((ushort)64, after.TagPopulation);
+        Assert.Equal(ENUM_ROSpecStopTriggerType.Duration, after.StopTrigger);
+        Assert.Equal((uint)30_000, after.StopAfterMilliseconds);
+        Assert.Equal((ushort)10, after.ReportEvery);
+        Assert.False(after.IncludeAntennaId);
+        Assert.True(after.IncludePeakRssi);
+
+        var unchanged = RospecEditor.Read(original);
+        Assert.Equal((ushort)1, unchanged.Session);
+        Assert.Equal((ushort)32, unchanged.TagPopulation);
+        Assert.Equal(ENUM_ROSpecStopTriggerType.Null, unchanged.StopTrigger);
     }
 
     [Theory]
@@ -140,6 +188,75 @@ public sealed class SessionAndPromptTests
 
         Assert.True(result.Success);
         Assert.Equal(host, result.Tokens[1]);
+    }
+
+    private static LlrpFrame RospecResponseFrame(PARAM_ROSpec roSpec)
+    {
+        var response = new MSG_GET_ROSPECS_RESPONSE
+        {
+            ROSpec = [roSpec],
+            LLRPStatus = new PARAM_LLRPStatus { StatusCode = ENUM_StatusCode.M_Success }
+        };
+        return new(DateTimeOffset.UtcNow, FrameDirection.Rx, [], "GET_ROSPECS_RESPONSE", response.MSG_ID,
+            "simulated", string.Empty, null, response, StatusCode: "M_Success");
+    }
+
+    private static PARAM_ROSpec CreateRospec(uint id)
+    {
+        var inventoryCommand = new PARAM_C1G2InventoryCommand
+        {
+            C1G2SingulationControl = new PARAM_C1G2SingulationControl
+            {
+                Session = new TwoBits(1),
+                TagPopulation = 32
+            }
+        };
+        var antenna = new PARAM_AntennaConfiguration { AntennaID = 1 };
+        antenna.AirProtocolInventoryCommandSettings.Add(inventoryCommand);
+        var aiSpec = new PARAM_AISpec
+        {
+            AISpecStopTrigger = new PARAM_AISpecStopTrigger
+            {
+                AISpecStopTriggerType = ENUM_AISpecStopTriggerType.Null
+            },
+            InventoryParameterSpec =
+            [
+                new PARAM_InventoryParameterSpec
+                {
+                    InventoryParameterSpecID = 1,
+                    ProtocolID = ENUM_AirProtocols.EPCGlobalClass1Gen2,
+                    AntennaConfiguration = [antenna]
+                }
+            ]
+        };
+        var roSpec = new PARAM_ROSpec
+        {
+            ROSpecID = id,
+            CurrentState = ENUM_ROSpecState.Inactive,
+            ROBoundarySpec = new PARAM_ROBoundarySpec
+            {
+                ROSpecStartTrigger = new PARAM_ROSpecStartTrigger
+                {
+                    ROSpecStartTriggerType = ENUM_ROSpecStartTriggerType.Null
+                },
+                ROSpecStopTrigger = new PARAM_ROSpecStopTrigger
+                {
+                    ROSpecStopTriggerType = ENUM_ROSpecStopTriggerType.Null
+                }
+            },
+            ROReportSpec = new PARAM_ROReportSpec
+            {
+                ROReportTrigger = ENUM_ROReportTriggerType.Upon_N_Tags_Or_End_Of_ROSpec,
+                N = 1,
+                TagReportContentSelector = new PARAM_TagReportContentSelector
+                {
+                    EnableAntennaID = true,
+                    EnablePeakRSSI = false
+                }
+            }
+        };
+        roSpec.SpecParameter.Add(aiSpec);
+        return roSpec;
     }
 
     private sealed class SimulatedTransport : IReaderTransport
@@ -165,6 +282,9 @@ public sealed class SessionAndPromptTests
                 : "0420000000120000002A011F000800000000"));
             if (RejectRequest) throw new InvalidOperationException("Reader returned R_DeviceError.");
         }
+
+        public RospecEditResult EditRospec(uint rospecId, RospecEditPatch patch, int timeoutMilliseconds) =>
+            throw new NotSupportedException();
 
         public void Disconnect() => IsConnected = false;
         public void Dispose() => IsConnected = false;

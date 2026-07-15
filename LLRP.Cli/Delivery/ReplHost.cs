@@ -86,7 +86,9 @@ internal sealed class ReplApplication
             case "connect": Connect(tokens.Skip(1).ToArray()); break;
             case "disconnect": Disconnect(); break;
             case "status": PrintStatus(); break;
-            case "send": Send(tokens.Skip(1).ToArray()); break;
+            case "caps": ExecuteOperation(ReaderOperation.Capabilities, 0, "Querying reader capabilities…"); break;
+            case "config": ExecuteOperation(ReaderOperation.Configuration, 0, "Querying reader configuration…"); break;
+            case "rospec": Rospec(tokens.Skip(1).ToArray()); break;
             case "monitor": Monitor(tokens.Skip(1).ToArray()); break;
             case "frames": PrintRecentFrames(tokens.Skip(1).ToArray()); break;
             case "clear": Console.Clear(); PrintBanner(); break;
@@ -244,6 +246,125 @@ internal sealed class ReplApplication
         ShowNextActions();
     }
 
+    private void Rospec(IReadOnlyList<string> args)
+    {
+        if (args.Count == 0)
+        {
+            PrintRospecHelp();
+            return;
+        }
+        var action = args[0].ToLowerInvariant();
+        if (action == "list")
+        {
+            if (args.Count != 1) throw new ArgumentException("Usage: rospec list");
+            ExecuteOperation(ReaderOperation.Rospecs, 0, "Reading installed ROSpecs…");
+            return;
+        }
+        if (action == "create")
+        {
+            if (args.Count != 2 || !args[1].Equals("default", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("Usage: rospec create default");
+            if (!Confirm("No ROSpec is installed. Create and enable the SDK default ROSpec"))
+            {
+                Info("Cancelled; no message was sent.");
+                return;
+            }
+            ExecuteOperation(ReaderOperation.CreateDefaultRospec, 0, "Creating default ROSpec…");
+            return;
+        }
+        if (action is "show" or "enable" or "disable" or "start" or "stop" or "delete")
+        {
+            if (args.Count != 2 || !uint.TryParse(args[1], out var lifecycleId) || lifecycleId == 0)
+                throw new ArgumentException($"Usage: rospec {action} <id>");
+            var operation = action switch
+            {
+                "show" => ReaderOperation.Rospecs,
+                "enable" => ReaderOperation.EnableRospec,
+                "disable" => ReaderOperation.DisableRospec,
+                "start" => ReaderOperation.StartRospec,
+                "stop" => ReaderOperation.StopRospec,
+                "delete" => ReaderOperation.DeleteRospec,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            var preflight = OperationRules.Validate(_context, operation, lifecycleId);
+            if (!preflight.Allowed)
+            {
+                PrintError("Invalid reader state", preflight.Message!, preflight.Recovery!);
+                ShowNextActions();
+                return;
+            }
+            if (operation is ReaderOperation.StartRospec or ReaderOperation.DeleteRospec &&
+                !Confirm($"rospec {action} {lifecycleId} changes reader state. Continue"))
+            {
+                Info("Cancelled; no message was sent.");
+                return;
+            }
+            ExecuteOperation(operation, lifecycleId, $"Running rospec {action} {lifecycleId}…");
+            return;
+        }
+        if (!action.Equals("edit", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("Usage: rospec list|show|create|edit|enable|disable|start|stop|delete");
+
+        var (rospecId, patch) = ParseRospecEdit(args.Skip(1).ToArray());
+        if (patch.HasChanges && !Confirm($"Replace ROSpec {rospecId} with the edited values"))
+        {
+            Info("Cancelled; no message was sent.");
+            return;
+        }
+
+        RospecEditExecution? execution = null;
+        var editProgress = patch.HasChanges ? $"Editing ROSpec {rospecId}…" : $"Reading ROSpec {rospecId}…";
+        RunWithStatus(editProgress, () => execution = _session!.EditRospec(rospecId, patch));
+        FrameOutput.WriteExecution(execution!);
+        _context.Observe(execution!.Frames);
+        if (!execution.Succeeded)
+        {
+            var error = execution.Error ?? new LLRPSdkException("Reader returned an unsuccessful LLRP status.");
+            _context.OperationFailed(error.Message, connectionLost: !_session!.IsConnected);
+            PrintException(error, $"Run `rospec list`, verify ROSpec {rospecId}, and retry.");
+            return;
+        }
+
+        PrintRospecValues(execution.Result!);
+        if (execution.Result!.Applied)
+            Success($"ROSpec {rospecId} updated and restored to {execution.Result.OriginalState} in {execution.Duration.TotalMilliseconds:F1} ms.");
+        else
+            Info(patch.HasChanges
+                ? $"ROSpec {rospecId} already has the requested values; no replacement was sent."
+                : $"ROSpec {rospecId} was inspected; no replacement was sent.");
+        ShowNextActions();
+    }
+
+    private void ExecuteOperation(ReaderOperation operation, uint rospecId, string progress)
+    {
+        var preflight = OperationRules.Validate(_context, operation, rospecId);
+        if (!preflight.Allowed)
+        {
+            PrintError("Invalid reader state", preflight.Message!, preflight.Recovery!);
+            ShowNextActions();
+            return;
+        }
+
+        OperationExecution? execution = null;
+        RunWithStatus(progress, () => execution = _session!.Execute(operation, rospecId));
+        FrameOutput.WriteExecution(execution!);
+        _context.Observe(execution!.Frames);
+        if (execution.Succeeded)
+        {
+            _context.OperationSucceeded(operation, rospecId);
+            Success($"{operation} completed in {execution.Duration.TotalMilliseconds:F1} ms.");
+        }
+        else
+        {
+            var error = execution.Error ?? new LLRPSdkException("Reader returned an unsuccessful LLRP status.");
+            _context.OperationFailed(error.Message, connectionLost: !_session!.IsConnected);
+            PrintException(error, operation == ReaderOperation.CreateDefaultRospec
+                ? "Run `rospec list` to inspect the reader state, then retry."
+                : "Run `status`, verify reader state, and retry.");
+        }
+        ShowNextActions();
+    }
+
     private void PrintRecentFrames(IReadOnlyList<string> args)
     {
         if (args.Count > 1) throw new ArgumentException("Usage: frames [count]");
@@ -282,14 +403,7 @@ internal sealed class ReplApplication
             {
                 AnsiConsole.MarkupLine($"[bold deepskyblue1]{Markup.Escape(command.Usage)}[/]");
                 AnsiConsole.MarkupLine(Markup.Escape(command.Description));
-                if (command.Name == "send") PrintOperations();
-                return;
-            }
-            var operation = CommandCatalog.FindOperation(topic);
-            if (operation is not null)
-            {
-                AnsiConsole.MarkupLine($"[bold deepskyblue1]send {Markup.Escape(operation.Name)}{(operation.RequiresRospecId ? " <rospec-id>" : string.Empty)}[/]");
-                AnsiConsole.MarkupLine(Markup.Escape(operation.Description));
+                if (command.Name == "rospec") PrintRospecHelp(showHeader: false);
                 return;
             }
             PrintError("Unknown help topic", topic, "Run `help` to list all commands.");
@@ -311,6 +425,31 @@ internal sealed class ReplApplication
         var table = new Table().Border(TableBorder.None).AddColumn("Name").AddColumn("Purpose");
         foreach (var operation in CommandCatalog.Operations)
             table.AddRow($"[deepskyblue1]{Markup.Escape(operation.Name)}[/]", $"[grey]{Markup.Escape(operation.Description)}[/]");
+        AnsiConsole.Write(table);
+    }
+
+    private static void PrintRospecHelp(bool showHeader = true)
+    {
+        if (showHeader)
+        {
+            AnsiConsole.MarkupLine("[bold deepskyblue1]rospec list|show|create|edit|enable|disable|start|stop|delete[/]");
+            AnsiConsole.MarkupLine("[grey]Without options, reads the ROSpec and displays its editable values.[/]");
+        }
+        var table = new Table().Border(TableBorder.None).AddColumn("Command").AddColumn("Purpose");
+        table.AddRow("[deepskyblue1]rospec list[/]", "List installed ROSpecs");
+        table.AddRow("[deepskyblue1]rospec show <id>[/]", "Show one ROSpec and its report tree");
+        table.AddRow("[deepskyblue1]rospec create default[/]", "Create the default ROSpec when none exists");
+        table.AddRow("[deepskyblue1]rospec edit <id>[/]", "Inspect or change common fields");
+        table.AddRow("[deepskyblue1]rospec enable|disable|start|stop|delete <id>[/]", "Control ROSpec lifecycle");
+        AnsiConsole.Write(table);
+        table = new Table().Border(TableBorder.None).AddColumn("Edit option").AddColumn("Value");
+        table.AddRow("[deepskyblue1]--priority[/]", "0–255");
+        table.AddRow("[deepskyblue1]--session[/]", "0–3 (applied to all C1G2 antenna controls)");
+        table.AddRow("[deepskyblue1]--population[/]", "1–65535");
+        table.AddRow("[deepskyblue1]--stop-ms[/]", "0 disables the duration stop trigger");
+        table.AddRow("[deepskyblue1]--report-every[/]", "0 reports at ROSpec end; otherwise every N tags");
+        table.AddRow("[deepskyblue1]--include-antenna[/]", "on | off");
+        table.AddRow("[deepskyblue1]--include-rssi[/]", "on | off");
         AnsiConsole.Write(table);
     }
 
@@ -364,6 +503,112 @@ internal sealed class ReplApplication
         if (port is < 1 or > 65535) throw new ArgumentException("Port must be between 1 and 65535.");
         return new(host, port, tls, timeout);
     }
+
+    private (uint RospecId, RospecEditPatch Patch) ParseRospecEdit(IReadOnlyList<string> args)
+    {
+        var index = 0;
+        var suggestedId = _context.CurrentRospecId ?? _context.KnownRospecIds.FirstOrDefault();
+        if (suggestedId == 0) suggestedId = 1;
+        var defaultId = suggestedId.ToString();
+        var idText = args.ElementAtOrDefault(index);
+        if (idText is null || idText.StartsWith('-'))
+            idText = Ask("ROSpec ID", defaultId);
+        else
+            index++;
+        if (!uint.TryParse(idText, out var rospecId) || rospecId == 0)
+            throw new ArgumentException("ROSpec ID must be an integer between 1 and 4294967295.");
+
+        byte? priority = null;
+        ushort? session = null;
+        ushort? population = null;
+        uint? stopMs = null;
+        ushort? reportEvery = null;
+        bool? includeAntenna = null;
+        bool? includeRssi = null;
+        while (index < args.Count)
+        {
+            var option = args[index++].ToLowerInvariant();
+            var value = index < args.Count ? args[index++] :
+                throw new ArgumentException($"{option} requires a value.");
+            switch (option)
+            {
+                case "--priority":
+                    if (!byte.TryParse(value, out var parsedPriority))
+                        throw new ArgumentException("--priority must be between 0 and 255.");
+                    priority = parsedPriority;
+                    break;
+                case "--session":
+                    if (!ushort.TryParse(value, out var parsedSession) || parsedSession > 3)
+                        throw new ArgumentException("--session must be 0, 1, 2, or 3.");
+                    session = parsedSession;
+                    break;
+                case "--population":
+                    if (!ushort.TryParse(value, out var parsedPopulation) || parsedPopulation == 0)
+                        throw new ArgumentException("--population must be between 1 and 65535.");
+                    population = parsedPopulation;
+                    break;
+                case "--stop-ms":
+                    if (!uint.TryParse(value, out var parsedStop))
+                        throw new ArgumentException("--stop-ms must be between 0 and 4294967295.");
+                    stopMs = parsedStop;
+                    break;
+                case "--report-every":
+                    if (!ushort.TryParse(value, out var parsedReport))
+                        throw new ArgumentException("--report-every must be between 0 and 65535.");
+                    reportEvery = parsedReport;
+                    break;
+                case "--include-antenna": includeAntenna = ParseOnOff(option, value); break;
+                case "--include-rssi": includeRssi = ParseOnOff(option, value); break;
+                default: throw new ArgumentException($"Unknown ROSpec edit option `{option}`. Run `help rospec`.");
+            }
+        }
+
+        return (rospecId, new(priority, session, population, stopMs, reportEvery, includeAntenna, includeRssi));
+    }
+
+    private static bool ParseOnOff(string option, string value) => value.ToLowerInvariant() switch
+    {
+        "on" or "true" or "yes" => true,
+        "off" or "false" or "no" => false,
+        _ => throw new ArgumentException($"{option} must be `on` or `off`.")
+    };
+
+    private static void PrintRospecValues(RospecEditResult result)
+    {
+        var table = new Table().Border(TableBorder.Simple).Title($"ROSpec {result.RospecId} · {result.OriginalState}");
+        table.AddColumn("Field");
+        table.AddColumn("Before");
+        if (result.Applied) table.AddColumn("After");
+
+        Add("Priority", result.Before.Priority.ToString(), result.After.Priority.ToString());
+        Add("Session", FormatOptional(result.Before.Session), FormatOptional(result.After.Session));
+        Add("Tag population", FormatOptional(result.Before.TagPopulation), FormatOptional(result.After.TagPopulation));
+        Add("Stop trigger", FormatStop(result.Before), FormatStop(result.After));
+        Add("Report", FormatReport(result.Before), FormatReport(result.After));
+        Add("Include antenna ID", FormatOptional(result.Before.IncludeAntennaId), FormatOptional(result.After.IncludeAntennaId));
+        Add("Include peak RSSI", FormatOptional(result.Before.IncludePeakRssi), FormatOptional(result.After.IncludePeakRssi));
+        AnsiConsole.Write(table);
+        return;
+
+        void Add(string field, string before, string after)
+        {
+            if (result.Applied)
+                table.AddRow(Markup.Escape(field), Markup.Escape(before),
+                    before == after ? $"[grey]{Markup.Escape(after)}[/]" : $"[green]{Markup.Escape(after)}[/]");
+            else
+                table.AddRow(Markup.Escape(field), Markup.Escape(before));
+        }
+    }
+
+    private static string FormatStop(RospecEditableValues values) => values.StopTrigger == Org.LLRP.LTK.LLRPV1.ENUM_ROSpecStopTriggerType.Duration
+        ? $"Duration · {values.StopAfterMilliseconds} ms"
+        : values.StopTrigger.ToString();
+
+    private static string FormatReport(RospecEditableValues values) => values.ReportTrigger is null
+        ? "unavailable"
+        : $"{values.ReportTrigger} · N={values.ReportEvery}";
+
+    private static string FormatOptional<T>(T? value) where T : struct => value?.ToString() ?? "mixed / unavailable";
 
     private string Ask(string label, string fallback)
     {

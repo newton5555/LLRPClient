@@ -1,4 +1,4 @@
-using System.Xml;
+﻿using System.Xml;
 using Org.LLRP.LTK.LLRPV1;
 using Org.LLRP.LTK.LLRPV1.DataType;
 

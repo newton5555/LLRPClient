@@ -14,8 +14,6 @@ public static class Program
         {
             config.SetApplicationName("llrp");
             config.UseStrictParsing();
-            config.AddCommand<SendCommand>("send")
-                .WithDescription("Send a standard LLRP request through LLRPSdk and display every TX/RX frame.");
             config.AddCommand<MonitorCommand>("monitor")
                 .WithDescription("Connect to a reader and continuously decode received LLRP frames.");
             config.AddCommand<DecodeCommand>("decode")
