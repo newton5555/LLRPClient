@@ -24,7 +24,11 @@ LLRPClient 是一组面向 LLRP RFID Reader 的 .NET 客户端、SDK 封装和�
 `LLRP.Cli` 是用于调试和自动化标准 LLRP 读写器的跨平台命令行工具。它既可作为交互式 REPL 使用，也可在脚本或 CI 中执行单次报文监控与帧解码。除命令结果外，工具会显示 LLRP 报文树、Message ID、状态码以及完整的十六进制原始帧，便于定位设备返回的协议问题。
 
 ```powershell
-# 启动交互式控制台
+# 发布后可直接运行 CLI 程序
+dotnet publish LLRP.Cli -c Release -o .\publish\llrp
+.\publish\llrp\LLRP.Cli.exe
+
+# 开发时也可直接从项目启动
 dotnet run --project LLRP.Cli
 
 # 连接读写器后，可执行：caps、config、rospec list、monitor 30 等命令

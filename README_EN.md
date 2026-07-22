@@ -7,7 +7,11 @@ English | [简体中文](README.md)
 `LLRP.Cli` is a cross-platform command-line tool for debugging and automating standards-compliant LLRP readers. Use it as an interactive REPL or invoke one-shot monitoring and frame-decoding commands from scripts or CI. It renders an LLRP message tree, Message ID, status and the complete raw hexadecimal frame to make protocol-level troubleshooting practical.
 
 ```powershell
-# Start the interactive console
+# Publish and run the CLI executable directly
+dotnet publish LLRP.Cli -c Release -o .\publish\llrp
+.\publish\llrp\LLRP.Cli.exe
+
+# Or launch it directly from the project while developing
 dotnet run --project LLRP.Cli
 
 # Decode a captured LLRP frame without connecting to a reader
