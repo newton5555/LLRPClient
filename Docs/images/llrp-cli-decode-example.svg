@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="510" viewBox="0 0 1200 510" role="img" aria-labelledby="title desc">
+  <title id="title">LLRP CLI decoded frame output</title>
+  <desc id="desc">A terminal capture showing the LLRP CLI decoding a START_ROSPEC frame and displaying its raw hexadecimal bytes.</desc>
+  <rect width="1200" height="510" rx="16" fill="#111827"/>
+  <rect width="1200" height="44" rx="16" fill="#1f2937"/>
+  <rect y="28" width="1200" height="16" fill="#1f2937"/>
+  <circle cx="28" cy="22" r="7" fill="#fb7185"/><circle cx="52" cy="22" r="7" fill="#fbbf24"/><circle cx="76" cy="22" r="7" fill="#34d399"/>
+  <g font-family="Cascadia Mono, Consolas, monospace" font-size="21" fill="#e5e7eb">
+    <text x="36" y="83" fill="#9ca3af">PS&gt; llrp decode --hex 04160000000E0000002A00000001</text>
+    <text x="36" y="126" fill="#67e8f9">← RX  START_ROSPEC  ID 42</text><text x="404" y="126" fill="#d1d5db">· 14 bytes</text>
+    <text x="36" y="169" fill="#f9fafb">START_ROSPEC</text>
+    <text x="36" y="204">├── Header</text>
+    <text x="36" y="239">│   ├── Version: 1</text>
+    <text x="36" y="274">│   ├── MessageType: START_ROSPEC (22)</text>
+    <text x="36" y="309">│   ├── Length: 14</text>
+    <text x="36" y="344">│   └── MessageID: 42</text>
+    <text x="36" y="379">└── ROSpecID: 1</text>
+  </g>
+  <rect x="28" y="408" width="1144" height="72" rx="8" fill="#172554" stroke="#60a5fa"/>
+  <text x="48" y="437" font-family="Cascadia Mono, Consolas, monospace" font-size="18" fill="#93c5fd">RAW HEX</text>
+  <text x="48" y="465" font-family="Cascadia Mono, Consolas, monospace" font-size="20" fill="#f3f4f6">0000  04 16 00 00 00 0E 00 00  00 2A 00 00 00 01        | .........*.... |</text>
+</svg>

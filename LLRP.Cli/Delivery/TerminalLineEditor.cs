@@ -265,7 +265,7 @@ public sealed class TerminalLineEditor : IDisposable
         var ghost = cursor == buffer.Length ? SafeDisplay(assist.GhostSuffix) : string.Empty;
         ghost = FitEnd(ghost, Math.Max(0, available - viewport.Text.Length));
 
-        const string inputMarker = "❯ ";
+        const string inputMarker = "> ";
         Console.Write(TerminalVisuals.Paint(inputMarker, Spectre.Console.Color.SpringGreen2, decoration: Spectre.Console.Decoration.Bold));
         Console.Write(TerminalVisuals.Paint(safePrompt, Spectre.Console.Color.Aqua, decoration: Spectre.Console.Decoration.Bold));
         Console.Write(viewport.Text);
@@ -302,7 +302,7 @@ public sealed class TerminalLineEditor : IDisposable
     private static void CommitLine(string prompt, StringBuilder buffer, bool hasAssistLine)
     {
         ClearEditor(hasAssistLine);
-        Console.Write("❯ ");
+        Console.Write("> ");
         Console.Write(SafeDisplay(prompt));
         Console.Write(buffer);
         Console.WriteLine();

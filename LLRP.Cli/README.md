@@ -12,6 +12,10 @@ XML is used only as an internal decoder representation and is never shown.
 dotnet run --project LLRP.Cli
 ```
 
+The CLI explicitly uses UTF-8 (without BOM) for both console input and output,
+so Chinese text and other Unicode characters are handled consistently when the
+terminal supports UTF-8.
+
 The prompt reflects the observed workflow rather than merely the TCP state:
 
 ```text

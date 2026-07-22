@@ -2,6 +2,26 @@
 
 English | [简体中文](README.md)
 
+## LLRP CLI
+
+`LLRP.Cli` is a cross-platform command-line tool for debugging and automating standards-compliant LLRP readers. Use it as an interactive REPL or invoke one-shot monitoring and frame-decoding commands from scripts or CI. It renders an LLRP message tree, Message ID, status and the complete raw hexadecimal frame to make protocol-level troubleshooting practical.
+
+```powershell
+# Start the interactive console
+dotnet run --project LLRP.Cli
+
+# Decode a captured LLRP frame without connecting to a reader
+dotnet run --project LLRP.Cli -- decode --hex 04160000000E0000002A00000001
+```
+
+### Decode output
+
+The CLI decodes a `START_ROSPEC` frame into a semantic tree while retaining its complete Hex payload:
+
+![LLRP CLI decoding a START_ROSPEC frame](Docs/images/llrp-cli-decode-example.svg)
+
+The tool supports TLS connections, reader capabilities/configuration queries, ROSpec creation and lifecycle management, continuous frame monitoring and offline frame decoding. State-changing operations require confirmation in the interactive console. See [LLRP.Cli/README.md](LLRP.Cli/README.md) for the full command reference and publishing instructions.
+
 ## 1. Introduction to LLRP
 
 LLRP (Low Level Reader Protocol) is a standard communication interface between RFID readers and host computer clients defined by GS1 EPCglobal. It is called "low level" because it provides fine-grained control over RFID air interface protocol timing, reader behavior, and tag operation parameters, making it suitable for application scenarios that require direct management of reader capabilities, antennas, inventory processes, and tag commands.

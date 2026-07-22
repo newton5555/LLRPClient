@@ -11,12 +11,34 @@ LLRPClient 是一组面向 LLRP RFID Reader 的 .NET 客户端、SDK 封装和�
 | 项目 | 说明 |
 | --- | --- |
 | [LLRPReaderManagement](LLRPReaderManagement/README.md) | .NET MAUI Blazor Hybrid 管理端，支持 Reader 连接、配置、盘点、ROSpec 与标签访问操作。 |
+| [LLRP.Cli](LLRP.Cli/README.md) | 面向 LLRP 读写器的命令行工具，提供交互式控制台、ROSpec 管理、报文监控与原始帧解码。 |
 | [LLRPSdk](LLRPSdk) | 标准 LLRP 能力封装，主要通过 `LLRPSdk.LlrpReader` 对外提供 Reader 操作接口。 |
 | [LTKNet/LLRP](LTKNet/LLRP) | LLRP-LTKNet 协议库代码。 |
 | [LLRPReaderUI_WPF](LLRPReaderUI_WPF) | WPF 示例客户端，可用于连接 Reader、盘点标签、读写标签内存和查看 LLRP 报文。 |
 | [LLRPReaderUI_Avalonia](LLRPReaderUI_Avalonia) | Avalonia 示例客户端。 |
 | [Docs](Docs) | SDK 开发指南、UI 用户手册、配置对比和测试文档。 |
 | [Refs](Refs) | LLRP 标准文档和协议定义文件。 |
+
+## LLRP CLI
+
+`LLRP.Cli` 是用于调试和自动化标准 LLRP 读写器的跨平台命令行工具。它既可作为交互式 REPL 使用，也可在脚本或 CI 中执行单次报文监控与帧解码。除命令结果外，工具会显示 LLRP 报文树、Message ID、状态码以及完整的十六进制原始帧，便于定位设备返回的协议问题。
+
+```powershell
+# 启动交互式控制台
+dotnet run --project LLRP.Cli
+
+# 连接读写器后，可执行：caps、config、rospec list、monitor 30 等命令
+# 不连接设备也可离线解码已捕获的 LLRP 帧
+dotnet run --project LLRP.Cli -- decode --hex 04160000000E0000002A00000001
+```
+
+### 解码输出示例
+
+下图为 CLI 对一条 `START_ROSPEC` 原始帧的实际解码输出：它展示了语义树和保留的完整 Hex 数据。
+
+![LLRP CLI 解码 START_ROSPEC 帧](Docs/images/llrp-cli-decode-example.svg)
+
+CLI 支持 TLS 连接、Reader 能力与配置查询、ROSpec 创建/编辑/启停/删除、持续帧监控和离线帧解码。需要执行会改变读写器状态的操作时，交互式控制台会要求确认。完整命令说明与发布方式请见 [LLRP.Cli/README.md](LLRP.Cli/README.md)。
 
 ## LLRP 简介
 
@@ -67,5 +89,6 @@ Impinj 提供了基于原版 LTKNet 扩展的 .NET 版本，增加了 IPv6 与 T
 ## 快速入口
 
 - 查看 MAUI Blazor 管理端说明：[LLRPReaderManagement/README.md](LLRPReaderManagement/README.md)
+- 查看 CLI 说明：[LLRP.Cli/README.md](LLRP.Cli/README.md)
 - 查看 LLRPSdk 开发指南：[LLRPSdk/Docs/LLRPSdk_Developer_Guide.md](LLRPSdk/Docs/LLRPSdk_Developer_Guide.md)
 - 查看 WPF 中文操作手册：[LLRPReaderUI_WPF/LLRPReaderUI_WPF_UI操作手册.md](LLRPReaderUI_WPF/LLRPReaderUI_WPF_UI操作手册.md)
