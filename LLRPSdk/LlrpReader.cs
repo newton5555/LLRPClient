@@ -932,13 +932,25 @@ namespace LLRPSdk
         {
             if (!this.IsConnected)
                 throw new LLRPSdkException("You must connect to the reader before getting the default configuration.");
-            return new Settings(
+            return this.CreateDefaultSettings();
+        }
+
+        private Settings CreateDefaultSettings()
+        {
+            var settings = new Settings(
                 this._readerCapabilities.AntennaCount,
                 this._readerCapabilities.GpiCount,
                 this._readerCapabilities.GpoCount,
                 this._readerCapabilities.FirmwareVersion,
                 this._readerCapabilities.RfModes.FirstOrDefault()
                 );
+
+            // Zebra readers use zero-based channel indexes; the SDK default
+            // is one-based for the other reader families.
+            if (this._readerCapabilities.DeviceManufacturerNumber == 161)
+                settings.ChannelIndex = 0;
+
+            return settings;
         }
 
         /// <summary>
@@ -962,12 +974,7 @@ namespace LLRPSdk
             if (!this.IsConnected)
                 throw new LLRPSdkException("You must connect to the reader before configuring it.");
 
-            var settings = new Settings(this._readerCapabilities.AntennaCount,
-                this._readerCapabilities.GpiCount,
-                this._readerCapabilities.GpoCount,
-                this._readerCapabilities.FirmwareVersion,
-                this._readerCapabilities.RfModes.FirstOrDefault()
-                );
+            var settings = this.CreateDefaultSettings();
 
             settings.Report.IncludeAntennaPortNumber = true;
             settings.Report.IncludeChannel = true;

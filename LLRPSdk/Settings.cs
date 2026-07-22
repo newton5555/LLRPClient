@@ -432,7 +432,10 @@ namespace LLRPSdk
             this.ReducedPowerFrequenciesInMhz.Clear();
             this.HoldReportsOnDisconnect = false;
             this.HopTableId = (ushort)1;
-            this.ChannelIndex = (ushort)0;
+            // Channel indexes are 1-based for the default configuration.
+            // Readers with a 0-based channel table (for example Zebra) are
+            // adjusted by LlrpReader.CreateDefaultSettings().
+            this.ChannelIndex = (ushort)1;
             this.InventoryStateAware = false;
             this.InventoryTarget = InventoryTarget.A;
             this.InventorySearchMode = InventorySearchMode.Not_SL;
