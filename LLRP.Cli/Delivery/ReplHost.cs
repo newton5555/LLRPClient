@@ -15,6 +15,7 @@ internal sealed class ReplApplication
     private readonly CancellationToken _applicationToken;
     private readonly ReaderContext _context = new();
     private readonly TerminalLineEditor _editor = new();
+    private readonly IAnsiConsole _console = AnsiConsole.Console;
     private ReaderSession? _session;
     private string _lastHost = "127.0.0.1";
     private int _lastPort = 5084;
@@ -91,7 +92,10 @@ internal sealed class ReplApplication
             case "rospec": Rospec(tokens.Skip(1).ToArray()); break;
             case "monitor": Monitor(tokens.Skip(1).ToArray()); break;
             case "frames": PrintRecentFrames(tokens.Skip(1).ToArray()); break;
-            case "clear": Console.Clear(); PrintBanner(); break;
+            case "clear":
+                if (!Console.IsOutputRedirected) Console.Clear();
+                PrintBanner();
+                break;
             case "help": PrintHelp(tokens.ElementAtOrDefault(1)); break;
             case "quit": return false;
         }
@@ -306,7 +310,22 @@ internal sealed class ReplApplication
             throw new ArgumentException("Usage: rospec list|show|create|edit|enable|disable|start|stop|delete");
 
         var (rospecId, patch) = ParseRospecEdit(args.Skip(1).ToArray());
-        if (patch.HasChanges && !Confirm($"Replace ROSpec {rospecId} with the edited values"))
+        var editedInteractively = false;
+        if (!patch.HasChanges && !Console.IsInputRedirected && !Console.IsOutputRedirected)
+        {
+            var current = ReadRospecForEditing(rospecId);
+            if (current is null) return;
+            var editor = new RospecEditScreen(rospecId, current);
+            var selectedPatch = editor.Run(_console);
+            if (selectedPatch is null)
+            {
+                Info("ROSpec editing cancelled; no replacement was sent.");
+                return;
+            }
+            patch = selectedPatch;
+            editedInteractively = true;
+        }
+        if (patch.HasChanges && !editedInteractively && !Confirm($"Replace ROSpec {rospecId} with the edited values"))
         {
             Info("Cancelled; no message was sent.");
             return;
@@ -333,6 +352,19 @@ internal sealed class ReplApplication
                 ? $"ROSpec {rospecId} already has the requested values; no replacement was sent."
                 : $"ROSpec {rospecId} was inspected; no replacement was sent.");
         ShowNextActions();
+    }
+
+    private RospecEditableValues? ReadRospecForEditing(uint rospecId)
+    {
+        RospecEditExecution? execution = null;
+        RunWithStatus($"Reading ROSpec {rospecId} for editing…", () => execution = _session!.EditRospec(rospecId, new RospecEditPatch()));
+        _context.Observe(execution!.Frames);
+        if (execution.Succeeded) return execution.Result!.Before;
+
+        var error = execution.Error ?? new LLRPSdkException("Reader returned an unsuccessful LLRP status.");
+        _context.OperationFailed(error.Message, connectionLost: !_session!.IsConnected);
+        PrintException(error, $"Run `rospec list`, verify ROSpec {rospecId}, and retry.");
+        return null;
     }
 
     private void ExecuteOperation(ReaderOperation operation, uint rospecId, string progress)
@@ -390,7 +422,7 @@ internal sealed class ReplApplication
             string.Join(", ", _context.RospecStates.Select(pair => $"{pair.Key}:{pair.Value}"));
         table.AddRow("[grey]ROSpecs[/]", Markup.Escape(rospecs));
         if (_context.LastError is not null) table.AddRow("[red]Last error[/]", Markup.Escape(_context.LastError));
-        AnsiConsole.Write(table);
+        _console.Write(table);
         ShowNextActions();
     }
 
@@ -401,8 +433,8 @@ internal sealed class ReplApplication
             var command = CommandCatalog.FindCommand(topic);
             if (command is not null)
             {
-                AnsiConsole.MarkupLine($"[bold deepskyblue1]{Markup.Escape(command.Usage)}[/]");
-                AnsiConsole.MarkupLine(Markup.Escape(command.Description));
+                _console.MarkupLine($"[bold deepskyblue1]{Markup.Escape(command.Usage)}[/]");
+                _console.MarkupLine(Markup.Escape(command.Description));
                 if (command.Name == "rospec") PrintRospecHelp(showHeader: false);
                 return;
             }
@@ -410,38 +442,38 @@ internal sealed class ReplApplication
             return;
         }
 
-        AnsiConsole.MarkupLine("[bold]Commands[/]");
+        _console.MarkupLine("[bold]Commands[/]");
         var table = new Table().Border(TableBorder.None).AddColumn("Command").AddColumn("Purpose");
         foreach (var command in CommandCatalog.Commands)
             table.AddRow($"[deepskyblue1]{Markup.Escape(command.Usage)}[/]", $"[grey]{Markup.Escape(command.Description)}[/]");
-        AnsiConsole.Write(table);
-        AnsiConsole.MarkupLine("[grey]Editing: ←/→ · Ctrl+←/→ · Home/End · ↑/↓ history · Tab/→ accept suggestion · Shift+Tab cycle · Esc clear · Ctrl+C cancel line · Ctrl+D exit[/]");
+        _console.Write(table);
+        _console.MarkupLine("[grey]Editing: ←/→ · Ctrl+←/→ · Home/End · ↑/↓ history · Tab/→ accept suggestion · Shift+Tab cycle · Esc clear · Ctrl+C cancel line · Ctrl+D exit[/]");
         ShowNextActions();
     }
 
-    private static void PrintOperations()
+    private void PrintOperations()
     {
-        AnsiConsole.MarkupLine("\n[bold]Operations[/]");
+        _console.MarkupLine("\n[bold]Operations[/]");
         var table = new Table().Border(TableBorder.None).AddColumn("Name").AddColumn("Purpose");
         foreach (var operation in CommandCatalog.Operations)
             table.AddRow($"[deepskyblue1]{Markup.Escape(operation.Name)}[/]", $"[grey]{Markup.Escape(operation.Description)}[/]");
-        AnsiConsole.Write(table);
+        _console.Write(table);
     }
 
-    private static void PrintRospecHelp(bool showHeader = true)
+    private void PrintRospecHelp(bool showHeader = true)
     {
         if (showHeader)
         {
-            AnsiConsole.MarkupLine("[bold deepskyblue1]rospec list|show|create|edit|enable|disable|start|stop|delete[/]");
-            AnsiConsole.MarkupLine("[grey]Without options, reads the ROSpec and displays its editable values.[/]");
+            _console.MarkupLine("[bold deepskyblue1]rospec list|show|create|edit|enable|disable|start|stop|delete[/]");
+            _console.MarkupLine("[grey]Without options, opens an interactive editor for the ROSpec.[/]");
         }
         var table = new Table().Border(TableBorder.None).AddColumn("Command").AddColumn("Purpose");
         table.AddRow("[deepskyblue1]rospec list[/]", "List installed ROSpecs");
         table.AddRow("[deepskyblue1]rospec show <id>[/]", "Show one ROSpec and its report tree");
         table.AddRow("[deepskyblue1]rospec create default[/]", "Create the default ROSpec when none exists");
-        table.AddRow("[deepskyblue1]rospec edit <id>[/]", "Inspect or change common fields");
+        table.AddRow("[deepskyblue1]rospec edit <id>[/]", "Interactively edit common fields");
         table.AddRow("[deepskyblue1]rospec enable|disable|start|stop|delete <id>[/]", "Control ROSpec lifecycle");
-        AnsiConsole.Write(table);
+        _console.Write(table);
         table = new Table().Border(TableBorder.None).AddColumn("Edit option").AddColumn("Value");
         table.AddRow("[deepskyblue1]--priority[/]", "0–255");
         table.AddRow("[deepskyblue1]--session[/]", "0–3 (applied to all C1G2 antenna controls)");
@@ -450,16 +482,16 @@ internal sealed class ReplApplication
         table.AddRow("[deepskyblue1]--report-every[/]", "0 reports at ROSpec end; otherwise every N tags");
         table.AddRow("[deepskyblue1]--include-antenna[/]", "on | off");
         table.AddRow("[deepskyblue1]--include-rssi[/]", "on | off");
-        AnsiConsole.Write(table);
+        _console.Write(table);
     }
 
     private void ShowNextActions()
     {
         var actions = PromptChain.GetNextActions(_context);
         if (actions.Count == 0) return;
-        AnsiConsole.MarkupLine("[bold grey70]Next[/]");
+        _console.MarkupLine("[bold grey70]Next[/]");
         foreach (var action in actions.Take(2))
-            AnsiConsole.MarkupLine($"  [deepskyblue1]{Markup.Escape(action.Command)}[/]  [grey]— {Markup.Escape(action.Reason)}[/]");
+            _console.MarkupLine($"  [deepskyblue1]{Markup.Escape(action.Command)}[/]  [grey]— {Markup.Escape(action.Reason)}[/]");
     }
 
     private ConnectionOptions PromptConnectionOptions()
@@ -573,7 +605,7 @@ internal sealed class ReplApplication
         _ => throw new ArgumentException($"{option} must be `on` or `off`.")
     };
 
-    private static void PrintRospecValues(RospecEditResult result)
+    private void PrintRospecValues(RospecEditResult result)
     {
         var table = new Table().Border(TableBorder.Simple).Title($"ROSpec {result.RospecId} · {result.OriginalState}");
         table.AddColumn("Field");
@@ -587,7 +619,7 @@ internal sealed class ReplApplication
         Add("Report", FormatReport(result.Before), FormatReport(result.After));
         Add("Include antenna ID", FormatOptional(result.Before.IncludeAntennaId), FormatOptional(result.After.IncludeAntennaId));
         Add("Include peak RSSI", FormatOptional(result.Before.IncludePeakRssi), FormatOptional(result.After.IncludePeakRssi));
-        AnsiConsole.Write(table);
+        _console.Write(table);
         return;
 
         void Add(string field, string before, string after)
@@ -648,10 +680,10 @@ internal sealed class ReplApplication
         _ => "Run `status`, verify reader state, and retry."
     };
 
-    private static void RunWithStatus(string text, Action action)
+    private void RunWithStatus(string text, Action action)
     {
         if (Console.IsOutputRedirected) action();
-        else AnsiConsole.Status().Spinner(Spinner.Known.Dots).Start(text, _ => action());
+        else _console.Status().Spinner(Spinner.Known.Dots).Start(text, _ => action());
     }
 
     private static bool TryReadMonitorStopKey()
@@ -667,27 +699,27 @@ internal sealed class ReplApplication
         catch (IOException) { return false; }
     }
 
-    private static void PrintBanner()
+    private void PrintBanner()
     {
-        AnsiConsole.MarkupLine("[bold deepskyblue1]◆ LLRP CLI[/] [grey]2.0.0[/]");
-        AnsiConsole.MarkupLine("[grey]  Standard reader console · semantic message tree · raw TX/RX hex[/]");
-        AnsiConsole.MarkupLine("[grey]  Type `help`; Tab/→ accepts the live suggestion; Ctrl+C cancels input or monitor.[/]");
-        AnsiConsole.Write(new Rule().RuleStyle("grey35"));
+        _console.MarkupLine("[bold deepskyblue1]◆ LLRP CLI[/] [grey]2.0.0[/]");
+        _console.MarkupLine("[grey]  Standard reader console · semantic message tree · raw TX/RX hex[/]");
+        _console.MarkupLine("[grey]  Type `help`; Tab/→ accepts the live suggestion; Ctrl+C cancels input or monitor.[/]");
+        _console.Write(new Rule().RuleStyle("grey35"));
     }
 
-    private static void Success(string text) => AnsiConsole.MarkupLine($"[green]✓[/] {Markup.Escape(text)}");
-    private static void Info(string text) => AnsiConsole.MarkupLine($"[grey]{Markup.Escape(text)}[/]");
+    private void Success(string text) => _console.MarkupLine($"[green]✓[/] {Markup.Escape(text)}");
+    private void Info(string text) => _console.MarkupLine($"[grey]{Markup.Escape(text)}[/]");
 
-    private static void PrintException(Exception error, string recovery)
+    private void PrintException(Exception error, string recovery)
     {
         var category = Classify(error);
         PrintError(category, error.Message, recovery);
     }
 
-    private static void PrintError(string category, string message, string recovery)
+    private void PrintError(string category, string message, string recovery)
     {
-        AnsiConsole.MarkupLine($"[red]✗ {Markup.Escape(category)}:[/] {Markup.Escape(message)}");
-        AnsiConsole.MarkupLine($"  [grey]Recovery: {Markup.Escape(recovery)}[/]");
+        _console.MarkupLine($"[red]✗ {Markup.Escape(category)}:[/] {Markup.Escape(message)}");
+        _console.MarkupLine($"  [grey]Recovery: {Markup.Escape(recovery)}[/]");
     }
 
     private static string Classify(Exception error)

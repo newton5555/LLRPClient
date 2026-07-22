@@ -37,6 +37,10 @@ horizontally instead of wrapping the active input row. History is stored under
 the user's local application-data directory; credentials are never collected
 or stored.
 
+The console uses the terminal's native scrollback. Spectre.Console provides
+tables, colors, progress feedback and interactive selection prompts without
+taking over mouse input or switching to a full-screen alternate buffer.
+
 Run `help` or `help rospec` inside the console. Core commands are:
 
 - `connect [host] [port] [--tls] [--timeout-ms <ms>]`
@@ -48,8 +52,9 @@ Run `help` or `help rospec` inside the console. Core commands are:
 - `clear`, `help [topic]`, `quit`
 
 If `connect` is entered without arguments, a validated host/port/TLS/timeout
-wizard is shown. Commands that can start or destructively change reader state
-require confirmation in the interactive console.
+wizard is shown as ordinary terminal prompts. Commands that can start or
+destructively change reader state require confirmation in the interactive
+console.
 
 ## Reader and ROSpec operations
 
@@ -65,11 +70,14 @@ delete other configuration.
 
 ## Edit an installed ROSpec
 
-Read the editable values without changing the reader:
+Open the interactive editor for an installed ROSpec:
 
 ```text
 rospec edit 1
 ```
+
+Use arrow keys to select a field and Enter to edit it. Editing returns to the
+field list; choose **Save changes** to apply or **Discard changes** to cancel.
 
 Apply one or more common standard fields:
 

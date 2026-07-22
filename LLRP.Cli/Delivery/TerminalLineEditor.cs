@@ -7,8 +7,6 @@ public sealed record LineReadResult(string? Text, bool Cancelled = false);
 public sealed class TerminalLineEditor : IDisposable
 {
     private const int MaximumHistoryEntries = 500;
-    private const string Dim = "\u001b[90m";
-    private const string Reset = "\u001b[0m";
     private readonly List<string> _history;
     private readonly string _historyPath;
 
@@ -262,26 +260,28 @@ public sealed class TerminalLineEditor : IDisposable
         ClearEditor(clearAssistLine);
         var width = TerminalWidth();
         var safePrompt = FitMiddle(SafeDisplay(prompt), Math.Max(10, width / 2));
-        var available = Math.Max(8, width - safePrompt.Length - 1);
+        var available = Math.Max(8, width - safePrompt.Length - 3);
         var viewport = BuildViewport(buffer.ToString(), cursor, available);
         var ghost = cursor == buffer.Length ? SafeDisplay(assist.GhostSuffix) : string.Empty;
         ghost = FitEnd(ghost, Math.Max(0, available - viewport.Text.Length));
 
-        Console.Write(safePrompt);
+        const string inputMarker = "❯ ";
+        Console.Write(TerminalVisuals.Paint(inputMarker, Spectre.Console.Color.SpringGreen2, decoration: Spectre.Console.Decoration.Bold));
+        Console.Write(TerminalVisuals.Paint(safePrompt, Spectre.Console.Color.Aqua, decoration: Spectre.Console.Decoration.Bold));
         Console.Write(viewport.Text);
-        if (ghost.Length > 0) Console.Write(Dim + ghost + Reset);
+        if (ghost.Length > 0) Console.Write(TerminalVisuals.Paint(ghost, Spectre.Console.Color.Grey));
 
         if (renderAssistLine)
         {
             var hint = string.IsNullOrWhiteSpace(assist.Hint)
                 ? "Tab/→ accept suggestion · Shift+Tab cycles candidates · Esc clears"
                 : SafeDisplay(assist.Hint);
-            hint = FitEnd(hint, Math.Max(1, width - 3));
-            Console.Write("\n\r\u001b[2K" + Dim + "  " + hint + Reset);
+            hint = FitEnd(hint, Math.Max(1, width - 6));
+            Console.Write("\n\r\u001b[2K" + TerminalVisuals.Paint("  └─ " + hint, Spectre.Console.Color.Grey));
             Console.Write("\u001b[1A\r");
         }
 
-        var column = safePrompt.Length + viewport.CursorColumn;
+        var column = inputMarker.Length + safePrompt.Length + viewport.CursorColumn;
         if (column > 0) Console.Write($"\u001b[{column}C");
     }
 
@@ -302,6 +302,7 @@ public sealed class TerminalLineEditor : IDisposable
     private static void CommitLine(string prompt, StringBuilder buffer, bool hasAssistLine)
     {
         ClearEditor(hasAssistLine);
+        Console.Write("❯ ");
         Console.Write(SafeDisplay(prompt));
         Console.Write(buffer);
         Console.WriteLine();
