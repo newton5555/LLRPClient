@@ -32,6 +32,7 @@
     <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <ProjectReference Include="..\LLRPSdk\LLRPSdk.csproj" />
+    <ProjectReference Include="..\LTKNet\LLRP\LLRP-LTKNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
