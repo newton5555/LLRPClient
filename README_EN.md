@@ -1,6 +1,20 @@
 # LLRPClient
 
 English | [简体中文](README.md)
+> [!IMPORTANT]
+>
+> ## This project is no longer maintained
+>
+> `LLRPClient` has been discontinued and will no longer receive new features or bug fixes.
+>
+> Development has moved to the new **LLRPCSharp** repository:
+>
+> **➡️ [newton5555/LLRPCSharp](https://github.com/newton5555/LLRPCSharp)**
+>
+> LLRPCSharp provides a redesigned project structure, LLRP protocol support, a reader SDK, command-line tools, and improved cross-platform support.
+>
+> Please submit issues, feature requests, and pull requests in the new repository.
+
 
 ## LLRP CLI
 

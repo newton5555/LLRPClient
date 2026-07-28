@@ -2,6 +2,21 @@
 
 [English](README_EN.md) | 简体中文
 
+> [!IMPORTANT]
+>
+> ## 本项目已停止维护
+>
+> `LLRPClient` 已停止维护，不再接受新功能开发或问题修复。
+>
+> 后续开发已经迁移到新的 **LLRPCSharp** 项目：
+>
+> **➡️ [newton5555/LLRPCSharp](https://github.com/newton5555/LLRPCSharp)**
+>
+> LLRPCSharp 提供重新设计的项目结构、LLRP 协议能力、Reader SDK、命令行工具以及更完善的跨平台支持。
+>
+> 请在新仓库提交 Issue、功能建议和 Pull Request。
+
+
 LLRPClient 是一组面向 LLRP RFID Reader 的 .NET 客户端、SDK 封装和示例 UI 项目。仓库基于 LTKNet / LLRPSdk 组织代码，聚焦标准 LLRP 报文能力，可用于连接、配置、盘点和访问支持 LLRP 的 RFID 读写器。
 
 当前项目采用 LLRP 1.0.1 协议体系，主要参考 Impinj LTKNet 的 .NET 实现思路，并保留标准 LLRP 能力。更详细的协议资料、SDK 文档和 UI 操作手册可在 `Refs`、`Docs` 以及各子项目目录中查看。
